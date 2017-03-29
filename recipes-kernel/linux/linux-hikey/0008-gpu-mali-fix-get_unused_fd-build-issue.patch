@@ -1,0 +1,31 @@
+From 11597fdbe85cccb6dee3246521d5c9e0e4ef06a7 Mon Sep 17 00:00:00 2001
+From: Xinliang Liu <xinliang.liu@linaro.org>
+Date: Wed, 23 Dec 2015 18:14:29 +0800
+Subject: [PATCH 08/10] gpu/mali: fix get_unused_fd build issue
+
+New kernel should use get_unused_fd_flags instead of get_unused_fd.
+
+Signed-off-by: Xinliang Liu <xinliang.liu@linaro.org>
+---
+ drivers/gpu/arm/utgard/linux/mali_sync.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/arm/utgard/linux/mali_sync.c
++++ b/drivers/gpu/arm/utgard/linux/mali_sync.c
+@@ -18,6 +18,7 @@
+ #include <linux/file.h>
+ #include <linux/seq_file.h>
+ #include <linux/module.h>
++#include <linux/fcntl.h>
+ 
+ struct mali_sync_pt {
+ 	struct sync_pt         sync_pt;
+@@ -298,7 +299,7 @@ s32 mali_sync_fence_fd_alloc(struct sync
+ {
+ 	s32 fd = -1;
+ 
+-	fd = get_unused_fd();
++	fd = get_unused_fd_flags(O_CLOEXEC);
+ 	if (fd < 0) {
+ 		sync_fence_put(sync_fence);
+ 		return -1;

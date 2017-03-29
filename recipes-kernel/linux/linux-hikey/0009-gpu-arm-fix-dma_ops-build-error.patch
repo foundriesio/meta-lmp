@@ -1,0 +1,22 @@
+From 9807b1fab27186e4e3d172af7d72fb3b5a2dbb2e Mon Sep 17 00:00:00 2001
+From: Xinliang Liu <xinliang.liu@linaro.org>
+Date: Mon, 28 Dec 2015 18:34:29 +0800
+Subject: [PATCH 09/10] gpu: arm: fix dma_ops build error
+
+Signed-off-by: Xinliang Liu <xinliang.liu@linaro.org>
+---
+ drivers/gpu/arm/utgard/platform/hikey/mali_hikey.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+--- a/drivers/gpu/arm/utgard/platform/hikey/mali_hikey.c
++++ b/drivers/gpu/arm/utgard/platform/hikey/mali_hikey.c
+@@ -638,9 +638,6 @@ int mali_platform_device_init(struct pla
+ 	pdev->dev.type = &mali_gpu_device_device_type;
+ 	pdev->dev.platform_data = &mali_gpu_data;
+ 	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+-#if defined(CONFIG_ARM64)
+-	pdev->dev.archdata.dma_ops = dma_ops;
+-#endif
+ 	mali_np = pdev->dev.of_node;
+ 
+ 	if (mali_get_gpu_type() != MALI_CORE_450_MP4) {

@@ -1,0 +1,87 @@
+From 3f6489554b75d55cd20443f3202bbda8096499b4 Mon Sep 17 00:00:00 2001
+From: Guillaume Tucker <guillaume.tucker@arm.com>
+Date: Mon, 23 Feb 2015 11:52:29 +0000
+Subject: [PATCH 02/10] drivers/gpu/arm/utgard: add option for custom device
+ tree
+
+Some Mali 450 Utgard GPU platform integration files like
+the HiKey need a custom Device Tree entry.  This config
+option is to disable the standard driver code that expects
+things in the device tree which conflict with what the
+platform files need.
+
+This is only an interim solution, tne platform files should
+really be tidied-up to enable the standard device tree
+instead (would require adding more IRQ and other resources).
+
+Signed-off-by: Guillaume Tucker <guillaume.tucker@arm.com>
+---
+ drivers/gpu/arm/utgard/Kconfig                   |   12 ++++++++++++
+ drivers/gpu/arm/utgard/common/mali_kernel_core.c |    2 +-
+ drivers/gpu/arm/utgard/common/mali_osk_mali.h    |    2 +-
+ drivers/gpu/arm/utgard/linux/mali_osk_mali.c     |    4 ++--
+ 4 files changed, 16 insertions(+), 4 deletions(-)
+
+--- a/drivers/gpu/arm/utgard/Kconfig
++++ b/drivers/gpu/arm/utgard/Kconfig
+@@ -96,6 +96,18 @@ config MALI_DT
+ 	  device tree is enabled in kernel and corresponding hardware description is implemented
+ 	  properly in device DTS file.
+ 
++config MALI_PLAT_SPECIFIC_DT
++	bool "Platform specific Device Tree is being used"
++	depends on MALI_DT
++	default n
++	---help---
++          This is a pragmatic approach for some platforms which make
++          use of a device tree entry that does not strictly comply to
++          what the standard Utgard driver expects to find, but have
++          their platform data implemented the old way.  Such platforms
++          should be converted to using the Device Tree so this
++          configuration option can be removed.
++
+ config MALI_QUIET
+ 	bool "Make Mali driver very quiet"
+ 	depends on MALI400 && !MALI400_DEBUG
+--- a/drivers/gpu/arm/utgard/common/mali_kernel_core.c
++++ b/drivers/gpu/arm/utgard/common/mali_kernel_core.c
+@@ -738,7 +738,7 @@ _mali_osk_errcode_t mali_initialize_subs
+ {
+ 	_mali_osk_errcode_t err;
+ 
+-#ifdef CONFIG_MALI_DT
++#if defined(CONFIG_MALI_DT) && !defined(CONFIG_MALI_PLAT_SPECIFIC_DT)
+ 	err = _mali_osk_resource_initialize();
+ 	if (_MALI_OSK_ERR_OK != err) {
+ 		mali_terminate_subsystems();
+--- a/drivers/gpu/arm/utgard/common/mali_osk_mali.h
++++ b/drivers/gpu/arm/utgard/common/mali_osk_mali.h
+@@ -30,7 +30,7 @@ extern "C" {
+  */
+ typedef struct mali_gpu_device_data _mali_osk_device_data;
+ 
+-#ifdef CONFIG_MALI_DT
++#if defined(CONFIG_MALI_DT) && !defined(CONFIG_MALI_PLAT_SPECIFIC_DT)
+ /** @brief Initialize those device resources when we use device tree
+  *
+  * @return _MALI_OSK_ERR_OK on success, otherwise failure.
+--- a/drivers/gpu/arm/utgard/linux/mali_osk_mali.c
++++ b/drivers/gpu/arm/utgard/linux/mali_osk_mali.c
+@@ -25,7 +25,7 @@
+ #include "mali_kernel_linux.h"
+ 
+ 
+-#ifdef CONFIG_MALI_DT
++#if defined(CONFIG_MALI_DT) && !defined(CONFIG_MALI_PLAT_SPECIFIC_DT)
+ 
+ #define MALI_OSK_INVALID_RESOURCE_ADDRESS 0xFFFFFFFF
+ 
+@@ -248,7 +248,7 @@ u32 _mali_osk_get_pmu_switch_delay(void)
+ 	return 0;
+ }
+ 
+-#else /* CONFIG_MALI_DT */
++#else /* CONFIG_MALI_DT && !CONFIG_MALI_PLAT_SPECIFIC_DT */
+ 
+ _mali_osk_errcode_t _mali_osk_resource_find(u32 addr, _mali_osk_resource_t *res)
+ {

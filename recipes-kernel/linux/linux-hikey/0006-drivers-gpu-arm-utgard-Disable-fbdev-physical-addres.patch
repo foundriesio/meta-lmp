@@ -1,0 +1,30 @@
+From be9f393583417a1b550a015b1c382264d10d6ff0 Mon Sep 17 00:00:00 2001
+From: "xinliang.liu" <xinliang.liu@linaro.org>
+Date: Mon, 8 Jun 2015 19:27:38 +0800
+Subject: [PATCH 06/10] drivers/gpu/arm/utgard: Disable fbdev physical address
+ check
+
+hikey don't specific the base of fbdev reserve memery.
+The reserve mememery is allocate dymanic, so it doesn't
+need a check.
+
+Signed-off-by: xinliang.liu <xinliang.liu@linaro.org>
+---
+ drivers/gpu/arm/utgard/linux/mali_memory_external.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/gpu/arm/utgard/linux/mali_memory_external.c
++++ b/drivers/gpu/arm/utgard/linux/mali_memory_external.c
+@@ -53,10 +53,12 @@ _mali_osk_errcode_t mali_mem_bind_ext_bu
+ 	/* size must be a multiple of the system page size */
+ 	if (size % _MALI_OSK_MALI_PAGE_SIZE) MALI_ERROR(_MALI_OSK_ERR_INVALID_ARGS);
+ 
++#if 0
+ 	/* Validate the mali physical range */
+ 	if (_MALI_OSK_ERR_OK != mali_mem_validation_check(phys_addr, size)) {
+ 		return _MALI_OSK_ERR_FAULT;
+ 	}
++#endif
+ 
+ 	if (flag & _MALI_MAP_EXTERNAL_MAP_GUARD_PAGE) {
+ 		alloc->flags |= MALI_MEM_FLAG_MALI_GUARD_PAGE;

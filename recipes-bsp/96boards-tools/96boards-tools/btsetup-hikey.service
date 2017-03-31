@@ -1,0 +1,10 @@
+[Unit]
+Description=Bluetooth (wl18xx) Init Script for HiKey
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/btsetup-hikey
+
+[Install]
+WantedBy=multi-user.target

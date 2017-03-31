@@ -1,0 +1,33 @@
+From 34d306f1806f518344614cf3489892c2451f4094 Mon Sep 17 00:00:00 2001
+From: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Date: Thu, 2 Mar 2017 18:58:41 +0100
+Subject: [PATCH] Revert "resize-helper.service: Use ConditionFirstBoot
+ directive"
+
+This reverts commit 906d4bde05b1e2d276deebecd789b53675fd7922.
+
+The systemd recipe creates an empty /etc/machine-id file, as such the FirstBoot
+condition is never triggered, and the resize-helper script never gets executed.
+
+Signed-off-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+---
+ resize-helper.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/resize-helper.service b/resize-helper.service
+index 48f6dc2..c1354a6 100644
+--- a/resize-helper.service
++++ b/resize-helper.service
+@@ -1,11 +1,11 @@
+ [Unit]
+ Description=Resize root filesystem to fit available disk space
+ After=systemd-remount-fs.service
+-ConditionFirstBoot=yes
+ 
+ [Service]
+ Type=oneshot
+ ExecStart=-/usr/sbin/resize-helper
++ExecStartPost=/bin/systemctl disable resize-helper.service
+ 
+ [Install]
+ WantedBy=basic.target

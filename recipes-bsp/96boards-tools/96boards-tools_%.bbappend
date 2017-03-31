@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
+    file://Revert-resize-helper.service-use-conditionfirstboot-directive.patch \
     file://btsetup-hikey.service \
     file://btsetup-hikey \
 "

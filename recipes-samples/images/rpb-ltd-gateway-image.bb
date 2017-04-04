@@ -22,8 +22,9 @@ CORE_IMAGE_BASE_INSTALL += " \
     packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
     packagegroup-rpb \
-    tcpdump \
     pciutils \
+    tcpdump \
+    vim \
 "
 
 fakeroot do_populate_rootfs_src () {

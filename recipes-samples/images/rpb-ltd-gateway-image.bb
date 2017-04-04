@@ -37,6 +37,9 @@ fakeroot do_populate_rootfs_src () {
 
     # Disable bluetooth service by default (allow to be contained in docker)
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service
+
+    # Useful for development
+    echo 'export PATH=$PATH:/sbin' >> ${IMAGE_ROOTFS}/home/linaro/.bashrc
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "

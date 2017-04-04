@@ -1,0 +1,49 @@
+From accae59cc3581b7f74ed3398a283a25267296b46 Mon Sep 17 00:00:00 2001
+From: Ryan Abrams <rdabrams@gmail.com>
+Date: Wed, 4 Jan 2017 15:31:04 -0800
+Subject: [PATCH] Add on-failure to default restart policy
+
+In the event that the docker daemon is managed by systemd and spontaneously
+dies the default service configuration does not have docker restart. For people
+who just want to install and start docker then never worry about whether docker
+is running a better default may be to restart the service on a failure.
+
+Signed-off-by: Ryan Abrams <rdabrams@gmail.com>
+---
+ contrib/init/systemd/docker.service     | 4 ++++
+ contrib/init/systemd/docker.service.rpm | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/contrib/init/systemd/docker.service b/contrib/init/systemd/docker.service
+index 8bfed93c7..41a662799 100644
+--- a/contrib/init/systemd/docker.service
++++ b/contrib/init/systemd/docker.service
+@@ -24,6 +24,10 @@ TimeoutStartSec=0
+ Delegate=yes
+ # kill only the docker process, not all processes in the cgroup
+ KillMode=process
++# restart the docker process if it exits prematurely
++Restart=on-failure
++StartLimitBurst=3
++StartLimitInterval=60s
+ 
+ [Install]
+ WantedBy=multi-user.target
+diff --git a/contrib/init/systemd/docker.service.rpm b/contrib/init/systemd/docker.service.rpm
+index 6e4189239..7ff27e8a5 100644
+--- a/contrib/init/systemd/docker.service.rpm
++++ b/contrib/init/systemd/docker.service.rpm
+@@ -23,6 +23,10 @@ TimeoutStartSec=0
+ Delegate=yes
+ # kill only the docker process, not all processes in the cgroup
+ KillMode=process
++# restart the docker process if it exits prematurely
++Restart=on-failure
++StartLimitBurst=3
++StartLimitInterval=60s
+ 
+ [Install]
+ WantedBy=multi-user.target
+-- 
+2.12.1
+

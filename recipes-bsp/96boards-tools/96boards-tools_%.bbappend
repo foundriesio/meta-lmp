@@ -6,7 +6,7 @@ SRC_URI += " \
     file://btsetup-hikey \
 "
 
-do_install_append () {
+do_install_append_hikey () {
     install -d ${D}${systemd_unitdir}/system
     install -m 0644 ${WORKDIR}/btsetup-hikey.service ${D}${systemd_unitdir}/system
 
@@ -14,4 +14,4 @@ do_install_append () {
     install -m 0755 ${WORKDIR}/btsetup-hikey ${D}${sbindir}
 }
 
-SYSTEMD_SERVICE_${PN} += "btsetup-hikey.service"
+SYSTEMD_SERVICE_${PN}_hikey += "resize-helper.service btsetup-hikey.service"

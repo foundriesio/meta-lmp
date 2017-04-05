@@ -1,4 +1,5 @@
 require linux.inc
+require linux-qcom-bootimg.inc
 
 DESCRIPTION = "Common Linaro Technologies Kernel"
 
@@ -15,7 +16,7 @@ S = "${WORKDIR}/git"
 KERNEL_DEFCONFIG_aarch64 ?= "${S}/arch/arm64/configs/defconfig"
 KERNEL_CONFIG_FRAGMENTS += "${S}/kernel/configs/distro.config"
 
-COMPATIBLE_MACHINE = "hikey"
+COMPATIBLE_MACHINE = "(hikey|dragonboard-410c)"
 KERNEL_IMAGETYPE ?= "Image"
 
 # make[3]: *** [scripts/extract-cert] Error 1

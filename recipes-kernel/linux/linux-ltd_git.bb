@@ -14,9 +14,10 @@ SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=
 S = "${WORKDIR}/git"
 
 KERNEL_DEFCONFIG_aarch64 ?= "${S}/arch/arm64/configs/defconfig"
+KERNEL_DEFCONFIG_mx6 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
 KERNEL_CONFIG_FRAGMENTS += "${S}/kernel/configs/distro.config"
 
-COMPATIBLE_MACHINE = "(hikey|dragonboard-410c)"
+COMPATIBLE_MACHINE = "(cubox-i|hikey|dragonboard-410c)"
 KERNEL_IMAGETYPE ?= "Image"
 
 # make[3]: *** [scripts/extract-cert] Error 1

@@ -54,6 +54,9 @@ python () {
     d.delVarFlag("do_unpack", "noexec")
 }
 
+# docker pulls runc/containerd, which in turn recommend lxc unecessarily
+BAD_RECOMMENDATIONS_append = " lxc"
+
 EXTRA_USERS_PARAMS = "\
 useradd -P linaro linaro; \
 usermod -a -G docker,sudo,users,plugdev linaro; \

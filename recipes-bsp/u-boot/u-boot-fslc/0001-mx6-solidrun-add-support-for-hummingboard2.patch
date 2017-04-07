@@ -1,0 +1,124 @@
+From d3b0c7271b4057a1f4b22c6bfb267011493cf642 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo.salveti@linaro.org>
+Date: Thu, 6 Apr 2017 21:51:18 -0300
+Subject: [PATCH] mx6: solidrun: add support for hummingboard2
+
+Based on a similar patch available in the SolidRun u-boot repository.
+
+Requires a kernel that includes the hummingboard2 device tree files.
+
+Signed-off-by: Ricardo Salveti <ricardo.salveti@linaro.org>
+---
+ board/solidrun/mx6cuboxi/mx6cuboxi.c | 46 ++++++++++++++++++++++++++----------
+ include/configs/mx6cuboxi.h          |  4 ++++
+ 2 files changed, 37 insertions(+), 13 deletions(-)
+
+diff --git a/board/solidrun/mx6cuboxi/mx6cuboxi.c b/board/solidrun/mx6cuboxi/mx6cuboxi.c
+index 285588d..37d73bc 100644
+--- a/board/solidrun/mx6cuboxi/mx6cuboxi.c
++++ b/board/solidrun/mx6cuboxi/mx6cuboxi.c
+@@ -81,6 +81,7 @@ static iomux_v3_cfg_t const hb_cbi_sense[] = {
+ 	/* These pins are for sensing if it is a CuBox-i or a HummingBoard */
+ 	IOMUX_PADS(PAD_KEY_ROW1__GPIO4_IO09  | MUX_PAD_CTRL(UART_PAD_CTRL)),
+ 	IOMUX_PADS(PAD_EIM_DA4__GPIO3_IO04   | MUX_PAD_CTRL(UART_PAD_CTRL)),
++	IOMUX_PADS(PAD_SD4_DAT0__GPIO2_IO08  | MUX_PAD_CTRL(UART_PAD_CTRL)),
+ };
+ 
+ static iomux_v3_cfg_t const usb_pads[] = {
+@@ -328,38 +329,53 @@ int board_init(void)
+ 	return 0;
+ }
+ 
+-static bool is_hummingboard(void)
++enum {
++	CUBOXI = 0,
++	HUMMINGBOARD,
++	HUMMINGBOARD2,
++};
++
++static int detect_board(void)
+ {
+-	int val1, val2;
++	int val1, val2, val3;
+ 
+ 	SETUP_IOMUX_PADS(hb_cbi_sense);
+ 
+ 	gpio_direction_input(IMX_GPIO_NR(4, 9));
+ 	gpio_direction_input(IMX_GPIO_NR(3, 4));
++	gpio_direction_input(IMX_GPIO_NR(2, 8));
+ 
+ 	val1 = gpio_get_value(IMX_GPIO_NR(4, 9));
+ 	val2 = gpio_get_value(IMX_GPIO_NR(3, 4));
++	val3 = gpio_get_value(IMX_GPIO_NR(2, 8));
+ 
+ 	/*
+ 	 * Machine selection -
+-	 * Machine        val1, val2
+-	 * -------------------------
+-	 * HB rev 3.x     x     0
+-	 * CBi            0     1
+-	 * HB             1     1
++	 * Machine        val1, val2, val3
++	 * -------------------------------
++	 * HB2            x     x     0
++	 * HB rev 3.x     x     0     x
++	 * CBi            0     1     x
++	 * HB             1     1     x
+ 	 */
+ 
+-	if (val2 == 0)
+-		return true;
++	if (val3 == 0)
++		return HUMMINGBOARD2;
++	else if (val2 == 0)
++		return HUMMINGBOARD;
+ 	else if (val1 == 0)
+-		return false;
++		return CUBOXI;
+ 	else
+-		return true;
++		return HUMMINGBOARD;
+ }
+ 
+ int checkboard(void)
+ {
+-	if (is_hummingboard())
++	int board = detect_board();
++
++	if (board == HUMMINGBOARD2)
++		puts("Board: MX6 Hummingboard2\n");
++	else if (board == HUMMINGBOARD)
+ 		puts("Board: MX6 Hummingboard\n");
+ 	else
+ 		puts("Board: MX6 Cubox-i\n");
+@@ -370,7 +386,11 @@ int checkboard(void)
+ int board_late_init(void)
+ {
+ #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
+-	if (is_hummingboard())
++	int board = detect_board();
++
++	if (board == HUMMINGBOARD2)
++		setenv("board_name", "HUMMINGBOARD2");
++	else if (board == HUMMINGBOARD)
+ 		setenv("board_name", "HUMMINGBOARD");
+ 	else
+ 		setenv("board_name", "CUBOXI");
+diff --git a/include/configs/mx6cuboxi.h b/include/configs/mx6cuboxi.h
+index 8672681..a20b39a 100644
+--- a/include/configs/mx6cuboxi.h
++++ b/include/configs/mx6cuboxi.h
+@@ -107,6 +107,10 @@
+ 			"fi; "	\
+ 		"fi\0" \
+ 	"findfdt="\
++		"if test $board_name = HUMMINGBOARD2 && test $board_rev = MX6Q ; then " \
++			"setenv fdtfile imx6q-hummingboard2.dtb; fi; " \
++		"if test $board_name = HUMMINGBOARD2 && test $board_rev = MX6DL ; then " \
++			"setenv fdtfile imx6dl-hummingboard2.dtb; fi; " \
+ 		"if test $board_name = HUMMINGBOARD && test $board_rev = MX6Q ; then " \
+ 			"setenv fdtfile imx6q-hummingboard.dtb; fi; " \
+ 		"if test $board_name = HUMMINGBOARD && test $board_rev = MX6DL ; then " \
+-- 
+2.7.4
+

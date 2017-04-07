@@ -22,7 +22,7 @@ KERNEL_CONFIG_FRAGMENTS += "${S}/kernel/configs/distro.config"
 KERNEL_EXTRA_ARGS_append_stih410-b2260 += " \
     LOADADDR=${ST_KERNEL_LOADADDR} TEXT_OFFSET=0x00008000 "
 
-COMPATIBLE_MACHINE = "(cubox-i|hikey|dragonboard-410c|stih410-b2260)"
+COMPATIBLE_MACHINE = "(cubox-i|hikey|dragonboard-410c|dragonboard-820c|stih410-b2260)"
 KERNEL_IMAGETYPE ?= "Image"
 
 # make[3]: *** [scripts/extract-cert] Error 1

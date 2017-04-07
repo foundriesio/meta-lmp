@@ -1,0 +1,55 @@
+From a96a0a71f6f6833ba5c688966761f39fad690761 Mon Sep 17 00:00:00 2001
+From: Ilya Ledvich <ilya@compulab.co.il>
+Date: Thu, 16 Mar 2017 10:00:15 +0200
+Subject: [PATCH 9/9] arm: imx7d: cl-som-imx7: add support for watchdog
+
+Add support for watchdog WDOG1 for board reset.
+
+Signed-off-by: Ilya Ledvich <ilya@compulab.co.il>
+---
+ board/compulab/cl_som_imx7/cl_som_imx7.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/board/compulab/cl_som_imx7/cl_som_imx7.c b/board/compulab/cl_som_imx7/cl_som_imx7.c
+index ae844a8..c785e97 100644
+--- a/board/compulab/cl_som_imx7/cl_som_imx7.c
++++ b/board/compulab/cl_som_imx7/cl_som_imx7.c
+@@ -434,6 +434,25 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
+ static void board_spi_init(void) {}
+ #endif
+ 
++static iomux_v3_cfg_t const wdog_pads[] = {
++	MX7D_PAD_GPIO1_IO00__WDOG1_WDOG_B | MUX_PAD_CTRL(NO_PAD_CTRL),
++};
++
++void setup_wdog(void)
++{
++	struct wdog_regs *wdog = (struct wdog_regs *)WDOG1_BASE_ADDR;
++
++	imx_iomux_v3_setup_multiple_pads(wdog_pads, ARRAY_SIZE(wdog_pads));
++
++	set_wdog_reset(wdog);
++
++	/*
++	 * Do not assert internal WDOG_RESET_B_DEB(controlled by bit 4),
++	 * since we use PMIC_PWRON to reset the board.
++	 */
++	clrsetbits_le16(&wdog->wcr, 0, 0x10);
++}
++
+ int board_early_init_f(void)
+ {
+ 	setup_iomux_uart();
+@@ -494,6 +513,9 @@ int power_init_board(void)
+ int board_late_init(void)
+ {
+ 	setenv("board_name", "CL-SOM-iMX7");
++
++	setup_wdog();
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
+

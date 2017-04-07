@@ -1,0 +1,49 @@
+From 6a2ba1436ba437508854894ea4e792b4d49d77f2 Mon Sep 17 00:00:00 2001
+From: Ilya Ledvich <ilya@compulab.co.il>
+Date: Mon, 15 Feb 2016 08:38:30 +0200
+Subject: [PATCH 3/9] arm: imx7d: cl-som-imx7: add support for I2C4 bus
+
+Signed-off-by: Ilya Ledvich <ilya@compulab.co.il>
+---
+ board/compulab/cl_som_imx7/cl_som_imx7.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/board/compulab/cl_som_imx7/cl_som_imx7.c b/board/compulab/cl_som_imx7/cl_som_imx7.c
+index 6664aff..0cd3a05 100644
+--- a/board/compulab/cl_som_imx7/cl_som_imx7.c
++++ b/board/compulab/cl_som_imx7/cl_som_imx7.c
+@@ -56,6 +56,23 @@ static struct i2c_pads_info i2c_pad_info2 = {
+ 		.gp = IMX_GPIO_NR(1, 7),
+ 	},
+ };
++
++static struct i2c_pads_info i2c_pad_info4 = {
++       .scl = {
++               .i2c_mode = MX7D_PAD_GPIO1_IO10__I2C4_SCL |
++                       MUX_PAD_CTRL(I2C_PAD_CTRL),
++               .gpio_mode = MX7D_PAD_GPIO1_IO10__GPIO1_IO10 |
++                       MUX_PAD_CTRL(I2C_PAD_CTRL),
++               .gp = IMX_GPIO_NR(1, 10),
++       },
++       .sda = {
++               .i2c_mode = MX7D_PAD_GPIO1_IO11__I2C4_SDA |
++                       MUX_PAD_CTRL(I2C_PAD_CTRL),
++               .gpio_mode = MX7D_PAD_GPIO1_IO11__GPIO1_IO11 |
++                       MUX_PAD_CTRL(I2C_PAD_CTRL),
++               .gp = IMX_GPIO_NR(1, 11),
++       },
++};
+ #endif
+ 
+ static int nand_enabled = 0;
+@@ -412,6 +429,7 @@ int board_init(void)
+ 
+ #ifdef CONFIG_SYS_I2C_MXC
+ 	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
++	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info4);
+ #endif
+ 	setup_gpmi_nand();
+ 
+-- 
+1.9.1
+

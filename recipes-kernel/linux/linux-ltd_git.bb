@@ -16,13 +16,14 @@ S = "${WORKDIR}/git"
 KERNEL_DEFCONFIG_aarch64 ?= "${S}/arch/arm64/configs/defconfig"
 KERNEL_DEFCONFIG_armv7a ?= "${S}/arch/arm/configs/multi_v7_defconfig"
 KERNEL_DEFCONFIG_mx6 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
+KERNEL_DEFCONFIG_mx7 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
 KERNEL_CONFIG_FRAGMENTS += "${S}/kernel/configs/distro.config"
 
 # ST
 KERNEL_EXTRA_ARGS_append_stih410-b2260 += " \
     LOADADDR=${ST_KERNEL_LOADADDR} TEXT_OFFSET=0x00008000 "
 
-COMPATIBLE_MACHINE = "(cubox-i|hikey|dragonboard-410c|dragonboard-820c|stih410-b2260)"
+COMPATIBLE_MACHINE = "(cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|stih410-b2260)"
 KERNEL_IMAGETYPE ?= "Image"
 
 # make[3]: *** [scripts/extract-cert] Error 1

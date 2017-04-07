@@ -23,7 +23,11 @@ KERNEL_CONFIG_FRAGMENTS += "${S}/kernel/configs/distro.config"
 KERNEL_EXTRA_ARGS_append_stih410-b2260 += " \
     LOADADDR=${ST_KERNEL_LOADADDR} TEXT_OFFSET=0x00008000 "
 
-COMPATIBLE_MACHINE = "(cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|stih410-b2260)"
+# NXP
+## Reuse board config by removing dtb that is not available upstream
+KERNEL_DEVICETREE_ls1043ardb = "freescale/fsl-ls1043a-rdb.dtb"
+
+COMPATIBLE_MACHINE = "(cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|ls1043ardb|stih410-b2260)"
 KERNEL_IMAGETYPE ?= "Image"
 
 # make[3]: *** [scripts/extract-cert] Error 1

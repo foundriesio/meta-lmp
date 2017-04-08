@@ -1,0 +1,49 @@
+From e2172527d6ab890942a990204f51bb52c13c2b53 Mon Sep 17 00:00:00 2001
+From: Christophe Priouzeau <christophe.priouzeau@st.com>
+Date: Mon, 18 Jul 2016 09:44:06 +0200
+Subject: [PATCH] ARM Support
+
+Signed-off-by: Christophe Priouzeau <christophe.priouzeau@st.com>
+---
+ Makefile | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 3eca391..59a988a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -50,7 +50,7 @@ CONFIG_PNO_SUPPORT = n
+ CONFIG_PNO_SET_DEBUG = n
+ CONFIG_AP_WOWLAN = n
+ ###################### Platform Related #######################
+-CONFIG_PLATFORM_I386_PC = y
++#CONFIG_PLATFORM_I386_PC = y
+ ###############################################################
+ 
+ CONFIG_DRVEXT_MODULE = n
+@@ -246,6 +246,22 @@ EXTRA_CFLAGS += -DCONFIG_GPIO_WAKEUP
+ endif
+ 
+ 
++ifeq ($(CONFIG_SOC_STIH407), y)
++EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211
++EXTRA_CFLAGS += -DRTW_USE_CFG80211_STA_EVENT # only enable when kernel >= 3.2
++EXTRA_CFLAGS += -DCONFIG_P2P_IPS
++#EXTRA_CFLAGS += -DCONFIG_DEBUG_RTL871X -DCONFIG_DEBUG
++
++SUBARCH := arm
++ARCH ?= $(SUBARCH)
++CROSS_COMPILE ?=
++KVER  := $(shell uname -r)
++#KSRC := /lib/modules/$(KVER)/build
++MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/
++INSTALL_PREFIX :=
++endif
++
++
+ ifeq ($(CONFIG_PLATFORM_I386_PC), y)
+ EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211
+ EXTRA_CFLAGS += -DRTW_USE_CFG80211_STA_EVENT # only enable when kernel >= 3.2
+-- 
+1.9.1
+

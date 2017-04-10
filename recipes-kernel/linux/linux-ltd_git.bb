@@ -8,7 +8,7 @@ SRCREV_kernel = "bc1bdbcada329fef400f7dcb2d7feffaee50480d"
 SRCREV_FORMAT = "kernel"
 
 SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=linux-v4.11.y-dev;name=kernel \
-    file://distro.config;subdir=git/kernel/configs \
+    file://distro.config \
 "
 
 S = "${WORKDIR}/git"
@@ -17,7 +17,7 @@ KERNEL_DEFCONFIG_aarch64 ?= "${S}/arch/arm64/configs/defconfig"
 KERNEL_DEFCONFIG_armv7a ?= "${S}/arch/arm/configs/multi_v7_defconfig"
 KERNEL_DEFCONFIG_mx6 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
 KERNEL_DEFCONFIG_mx7 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
-KERNEL_CONFIG_FRAGMENTS += "${S}/kernel/configs/distro.config"
+KERNEL_CONFIG_FRAGMENTS += "${WORKDIR}/distro.config"
 
 # ST
 KERNEL_EXTRA_ARGS_append_stih410-b2260 += " \

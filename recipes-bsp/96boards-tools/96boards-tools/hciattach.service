@@ -1,0 +1,11 @@
+[Unit]
+Description=Bluetooth Hciattach Initialization
+ConditionFileNotEmpty=/etc/bluetooth/hciattach.conf
+After=rc-local.service
+
+[Service]
+EnvironmentFile=/etc/bluetooth/hciattach.conf
+ExecStart=/usr/bin/hciattach -n -s $HCISPEED $HCITTY $HCITYPE
+
+[Install]
+WantedBy=multi-user.target

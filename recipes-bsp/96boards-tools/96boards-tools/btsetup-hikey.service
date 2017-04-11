@@ -1,5 +1,6 @@
 [Unit]
 Description=Bluetooth (wl18xx) Init Script for HiKey
+After=local-fs.target
 
 [Service]
 Type=oneshot

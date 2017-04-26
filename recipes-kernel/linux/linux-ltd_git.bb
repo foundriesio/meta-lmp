@@ -3,8 +3,8 @@ require linux-qcom-bootimg.inc
 
 DESCRIPTION = "Common Linaro Technologies Kernel"
 
-PV = "4.11-rc5+git${SRCPV}"
-SRCREV_kernel = "2992ae56e5e68b04a19f68016f594d801c19e277"
+PV = "4.11-rc8+git${SRCPV}"
+SRCREV_kernel = "2f4fb08746beb1ce8e2ba0fcc2e3ee9e13e3b0f2"
 SRCREV_FORMAT = "kernel"
 
 SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=linux-v4.11.y;name=kernel \

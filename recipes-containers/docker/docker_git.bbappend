@@ -1,4 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+INHIBIT_PACKAGE_STRIP = "0"
 
 # Additional bugfixes already available upstream
 SRC_URI += " \

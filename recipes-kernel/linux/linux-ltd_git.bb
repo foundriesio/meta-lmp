@@ -10,6 +10,7 @@ SRCREV_FORMAT = "kernel"
 SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=linux-v4.11.y;name=kernel \
     file://distro.config \
 "
+SRC_URI_append_hikey += "file://hikey.config"
 
 S = "${WORKDIR}/git"
 
@@ -18,6 +19,7 @@ KERNEL_DEFCONFIG_armv7a ?= "${S}/arch/arm/configs/multi_v7_defconfig"
 KERNEL_DEFCONFIG_mx6 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
 KERNEL_DEFCONFIG_mx7 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
 KERNEL_CONFIG_FRAGMENTS += "${WORKDIR}/distro.config"
+KERNEL_CONFIG_FRAGMENTS_append_hikey += " ${WORKDIR}/hikey.config"
 
 # ST
 KERNEL_EXTRA_ARGS_append_stih410-b2260 += " \

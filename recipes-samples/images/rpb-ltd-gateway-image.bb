@@ -1,6 +1,6 @@
 SUMMARY = "Basic console-based gateway image"
 
-IMAGE_FEATURES += "splash package-management ssh-server-openssh hwcodecs tools-debug"
+IMAGE_FEATURES += "splash package-management ssh-server-openssh hwcodecs"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690 \
@@ -19,16 +19,26 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 
 CORE_IMAGE_BASE_INSTALL += " \
     docker \
-    linux-firmware \
+    linux-firmware-ath9k \
+    linux-firmware-ath10k \
+    linux-firmware-wl18xx \
     openssh-sftp-server \
     packagegroup-core-full-cmdline-utils \
     packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
     packagegroup-rpb \
-    python-modules \
+    python-compression \
+    python-distutils \
+    python-json \
+    python-netclient \
+    python-pkgutil \
+    python-shell \
+    python-subprocess \
+    python-unixadmin \
     pciutils \
+    strace \
     tcpdump \
-    vim \
+    vim-tiny \
 "
 
 fakeroot do_populate_rootfs_src () {

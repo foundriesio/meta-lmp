@@ -4,10 +4,10 @@ require linux-qcom-bootimg.inc
 DESCRIPTION = "Common Linaro Technologies Kernel"
 
 PV = "4.11+git${SRCPV}"
-SRCREV_kernel = "b6243d501d7518a2d41fd632286c6ac2e80df67d"
+SRCREV_kernel = "1d370acab73d131159a29eeafd51dcdd5c6df636"
 SRCREV_FORMAT = "kernel"
 
-SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=linux-v4.11.y-dev;name=kernel \
+SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=linux-v4.11.y;name=kernel \
     file://distro.config \
 "
 SRC_URI_append_hikey += "file://hikey.config"

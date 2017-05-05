@@ -11,6 +11,12 @@ SRC_URI_append = "\
     https://github.com/kvalo/ath10k-firmware/raw/07859a27a5fd6a6919f8ae613c6ab4f62a5c5a2a/QCA6174/hw3.0/4.4/firmware-5.bin_WLAN.RM.4.4-00022-QCARMSWPZ-2;name=firmware-5 \
 "
 
+# QCA BT firmware
+PACKAGES_prepend = " ${PN}-qca "
+LICENSE_${PN}-qca = "Firmware-qualcommAthos_ath10k"
+FILES_${PN}-qca = "${nonarch_base_libdir}/firmware/qca"
+RDEPENDS_${PN}-qca += "${PN}-ath10k-license"
+
 # WiLink8
 SRC_URI[TIInit_11.8.32.md5sum] = "b1e142773e8ef0537b93895ebe2fcae3"
 SRC_URI[TIInit_11.8.32.sha256sum] = "962322c05857ad6b1fb81467bdfc59c125e04a6a8eaabf7f24b742ddd68c3bfa"

@@ -21,6 +21,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     docker \
     linux-firmware-ath9k \
     linux-firmware-ath10k \
+    linux-firmware-qca \
     linux-firmware-wl18xx \
     openssh-sftp-server \
     packagegroup-core-full-cmdline-utils \

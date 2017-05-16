@@ -19,6 +19,7 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 
 CORE_IMAGE_BASE_INSTALL += " \
     docker \
+    linux-firmware-ar3k \
     linux-firmware-ath9k \
     linux-firmware-ath10k \
     linux-firmware-qca \

@@ -14,6 +14,7 @@ SRC_URI_append_hikey += "file://hikey.config"
 
 S = "${WORKDIR}/git"
 
+KERNEL_DEFCONFIG_beaglebone ?= "${S}/arch/arm/configs/omap2plus_defconfig"
 KERNEL_DEFCONFIG_aarch64 ?= "${S}/arch/arm64/configs/defconfig"
 KERNEL_DEFCONFIG_armv7a ?= "${S}/arch/arm/configs/multi_v7_defconfig"
 KERNEL_DEFCONFIG_mx6 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"

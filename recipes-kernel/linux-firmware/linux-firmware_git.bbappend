@@ -5,6 +5,9 @@
 SRC_URI_append = "\
      https://git.ti.com/ti-bt/service-packs/blobs/raw/c290f8af9e388f37e509ecb111a1b64572b7c225/initscripts/TIInit_11.8.32.bts;name=TIInit_11.8.32 \
 "
+SRC_URI_append_beaglebone = "\
+    https://github.com/beagleboard/beaglebone-black-wireless/raw/d9135000a223228158d92fd2e3f00e495f642fee/firmware/wl18xx-conf.bin;name=wl18xx-conf \
+"
 # Updated firmware files for QCA6174
 SRC_URI_append = "\
     https://github.com/kvalo/ath10k-firmware/raw/07859a27a5fd6a6919f8ae613c6ab4f62a5c5a2a/QCA6174/hw3.0/board-2.bin;name=board-2 \
@@ -14,6 +17,8 @@ SRC_URI_append = "\
 # WiLink8
 SRC_URI[TIInit_11.8.32.md5sum] = "b1e142773e8ef0537b93895ebe2fcae3"
 SRC_URI[TIInit_11.8.32.sha256sum] = "962322c05857ad6b1fb81467bdfc59c125e04a6a8eaabf7f24b742ddd68c3bfa"
+SRC_URI[wl18xx-conf.md5sum] = "e0db09a1dea22b1fbcb1a5d9aa168215"
+SRC_URI[wl18xx-conf.sha256sum] = "e68e9a37995ab782faa41971704f24fd597d5abf16c47463708e90f8f080d335"
 # QCA6174
 SRC_URI[board-2.md5sum] = "039462f699784be6efb77747de9f0011"
 SRC_URI[board-2.sha256sum] = "b3f483ad4e645cf36beaee23743176597dddf3fd5afe22f95ac7883f590188d5"
@@ -24,4 +29,8 @@ do_install_append() {
      cp ${WORKDIR}/TIInit_11.8.32.bts ${D}/lib/firmware/ti-connectivity/
      cp ${WORKDIR}/board-2.bin ${D}/lib/firmware/ath10k/QCA6174/hw3.0/
      cp ${WORKDIR}/firmware-5.bin_WLAN.RM.4.4-00022-QCARMSWPZ-2 ${D}/lib/firmware/ath10k/QCA6174/hw3.0/firmware-5.bin
+}
+
+do_install_append_beaglebone() {
+     cp ${WORKDIR}/wl18xx-conf.bin ${D}/lib/firmware/ti-connectivity/
 }

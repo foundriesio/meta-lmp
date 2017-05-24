@@ -19,6 +19,7 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 
 CORE_IMAGE_BASE_INSTALL += " \
     docker \
+    bluez5-noinst-tools \
     linux-firmware-ar3k \
     linux-firmware-ath9k \
     linux-firmware-ath10k \

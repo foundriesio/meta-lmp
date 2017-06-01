@@ -6,6 +6,9 @@ After=rc-local.service
 [Service]
 EnvironmentFile=/etc/bluetooth/btattach.conf
 ExecStart=/usr/bin/btattach -B $HCITTY -S $HCISPEED -P $HCIPROTO
+TimeoutStartSec=3
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

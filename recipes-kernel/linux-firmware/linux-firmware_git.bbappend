@@ -29,6 +29,9 @@ do_install_append() {
      cp ${WORKDIR}/TIInit_11.8.32.bts ${D}/lib/firmware/ti-connectivity/
      cp ${WORKDIR}/board-2.bin ${D}/lib/firmware/ath10k/QCA6174/hw3.0/
      cp ${WORKDIR}/firmware-5.bin_WLAN.RM.4.4-00022-QCARMSWPZ-2 ${D}/lib/firmware/ath10k/QCA6174/hw3.0/firmware-5.bin
+
+     # No need to install check_whence, triggers QA error (reported upstream)
+     rm ${D}${nonarch_base_libdir}/firmware/check_whence.py
 }
 
 do_install_append_beaglebone() {

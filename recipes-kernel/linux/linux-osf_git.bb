@@ -7,7 +7,7 @@ PV = "4.11+git${SRCPV}"
 SRCREV_kernel = "241905c635e97ed48885582055b19d1fea51b7f5"
 SRCREV_FORMAT = "kernel"
 
-SRC_URI = "git://github.com/linaro-technologies/linux.git;protocol=https;branch=linux-v4.11.y-dev;name=kernel \
+SRC_URI = "git://git.opensourcefoundries.com/development/microplatforms/linux/linux.git;protocol=https;branch=linux-v4.11.y-dev;name=kernel \
     file://distro.config \
 "
 SRC_URI_append_hikey += "file://hikey.config"

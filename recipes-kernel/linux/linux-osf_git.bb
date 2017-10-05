@@ -1,7 +1,7 @@
 require linux.inc
 require linux-qcom-bootimg.inc
 
-DESCRIPTION = "Common Linaro Technologies Kernel"
+DESCRIPTION = "Common Open Source Foundries Linux microPlatform Kernel"
 
 PV = "4.11+git${SRCPV}"
 SRCREV_kernel = "241905c635e97ed48885582055b19d1fea51b7f5"

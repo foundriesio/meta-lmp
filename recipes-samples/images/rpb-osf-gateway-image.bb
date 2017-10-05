@@ -57,7 +57,7 @@ fakeroot do_populate_rootfs_src () {
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service
 
     # Useful for development
-    echo 'export PATH=$PATH:/sbin' >> ${IMAGE_ROOTFS}/home/linaro/.bashrc
+    echo 'export PATH=$PATH:/sbin' >> ${IMAGE_ROOTFS}/home/osf/.bashrc
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "
@@ -74,6 +74,6 @@ python () {
 BAD_RECOMMENDATIONS_append = " lxc"
 
 EXTRA_USERS_PARAMS = "\
-useradd -P linaro linaro; \
-usermod -a -G docker,sudo,users,plugdev linaro; \
+useradd -P osf osf; \
+usermod -a -G docker,sudo,users,plugdev osf; \
 "

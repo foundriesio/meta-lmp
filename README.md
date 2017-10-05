@@ -1,4 +1,4 @@
-Meta-LTD
+Meta-OSF
 ================================
 
-OpenEmbedded/Yocto Project development layer for LTD related work.
+Open Source Foundries OpenEmbedded/Yocto Project development layer.

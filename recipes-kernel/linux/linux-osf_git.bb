@@ -6,8 +6,10 @@ DESCRIPTION = "Common Open Source Foundries Linux microPlatform Kernel"
 PV = "4.11+git${SRCPV}"
 SRCREV_kernel = "241905c635e97ed48885582055b19d1fea51b7f5"
 SRCREV_FORMAT = "kernel"
+OSF_LMP_GIT_URL ?= "git.foundries.io"
+OSF_LMP_GIT_NAMESPACE ?= "development/microplatforms/linux/"
 
-SRC_URI = "git://git.foundries.io/development/microplatforms/linux/linux.git;protocol=https;branch=linux-v4.11.y-dev;name=kernel \
+SRC_URI = "git://${OSF_LMP_GIT_URL}/${OSF_LMP_GIT_NAMESPACE}linux.git;protocol=https;branch=linux-v4.11.y-dev;name=kernel \
     file://distro.config \
 "
 SRC_URI_append_hikey += "file://hikey.config"

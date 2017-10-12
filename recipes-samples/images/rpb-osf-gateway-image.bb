@@ -30,14 +30,14 @@ CORE_IMAGE_BASE_INSTALL += " \
     packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
     packagegroup-rpb \
-    python-compression \
-    python-distutils \
-    python-json \
-    python-netclient \
-    python-pkgutil \
-    python-shell \
-    python-subprocess \
-    python-unixadmin \
+    python3-compression \
+    python3-distutils \
+    python3-json \
+    python3-netclient \
+    python3-pkgutil \
+    python3-shell \
+    python3-subprocess \
+    python3-unixadmin \
     pciutils \
     strace \
     tcpdump \

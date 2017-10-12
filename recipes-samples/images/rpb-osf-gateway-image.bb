@@ -32,6 +32,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     packagegroup-rpb \
     python3-compression \
     python3-distutils \
+    python3-docker \
     python3-json \
     python3-netclient \
     python3-pkgutil \

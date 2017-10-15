@@ -8,7 +8,7 @@ TARGET_VENDOR = "-osf"
 
 require conf/distro/include/arm-defaults.inc
 
-GCCVERSION ?= "linaro-6.%"
+GCCVERSION ?= "linaro-7.%"
 
 # TODO: update default provider after list gets removed from local.conf
 #PREFERRED_PROVIDER_virtual/kernel = "linux-osf"

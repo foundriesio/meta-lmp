@@ -1,7 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append += " \
-    file://Revert-resize-helper.service-use-conditionfirstboot-directive.patch \
     file://btattach.service \
 "
 

@@ -13,6 +13,10 @@ GCCVERSION ?= "linaro-7.%"
 # TODO: update default provider after list gets removed from local.conf
 #PREFERRED_PROVIDER_virtual/kernel = "linux-osf"
 
+# No need for x11 even for native
+DISTRO_FEATURES_NATIVE_remove = "x11"
+DISTRO_FEATURES_NATIVESDK_remove = "x11"
+
 # TODO: review default distro features
 DISTRO_FEATURES_append = " pam systemd virtualization"
 DISTRO_FEATURES_remove = "3g sysvinit"

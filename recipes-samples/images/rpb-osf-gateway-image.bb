@@ -17,6 +17,23 @@ SRC_URI = "\
 # let's make sure we have a good image..
 REQUIRED_DISTRO_FEATURES = "pam systemd"
 
+# Base packages
+CORE_IMAGE_BASE_INSTALL += " \
+    96boards-tools \
+    coreutils \
+    cpufrequtils \
+    gptfdisk \
+    hostapd \
+    htop \
+    iptables \
+    kernel-modules \
+    networkmanager \
+    networkmanager-nmtui \
+    ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-test optee-client", "", d)} \
+    rsync \
+    sshfs-fuse \
+"
+
 CORE_IMAGE_BASE_INSTALL += " \
     docker \
     bluez5-noinst-tools \
@@ -29,7 +46,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     packagegroup-core-full-cmdline-utils \
     packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
-    packagegroup-rpb \
     python3-compression \
     python3-distutils \
     python3-docker \

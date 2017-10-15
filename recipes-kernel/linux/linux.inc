@@ -216,8 +216,6 @@ do_install_append() {
 PACKAGES =+ "kernel-headers"
 FILES_kernel-headers = "${exec_prefix}/src/linux*"
 
-require recipes-kernel/linux/linux-dtb.inc
-
 PACKAGES =+ "kernel-devicetree-overlays"
 FILES_kernel-devicetree-overlays = "/lib/firmware/*.dtbo /lib/firmware/*.dts"
 FILES_kernel-devicetree += "/boot/*.dtb"

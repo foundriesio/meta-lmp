@@ -22,6 +22,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     96boards-tools \
     coreutils \
     cpufrequtils \
+    ldd \
     gptfdisk \
     hostapd \
     htop \

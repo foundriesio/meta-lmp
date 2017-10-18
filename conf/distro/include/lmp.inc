@@ -23,8 +23,9 @@ DISTRO_FEATURES_remove = "3g sysvinit"
 VIRTUAL-RUNTIME_init_manager = "systemd"
 PACKAGECONFIG_append_pn-systemd = " resolved networkd"
 
-# Avoid to duplicate the rootfs tarball by generating both tar.gz/tar.xz
-IMAGE_FSTYPES_remove = "tar.gz"
+# Default image formats
+IMAGE_FSTYPES_append = " tar.xz"
+IMAGE_FSTYPES_remove = "tar.gz tar.bz2"
 
 INHERIT += "buildhistory"
 INHERIT += "image-buildinfo"

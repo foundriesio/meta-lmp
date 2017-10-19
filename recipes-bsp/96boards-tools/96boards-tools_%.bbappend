@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append += " \
+    file://0001-resize-helper.service-wait-for-udevadm-settle-before.patch \
     file://btattach.service \
 "
 

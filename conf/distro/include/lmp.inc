@@ -8,6 +8,8 @@ MAINTAINER = "OSF Support <support@opensourcefoundries.com>"
 
 TARGET_VENDOR = "-osf"
 
+TCLIBCAPPEND = ""
+
 require conf/distro/include/arm-defaults.inc
 
 GCCVERSION ?= "linaro-7.%"

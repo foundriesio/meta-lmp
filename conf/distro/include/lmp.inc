@@ -4,6 +4,8 @@ DISTRO_VERSION = "2.4"
 SDK_NAME_PREFIX = "${DISTRO}"
 SDK_VERSION = "${DISTRO_VERSION}"
 
+MAINTAINER = "OSF Support <support@opensourcefoundries.com>"
+
 TARGET_VENDOR = "-osf"
 
 require conf/distro/include/arm-defaults.inc

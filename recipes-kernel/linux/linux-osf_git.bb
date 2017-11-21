@@ -21,6 +21,7 @@ KERNEL_DEFCONFIG_aarch64 ?= "${S}/arch/arm64/configs/defconfig"
 KERNEL_DEFCONFIG_armv7a ?= "${S}/arch/arm/configs/multi_v7_defconfig"
 KERNEL_DEFCONFIG_mx6 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
 KERNEL_DEFCONFIG_mx7 ?= "${S}/arch/arm/configs/imx_v6_v7_defconfig"
+KERNEL_DEFCONFIG_intel-core2-32 ?= "${S}/arch/x86/configs/i386_defconfig"
 KERNEL_CONFIG_FRAGMENTS += "${WORKDIR}/distro.config"
 KERNEL_CONFIG_FRAGMENTS_append_hikey += " ${WORKDIR}/hikey.config"
 
@@ -32,7 +33,7 @@ KERNEL_EXTRA_ARGS_append_stih410-b2260 += " \
 ## Reuse board config by removing dtb that is not available upstream
 KERNEL_DEVICETREE_ls1043ardb = "freescale/fsl-ls1043a-rdb.dtb"
 
-COMPATIBLE_MACHINE = "(beaglebone|cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|ls1043ardb|stih410-b2260)"
+COMPATIBLE_MACHINE = "(beaglebone|cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|ls1043ardb|stih410-b2260|intel-core2-32)"
 KERNEL_IMAGETYPE ?= "Image"
 
 # make[3]: *** [scripts/extract-cert] Error 1

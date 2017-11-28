@@ -1,0 +1,4 @@
+define KFEATURE_DESCRIPTION "HiKey specific configs"
+define KFEATURE_COMPATIBILITY board
+
+kconf hardware hikey.cfg

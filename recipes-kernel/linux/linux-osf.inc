@@ -46,10 +46,6 @@ do_configure_prepend() {
     mv -f ${B}/.config ${B}/.config.patched
     CONF_SED_SCRIPT=""
 
-    # ARM EABI support
-    ## TODO: Move to an arch specific config
-    kernel_configure_variable AEABI y
-
     # Set cmdline
     kernel_configure_variable CMDLINE "\"${CMDLINE}\""
 

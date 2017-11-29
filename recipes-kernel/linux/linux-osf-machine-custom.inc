@@ -20,6 +20,10 @@ KBUILD_DEFCONFIG_mx7 ?= "imx_v6_v7_defconfig"
 # HiKey
 SRC_URI_append_hikey += " file://hikey.scc"
 
+# Qcom (db410/db820c)
+SRC_URI_append_dragonboard-410c += " file://qcom.scc"
+SRC_URI_append_dragonboard-820c += " file://qcom.scc"
+
 # Raspberry Pi
 # No common rpi machine override available, need entries for every device
 ## TODO: Upstream a common override and uboot entrypoint

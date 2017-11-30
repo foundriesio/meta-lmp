@@ -81,6 +81,9 @@ do_configure_prepend() {
     kernel_configure_variable CGROUP_CPUACCT y
     kernel_configure_variable RESOURCE_COUNTERS y
 
+    # Systemd
+    kernel_configure_variable RT_GROUP_SCHED n
+
     # root-over-nfs-over-usb-eth support. Limited, but should cover some cases
     # Enable this by setting a proper CMDLINE_NFSROOT_USB.
     if [ ! -z "${CMDLINE_NFSROOT_USB}" ]; then

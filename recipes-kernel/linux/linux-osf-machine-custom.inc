@@ -58,6 +58,15 @@ do_deploy_append_raspberrypi3() {
     echo "${CMDLINE}" > ${DEPLOYDIR}/bcm2835-bootfiles/cmdline.txt
 }
 
+## DB410c fails to build when skales is invoked
+do_deploy_append_dragonboard-410c() {
+    # FIXME 410c fails to build when skales in invoked
+    # |   File "/usr/bin/skales/dtbTool", line 239, in __init__
+    # |     self.msm_id[0] = soc_ids[matches['soc']] | (foundry << 16)
+    # | KeyError: u'ipq8074'
+    rm -f ${B}/arch/arm64/boot/dts/qcom/*ipq8074* || true
+}
+
 ## Build issues
 ## TODO: Validate if still required
 do_compile_append_raspberrypi3-64() {

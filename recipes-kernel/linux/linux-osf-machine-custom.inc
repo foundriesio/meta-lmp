@@ -37,6 +37,10 @@ UBOOT_ENTRYPOINT_RPI = "0x00008000"
 KERNEL_EXTRA_ARGS_raspberrypi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 KERNEL_EXTRA_ARGS_raspberrypi2 += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 KERNEL_EXTRA_ARGS_raspberrypi3 += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
+## Raspberry Pi config fragment
+SRC_URI_append_raspberrypi += " file://rpi.scc"
+SRC_URI_append_raspberrypi2 += " file://rpi.scc"
+SRC_URI_append_raspberrypi3 += " file://rpi.scc"
 
 ## Default cmdline
 CMDLINE_RPI = "dwc_otg.lpm_enable=0 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"

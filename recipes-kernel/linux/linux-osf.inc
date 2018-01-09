@@ -18,7 +18,7 @@ CMDLINE_append = " ${CMDLINE_DEBUG}"
 KERNEL_INITRAMFS ?= '${@base_conditional("INITRAMFS_IMAGE_BUNDLE", "1", "1", "", d)}'
 
 # Always have a package to allow forcing package dependency
-ALLOW_EMPTY_kernel-devicetree = "1"
+ALLOW_EMPTY_${KERNEL_PACKAGE_NAME}-devicetree = "1"
 
 python __anonymous () {
     import bb
@@ -136,6 +136,14 @@ do_install_append() {
     install -d ${D}/boot
     make -C ${S} O=${B} ARCH=$ARCH dtbs || true
     install -m 0644 ${B}/arch/$ARCH/boot/dts/*.dtb ${D}/boot || true
+
+    # Workaround for http://lists.openembedded.org/pipermail/openembedded-core/2018-January/146214.html
+    for type in ${KERNEL_IMAGETYPES} ; do
+            install -m 0644 ${KERNEL_OUTPUT_DIR}/${type} ${D}/${KERNEL_IMAGEDEST}/${type}-${KERNEL_VERSION}
+            if [ "${KERNEL_PACKAGE_NAME}" = "kernel" ]; then
+                    ln -sf ${type}-${KERNEL_VERSION} ${D}/${KERNEL_IMAGEDEST}/${type}
+            fi
+    done
 }
 
 do_deploy_append() {
@@ -143,9 +151,9 @@ do_deploy_append() {
     cp -a ${B}/.config ${DEPLOYDIR}/config
 }
 
-PACKAGES =+ "kernel-devicetree-overlays"
-FILES_kernel-devicetree-overlays = "/lib/firmware/*.dtbo /lib/firmware/*.dts"
-FILES_kernel-devicetree += "/boot/*.dtb"
+PACKAGES =+ "${KERNEL_PACKAGE_NAME}-devicetree-overlays"
+FILES_${KERNEL_PACKAGE_NAME}-devicetree-overlays = "/lib/firmware/*.dtbo /lib/firmware/*.dts"
+FILES_${KERNEL_PACKAGE_NAME}-devicetree += "/boot/*.dtb"
 
-RDEPENDS_kernel-image_append = " kernel-devicetree"
-RRECOMMENDS_kernel-image_append = " kernel-devicetree-overlays"
+RDEPENDS_${KERNEL_PACKAGE_NAME}-image_append = " ${KERNEL_PACKAGE_NAME}-devicetree"
+RRECOMMENDS_${KERNEL_PACKAGE_NAME}-image_append = " ${KERNEL_PACKAGE_NAME}-devicetree-overlays"

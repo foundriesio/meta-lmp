@@ -5,6 +5,9 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 
 PV = "${LINUX_VERSION}+git${SRCPV}"
 
+DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
+DEPENDS += "openssl-native util-linux-native"
+
 inherit kernel siteinfo
 require recipes-kernel/linux/linux-yocto.inc
 

@@ -10,8 +10,8 @@ SRC_URI_append_beaglebone = "\
 "
 # Updated firmware files for QCA6174
 SRC_URI_append = "\
-    https://github.com/kvalo/ath10k-firmware/raw/07859a27a5fd6a6919f8ae613c6ab4f62a5c5a2a/QCA6174/hw3.0/board-2.bin;name=board-2 \
-    https://github.com/kvalo/ath10k-firmware/raw/07859a27a5fd6a6919f8ae613c6ab4f62a5c5a2a/QCA6174/hw3.0/4.4/firmware-5.bin_WLAN.RM.4.4-00022-QCARMSWPZ-2;name=firmware-5 \
+    https://github.com/kvalo/ath10k-firmware/raw/35d8642f452827b955470de4ac997ffe906a6f17/QCA6174/hw3.0/board-2.bin;name=board-2 \
+    https://github.com/kvalo/ath10k-firmware/raw/35d8642f452827b955470de4ac997ffe906a6f17/QCA6174/hw3.0/4.4.1/firmware-6.bin_WLAN.RM.4.4.1-00079-QCARMSWPZ-1;name=firmware-6 \
 "
 
 # WiLink8
@@ -20,15 +20,15 @@ SRC_URI[TIInit_11.8.32.sha256sum] = "962322c05857ad6b1fb81467bdfc59c125e04a6a8ea
 SRC_URI[wl18xx-conf.md5sum] = "e0db09a1dea22b1fbcb1a5d9aa168215"
 SRC_URI[wl18xx-conf.sha256sum] = "e68e9a37995ab782faa41971704f24fd597d5abf16c47463708e90f8f080d335"
 # QCA6174
-SRC_URI[board-2.md5sum] = "039462f699784be6efb77747de9f0011"
-SRC_URI[board-2.sha256sum] = "b3f483ad4e645cf36beaee23743176597dddf3fd5afe22f95ac7883f590188d5"
-SRC_URI[firmware-5.md5sum] = "48605abe5f687f66131a2a39fc531965"
-SRC_URI[firmware-5.sha256sum] = "7fa6a6e60a68f7f787ad26766f9647c9c99d681d15ba59d0ae3951bbcf94bb64"
+SRC_URI[board-2.md5sum] = "33a5884a8ae14f150aa70468cc092ad2"
+SRC_URI[board-2.sha256sum] = "8fcc6b96c1895bc227c3caf0bd04b23d0292f8f919e819e4e025e29ef4b44d8e"
+SRC_URI[firmware-6.md5sum] = "f248b22e3f7c8602887203efe1d96bc8"
+SRC_URI[firmware-6.sha256sum] = "5554d6aa0de07394938a0094bae725ed24d4ceee3b38c849b4099a496ec50b48"
 
 do_install_append() {
      cp ${WORKDIR}/TIInit_11.8.32.bts ${D}/lib/firmware/ti-connectivity/
      cp ${WORKDIR}/board-2.bin ${D}/lib/firmware/ath10k/QCA6174/hw3.0/
-     cp ${WORKDIR}/firmware-5.bin_WLAN.RM.4.4-00022-QCARMSWPZ-2 ${D}/lib/firmware/ath10k/QCA6174/hw3.0/firmware-5.bin
+     cp ${WORKDIR}/firmware-6.bin_WLAN.RM.4.4.1-00079-QCARMSWPZ-1 ${D}/lib/firmware/ath10k/QCA6174/hw3.0/firmware-6.bin
 }
 
 do_install_append_beaglebone() {

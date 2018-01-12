@@ -116,15 +116,6 @@ do_configure_prepend() {
     # this module is built externally via drbd-utils
     kernel_configure_variable BLK_DEV_DRBD n
 
-    # Activate the configuration options for VC4
-    VC4GRAPHICS="${@bb.utils.contains("MACHINE_FEATURES", "vc4graphics", "1", "0", d)}"
-    if [ ${VC4GRAPHICS} = "1" ]; then
-        kernel_configure_variable I2C_BCM2835 y
-        kernel_configure_variable DRM y
-        kernel_configure_variable DRM_FBDEV_EMULATION y
-        kernel_configure_variable DRM_VC4 y
-    fi
-
     # Keep this the last line
     # Remove all modified configs and add the rest to .config
     sed -e "${CONF_SED_SCRIPT}" < '${B}/.config.patched' >> '${B}/.config'

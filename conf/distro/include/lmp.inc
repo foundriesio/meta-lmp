@@ -12,8 +12,6 @@ TCLIBCAPPEND = ""
 
 require conf/distro/include/arm-defaults.inc
 
-GCCVERSION ?= "linaro-7.%"
-
 PREFERRED_PROVIDER_virtual/kernel = "linux-osf"
 
 # No need for x11 even for native

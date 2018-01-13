@@ -14,8 +14,7 @@ require conf/distro/include/arm-defaults.inc
 
 GCCVERSION ?= "linaro-7.%"
 
-# TODO: update default provider after list gets removed from local.conf
-#PREFERRED_PROVIDER_virtual/kernel = "linux-osf"
+PREFERRED_PROVIDER_virtual/kernel = "linux-osf"
 
 # No need for x11 even for native
 DISTRO_FEATURES_NATIVE_remove = "x11"

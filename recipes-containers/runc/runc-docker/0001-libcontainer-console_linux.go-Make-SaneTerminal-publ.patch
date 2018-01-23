@@ -1,0 +1,101 @@
+From 830c0d70df9143d13c7ac3d15614ccde50449b49 Mon Sep 17 00:00:00 2001
+From: "W. Trevor King" <wking@tremily.us>
+Date: Wed, 7 Jun 2017 21:08:44 -0700
+Subject: [PATCH] libcontainer/console_linux.go: Make SaneTerminal public
+
+And use it only in local tooling that is forwarding the pseudoterminal
+master.  That way runC no longer has an opinion on the onlcr setting
+for folks who are creating a terminal and detaching.  They'll use
+--console-socket and can setup the pseudoterminal however they like
+without runC having an opinion.  With this commit, the only cases
+where runC still has applies SaneTerminal is when *it* is the process
+consuming the master descriptor.
+
+Signed-off-by: W. Trevor King <wking@tremily.us>
+---
+ src/import/contrib/cmd/recvtty/recvtty.go          | 4 ++++
+ src/import/libcontainer/console_linux.go           | 7 ++-----
+ src/import/libcontainer/integration/execin_test.go | 1 +
+ src/import/tty.go                                  | 3 +++
+ 4 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/src/import/contrib/cmd/recvtty/recvtty.go b/src/import/contrib/cmd/recvtty/recvtty.go
+index 177a8935..ebb69197 100644
+--- a/src/import/contrib/cmd/recvtty/recvtty.go
++++ b/src/import/contrib/cmd/recvtty/recvtty.go
+@@ -24,6 +24,7 @@ import (
+ 	"os"
+ 	"strings"
+ 
++	"github.com/opencontainers/runc/libcontainer"
+ 	"github.com/opencontainers/runc/libcontainer/utils"
+ 	"github.com/urfave/cli"
+ )
+@@ -100,6 +101,9 @@ func handleSingle(path string) error {
+ 	if err != nil {
+ 		return err
+ 	}
++	if err = libcontainer.SaneTerminal(master); err != nil {
++		return err
++	}
+ 
+ 	// Copy from our stdio to the master fd.
+ 	quitChan := make(chan struct{})
+diff --git a/src/import/libcontainer/console_linux.go b/src/import/libcontainer/console_linux.go
+index 5e364a88..477b5602 100644
+--- a/src/import/libcontainer/console_linux.go
++++ b/src/import/libcontainer/console_linux.go
+@@ -21,9 +21,6 @@ func newConsole() (Console, error) {
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	if err := saneTerminal(master); err != nil {
+-		return nil, err
+-	}
+ 	console, err := ptsname(master)
+ 	if err != nil {
+ 		return nil, err
+@@ -133,12 +130,12 @@ func ptsname(f *os.File) (string, error) {
+ 	return fmt.Sprintf("/dev/pts/%d", n), nil
+ }
+ 
+-// saneTerminal sets the necessary tty_ioctl(4)s to ensure that a pty pair
++// SaneTerminal sets the necessary tty_ioctl(4)s to ensure that a pty pair
+ // created by us acts normally. In particular, a not-very-well-known default of
+ // Linux unix98 ptys is that they have +onlcr by default. While this isn't a
+ // problem for terminal emulators, because we relay data from the terminal we
+ // also relay that funky line discipline.
+-func saneTerminal(terminal *os.File) error {
++func SaneTerminal(terminal *os.File) error {
+ 	// Go doesn't have a wrapper for any of the termios ioctls.
+ 	var termios unix.Termios
+ 
+diff --git a/src/import/libcontainer/integration/execin_test.go b/src/import/libcontainer/integration/execin_test.go
+index 2922eaad..0f662bd3 100644
+--- a/src/import/libcontainer/integration/execin_test.go
++++ b/src/import/libcontainer/integration/execin_test.go
+@@ -300,6 +300,7 @@ func TestExecInTTY(t *testing.T) {
+ 				err: err,
+ 			}
+ 		}
++		libcontainer.SaneTerminal(f)
+ 		dc <- &cdata{
+ 			c: libcontainer.ConsoleFromFile(f),
+ 		}
+diff --git a/src/import/tty.go b/src/import/tty.go
+index 9824df14..52e0254a 100644
+--- a/src/import/tty.go
++++ b/src/import/tty.go
+@@ -74,6 +74,9 @@ func (t *tty) recvtty(process *libcontainer.Process, socket *os.File) error {
+ 	if err != nil {
+ 		return err
+ 	}
++	if err = libcontainer.SaneTerminal(f); err != nil {
++		return err
++	}
+ 	console := libcontainer.ConsoleFromFile(f)
+ 	go io.Copy(console, os.Stdin)
+ 	t.wg.Add(1)
+-- 
+2.15.1
+

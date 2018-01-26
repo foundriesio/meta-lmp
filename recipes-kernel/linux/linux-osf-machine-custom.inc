@@ -1,7 +1,7 @@
 # Machine specific configuration
 
 # Machines that were tested and known to work
-COMPATIBLE_MACHINE = "(beaglebone|cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|rpi|stih410-b2260|intel-corei7-64)"
+COMPATIBLE_MACHINE = "(beaglebone|cl-som-imx7|colibri-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|rpi|stih410-b2260|intel-corei7-64)"
 
 # Generic configs for ARM
 KBUILD_DEFCONFIG_aarch64 ?= "defconfig"
@@ -16,6 +16,7 @@ KBUILD_DEFCONFIG_beaglebone ?= "omap2plus_defconfig"
 # iMX
 KBUILD_DEFCONFIG_mx6 ?= "imx_v6_v7_defconfig"
 KBUILD_DEFCONFIG_mx7 ?= "imx_v6_v7_defconfig"
+SRC_URI_append_imx += " file://imx.scc"
 
 # HiKey
 SRC_URI_append_hikey += " file://hikey.scc"

@@ -1,0 +1,1 @@
+inherit lmp-machine-custom

@@ -28,6 +28,9 @@ PACKAGECONFIG_append_pn-systemd = " resolved networkd"
 IMAGE_FSTYPES_append = " tar.xz"
 IMAGE_FSTYPES_remove = "tar.gz tar.bz2"
 
+# LMP default classes and overwrites
+INHERIT += "lmp"
+
 INHERIT += "buildhistory"
 INHERIT += "image-buildinfo"
 BUILDHISTORY_COMMIT = "1"

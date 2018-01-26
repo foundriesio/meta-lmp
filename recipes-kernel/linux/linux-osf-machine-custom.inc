@@ -1,7 +1,7 @@
 # Machine specific configuration
 
 # Machines that were tested and known to work
-COMPATIBLE_MACHINE = "(beaglebone|cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|raspberrypi|raspberrypi2|raspberrypi3|stih410-b2260|intel-corei7-64)"
+COMPATIBLE_MACHINE = "(beaglebone|cl-som-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|rpi|stih410-b2260|intel-corei7-64)"
 
 # Generic configs for ARM
 KBUILD_DEFCONFIG_aarch64 ?= "defconfig"
@@ -34,30 +34,15 @@ KBUILD_DEFCONFIG_raspberrypi2 ?= "bcm2709_defconfig"
 KBUILD_DEFCONFIG_raspberrypi3 ?= "bcm2709_defconfig"
 KBUILD_DEFCONFIG_raspberrypi3-64 ?= "bcmrpi3_defconfig"
 UBOOT_ENTRYPOINT_RPI = "0x00008000"
-KERNEL_EXTRA_ARGS_raspberrypi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
-KERNEL_EXTRA_ARGS_raspberrypi2 += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
-KERNEL_EXTRA_ARGS_raspberrypi3 += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
+KERNEL_EXTRA_ARGS_rpi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 ## Raspberry Pi config fragment
-SRC_URI_append_raspberrypi += " file://rpi.scc"
-SRC_URI_append_raspberrypi2 += " file://rpi.scc"
-SRC_URI_append_raspberrypi3 += " file://rpi.scc"
+SRC_URI_append_rpi += " file://rpi.scc"
 
 ## Default cmdline
-CMDLINE_RPI = "dwc_otg.lpm_enable=0 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"
-CMDLINE_raspberrypi ?= "${CMDLINE_RPI}"
-CMDLINE_raspberrypi2 ?= "${CMDLINE_RPI}"
-CMDLINE_raspberrypi3 ?= "${CMDLINE_RPI}"
+CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"
 
 ## Deploy cmdline.txt
-do_deploy_append_raspberrypi() {
-    install -d ${DEPLOYDIR}/bcm2835-bootfiles
-    echo "${CMDLINE}" > ${DEPLOYDIR}/bcm2835-bootfiles/cmdline.txt
-}
-do_deploy_append_raspberrypi2() {
-    install -d ${DEPLOYDIR}/bcm2835-bootfiles
-    echo "${CMDLINE}" > ${DEPLOYDIR}/bcm2835-bootfiles/cmdline.txt
-}
-do_deploy_append_raspberrypi3() {
+do_deploy_append_rpi() {
     install -d ${DEPLOYDIR}/bcm2835-bootfiles
     echo "${CMDLINE}" > ${DEPLOYDIR}/bcm2835-bootfiles/cmdline.txt
 }

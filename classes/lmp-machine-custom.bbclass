@@ -9,6 +9,7 @@ QCOM_BOOTIMG_ROOTFS_dragonboard-820c ?= "sda9"
 
 # HiKey
 CMDLINE_remove_hikey = "quiet"
+PREFERRED_VERSION_grub_hikey = "git"
 
 # Raspberry Pi
 RPI_USE_U_BOOT = "1"

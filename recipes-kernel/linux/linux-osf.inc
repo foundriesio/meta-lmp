@@ -18,7 +18,7 @@ KCONFIG_MODE = "--alldefconfig"
 CMDLINE_DEBUG ?= ""
 CMDLINE_append = " ${CMDLINE_DEBUG}"
 
-KERNEL_INITRAMFS ?= '${@base_conditional("INITRAMFS_IMAGE_BUNDLE", "1", "1", "", d)}'
+KERNEL_INITRAMFS ?= '${@oe.utils.conditional("INITRAMFS_IMAGE_BUNDLE", "1", "1", "", d)}'
 
 # Always have a package to allow forcing package dependency
 ALLOW_EMPTY_${KERNEL_PACKAGE_NAME}-devicetree = "1"

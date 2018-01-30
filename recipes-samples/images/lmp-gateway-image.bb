@@ -56,7 +56,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     python3-netclient \
     python3-pkgutil \
     python3-shell \
-    python3-subprocess \
     python3-unixadmin \
     pciutils \
     strace \

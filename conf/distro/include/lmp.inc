@@ -13,6 +13,7 @@ TCLIBCAPPEND = ""
 require conf/distro/include/arm-defaults.inc
 
 PREFERRED_PROVIDER_virtual/kernel = "linux-osf"
+PREFERRED_PROVIDER_iasl-native = "acpica-native"
 PREFERRED_VERSION_grub ?= "2.02"
 
 # No need for x11 even for native

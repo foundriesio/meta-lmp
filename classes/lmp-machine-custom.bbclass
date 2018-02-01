@@ -21,6 +21,7 @@ WKS_FILE_rpi = "raspberrypi.wks"
 # Intel
 IMAGE_FSTYPES_append_intel-corei7-64 = " ext4.gz wic.gz"
 IMAGE_FSTYPES_remove_intel-corei7-64 = " ext4 wic"
+EFI_PROVIDER_intel-corei7-64 = "grub-efi"
 
 # Cross machines / BSPs
 ## Drop IMX BSP that is not needed

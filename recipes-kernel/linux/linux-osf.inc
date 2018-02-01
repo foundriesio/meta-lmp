@@ -20,6 +20,9 @@ CMDLINE_append = " ${CMDLINE_DEBUG}"
 
 KERNEL_INITRAMFS ?= '${@oe.utils.conditional("INITRAMFS_IMAGE_BUNDLE", "1", "1", "", d)}'
 
+# No need for extra fragments besides what is provided by LMP
+KERNEL_FEATURES_remove += " features/debug/printk.scc"
+
 # Always have a package to allow forcing package dependency
 ALLOW_EMPTY_${KERNEL_PACKAGE_NAME}-devicetree = "1"
 

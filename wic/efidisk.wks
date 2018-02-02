@@ -1,0 +1,7 @@
+# short-description: Create an EFI disk image
+# long-description: Creates a partitioned EFI disk image that the user
+# can directly dd to boot media. The selected bootloader is grub-efi.
+
+part /boot --source bootimg-efi --sourceparams="loader=grub-efi" --ondisk sda --label msdos --active --align 1024 --use-uuid
+part / --source rootfs --ondisk sda --fstype=ext4 --label platform --align 1024 --use-uuid
+bootloader --ptable gpt --timeout=3 --append="rootfstype=ext4 console=ttyS0,115200 console=tty0"

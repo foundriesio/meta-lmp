@@ -25,6 +25,7 @@ DISTRO_FEATURES_append = " pam systemd virtualization"
 DISTRO_FEATURES_remove = "3g sysvinit"
 VIRTUAL-RUNTIME_init_manager = "systemd"
 PACKAGECONFIG_append_pn-systemd = " resolved networkd"
+PACKAGECONFIG_append_pn-qemu-native = " libusb"
 
 # Default image formats
 IMAGE_FSTYPES_append = " tar.xz"

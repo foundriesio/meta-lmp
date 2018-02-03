@@ -21,7 +21,7 @@ DISTRO_FEATURES_NATIVE_remove = "x11"
 DISTRO_FEATURES_NATIVESDK_remove = "x11"
 
 # TODO: review default distro features
-DISTRO_FEATURES_append = " pam systemd virtualization"
+DISTRO_FEATURES_append = " pam systemd usrmerge virtualization"
 DISTRO_FEATURES_remove = "3g sysvinit"
 VIRTUAL-RUNTIME_init_manager = "systemd"
 PACKAGECONFIG_append_pn-systemd = " resolved networkd"

@@ -1,6 +1,6 @@
-LINUX_VERSION ?= "4.14.16"
+LINUX_VERSION ?= "4.14.17"
 
-SRCREV = "3d887da3b2dde8c3f6fb80a9a9d24d3fb1726177"
+SRCREV = "eae18481a97faf4f1fa142ec3b48e136acb0d80e"
 OSF_LMP_GIT_URL ?= "source.foundries.io"
 OSF_LMP_GIT_NAMESPACE ?= ""
 

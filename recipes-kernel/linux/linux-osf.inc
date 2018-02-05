@@ -135,9 +135,14 @@ do_install_append() {
     install -m 0644 ${B}/arch/$ARCH/boot/dts/*.dtb ${D}/boot || true
 }
 
+# Kernel config
+KERNEL_CONFIG_BASE_NAME ?= "${KERNEL_PACKAGE_NAME}-config-${PKGE}-${PKGV}-${MACHINE}-${DATETIME}"
+KERNEL_CONFIG_BASE_NAME[vardepsexclude] = "DATETIME"
+KERNEL_CONFIG_SYMLINK_NAME ?= "${KERNEL_PACKAGE_NAME}-config"
+
 do_deploy_append() {
-    cp -a ${B}/defconfig ${DEPLOYDIR}
-    cp -a ${B}/.config ${DEPLOYDIR}/config
+    cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_BASE_NAME}
+    ln -sf ${KERNEL_CONFIG_BASE_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_SYMLINK_NAME}
 }
 
 PACKAGES =+ "${KERNEL_PACKAGE_NAME}-devicetree-overlays"

@@ -123,10 +123,6 @@ do_configure_prepend() {
     # Remove all modified configs and add the rest to .config
     sed -e "${CONF_SED_SCRIPT}" < '${B}/.config.patched' >> '${B}/.config'
     rm -f ${B}/.config.patched
-
-    yes '' | oe_runmake oldconfig
-    bbplain "Saving defconfig to:\n${B}/defconfig"
-    oe_runmake -C ${B} savedefconfig
 }
 
 do_install_append() {

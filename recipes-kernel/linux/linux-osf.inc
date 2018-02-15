@@ -142,7 +142,7 @@ do_deploy_append() {
 }
 
 PACKAGES =+ "${KERNEL_PACKAGE_NAME}-devicetree-overlays"
-FILES_${KERNEL_PACKAGE_NAME}-devicetree-overlays = "/lib/firmware/*.dtbo /lib/firmware/*.dts"
+FILES_${KERNEL_PACKAGE_NAME}-devicetree-overlays = "${nonarch_base_libdir}/firmware/*.dtbo ${nonarch_base_libdir}/firmware/*.dts"
 FILES_${KERNEL_PACKAGE_NAME}-devicetree += "/boot/*.dtb"
 
 RDEPENDS_${KERNEL_PACKAGE_NAME}-image_append = " ${KERNEL_PACKAGE_NAME}-devicetree"

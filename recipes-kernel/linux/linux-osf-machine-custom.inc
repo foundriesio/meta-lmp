@@ -9,7 +9,7 @@ KBUILD_DEFCONFIG_armv7a ?= "multi_v7_defconfig"
 
 # Generic configs for X86
 KBUILD_DEFCONFIG_intel-corei7-64 ?= "x86_64_defconfig"
-SRC_URI_append_intel-corei7-64 += " file://qemu-guest.scc"
+SRC_URI_append_intel-corei7-64 += " file://qemu-guest.scc file://qemu-guest.cfg"
 
 # Beagle
 KBUILD_DEFCONFIG_beaglebone ?= "omap2plus_defconfig"
@@ -17,14 +17,14 @@ KBUILD_DEFCONFIG_beaglebone ?= "omap2plus_defconfig"
 # iMX
 KBUILD_DEFCONFIG_mx6 ?= "imx_v6_v7_defconfig"
 KBUILD_DEFCONFIG_mx7 ?= "imx_v6_v7_defconfig"
-SRC_URI_append_imx += " file://imx.scc"
+SRC_URI_append_imx += " file://imx.scc file://imx.cfg"
 
 # HiKey
-SRC_URI_append_hikey += " file://hikey.scc"
+SRC_URI_append_hikey += " file://hikey.scc file://hikey.cfg"
 
 # Qcom (db410/db820c)
-SRC_URI_append_dragonboard-410c += " file://qcom.scc"
-SRC_URI_append_dragonboard-820c += " file://qcom.scc"
+SRC_URI_append_dragonboard-410c += " file://qcom.scc file://qcom.cfg"
+SRC_URI_append_dragonboard-820c += " file://qcom.scc file://qcom.cfg"
 
 # Raspberry Pi
 # No common rpi machine override available, need entries for every device
@@ -38,7 +38,7 @@ KBUILD_DEFCONFIG_raspberrypi3-64 ?= "bcmrpi3_defconfig"
 UBOOT_ENTRYPOINT_RPI = "0x00008000"
 KERNEL_EXTRA_ARGS_rpi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 ## Raspberry Pi config fragment
-SRC_URI_append_rpi += " file://rpi.scc"
+SRC_URI_append_rpi += " file://rpi.scc file://rpi.cfg"
 
 ## Default cmdline
 CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"

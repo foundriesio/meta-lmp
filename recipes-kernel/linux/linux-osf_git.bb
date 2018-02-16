@@ -6,6 +6,7 @@ OSF_LMP_GIT_NAMESPACE ?= ""
 
 SRC_URI = "git://${OSF_LMP_GIT_URL}/${OSF_LMP_GIT_NAMESPACE}linux.git;protocol=https;branch=linux-v4.14.y;name=kernel \
            file://distro.scc \
+           file://distro.cfg \
 "
 
 require linux-osf.inc

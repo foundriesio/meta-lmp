@@ -9,7 +9,7 @@ KBUILD_DEFCONFIG_armv7a ?= "multi_v7_defconfig"
 
 # Generic configs for X86
 KBUILD_DEFCONFIG_intel-corei7-64 ?= "x86_64_defconfig"
-SRC_URI_append_intel-corei7-64 += " file://qemu-guest.scc file://qemu-guest.cfg"
+SRC_URI_append_intel-corei7-64 += " file://qemu-guest.scc file://qemu-guest.cfg file://intel.scc file://intel.cfg"
 
 # Beagle
 KBUILD_DEFCONFIG_beaglebone ?= "omap2plus_defconfig"

@@ -27,5 +27,3 @@ WKS_FILE_intel-corei7-64 = "efidisk.wks"
 # Cross machines / BSPs
 ## Drop IMX BSP that is not needed
 MACHINE_EXTRA_RRECOMMENDS_remove = "imx-alsa-plugins"
-## Workaround for https://lists.yoctoproject.org/pipermail/meta-freescale/2018-February/022104.html
-BRCM_FWDIR_imx = "${nonarch_base_libdir}/firmware/brcm"

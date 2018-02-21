@@ -1,0 +1,8 @@
+# short-description: Create an OTA-enabled EFI disk image
+# long-description: Creates an OTA-enabled EFI disk image that the user
+# can directly dd to boot media.
+
+part /boot/efi --source bootimg-sota-efi --sourceparams="loader=grub-efi" --ondisk sda --active --align 1024 --use-uuid
+part / --source otaimage --ondisk sda --fstype=ext4 --align 1024 --use-uuid
+
+bootloader --ptable gpt --configfile="grub-ota.cfg"

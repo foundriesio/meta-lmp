@@ -1,0 +1,148 @@
+# Copyright (c) 2014, Intel Corporation.
+# Copyright (c) 2018, Open Source Foundries Ltd.
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+# DESCRIPTION
+# This implements the 'bootimg-sota-efi' source plugin class for 'wic'
+#
+# Heavily based on the bootimg-efi plugin from OE-core.
+
+import logging
+import os
+import shutil
+
+from wic import WicError
+from wic.engine import get_custom_config
+from wic.pluginbase import SourcePlugin
+from wic.misc import (exec_cmd, exec_native_cmd,
+                      get_bitbake_var, BOOTDD_EXTRA_SPACE)
+
+logger = logging.getLogger('wic')
+
+class BootimgSotaEFIPlugin(SourcePlugin):
+    """
+    Create Sota EFI boot partition.
+    This plugin only supports the GRUB 2 bootloader.
+    """
+
+    name = 'bootimg-sota-efi'
+
+    @classmethod
+    def do_configure_grubefi(cls, creator, cr_workdir):
+        """
+        Create loader-specific (grub-efi) config
+        """
+        configfile = creator.ks.bootloader.configfile
+
+        if not configfile:
+            raise WicError("Missing configfile argument")
+
+        custom_cfg = None
+        custom_cfg = get_custom_config(configfile)
+        if custom_cfg:
+            # Use a custom configuration for grub
+            grubefi_conf = custom_cfg
+            logger.debug("Using custom configuration file "
+                         "%s for grub.cfg", configfile)
+        else:
+            raise WicError("configfile is specified but failed to "
+                          "get it from %s." % configfile)
+
+        logger.debug("Writing grubefi config %s/hdd/boot/EFI/BOOT/grub.cfg",
+                     cr_workdir)
+        cfg = open("%s/hdd/boot/EFI/BOOT/grub.cfg" % cr_workdir, "w")
+        cfg.write(grubefi_conf)
+        cfg.close()
+
+
+    @classmethod
+    def do_configure_partition(cls, part, source_params, creator, cr_workdir,
+                               oe_builddir, bootimg_dir, kernel_dir,
+                               native_sysroot):
+        """
+        Called before do_prepare_partition(), creates loader-specific config
+        """
+        hdddir = "%s/hdd/boot" % cr_workdir
+
+        install_cmd = "install -d %s/EFI/BOOT" % hdddir
+        exec_cmd(install_cmd)
+
+        try:
+            if source_params['loader'] == 'grub-efi':
+                cls.do_configure_grubefi(creator, cr_workdir)
+            else:
+                raise WicError("unrecognized bootimg-sota-efi loader: %s" % source_params['loader'])
+        except KeyError:
+            raise WicError("bootimg-sota-efi requires a loader, none specified")
+
+
+    @classmethod
+    def do_prepare_partition(cls, part, source_params, creator, cr_workdir,
+                             oe_builddir, bootimg_dir, kernel_dir,
+                             rootfs_dir, native_sysroot):
+        """
+        Called to do the actual content population for a partition i.e. it
+        'prepares' the partition to be incorporated into the image.
+        In this case, prepare content for an EFI (grub) boot partition.
+        """
+        if not kernel_dir:
+            kernel_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
+            if not kernel_dir:
+                raise WicError("Couldn't find DEPLOY_DIR_IMAGE, exiting")
+
+        hdddir = "%s/hdd/boot" % cr_workdir
+
+        try:
+            if source_params['loader'] == 'grub-efi':
+                shutil.copyfile("%s/hdd/boot/EFI/BOOT/grub.cfg" % cr_workdir,
+                                "%s/grub.cfg" % cr_workdir)
+                for mod in [x for x in os.listdir(kernel_dir) if x.startswith("grub-efi-")]:
+                    cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (kernel_dir, mod, hdddir, mod[9:])
+                    exec_cmd(cp_cmd, True)
+                shutil.move("%s/grub.cfg" % cr_workdir,
+                            "%s/hdd/boot/EFI/BOOT/grub.cfg" % cr_workdir)
+            else:
+                raise WicError("unrecognized bootimg-sota-efi loader: %s" %
+                               source_params['loader'])
+        except KeyError:
+            raise WicError("bootimg-sota-efi requires a loader, none specified")
+
+        startup = os.path.join(kernel_dir, "startup.nsh")
+        if os.path.exists(startup):
+            cp_cmd = "cp %s %s/" % (startup, hdddir)
+            exec_cmd(cp_cmd, True)
+
+        du_cmd = "du -bks %s" % hdddir
+        out = exec_cmd(du_cmd)
+        blocks = int(out.split()[0])
+
+        extra_blocks = part.get_extra_block_count(blocks)
+
+        if extra_blocks < BOOTDD_EXTRA_SPACE:
+            extra_blocks = BOOTDD_EXTRA_SPACE
+
+        blocks += extra_blocks
+
+        logger.debug("Added %d extra blocks to %s to get to %d total blocks",
+                     extra_blocks, part.mountpoint, blocks)
+
+        # dosfs image, created by mkdosfs
+        bootimg = "%s/boot.img" % cr_workdir
+
+        dosfs_cmd = "mkdosfs -n efi -i %s -C %s %d" % \
+                    (part.fsuuid, bootimg, blocks)
+        exec_native_cmd(dosfs_cmd, native_sysroot)
+
+        mcopy_cmd = "mcopy -i %s -s %s/* ::/" % (bootimg, hdddir)
+        exec_native_cmd(mcopy_cmd, native_sysroot)
+
+        chmod_cmd = "chmod 644 %s" % bootimg
+        exec_cmd(chmod_cmd)
+
+        du_cmd = "du -Lbks %s" % bootimg
+        out = exec_cmd(du_cmd)
+        bootimg_size = out.split()[0]
+
+        part.size = int(bootimg_size)
+        part.source_file = bootimg

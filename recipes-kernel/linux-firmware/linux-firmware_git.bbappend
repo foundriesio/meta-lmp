@@ -5,7 +5,7 @@
 SRC_URI_append = "\
      https://git.ti.com/ti-bt/service-packs/blobs/raw/c290f8af9e388f37e509ecb111a1b64572b7c225/initscripts/TIInit_11.8.32.bts;name=TIInit_11.8.32 \
 "
-SRC_URI_append_beaglebone = "\
+SRC_URI_append_beaglebone-yocto = "\
     https://github.com/beagleboard/beaglebone-black-wireless/raw/d9135000a223228158d92fd2e3f00e495f642fee/firmware/wl18xx-conf.bin;name=wl18xx-conf \
 "
 # Updated firmware files for QCA6174
@@ -31,6 +31,6 @@ do_install_append() {
      cp ${WORKDIR}/firmware-6.bin_WLAN.RM.4.4.1-00079-QCARMSWPZ-1 ${D}${nonarch_base_libdir}/firmware/ath10k/QCA6174/hw3.0/firmware-6.bin
 }
 
-do_install_append_beaglebone() {
+do_install_append_beaglebone-yocto() {
      cp ${WORKDIR}/wl18xx-conf.bin ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
 }

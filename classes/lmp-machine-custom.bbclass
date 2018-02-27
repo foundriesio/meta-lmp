@@ -1,8 +1,8 @@
 # OSF LMP specific configuration
 
 # Beaglebone
-IMAGE_FSTYPES_append_beaglebone = " wic.gz"
-IMAGE_FSTYPES_remove_beaglebone = " wic"
+IMAGE_FSTYPES_append_beaglebone-yocto = " wic.gz"
+IMAGE_FSTYPES_remove_beaglebone-yocto = " wic"
 
 # Dragonboard (DB410/DB820)
 QCOM_BOOTIMG_ROOTFS_dragonboard-820c ?= "sda9"

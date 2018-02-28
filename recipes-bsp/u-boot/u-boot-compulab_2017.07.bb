@@ -11,6 +11,7 @@ SRCBRANCH = "master"
 SRCREV = "v2017.07"
 SRC_URI = "git://git.denx.de/u-boot.git;branch=${SRCBRANCH} \
 	file://u-boot-v2017.07-cl-som-imx7-1.1.patch \
+	file://enable_distro_defaults.patch \
 "
 
 S = "${WORKDIR}/git"

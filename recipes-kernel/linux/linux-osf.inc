@@ -131,6 +131,14 @@ do_install_append() {
     install -m 0644 ${B}/arch/$ARCH/boot/dts/*.dtb ${D}/boot || true
 }
 
+do_deploy_append() {
+    # Workaround for usrmerge
+    if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
+        mkdir -p ${D}${nonarch_base_libdir}
+        tar -cvzf $deployDir/${MODULE_TARBALL_BASE_NAME} -C ${D} ${nonarch_base_libdir#/}
+    fi
+}
+
 # Kernel config
 KERNEL_CONFIG_BASE_NAME ?= "${KERNEL_PACKAGE_NAME}-config-${PKGE}-${PKGV}-${MACHINE}-${DATETIME}"
 KERNEL_CONFIG_BASE_NAME[vardepsexclude] = "DATETIME"

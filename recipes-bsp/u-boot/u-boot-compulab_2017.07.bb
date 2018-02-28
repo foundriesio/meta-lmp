@@ -21,3 +21,6 @@ S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 COMPATIBLE_MACHINE = "(cl-som-imx7)"
+
+# SOTA specific
+RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"

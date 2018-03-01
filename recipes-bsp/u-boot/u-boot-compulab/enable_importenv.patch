@@ -1,0 +1,12 @@
+Index: git/configs/cl-som-imx7_defconfig
+===================================================================
+--- git.orig/configs/cl-som-imx7_defconfig
++++ git/configs/cl-som-imx7_defconfig
+@@ -31,7 +31,6 @@ CONFIG_CMD_BOOTZ=y
+ # CONFIG_CMD_IMLS is not set
+ # CONFIG_CMD_XIMG is not set
+ # CONFIG_CMD_EXPORTENV is not set
+-# CONFIG_CMD_IMPORTENV is not set
+ CONFIG_CMD_GREPENV=y
+ CONFIG_CMD_MMC=y
+ CONFIG_CMD_SF=y

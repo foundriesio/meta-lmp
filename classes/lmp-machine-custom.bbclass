@@ -1,29 +1,60 @@
 # OSF LMP specific configuration
 
 # Beaglebone
-IMAGE_FSTYPES_append_beaglebone-yocto = " wic.gz"
-IMAGE_FSTYPES_remove_beaglebone-yocto = " wic"
+OSTREE_KERNEL_ARGS_append_beaglebone-yocto = " console=ttyO0,115200n8"
+KERNEL_DEVICETREE_append_beaglebone-yocto = " am335x-boneblack-wireless.dtb"
+IMAGE_BOOT_FILES_append_beaglebone-yocto = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
 
-# Dragonboard (DB410/DB820)
-QCOM_BOOTIMG_ROOTFS_dragonboard-820c ?= "sda9"
+# Dragonboard (DB410/DB820), u-boot as boot image and rootfs on sdcard
+UBOOT_MACHINE_dragonboard-410c = "dragonboard410c_defconfig"
+IMAGE_BOOT_FILES_append_dragonboard-410c = " boot.scr uEnv.txt apq8016-sbc.dtb"
+OSTREE_KERNEL_ARGS_append_dragonboard-410c = " console=tty0 console=ttyMSM0,115200n8 androidboot.baseband=apq mdss_mdp.panel=0:dsi:0:"
+WKS_FILES_sota_dragonboard-410c = "sdimage-sota.wks"
+UBOOT_MACHINE_dragonboard-820c = "dragonboard820c_defconfig"
+IMAGE_BOOT_FILES_append_dragonboard-820c = " boot.scr uEnv.txt apq8096-db820c.dtb"
+OSTREE_KERNEL_ARGS_append_dragonboard-820c = " console=tty0 console=ttyMSM0,115200n8 androidboot.baseband=apq mdss_mdp.panel=0"
+WKS_FILES_sota_dragonboard-820c = "sdimage-sota.wks"
 
 # HiKey
 CMDLINE_remove_hikey = "quiet"
 PREFERRED_VERSION_grub_hikey = "git"
+OSTREE_BOOTLOADER_hikey = "grub"
+OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA3,115200n8 efi=noruntime"
+KERNEL_IMAGETYPE_hikey = "Image.gz"
+IMAGE_FSTYPES_remove_hikey = "wic.gz wic.bmap"
 
 # Raspberry Pi
 RPI_USE_U_BOOT = "1"
 VC4DTBO_raspberrypi3-64 = "vc4-kms-v3d"
-IMAGE_FSTYPES_append_rpi = " ext4.gz wic.gz wic.bmap"
 IMAGE_FSTYPES_remove_rpi = " ext3 rpi-sdimg"
-WKS_FILE_rpi = "raspberrypi.wks"
+IMAGE_BOOT_FILES_append_rpi = " uEnv.txt"
+KERNEL_IMAGETYPE_UBOOT_raspberrypi3-64 = "Image.gz"
 
 # Intel
-IMAGE_FSTYPES_append_intel-corei7-64 = " ext4.gz wic.gz"
-IMAGE_FSTYPES_remove_intel-corei7-64 = " ext4 wic"
+IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"
+OSTREE_KERNEL_ARGS_append_intel-corei7-64 = " console=ttyS0,115200"
 EFI_PROVIDER_intel-corei7-64 = "grub-efi"
-WKS_FILE_intel-corei7-64 = "efidisk.wks"
+WKS_FILE_append_intel-corei7-64 = "efidisk-sota.wks"
+
+# Toradex (support both NAND and eMMC targets with one single image)
+OSTREE_KERNEL_ARGS_append_colibri-imx7 = " console=tty1 console=ttymxc0,115200"
+EXTRA_IMAGEDEPENDS_append_colibri-imx7 = " u-boot-script-toradex"
+IMAGE_BOOT_FILES_append_colibri-imx7 = " boot.scr uEnv.txt u-boot-colibri-imx7.imx;u-boot-nand.imx u-boot-colibri-imx7.imx-sd;u-boot-emmc.imx ${MACHINE_ARCH}/*;${MACHINE_ARCH}"
+
+# cl-som-imx7 (IOT-GATE-iMX7)
+OSTREE_KERNEL_ARGS_append_cl-som-imx7 = " console=tty1 console=ttymxc0,115200"
+IMAGE_BOOT_FILES_append_cl-som-imx7 = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
+WKS_FILE_sota_cl-som-imx7 = "sdimage-imx7-spl-sota.wks"
+
+# cubox-i (hummingboard)
+OSTREE_KERNEL_ARGS_append_cubox-i = " console=tty1 console=ttymxc0,115200"
+KERNEL_DEVICETREE_append_cubox-i = " imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb"
+IMAGE_BOOT_FILES_append_cubox-i = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
+WKS_FILES_sota_cubox-i = "sdimage-imx6-spl-sota.wks"
+UBOOT_EXTLINUX_cubox-i = ""
 
 # Cross machines / BSPs
 ## Drop IMX BSP that is not needed
-MACHINE_EXTRA_RRECOMMENDS_remove = "imx-alsa-plugins"
+MACHINE_EXTRA_RRECOMMENDS_remove_imx = "imx-alsa-plugins"
+## No need to install u-boot, already a WKS dependency
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"

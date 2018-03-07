@@ -28,8 +28,8 @@ PACKAGECONFIG_append_pn-systemd = " resolved networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"
 
 # Default image formats
-IMAGE_FSTYPES_append = " tar.xz"
-IMAGE_FSTYPES_remove = "tar.gz tar.bz2"
+IMAGE_FSTYPES = "tar.xz ext4.gz wic.gz wic.bmap"
+IMAGE_FSTYPES_remove = "tar.gz tar.bz2 wic"
 
 # LMP default classes and overwrites
 INHERIT += "lmp"

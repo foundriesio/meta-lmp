@@ -1,0 +1,40 @@
+From 63ef10d56d495bb98c9dffbc762342f3eff8660c Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Sat, 24 Feb 2018 21:00:37 -0300
+Subject: [PATCH] colibri_imx7: run distro_bootcmd by default
+
+Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
+---
+ include/configs/colibri_imx7.h      | 2 +-
+ include/configs/colibri_imx7_emmc.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/configs/colibri_imx7.h b/include/configs/colibri_imx7.h
+index 2d6cee3a34..21c0d1ac7b 100644
+--- a/include/configs/colibri_imx7.h
++++ b/include/configs/colibri_imx7.h
+@@ -104,7 +104,7 @@
+ 		"ubi read ${fdt_addr_r} dtb && " \
+ 		"run fdt_fixup && bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
+ 
+-#define CONFIG_BOOTCOMMAND "run ubiboot; " \
++#define CONFIG_BOOTCOMMAND \
+ 	"setenv fdtfile ${soc}-colibri-${fdt_board}.dtb && run distro_bootcmd;"
+ 
+ #define BOOTENV_RUN_NET_USB_START ""
+diff --git a/include/configs/colibri_imx7_emmc.h b/include/configs/colibri_imx7_emmc.h
+index 957d4205e8..54ffea49c8 100644
+--- a/include/configs/colibri_imx7_emmc.h
++++ b/include/configs/colibri_imx7_emmc.h
+@@ -105,7 +105,7 @@
+ 	"load mmc 1:1 ${fdt_addr_r} ${soc}-colibri-emmc-${fdt_board}.dtb && " \
+ 	"run fdt_fixup && bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
+ 
+-#define CONFIG_BOOTCOMMAND "run emmcboot ; echo ; echo emmcboot failed ; " \
++#define CONFIG_BOOTCOMMAND \
+ 	"setenv fdtfile ${soc}-colibri-emmc-${fdt_board}.dtb && run distro_bootcmd;"
+ 
+ #define BOOTENV_RUN_NET_USB_START ""
+-- 
+2.16.1
+

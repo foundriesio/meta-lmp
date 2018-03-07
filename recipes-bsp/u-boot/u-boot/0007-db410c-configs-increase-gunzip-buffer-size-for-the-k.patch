@@ -1,0 +1,29 @@
+From 9941745d31afd8656c09a9abf8476f2a913ee39b Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Date: Wed, 10 Jan 2018 11:34:34 +0100
+Subject: [PATCH 07/15] db410c: configs: increase gunzip buffer size for the
+ kernel
+
+the kernel fails to boot when it goes over the limit.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ include/configs/dragonboard410c.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/dragonboard410c.h b/include/configs/dragonboard410c.h
+index d2447b2..3c5bb8a 100644
+--- a/include/configs/dragonboard410c.h
++++ b/include/configs/dragonboard410c.h
+@@ -23,7 +23,7 @@
+ #define CONFIG_SYS_TEXT_BASE		0x80080000
+ #define CONFIG_SYS_INIT_SP_ADDR		(CONFIG_SYS_SDRAM_BASE + 0x7fff0)
+ #define CONFIG_SYS_LOAD_ADDR		(CONFIG_SYS_SDRAM_BASE + 0x80000)
+-#define CONFIG_SYS_BOOTM_LEN		0x1000000 /* 16MB max kernel size */
++#define CONFIG_SYS_BOOTM_LEN		SZ_64M
+ 
+ /* UART */
+ 
+-- 
+2.7.4
+

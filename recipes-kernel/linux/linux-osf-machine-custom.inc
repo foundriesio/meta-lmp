@@ -49,24 +49,6 @@ do_deploy_append_rpi() {
     echo "${CMDLINE}" > ${DEPLOYDIR}/bcm2835-bootfiles/cmdline.txt
 }
 
-## DB410c fails to build when skales is invoked
-do_deploy_append_dragonboard-410c() {
-    # FIXME 410c fails to build when skales in invoked
-    # |   File "/usr/bin/skales/dtbTool", line 239, in __init__
-    # |     self.msm_id[0] = soc_ids[matches['soc']] | (foundry << 16)
-    # | KeyError: u'ipq8074'
-    rm -f ${B}/arch/arm64/boot/dts/qcom/*ipq8074* || true
-}
-
-## DB820c fails to build when skales is invoked
-do_deploy_append_dragonboard-820c() {
-    # FIXME 820c fails to build when skales in invoked
-    # |   File "/usr/bin/skales/dtbTool", line 239, in __init__
-    # |     self.msm_id[0] = soc_ids[matches['soc']] | (foundry << 16)
-    # | KeyError: u'ipq8074'
-    rm -f ${B}/arch/arm64/boot/dts/qcom/*ipq8074* || true
-}
-
 ## Build issues
 ## TODO: Validate if still required
 do_compile_append_raspberrypi3-64() {
@@ -76,18 +58,3 @@ do_compile_append_raspberrypi3-64() {
 
 # ST
 KERNEL_EXTRA_ARGS_stih410-b2260 += "LOADADDR=${ST_KERNEL_LOADADDR}"
-
-# Machine specific hooks (e.g. hw specific boot images)
-def get_include_handler(d):
-    machine = d.getVar('MACHINE', True)
-    if (machine == "dragonboard-410c"):
-        include = "recipes-kernel/linux/linux-qcom-bootimg.inc"
-    elif (machine == "dragonboard-820c"):
-        include = "recipes-kernel/linux/linux-qcom-bootimg.inc"
-    else:
-        include = "recipes-kernel/linux/file-cannot-be-found.inc"
-    return include
-
-# Use a weak include to avoid to produce an error when the file cannot be found.
-# It is the case when we don't have any machine specific hooks.
-include ${@get_include_handler(d)}

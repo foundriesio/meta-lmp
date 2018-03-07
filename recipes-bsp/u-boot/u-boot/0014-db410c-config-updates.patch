@@ -1,0 +1,41 @@
+From b0daf298dbec45b19c25cac3290c9863157b2f91 Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Tue, 16 Jan 2018 03:16:35 +0000
+Subject: [PATCH 14/15] db410c: config updates
+
+Enable USB keyboards and video output, VFAT writes (useful for EFI boot)
+and a common USB eth adapter
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ configs/dragonboard410c_defconfig | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/configs/dragonboard410c_defconfig b/configs/dragonboard410c_defconfig
+index 4389f52..9dcadb9 100644
+--- a/configs/dragonboard410c_defconfig
++++ b/configs/dragonboard410c_defconfig
+@@ -41,10 +41,20 @@ CONFIG_USB_HOST_ETHER=y
+ CONFIG_USB_ETHER_ASIX=y
+ CONFIG_USB_ETHER_ASIX88179=y
+ CONFIG_USB_ETHER_MCS7830=y
++CONFIG_USB_ETHER_RTL8152=y
+ CONFIG_USB_ETHER_SMSC95XX=y
++CONFIG_DM_ETH=y
+ CONFIG_OF_LIBFDT_OVERLAY=y
+ CONFIG_OF_CONTROL=y
+ CONFIG_ENV_IS_IN_MMC=y
+ CONFIG_OF_BOARD_SETUP=y
+ CONFIG_PSCI_RESET=y
+ CONFIG_OF_SEPARATE=y
++CONFIG_DM_KEYBOARD=y
++CONFIG_USB_KEYBOARD=y
++CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE=y
++CONFIG_DM_VIDEO=y
++# CONFG_VIDEO_BPP8 is not set
++CONFIG_NO_FB_CLEAR=y
++CONFIG_VIDEO_SIMPLE=y
++CONFIG_FAT_WRITE=y
+-- 
+2.7.4
+

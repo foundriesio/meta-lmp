@@ -1,0 +1,22 @@
+Index: git/include/configs/dragonboard820c.h
+===================================================================
+--- git.orig/include/configs/dragonboard820c.h
++++ git/include/configs/dragonboard820c.h
+@@ -48,14 +48,14 @@
+ 	func(MMC, mmc, 0)
+ 
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+-	"loadaddr=0x95000000\0" \
++	"loadaddr=0x96000000\0" \
+ 	"fdt_high=0xffffffffffffffff\0" \
+ 	"initrd_high=0xffffffffffffffff\0" \
+ 	"linux_image=uImage\0" \
+-	"kernel_addr_r=0x95000000\0"\
++	"kernel_addr_r=0x91000000\0"\
+ 	"fdtfile=apq8096-db820c.dtb\0" \
+ 	"fdt_addr_r=0x93000000\0"\
+-	"ramdisk_addr_r=0x91000000\0"\
++	"ramdisk_addr_r=0x95000000\0"\
+ 	"scriptaddr=0x90000000\0"\
+ 	"pxefile_addr_r=0x90100000\0"\
+ 	BOOTENV

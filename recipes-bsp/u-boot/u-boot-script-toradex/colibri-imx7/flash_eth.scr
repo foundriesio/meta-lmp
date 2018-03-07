@@ -1,0 +1,29 @@
+setenv create_bcb 'nand erase.part mx7-bcb && writebcb 80000 200000'
+setenv recreate_bcb 'nand read ${loadaddr} 0x800 0x800 && run create_bcb && nand write ${loadaddr} 0x800 0x800'
+
+# Migrate to UBI volume based boot schema
+setenv prepare_kernel_fdt 'ubi create kernel 0x800000 static && ubi create dtb 0x20000 static'
+setenv prepare_m4firmware 'ubi create m4firmware 0xe0000 static'
+setenv prepare_rootfs 'ubi create rootfs 0 dynamic'
+setenv prepare_ubi 'ubi part ubi && if ubi check rootfs; then if ubi check kernel; then else ubi remove rootfs && run prepare_kernel_fdt && run prepare_m4firmware && run prepare_rootfs; fi; else run prepare_kernel_fdt && run prepare_m4firmware && run prepare_rootfs; fi'
+
+setenv upgrade_msg 'echo && echo "Upgraded U-Boot, please reset the board and complete update with" && echo "# run setupdate && run recreate_bcb && run update" && echo && echo "(note the recreate_bcb command in between!)"'
+setenv update_uboot_old 'tftpboot ${loadaddr} ${board_name}/u-boot-nand.imx && nand erase.part u-boot && nand erase.part u-boot-env && writeboot ${loadaddr} 80000 200000 $filesize && nand erase.part u-boot-env && nand erase.part ubi && run upgrade_msg'
+setenv update_uboot 'tftpboot ${loadaddr} ${board_name}/u-boot-nand.imx && nand erase.part u-boot1 && nand write ${loadaddr} u-boot1 ${filesize} && nand erase.part u-boot2 && nand write ${loadaddr} u-boot2 ${filesize}'
+setenv update_kernel 'tftpboot ${loadaddr} ${board_name}/zImage && ubi write ${loadaddr} kernel ${filesize}'
+setenv update_fdt 'tftpboot ${loadaddr} ${board_name}/${soc}-colibri-${fdt_board}.dtb && ubi write ${loadaddr} dtb ${filesize}'
+setenv update_rootfs 'tftpboot ${loadaddr} ${board_name}/ubifs.img && ubi write ${loadaddr} rootfs ${filesize}'
+
+# Test which version of U-Boot we are currently running on
+setenv update 'mtdparts default && env default -f updlevel && if test $updlevel -lt 1; then; run update_uboot_old; else; run update_uboot && reset; fi'
+
+if itest.b *0x30360800 -lt 0x11; then
+echo &&
+echo 'NOTE: The U-Boot provided with this BSP version does not support the' &&
+echo 'early tapeout/stepping of i.MX 7 used on your module. You still can' &&
+echo 'update the kernel/device-tree/rootfs manually using: ' &&
+echo '# run prepare_ubi && run update_kernel && run update_fdt && run update_rootfs' &&
+echo && setenv update_uboot; setenv update_uboot_old; setenv update
+else
+echo 'enter "run update" to update the entire module'
+fi

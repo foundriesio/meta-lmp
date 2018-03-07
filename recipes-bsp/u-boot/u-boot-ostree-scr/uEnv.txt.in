@@ -1,0 +1,6 @@
+bootcmd_dtb=fatload mmc 0:1 ${fdt_addr_r} /${fdtfile}
+bootcmd_otenv=ext4load mmc 0:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}
+bootcmd_load_k=ext4load mmc 0:2 ${kernel_addr_r} "/boot"${kernel_image}
+bootcmd_load_r=ext4load mmc 0:2 ${ramdisk_addr_r} "/boot"${ramdisk_image}; setenv ramdisk_size ${filesize}
+bootcmd_run=@@KERNEL_BOOTCMD@@ ${kernel_addr_r} ${ramdisk_addr_r}:${ramdisk_size} ${fdt_addr_r}
+bootcmd=run bootcmd_dtb; run bootcmd_otenv; run bootcmd_load_k; run bootcmd_load_r; run bootcmd_run

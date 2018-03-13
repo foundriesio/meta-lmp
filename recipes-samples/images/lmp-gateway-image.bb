@@ -1,6 +1,6 @@
 SUMMARY = "Basic console-based gateway image"
 
-IMAGE_FEATURES += "package-management ssh-server-openssh"
+IMAGE_FEATURES += "ssh-server-openssh"
 IMAGE_FSTYPES_append_intel-corei7-64 = " wic.vmdk wic.vdi"
 
 LICENSE = "MIT"

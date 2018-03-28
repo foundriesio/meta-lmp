@@ -1,0 +1,60 @@
+From e0da19626fa777b08c7f0d536257da280eb8c368 Mon Sep 17 00:00:00 2001
+From: William Douglas <william.r.douglas@gmail.com>
+Date: Thu, 18 May 2017 22:24:09 +0000
+Subject: [PATCH] tmpfiles: Allow create symlink on directories
+
+Currently if tmpfiles is run with force on symlink creation but there already
+exists a directory at that location, the creation will fail. This change
+updates the behavior to remove the directory with rm_fr and then attempts to
+create the symlink again.
+---
+ man/tmpfiles.d.xml      | 15 ++++++++-------
+ src/tmpfiles/tmpfiles.c |  9 +++++++++
+ 2 files changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/man/tmpfiles.d.xml b/man/tmpfiles.d.xml
+index 555e9c2d56c..91434d7b7ab 100644
+--- a/man/tmpfiles.d.xml
++++ b/man/tmpfiles.d.xml
+@@ -273,13 +273,14 @@ L     /tmp/foobar -    -    -    -   /dev/null</programlisting>
+           <term><varname>L</varname></term>
+           <term><varname>L+</varname></term>
+           <listitem><para>Create a symlink if it does not exist
+-          yet. If suffixed with <varname>+</varname> and a file
+-          already exists where the symlink is to be created, it will
+-          be removed and be replaced by the symlink. If the argument
+-          is omitted, symlinks to files with the same name residing in
+-          the directory <filename>/usr/share/factory/</filename> are
+-          created. Note that permissions and ownership on symlinks
+-          are ignored.</para></listitem>
++          yet. If suffixed with <varname>+</varname> and a file or
++          directory already exists where the symlink is to be created,
++          it will be removed and be replaced by the symlink. If the
++          argument is omitted, symlinks to files with the same name
++          residing in the directory
++          <filename>/usr/share/factory/</filename> are created. Note
++          that permissions and ownership on symlinks are ignored.
++          </para></listitem>
+         </varlistentry>
+ 
+         <varlistentry>
+diff --git a/src/tmpfiles/tmpfiles.c b/src/tmpfiles/tmpfiles.c
+index 9419c99e28e..2ab0cd12701 100644
+--- a/src/tmpfiles/tmpfiles.c
++++ b/src/tmpfiles/tmpfiles.c
+@@ -1353,6 +1353,15 @@ static int create_item(Item *i) {
+                                         r = symlink_atomic(resolved, i->path);
+                                         mac_selinux_create_file_clear();
+ 
++                                        if (IN_SET(r, -EEXIST, -ENOTEMPTY)) {
++                                                r = rm_rf(i->path, REMOVE_ROOT|REMOVE_PHYSICAL);
++                                                if (r < 0)
++                                                        return log_error_errno(r, "rm -fr %s failed: %m", i->path);
++
++                                                mac_selinux_create_file_prepare(i->path, S_IFLNK);
++                                                r = symlink(resolved, i->path) < 0 ? -errno : 0;
++                                                mac_selinux_create_file_clear();
++                                        }
+                                         if (r < 0)
+                                                 return log_error_errno(r, "symlink(%s, %s) failed: %m", resolved, i->path);
+ 

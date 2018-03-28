@@ -1,0 +1,15 @@
+Also check for -EISDIR so the original directory can be removed.
+
+Index: git/src/tmpfiles/tmpfiles.c
+===================================================================
+--- git.orig/src/tmpfiles/tmpfiles.c
++++ git/src/tmpfiles/tmpfiles.c
+@@ -1361,7 +1361,7 @@ static int create_item(Item *i) {
+                                         r = symlink_atomic(resolved, i->path);
+                                         mac_selinux_create_file_clear();
+ 
+-                                        if (IN_SET(r, -EEXIST, -ENOTEMPTY)) {
++                                        if (IN_SET(r, -EISDIR, -EEXIST, -ENOTEMPTY)) {
+                                                 r = rm_rf(i->path, REMOVE_ROOT|REMOVE_PHYSICAL);
+                                                 if (r < 0)
+                                                         return log_error_errno(r, "rm -fr %s failed: %m", i->path);

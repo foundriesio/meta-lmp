@@ -2,6 +2,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append += " \
 	file://backport-tmpfiles_allow_create_symlink_on_directories.patch \
+	file://tmpfiles_check_for_eisdir.patch \
 "
 
 do_install_append() {

@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
+RDEPENDS_${PN}_remove_rpi = "rpi-u-boot-scr"
 
 # Backports from upstream
 SRC_URI_append_sota += " \

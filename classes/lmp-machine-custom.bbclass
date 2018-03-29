@@ -27,8 +27,16 @@ IMAGE_FSTYPES_remove_hikey = "wic.gz wic.bmap"
 RPI_USE_U_BOOT = "1"
 VC4DTBO_raspberrypi3-64 = "vc4-kms-v3d"
 IMAGE_FSTYPES_remove_rpi = " ext3 rpi-sdimg"
-IMAGE_BOOT_FILES_append_rpi = " uEnv.txt"
-KERNEL_IMAGETYPE_UBOOT_raspberrypi3-64 = "Image.gz"
+IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+KERNEL_IMAGETYPE_sota_raspberrypi3-64 = "Image.gz"
+## We don't want fitimage by default yet as it blocks overlay support
+KERNEL_CLASSES_remove_rpi = "kernel-fitimage"
+KERNEL_DEVICETREE_raspberrypi3-64_sota = "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2837-rpi-3-b.dtb \
+    overlays/i2c-rtc.dtbo overlays/rpi-ft5406.dtbo overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo \
+    overlays/pitft22.dtbo overlays/pitft28-resistive.dtbo overlays/pitft35-resistive.dtbo \
+    overlays/w1-gpio.dtbo overlays/w1-gpio-pullup.dtbo \
+"
+OSTREE_KERNEL_ARGS_sota_rpi = "root=LABEL=otaroot rootfstype=ext4"
 
 # Intel
 IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"

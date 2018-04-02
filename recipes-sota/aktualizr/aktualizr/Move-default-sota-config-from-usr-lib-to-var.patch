@@ -1,0 +1,42 @@
+From 95659a4676f0fb3cd0ca235632af7f0fd72e8d5c Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Fri, 23 Feb 2018 00:26:39 -0300
+Subject: [PATCH] Move default sota config from /usr/lib to /var
+
+Default to a writable path to allow runtime provisioning.
+
+Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
+---
+ src/aktualizr_info/main.cc  | 2 +-
+ src/implicit_writer/main.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/aktualizr_info/main.cc b/src/aktualizr_info/main.cc
+index 361add0c..38e6f554 100644
+--- a/src/aktualizr_info/main.cc
++++ b/src/aktualizr_info/main.cc
+@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
+       exit(EXIT_SUCCESS);
+     }
+ 
+-    std::string sota_config_file = "/usr/lib/sota/sota.toml";
++    std::string sota_config_file = "/var/sota/sota.toml";
+     if (vm.count("config") != 0) {
+       sota_config_file = vm["config"].as<std::string>();
+     } else if (boost::filesystem::exists("/tmp/aktualizr_config_path")) {
+diff --git a/src/implicit_writer/main.cc b/src/implicit_writer/main.cc
+index acac372f..b52a9525 100644
+--- a/src/implicit_writer/main.cc
++++ b/src/implicit_writer/main.cc
+@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
+ 
+   if (!no_root) {
+     boost::filesystem::path ca_path(prefix);
+-    config.import.tls_cacert_path = "/usr/lib/sota/root.crt";
++    config.import.tls_cacert_path = "/var/sota/root.crt";
+     ca_path /= config.import.tls_cacert_path;
+ 
+     std::string server_ca = Bootstrap::readServerCa(credentials_path);
+-- 
+2.16.2
+

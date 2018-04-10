@@ -1,0 +1,16 @@
+diff --git a/configs/am335x_boneblack_defconfig b/configs/am335x_boneblack_defconfig
+index 50093cd..caee543 100644
+--- a/configs/am335x_boneblack_defconfig
++++ b/configs/am335x_boneblack_defconfig
+@@ -39,6 +39,11 @@ CONFIG_USB_GADGET_MANUFACTURER="Texas Instruments"
+ CONFIG_USB_GADGET_VENDOR_NUM=0x0451
+ CONFIG_USB_GADGET_PRODUCT_NUM=0xd022
+ CONFIG_USB_ETHER=y
++CONFIG_USB_HOST_ETHER=y
++CONFIG_USB_ETHER_ASIX=y
++CONFIG_USB_ETHER_ASIX88179=y
++CONFIG_USB_ETHER_MCS7830=y
++CONFIG_USB_ETHER_SMSC95XX=y
+ CONFIG_USBNET_HOST_ADDR="de:ad:be:af:00:00"
+ CONFIG_LZO=y
+ CONFIG_OF_LIBFDT=y

@@ -3,6 +3,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
 RDEPENDS_${PN}_remove_rpi = "rpi-u-boot-scr"
 
+SRC_URI_append_beaglebone-yocto += " \
+    file://beaglebone-extend-usb-ether.patch \
+"
+
 # Backports from upstream
 SRC_URI_append_sota += " \
     file://0001-spmi-msm-display-the-PMIC-Arb-version-debug.patch  \

@@ -1,9 +1,10 @@
-diff -Naur /home/anton/lshw-old/src/Makefile lshw-B.02.16/src/Makefile
---- /home/anton/lshw-old/src/Makefile	2017-02-07 16:21:52.554738182 +0100
-+++ lshw-B.02.16/src/Makefile	2017-02-07 16:22:45.578588072 +0100
-@@ -25,9 +25,9 @@
- ifeq ($(SQLITE), 1)
- 	CXXFLAGS+= -DSQLITE $(shell pkg-config --cflags sqlite3)
+diff --git a/src/Makefile b/src/Makefile
+index 917bf6b..4766fcb 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -30,9 +30,9 @@ endif
+ ifeq ($(ZLIB), 1)
+ 	CXXFLAGS+= -DZLIB $(shell pkg-config --cflags zlib)
  endif
 -LDFLAGS=-L./core/ -g
 +LDEXTRAS=-L./core/ -g
@@ -12,17 +13,17 @@ diff -Naur /home/anton/lshw-old/src/Makefile lshw-B.02.16/src/Makefile
 +	LDEXTRAS+= -Wl,--as-needed
  endif
  LDSTATIC=-static
- LIBS=-llshw -lresolv
-@@ -37,7 +37,7 @@
+ LIBS+=-llshw -lresolv
+@@ -45,7 +45,7 @@ endif
  
  export CXXFLAGS
  export LIBS
 -export LDFLAGS
 +export LDEXTRAS
  
- DATAFILES = pci.ids usb.ids oui.txt manuf.txt
- 
-@@ -51,7 +51,7 @@
+ ifeq ($(ZLIB), 1)
+ DATAFILES = pci.ids.gz usb.ids.gz oui.txt.gz manuf.txt.gz pnp.ids.gz pnpid.txt.gz
+@@ -66,7 +66,7 @@ core:
  	+make -C core all
  
  $(PACKAGENAME): core $(PACKAGENAME).o
@@ -31,7 +32,7 @@ diff -Naur /home/anton/lshw-old/src/Makefile lshw-B.02.16/src/Makefile
  
  .PHONY: po
  po:
-@@ -69,7 +69,7 @@
+@@ -84,7 +84,7 @@ nologo:
  static: $(PACKAGENAME)-static
  
  $(PACKAGENAME)-static: core core/lib$(PACKAGENAME).a $(PACKAGENAME).o

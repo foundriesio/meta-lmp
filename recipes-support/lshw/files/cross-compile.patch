@@ -1,20 +1,18 @@
----
- src/Makefile      |    2 +-
- src/core/Makefile |    2 +-
- src/gui/Makefile  |    4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
+diff --git a/src/Makefile b/src/Makefile
+index 917bf6b..9a02d4f 100644
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -18,7 +18,7 @@ export MANDIR
- export DATADIR
+@@ -20,7 +20,7 @@ export DATADIR
  export SQLITE
+ export ZLIB
  
 -CXX?=c++
 +CXX?=$(CROSS_COMPILE)c++
  INCLUDES=-I./core/
- DEFINES=-DPREFIX=\"$(PREFIX)\" -DSBINDIR=\"$(SBINDIR)\" -DMANDIR=\"$(MANDIR)\" -DDATADIR=\"$(DATADIR)\"
+ DEFINES=-DPREFIX=\"$(PREFIX)\" -DSBINDIR=\"$(SBINDIR)\" -DMANDIR=\"$(MANDIR)\" -DDATADIR=\"$(DATADIR)\" -DVERSION=\"$(VERSION)\"
  CXXFLAGS=-g -Wall -g $(INCLUDES) $(DEFINES) $(RPM_OPT_FLAGS)
+diff --git a/src/core/Makefile b/src/core/Makefile
+index 884a963..fbf6027 100644
 --- a/src/core/Makefile
 +++ b/src/core/Makefile
 @@ -1,6 +1,6 @@
@@ -25,6 +23,8 @@
  INCLUDES=
  DEFINES=-DPREFIX=\"$(PREFIX)\" -DSBINDIR=\"$(SBINDIR)\" -DMANDIR=\"$(MANDIR)\" -DDATADIR=\"$(DATADIR)\"
  CXXFLAGS?=-g -Wall $(INCLUDES) $(DEFINES) $(RPM_OPT_FLAGS)
+diff --git a/src/gui/Makefile b/src/gui/Makefile
+index 2526c18..74be693 100644
 --- a/src/gui/Makefile
 +++ b/src/gui/Makefile
 @@ -1,7 +1,7 @@

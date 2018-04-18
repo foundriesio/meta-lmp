@@ -17,9 +17,6 @@ SRC_URI = "\
 # let's make sure we have a good image..
 REQUIRED_DISTRO_FEATURES = "pam systemd"
 
-# Make sure default kernel image is also installed in the rootfs
-IMAGE_INSTALL_append = " ${@ d.getVar("KERNEL_PACKAGE_NAME") or "kernel" }-image"
-
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
     96boards-tools \

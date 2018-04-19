@@ -1,0 +1,13 @@
+diff --git a/aktualizr.service b/aktualizr.service
+index 1c2e1df..96dbe8b 100644
+--- a/aktualizr.service
++++ b/aktualizr.service
+@@ -5,7 +5,7 @@ After=network.target network-online.target
+ Requires=network-online.target
+ 
+ [Service]
+-RestartSec=10
++RestartSec=180
+ Restart=always
+ EnvironmentFile=/usr/lib/sota/sota.env
+ EnvironmentFile=-/etc/sota/sota.env

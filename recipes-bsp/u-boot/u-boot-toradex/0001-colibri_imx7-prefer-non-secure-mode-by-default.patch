@@ -1,0 +1,43 @@
+From 87be2eecdf8a2463e52e4b8efec06cc9e2e2be0e Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Thu, 26 Apr 2018 20:45:37 -0300
+Subject: [PATCH] colibri_imx7: prefer non secure mode by default
+
+Uset can set secure mode by default by setting the bootm_boot_mode env
+variable to "sec" if desired.
+
+Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
+---
+ configs/colibri_imx7_defconfig      | 2 +-
+ configs/colibri_imx7_emmc_defconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configs/colibri_imx7_defconfig b/configs/colibri_imx7_defconfig
+index f5544c6..30e696b 100644
+--- a/configs/colibri_imx7_defconfig
++++ b/configs/colibri_imx7_defconfig
+@@ -2,7 +2,7 @@ CONFIG_ARM=y
+ CONFIG_ARCH_MX7=y
+ CONFIG_TARGET_COLIBRI_IMX7=y
+ CONFIG_TARGET_COLIBRI_IMX7_NAND=y
+-CONFIG_ARMV7_BOOT_SEC_DEFAULT=y
++# CONFIG_ARMV7_BOOT_SEC_DEFAULT is not set
+ CONFIG_IMX_RDC=y
+ CONFIG_IMX_BOOTAUX=y
+ CONFIG_VIDEO=y
+diff --git a/configs/colibri_imx7_emmc_defconfig b/configs/colibri_imx7_emmc_defconfig
+index db1de19..8c7182f 100644
+--- a/configs/colibri_imx7_emmc_defconfig
++++ b/configs/colibri_imx7_emmc_defconfig
+@@ -2,7 +2,7 @@ CONFIG_ARM=y
+ CONFIG_ARCH_MX7=y
+ CONFIG_TARGET_COLIBRI_IMX7=y
+ CONFIG_TARGET_COLIBRI_IMX7_EMMC=y
+-CONFIG_ARMV7_BOOT_SEC_DEFAULT=y
++# CONFIG_ARMV7_BOOT_SEC_DEFAULT is not set
+ CONFIG_IMX_RDC=y
+ CONFIG_IMX_BOOTAUX=y
+ CONFIG_VIDEO=y
+-- 
+2.7.4
+

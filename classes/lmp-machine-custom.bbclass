@@ -57,7 +57,11 @@ WKS_FILE_sota_cl-som-imx7 = "sdimage-imx7-spl-sota.wks"
 
 # cubox-i (hummingboard)
 OSTREE_KERNEL_ARGS_append_cubox-i = " console=tty1 console=ttymxc0,115200"
-KERNEL_DEVICETREE_append_cubox-i = " imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb"
+KERNEL_DEVICETREE_append_cubox-i = " \
+    imx6dl-hummingboard2-som-v15.dtb imx6q-hummingboard2-som-v15.dtb \
+    imx6dl-hummingboard2-emmc-som-v15.dtb imx6q-hummingboard2-emmc-som-v15.dtb \
+    imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb \
+"
 IMAGE_BOOT_FILES_append_cubox-i = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
 WKS_FILES_sota_cubox-i = "sdimage-imx6-spl-sota.wks"
 UBOOT_EXTLINUX_cubox-i = ""

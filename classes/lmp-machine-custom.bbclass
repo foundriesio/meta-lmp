@@ -31,7 +31,8 @@ IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_sota_raspberrypi3-64 = "Image.gz"
 ## We don't want fitimage by default yet as it blocks overlay support
 KERNEL_CLASSES_remove_rpi = "kernel-fitimage"
-KERNEL_DEVICETREE_raspberrypi3-64_sota = "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2837-rpi-3-b.dtb \
+KERNEL_DEVICETREE_raspberrypi3-64_sota = "\
+    broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2837-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb \
     overlays/i2c-rtc.dtbo overlays/rpi-ft5406.dtbo overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo \
     overlays/pitft22.dtbo overlays/pitft28-resistive.dtbo overlays/pitft35-resistive.dtbo \
     overlays/w1-gpio.dtbo overlays/w1-gpio-pullup.dtbo \

@@ -39,6 +39,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     aktualizr-host-tools \
     docker \
     bluez5-noinst-tools \
+    git \
     linux-firmware-ar3k \
     linux-firmware-ath9k \
     linux-firmware-ath10k \

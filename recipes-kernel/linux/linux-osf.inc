@@ -90,21 +90,6 @@ do_configure_prepend() {
     # Systemd
     kernel_configure_variable RT_GROUP_SCHED n
 
-    # root-over-nfs-over-usb-eth support. Limited, but should cover some cases
-    # Enable this by setting a proper CMDLINE_NFSROOT_USB.
-    if [ ! -z "${CMDLINE_NFSROOT_USB}" ]; then
-        oenote "Configuring the kernel for root-over-nfs-over-usb-eth with CMDLINE ${CMDLINE_NFSROOT_USB}"
-        kernel_configure_variable INET y
-        kernel_configure_variable IP_PNP y
-        kernel_configure_variable USB_GADGET y
-        kernel_configure_variable USB_GADGET_SELECTED y
-        kernel_configure_variable USB_ETH y
-        kernel_configure_variable NFS_FS y
-        kernel_configure_variable ROOT_NFS y
-        kernel_configure_variable ROOT_NFS y
-        kernel_configure_variable CMDLINE "\"${CMDLINE_NFSROOT_USB}\""
-    fi
-
     if [ ! -z "${KERNEL_INITRAMFS}" ]; then
         kernel_configure_variable BLK_DEV_INITRD y
         kernel_configure_variable INITRAMFS_SOURCE ""

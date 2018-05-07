@@ -1,7 +1,7 @@
 # Machine specific configuration
 
 # Machines that were tested and known to work
-COMPATIBLE_MACHINE = "(beaglebone-yocto|cl-som-imx7|colibri-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|rpi|stih410-b2260|intel-corei7-64)"
+COMPATIBLE_MACHINE = "(beaglebone-yocto|cl-som-imx7|colibri-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|rpi|stih410-b2260|intel-corei7-64|qemuriscv64|freedom-u540)"
 
 # Generic configs for ARM
 KBUILD_DEFCONFIG_aarch64 ?= "defconfig"
@@ -10,6 +10,12 @@ KBUILD_DEFCONFIG_armv7a ?= "multi_v7_defconfig"
 # Generic configs for X86
 KBUILD_DEFCONFIG_intel-corei7-64 ?= "x86_64_defconfig"
 SRC_URI_append_intel-corei7-64 += " file://qemu-guest.scc file://qemu-guest.cfg file://intel.scc file://intel.cfg"
+
+# Generic configs for RISC-V
+KBUILD_DEFCONFIG_riscv64 ?= "defconfig"
+DEPENDS_append_riscv64 = " libgcc"
+KERNEL_CC_append_riscv64 = " ${TOOLCHAIN_OPTIONS} ${SECURITY_NOPIE_CFLAGS}"
+KERNEL_LD_append_riscv64 = " -no-pie"
 
 # Beagle
 KBUILD_DEFCONFIG_beaglebone-yocto ?= "omap2plus_defconfig"

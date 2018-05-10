@@ -1,0 +1,35 @@
+From 259653c88ba844e881aeb8afd9e5c5505764888b Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Thu, 10 May 2018 19:07:14 -0300
+Subject: [PATCH] aktualizr-info: add support to report current image hash and
+ filename
+
+Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
+---
+ src/aktualizr_info/main.cc | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/aktualizr_info/main.cc b/src/aktualizr_info/main.cc
+index 7e0f9df4..37ddb6b5 100644
+--- a/src/aktualizr_info/main.cc
++++ b/src/aktualizr_info/main.cc
+@@ -85,6 +85,16 @@ int main(int argc, char **argv) {
+     std::cout << "Provisioned on server: " << (storage->loadEcuRegistered() ? "yes" : "no") << std::endl;
+     std::cout << "Fetched metadata: " << (has_metadata ? "yes" : "no") << std::endl;
+ 
++    std::vector<Uptane::Target> installed_versions;
++    std::string current_hash = storage->loadInstalledVersions(&installed_versions);
++    std::vector<Uptane::Target>::iterator it;
++    for (it = installed_versions.begin(); it != installed_versions.end(); it++) {
++      if (it->sha256Hash() == current_hash) {
++        std::cout << "Current image name: " << it->filename() << std::endl;
++        std::cout << "Current image hash: " << it->sha256Hash() << std::endl;
++      }
++    }
++
+     if (has_metadata) {
+       if (vm.count("images-root") != 0u) {
+         std::cout << "image root.json content:" << std::endl;
+-- 
+2.17.0
+

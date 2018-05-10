@@ -1,0 +1,26 @@
+From a4ec0b2252ab8998197f7ed2ea28b9fe81959d36 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Thu, 10 May 2018 13:57:31 -0300
+Subject: [PATCH] tmpfiles.d/var.conf: also create /var/lib/misc
+
+Used by dnsmasq.
+
+Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
+---
+ tmpfiles.d/var.conf.m4 | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tmpfiles.d/var.conf.m4 b/tmpfiles.d/var.conf.m4
+index 0e2c50966..b25d909cd 100644
+--- a/tmpfiles.d/var.conf.m4
++++ b/tmpfiles.d/var.conf.m4
+@@ -22,4 +22,6 @@ d /var/cache 0755 - - -
+ 
+ d /var/lib 0755 - - -
+ 
++d /var/lib/misc 0755 - - -
++
+ d /var/spool 0755 - - -
+-- 
+2.17.0
+

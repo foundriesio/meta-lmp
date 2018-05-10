@@ -2,6 +2,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append += " \
 	file://tmpfiles_check_for_eisdir.patch \
+	file://tmpfiles.d-var.conf-also-create-var-lib-misc.patch \
 "
 
 do_install_append() {

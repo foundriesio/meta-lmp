@@ -45,6 +45,13 @@ KERNEL_DEVICETREE_raspberrypi3-64_sota = "\
 "
 OSTREE_KERNEL_ARGS_sota_rpi = "root=LABEL=otaroot rootfstype=ext4"
 
+# RISC-V targets
+## QEMU target doesn't support complete disk images
+IMAGE_FSTYPES_remove_qemuriscv64 = "wic.gz wic.bmap"
+INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"
+KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
+RISCV_BBL_PAYLOAD_qemuriscv64 = "${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin"
+
 # Intel
 IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"
 OSTREE_KERNEL_ARGS_append_intel-corei7-64 = " console=ttyS0,115200"

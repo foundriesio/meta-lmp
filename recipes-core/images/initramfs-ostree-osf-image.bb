@@ -15,6 +15,9 @@ LICENSE = "MIT"
 IMAGE_FSTYPES = "${OSTREE_INITRAMFS_FSTYPES}"
 IMAGE_FSTYPES_remove = "wic wic.gz wic.bmap ext4 ext4.gz"
 
+# avoid circular dependencies
+EXTRA_IMAGEDEPENDS = ""
+
 inherit core-image
 
 IMAGE_ROOTFS_SIZE = "8192"

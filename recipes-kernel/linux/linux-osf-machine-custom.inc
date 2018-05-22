@@ -17,6 +17,9 @@ SRC_URI_append_riscv64 += " file://riscv.scc file://riscv.cfg"
 DEPENDS_append_riscv64 = " libgcc"
 KERNEL_CC_append_riscv64 = " ${TOOLCHAIN_OPTIONS} ${SECURITY_NOPIE_CFLAGS}"
 KERNEL_LD_append_riscv64 = " -no-pie"
+## Freedom U540
+SRC_URI_append_freedom-u540 += " file://freedom-u540.scc file://freedom-u540.cfg"
+CMDLINE_freedom-u540 = "earlyprintk root=/dev/mmcblk0p2 rootwait console=ttySI0"
 
 # Beagle
 KBUILD_DEFCONFIG_beaglebone-yocto ?= "omap2plus_defconfig"

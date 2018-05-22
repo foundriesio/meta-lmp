@@ -1,0 +1,4 @@
+define KFEATURE_DESCRIPTION "Features specific to HiFive Unleashed"
+define KFEATURE_COMPATIBILITY board
+
+kconf hardware freedom-u540.cfg

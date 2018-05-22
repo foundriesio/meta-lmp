@@ -13,6 +13,7 @@ SRC_URI_append_intel-corei7-64 += " file://qemu-guest.scc file://qemu-guest.cfg 
 
 # Generic configs for RISC-V
 KBUILD_DEFCONFIG_riscv64 ?= "defconfig"
+SRC_URI_append_riscv64 += " file://riscv.scc file://riscv.cfg"
 DEPENDS_append_riscv64 = " libgcc"
 KERNEL_CC_append_riscv64 = " ${TOOLCHAIN_OPTIONS} ${SECURITY_NOPIE_CFLAGS}"
 KERNEL_LD_append_riscv64 = " -no-pie"

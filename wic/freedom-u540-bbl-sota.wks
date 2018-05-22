@@ -1,0 +1,6 @@
+# short-description: Create OTA-enabled SD card image for RISC-V boards that depends on BBL
+
+part bbl --source rawcopy --sourceparams="file=bbl.bin" --ondisk mmcblk --align 1 --part-type 2e54b353-1271-4842-806f-e436d6af6985
+part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096
+
+bootloader --ptable gpt

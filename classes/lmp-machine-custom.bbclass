@@ -51,6 +51,11 @@ IMAGE_FSTYPES_remove_qemuriscv64 = "wic.gz wic.bmap"
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"
 KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
 RISCV_BBL_PAYLOAD_qemuriscv64 = "${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin"
+## Freedom U540 target doesn't yet support standard bootloaders (e.g. u-boot)
+INITRAMFS_IMAGE_BUNDLE_freedom-u540 = "1"
+KERNEL_INITRAMFS_freedom-u540 = '-initramfs'
+RISCV_BBL_PAYLOAD_freedom-u540 = "${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin"
+WKS_FILE_sota_freedom-u540 = "freedom-u540-bbl-sota.wks"
 
 # Intel
 IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"

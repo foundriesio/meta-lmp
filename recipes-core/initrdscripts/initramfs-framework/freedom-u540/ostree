@@ -1,0 +1,29 @@
+#!/bin/sh
+# Copyright (C) 2018 Open Source Foundries Ltd.
+# Licensed on MIT
+
+ostree_enabled() {
+	return 0
+}
+
+ostree_run() {
+	if [ -n "$ROOTFS_DIR" ]; then
+		# HACK: try to boot out of the default ostree target on targets
+		# without bootloader support (no ostree= cmdline argument)
+		if ! grep -q "ostree=" /proc/cmdline; then
+			info "Fetching OSTree target from $ROOTFS_DIR/boot/loader/entries"
+			ostree_entry="$ROOTFS_DIR/boot/loader/entries/ostree-lmp-0.conf"
+			if [ ! -f $ostree_entry ]; then
+				fatal "ERROR: Unable to find default OSTree LMP boot entry $ostree_entry"
+			fi
+			ostree_target=`grep "^options " $ostree_entry | sed -e "s/.*ostree=//g"`
+			cmdline=`cat /proc/cmdline`
+			echo "$cmdline ostree=$ostree_target" > /run/cmdline
+			mount --bind -o ro /run/cmdline /proc/cmdline
+		fi
+		info "Preparing OSTree root at '$ROOTFS_DIR'..."
+		/usr/lib/ostree/ostree-prepare-root $ROOTFS_DIR
+	else
+		debug "No rootfs has been set"
+	fi
+}

@@ -1,25 +1,8 @@
 SUMMARY = "Basic console-based gateway image"
 
+require lmp-image-common.inc
+
 IMAGE_FEATURES += "ssh-server-openssh"
-IMAGE_FSTYPES_append_intel-corei7-64 = " wic.vmdk wic.vdi"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/configs:"
-
-LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
-
-inherit core-image distro_features_check extrausers
-
-SRC_URI = "\
-    file://bt-6lowpan.network \
-    file://modules-6lowpan.conf \
-    file://sysctl-panic.conf \
-    file://path-sbin.sh \
-    file://sudoers \
-"
-
-# let's make sure we have a good image..
-REQUIRED_DISTRO_FEATURES = "pam systemd"
 
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
@@ -69,36 +52,15 @@ CORE_IMAGE_BASE_INSTALL += " \
 "
 
 fakeroot do_populate_rootfs_src () {
-    # Allow sudo group users to use sudo
-    install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/lmp
-
-    # Configs that are specific to this image
-    install -m 0644 ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}${exec_prefix}/lib/systemd/network/60-bt-6lowpan.network
-    install -m 0644 ${WORKDIR}/modules-6lowpan.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/modules-load.d/6lowpan.conf
-    install -m 0644 ${WORKDIR}/sysctl-panic.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/sysctl.d/60-panic.conf
-
     # Disable bluetooth service by default (allow to be contained in docker)
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service
-
-    # Useful for development
-    install -d ${IMAGE_ROOTFS}${sysconfdir}/profile.d
-    install -m 0644 ${WORKDIR}/path-sbin.sh ${IMAGE_ROOTFS}${sysconfdir}/profile.d/path-sbin.sh
-}
-
-IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "
-
-addtask rootfs after do_unpack
-
-python () {
-    # Ensure we run these usually noexec tasks
-    d.delVarFlag("do_fetch", "noexec")
-    d.delVarFlag("do_unpack", "noexec")
 }
 
 # docker pulls runc/containerd, which in turn recommend lxc unecessarily
 BAD_RECOMMENDATIONS_append = " lxc"
 
-EXTRA_USERS_PARAMS = "\
-useradd -P osf osf; \
-usermod -a -G docker,sudo,users,plugdev osf; \
+IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "
+
+EXTRA_USERS_PARAMS += "\
+usermod -a -G docker osf; \
 "

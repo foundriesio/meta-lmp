@@ -15,6 +15,7 @@ SRC_URI = "\
     file://modules-6lowpan.conf \
     file://sysctl-panic.conf \
     file://path-sbin.sh \
+    file://sudoers \
 "
 
 # let's make sure we have a good image..
@@ -69,7 +70,7 @@ CORE_IMAGE_BASE_INSTALL += " \
 
 fakeroot do_populate_rootfs_src () {
     # Allow sudo group users to use sudo
-    echo "%sudo ALL=(ALL) ALL" >> ${IMAGE_ROOTFS}/etc/sudoers
+    install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/lmp
 
     # Configs that are specific to this image
     install -m 0644 ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}${exec_prefix}/lib/systemd/network/60-bt-6lowpan.network

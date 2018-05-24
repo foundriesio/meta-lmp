@@ -70,10 +70,10 @@ fakeroot do_populate_rootfs_src () {
     # Allow sudo group users to use sudo
     echo "%sudo ALL=(ALL) ALL" >> ${IMAGE_ROOTFS}/etc/sudoers
 
-    # Local configs that are specific to this image
-    cp ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}/etc/systemd/network/
-    cp ${WORKDIR}/modules-6lowpan.conf ${IMAGE_ROOTFS}/etc/modules-load.d/
-    cp ${WORKDIR}/sysctl-panic.conf ${IMAGE_ROOTFS}/etc/sysctl.d/
+    # Configs that are specific to this image
+    install -m 0644 ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}${exec_prefix}/lib/systemd/network/60-bt-6lowpan.network
+    install -m 0644 ${WORKDIR}/modules-6lowpan.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/modules-load.d/6lowpan.conf
+    install -m 0644 ${WORKDIR}/sysctl-panic.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/sysctl.d/60-panic.conf
 
     # Disable bluetooth service by default (allow to be contained in docker)
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service

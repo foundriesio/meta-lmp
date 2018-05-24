@@ -14,6 +14,7 @@ SRC_URI = "\
     file://bt-6lowpan.network \
     file://modules-6lowpan.conf \
     file://sysctl-panic.conf \
+    file://path-sbin.sh \
 "
 
 # let's make sure we have a good image..
@@ -79,7 +80,8 @@ fakeroot do_populate_rootfs_src () {
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service
 
     # Useful for development
-    echo 'export PATH=$PATH:/sbin' >> ${IMAGE_ROOTFS}/home/osf/.bashrc
+    install -d ${IMAGE_ROOTFS}${sysconfdir}/profile.d
+    install -m 0644 ${WORKDIR}/path-sbin.sh ${IMAGE_ROOTFS}${sysconfdir}/profile.d/path-sbin.sh
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "

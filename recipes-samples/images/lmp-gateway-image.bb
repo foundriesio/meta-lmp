@@ -3,15 +3,17 @@ SUMMARY = "Basic console-based gateway image"
 IMAGE_FEATURES += "ssh-server-openssh"
 IMAGE_FSTYPES_append_intel-corei7-64 = " wic.vmdk wic.vdi"
 
+FILESEXTRAPATHS_prepend := "${THISDIR}/configs:"
+
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 inherit core-image distro_features_check extrausers
 
 SRC_URI = "\
-    file://25-bt-6lowpan.network \
-    file://modules-gateway.conf \
-    file://sysctl-gateway.conf \
+    file://bt-6lowpan.network \
+    file://modules-6lowpan.conf \
+    file://sysctl-panic.conf \
 "
 
 # let's make sure we have a good image..
@@ -69,9 +71,9 @@ fakeroot do_populate_rootfs_src () {
     echo "%sudo ALL=(ALL) ALL" >> ${IMAGE_ROOTFS}/etc/sudoers
 
     # Local configs that are specific to this image
-    cp ${WORKDIR}/25-bt-6lowpan.network ${IMAGE_ROOTFS}/etc/systemd/network/
-    cp ${WORKDIR}/modules-gateway.conf ${IMAGE_ROOTFS}/etc/modules-load.d/
-    cp ${WORKDIR}/sysctl-gateway.conf ${IMAGE_ROOTFS}/etc/sysctl.d/
+    cp ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}/etc/systemd/network/
+    cp ${WORKDIR}/modules-6lowpan.conf ${IMAGE_ROOTFS}/etc/modules-load.d/
+    cp ${WORKDIR}/sysctl-panic.conf ${IMAGE_ROOTFS}/etc/sysctl.d/
 
     # Disable bluetooth service by default (allow to be contained in docker)
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service

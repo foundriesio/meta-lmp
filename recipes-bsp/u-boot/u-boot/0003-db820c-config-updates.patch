@@ -1,0 +1,36 @@
+From 6beec0665e874e816e30b56fe95deb684d0a5df4 Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Tue, 16 Jan 2018 03:23:07 +0000
+Subject: [PATCH 3/3] db820c: config updates
+
+Enable LEDs, FAT write, and various DT functionality
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ configs/dragonboard820c_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/configs/dragonboard820c_defconfig b/configs/dragonboard820c_defconfig
+index ec4a5b9..36ad6d6 100644
+--- a/configs/dragonboard820c_defconfig
++++ b/configs/dragonboard820c_defconfig
+@@ -27,6 +27,8 @@ CONFIG_ENV_EXT4_DEVICE_AND_PART="0:1"
+ CONFIG_ENV_EXT4_FILE="/uboot.env"
+ CONFIG_CLK=y
+ CONFIG_PM8916_GPIO=y
++CONFIG_LED=y
++CONFIG_LED_GPIO=y
+ CONFIG_DM_MMC=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_MSM=y
+@@ -34,3 +36,7 @@ CONFIG_DM_PMIC=y
+ CONFIG_PMIC_PM8916=y
+ CONFIG_MSM_SERIAL=y
+ CONFIG_SPMI_MSM=y
++CONFIG_FAT_WRITE=y
++CONFIG_OF_LIBFDT_OVERLAY=y
++CONFIG_OF_CONTROL=y
++CONFIG_OF_SEPARATE=y
+-- 
+2.7.4
+

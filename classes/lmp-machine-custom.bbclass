@@ -17,7 +17,6 @@ WKS_FILES_sota_dragonboard-820c = "sdimage-sota.wks"
 
 # HiKey
 CMDLINE_remove_hikey = "quiet"
-PREFERRED_VERSION_grub_hikey = "git"
 OSTREE_BOOTLOADER_hikey = "grub"
 OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA3,115200n8 efi=noruntime"
 KERNEL_IMAGETYPE_hikey = "Image.gz"

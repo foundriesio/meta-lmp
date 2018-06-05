@@ -26,6 +26,10 @@ KERNEL_FEATURES_remove += " features/debug/printk.scc"
 # Always have a package to allow forcing package dependency
 ALLOW_EMPTY_${KERNEL_PACKAGE_NAME}-devicetree = "1"
 
+# Task kernel_configme requires bison-native to be available
+# Upstream added bison-native to build-deps but not for the required task
+do_kernel_configme[depends] += "bison-native:do_populate_sysroot"
+
 python __anonymous () {
     import bb
     devicetree = d.getVar('KERNEL_DEVICETREE', True) or ''

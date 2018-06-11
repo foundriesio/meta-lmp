@@ -2,7 +2,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append += " \
     file://Move-default-sota-config-from-usr-lib-to-var.patch \
-    file://sota_tools-always-set-cacerts-if-specified-by-the-us.patch \
     file://aktualizr-info-add-support-to-report-current-image-h.patch \
     file://increase-restartsec-service.patch;patchdir=.. \
 "

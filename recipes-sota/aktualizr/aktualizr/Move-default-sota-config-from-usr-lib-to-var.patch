@@ -1,4 +1,4 @@
-From 348530cdd3f73764502eedcd0f588808d9f4e932 Mon Sep 17 00:00:00 2001
+From 6c13cf7631324ffcea7096b5a632d39253825caa Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@opensourcefoundries.com>
 Date: Wed, 9 May 2018 15:21:21 -0300
 Subject: [PATCH] Make default config search for /var/sota by default
@@ -13,31 +13,31 @@ Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/implicit_writer/main.cc b/src/implicit_writer/main.cc
-index 9bf6ef37..153cf75e 100644
+index c7e41492..46971971 100644
 --- a/src/implicit_writer/main.cc
 +++ b/src/implicit_writer/main.cc
-@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
+@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
+   sink << "server = \"" << Bootstrap::readServerUrl(credentials_path) << "\"\n\n";
  
    if (!no_root) {
-     boost::filesystem::path ca_path(prefix);
--    config.import.tls_cacert_path = "/usr/lib/sota/root.crt";
-+    config.import.tls_cacert_path = "/var/sota/root.crt";
-     ca_path /= config.import.tls_cacert_path;
+-    std::string cacert_path = "/usr/lib/sota/root.crt";
++    std::string cacert_path = "/var/sota/root.crt";
+     sink << "[import]\n";
+     sink << "tls_cacert_path = \"" << cacert_path << "\"\n\n";
  
-     std::string server_ca = Bootstrap::readServerCa(credentials_path);
 diff --git a/src/libaktualizr/config/config.h b/src/libaktualizr/config/config.h
-index 681adba5..daaeb648 100644
+index c33c8d73..8eaeac53 100644
 --- a/src/libaktualizr/config/config.h
 +++ b/src/libaktualizr/config/config.h
-@@ -133,7 +133,7 @@ class Config {
-   TelemetryConfig telemetry;
+@@ -138,7 +138,7 @@ class Config : public BaseConfig {
+   void checkLegacyVersion();
+   void initLegacySecondaries();
  
-  private:
 -  std::vector<boost::filesystem::path> config_dirs_ = {"/usr/lib/sota/conf.d", "/etc/sota/conf.d/"};
 +  std::vector<boost::filesystem::path> config_dirs_ = {"/var/sota/sota.toml", "/usr/lib/sota/conf.d", "/etc/sota/conf.d/"};
-   void updateFromDirs(const std::vector<boost::filesystem::path>& configs);
-   void updateFromPropertyTree(const boost::property_tree::ptree& pt);
-   void updateFromToml(const boost::filesystem::path& filename);
+   bool loglevel_from_cmdline{false};
+ };
+ 
 -- 
-2.17.0
+2.17.1
 

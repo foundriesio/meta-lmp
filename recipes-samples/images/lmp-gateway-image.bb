@@ -32,6 +32,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     linux-firmware-ath10k \
     linux-firmware-qca \
     linux-firmware-wl18xx \
+    lmp-device-register \
     openssh-sftp-server \
     packagegroup-core-full-cmdline-utils \
     packagegroup-core-full-cmdline-extended \

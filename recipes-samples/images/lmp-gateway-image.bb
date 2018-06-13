@@ -20,6 +20,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-test optee-client", "", d)} \
     rsync \
     sshfs-fuse \
+    haveged \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \

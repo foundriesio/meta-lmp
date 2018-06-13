@@ -19,6 +19,21 @@ SRC_URI = "\
 # let's make sure we have a good image..
 REQUIRED_DISTRO_FEATURES = "pam systemd"
 
+# Base packages
+CORE_IMAGE_BASE_INSTALL += " \
+    96boards-tools \
+    aktualizr-host-tools \
+    haveged \
+    networkmanager \
+    sudo \
+"
+
+# OTA+ extras (OSF device provisioning)
+CORE_IMAGE_BASE_INSTALL += " \
+    lmp-device-register \
+    python3-requests \
+"
+
 fakeroot do_populate_rootfs_common_src () {
     # Allow sudo group users to use sudo
     install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/lmp

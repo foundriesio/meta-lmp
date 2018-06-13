@@ -6,7 +6,6 @@ IMAGE_FEATURES += "ssh-server-openssh"
 
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
-    96boards-tools \
     coreutils \
     cpufrequtils \
     ldd \
@@ -15,16 +14,13 @@ CORE_IMAGE_BASE_INSTALL += " \
     htop \
     iptables \
     kernel-modules \
-    networkmanager \
     networkmanager-nmtui \
     ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-test optee-client", "", d)} \
     rsync \
     sshfs-fuse \
-    haveged \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \
-    aktualizr-host-tools \
     docker \
     bluez5-noinst-tools \
     git \
@@ -33,7 +29,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     linux-firmware-ath10k \
     linux-firmware-qca \
     linux-firmware-wl18xx \
-    lmp-device-register \
     openssh-sftp-server \
     packagegroup-core-full-cmdline-utils \
     packagegroup-core-full-cmdline-extended \

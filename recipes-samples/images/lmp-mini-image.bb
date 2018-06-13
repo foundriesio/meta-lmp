@@ -14,6 +14,7 @@ CORE_IMAGE_BASE_INSTALL += " \
 
 # OTA+ extras (OSF device provisioning)
 CORE_IMAGE_BASE_INSTALL += " \
+    lmp-device-register \
     python3-requests \
 "
 

@@ -1,0 +1,56 @@
+From f982da29af4a31482a1f8c461ed90a785adc991c Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Mon, 18 Jun 2018 22:22:21 -0300
+Subject: [PATCH] libfdt: remove leading underscore from identifiers
+
+Avoid type definition conflicts with dtc upstream (>= 1.4.6) by removing
+leading underscore from header identifiers.
+
+Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
+---
+ include/libfdt.h     | 6 +++---
+ include/libfdt_env.h | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/include/libfdt.h b/include/libfdt.h
+index e2bc2e0..29d2b16 100644
+--- a/include/libfdt.h
++++ b/include/libfdt.h
+@@ -1,5 +1,5 @@
+-#ifndef _LIBFDT_H
+-#define _LIBFDT_H
++#ifndef LIBFDT_H
++#define LIBFDT_H
+ /*
+  * libfdt - Flat Device Tree manipulation
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+@@ -2134,4 +2134,4 @@ int fdt_next_region(const void *fdt,
+ int fdt_add_alias_regions(const void *fdt, struct fdt_region *region, int count,
+ 			  int max_regions, struct fdt_region_state *info);
+ 
+-#endif /* _LIBFDT_H */
++#endif /* LIBFDT_H */
+diff --git a/include/libfdt_env.h b/include/libfdt_env.h
+index 6c6845f..1fbcd0e 100644
+--- a/include/libfdt_env.h
++++ b/include/libfdt_env.h
+@@ -6,8 +6,8 @@
+  * SPDX-License-Identifier:	LGPL-2.1+
+  */
+ 
+-#ifndef _LIBFDT_ENV_H
+-#define _LIBFDT_ENV_H
++#ifndef LIBFDT_ENV_H
++#define LIBFDT_ENV_H
+ 
+ #include "compiler.h"
+ #include "linux/types.h"
+@@ -32,4 +32,4 @@ typedef __be64 fdt64_t;
+ /* adding a ramdisk needs 0x44 bytes in version 2008.10 */
+ #define FDT_RAMDISK_OVERHEAD	0x80
+ 
+-#endif /* _LIBFDT_ENV_H */
++#endif /* LIBFDT_ENV_H */
+-- 
+2.7.4
+

@@ -38,14 +38,14 @@ INHERIT += "image-buildinfo"
 BUILDHISTORY_COMMIT = "1"
 
 PREMIRRORS ??= "\
-     git://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
-     ftp://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
-     http://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
-     https://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
+     git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
+     ftp://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
+     http://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
+     https://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
 "
 
 MIRRORS =+ "\
-     ftp://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
-     http://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
-     https://.*/.* https://lmp-mirror.foundries.io/downloads/ \n \
+     ftp://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
+     http://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
+     https://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
 "

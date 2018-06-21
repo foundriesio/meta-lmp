@@ -51,7 +51,8 @@ KERNEL_EXTRA_ARGS_rpi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 SRC_URI_append_rpi += " file://rpi.scc file://rpi.cfg"
 
 ## Default cmdline
-CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 console=serial0,115200 rootwait"
+SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "console=serial0,115200", "", d)}"
+CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 ${SERIAL} rootwait"
 
 ## Deploy cmdline.txt
 do_deploy_append_rpi() {

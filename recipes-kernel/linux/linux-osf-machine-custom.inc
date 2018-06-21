@@ -51,7 +51,7 @@ KERNEL_EXTRA_ARGS_rpi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 SRC_URI_append_rpi += " file://rpi.scc file://rpi.cfg"
 
 ## Default cmdline
-CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"
+CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 console=serial0,115200 rootwait"
 
 ## Deploy cmdline.txt
 do_deploy_append_rpi() {

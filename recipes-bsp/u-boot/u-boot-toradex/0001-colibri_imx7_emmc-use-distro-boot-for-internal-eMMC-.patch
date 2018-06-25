@@ -1,0 +1,27 @@
+From 850c206bc27fbbaefd3c040366a75e3eaa269c2f Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 14 Jun 2018 14:44:54 +0200
+Subject: [PATCH] colibri_imx7_emmc: use distro boot for internal eMMC too
+
+This allows to use the same image on the eMMC or on a SD card.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ include/configs/colibri_imx7_emmc.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/configs/colibri_imx7_emmc.h b/include/configs/colibri_imx7_emmc.h
+index 54ffea49c8..aa6f8fc23e 100644
+--- a/include/configs/colibri_imx7_emmc.h
++++ b/include/configs/colibri_imx7_emmc.h
+@@ -110,6 +110,7 @@
+ 
+ #define BOOTENV_RUN_NET_USB_START ""
+ #define BOOT_TARGET_DEVICES(func) \
++	func(MMC, mmc, 0) \
+ 	func(MMC, mmc, 1) \
+ 	func(USB, usb, 0) \
+ 	func(DHCP, dhcp, na)
+-- 
+2.17.1
+

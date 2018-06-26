@@ -1,0 +1,30 @@
+From 48775c2d53581b323096273f15b2a6b0411aaf6e Mon Sep 17 00:00:00 2001
+From: Simon Hughes <simon.hughes@arm.com>
+Date: Fri, 22 Jun 2018 10:36:50 +0100
+Subject: [PATCH] IOTMBL-438: Fix optee_test adbg_run.c strncpy
+ -Werror=stringop-overflow=.
+
+The following provides more information on this commit:
+- The error is caused by using GCC 8.1.1.
+
+Signed-off-by: Simon Hughes <simon.hughes@arm.com>
+---
+ host/xtest/adbg/src/adbg_run.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/host/xtest/adbg/src/adbg_run.c b/host/xtest/adbg/src/adbg_run.c
+index 406e429..2739db5 100644
+--- a/host/xtest/adbg/src/adbg_run.c
++++ b/host/xtest/adbg/src/adbg_run.c
+@@ -100,7 +100,7 @@ int Do_ADBG_AppendToSuite(
+ 		snprintf(p, size, "%s+%s", Dest_p->SuiteID_p,
+ 			 Source_p->SuiteID_p);
+ 	else
+-		strncpy(p, Source_p->SuiteID_p, size);
++		snprintf(p, size, "%s", Source_p->SuiteID_p);
+ 	free((void *)Dest_p->SuiteID_p);
+ 	Dest_p->SuiteID_p = p;
+ 
+-- 
+2.7.4
+

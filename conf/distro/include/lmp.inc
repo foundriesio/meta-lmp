@@ -4,9 +4,9 @@ DISTRO_VERSION = "2.5"
 SDK_NAME_PREFIX = "${DISTRO}"
 SDK_VERSION = "${DISTRO_VERSION}"
 
-MAINTAINER = "OSF Support <support@opensourcefoundries.com>"
+MAINTAINER = "LMP Support <support@foundries.io>"
 
-TARGET_VENDOR = "-osf"
+TARGET_VENDOR = "-lmp"
 
 TCLIBCAPPEND = ""
 

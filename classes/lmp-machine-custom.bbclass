@@ -1,4 +1,4 @@
-# OSF LMP specific configuration
+# LMP specific configuration
 
 # Beaglebone
 OSTREE_KERNEL_ARGS_append_beaglebone-yocto = " console=ttyO0,115200n8"

@@ -1,4 +1,4 @@
-Meta-OSF
+Meta-LMP
 ================================
 
-Open Source Foundries OpenEmbedded/Yocto Project development layer.
+Linux microPlatform OpenEmbedded/Yocto Project development layer.

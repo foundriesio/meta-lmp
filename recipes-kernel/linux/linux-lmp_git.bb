@@ -10,5 +10,5 @@ SRC_URI = "git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}linux.git;protocol=h
            file://distro.cfg \
 "
 
-require linux-osf.inc
-require linux-osf-machine-custom.inc
+require linux-lmp.inc
+require linux-lmp-machine-custom.inc

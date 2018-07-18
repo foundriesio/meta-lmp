@@ -1,4 +1,4 @@
-DESCRIPTION = "OSF OSTree initramfs image"
+DESCRIPTION = "Linux microPlatform OSTree initramfs image"
 
 PACKAGE_INSTALL = "initramfs-framework-base initramfs-module-udev initramfs-module-rootfs initramfs-module-debug initramfs-module-ostree ${VIRTUAL-RUNTIME_base-utils} udev base-passwd ${ROOTFS_BOOTSTRAP_INSTALL}"
 
@@ -7,7 +7,7 @@ SYSTEMD_DEFAULT_TARGET = "initrd.target"
 # Do not pollute the initrd image with rootfs features
 IMAGE_FEATURES = ""
 
-export IMAGE_BASENAME = "initramfs-ostree-osf-image"
+export IMAGE_BASENAME = "initramfs-ostree-lmp-image"
 IMAGE_LINGUAS = ""
 
 LICENSE = "MIT"

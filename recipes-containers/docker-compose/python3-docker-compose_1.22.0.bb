@@ -5,8 +5,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=435b266b3899aa8a959f17d41c56def8"
 
 inherit pypi setuptools3
 
-SRC_URI[md5sum] = "de7ef160032e6b211736c921c0a01e35"
-SRC_URI[sha256sum] = "d52412bf870c7a48ebb08cb1d5b29de43fb4be1a3cdc3746aa4bfe3eba6d3938"
+SRC_URI[md5sum] = "2c6030d4f7267a583a16debfd493e4a7"
+SRC_URI[sha256sum] = "915cdd0ea7aff349d27a8e0585124ac38695635201770a35612837b25e234677"
+
+SRC_URI_append = " file://support-newer-version-of-requests.patch"
 
 RDEPENDS_${PN} = "\
   ${PYTHON_PN}-cached-property \

@@ -1,0 +1,37 @@
+From 88d88d1998ea94c465cd370c4e8e06b64d34e707 Mon Sep 17 00:00:00 2001
+From: Ofek Lev <ofekmeister@gmail.com>
+Date: Wed, 18 Jul 2018 22:22:45 -0400
+Subject: [PATCH] support newer minor version of requests
+
+Signed-off-by: Ofek Lev <ofekmeister@gmail.com>
+---
+ requirements.txt | 2 +-
+ setup.py         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/requirements.txt b/requirements.txt
+index a3d6e02d6..96a98417e 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -16,7 +16,7 @@ pypiwin32==219; sys_platform == 'win32' and python_version < '3.6'
+ pypiwin32==220; sys_platform == 'win32' and python_version >= '3.6'
+ PySocks==1.6.7
+ PyYAML==3.12
+-requests==2.18.4
++requests==2.19.1
+ six==1.10.0
+ texttable==0.9.1
+ urllib3==1.21.1
+diff --git a/setup.py b/setup.py
+index e0a26b0ec..213f66625 100644
+--- a/setup.py
++++ b/setup.py
+@@ -33,7 +33,7 @@ def find_version(*file_paths):
+     'cached-property >= 1.2.0, < 2',
+     'docopt >= 0.6.1, < 0.7',
+     'PyYAML >= 3.10, < 4',
+-    'requests >= 2.6.1, != 2.11.0, != 2.12.2, != 2.18.0, < 2.19',
++    'requests >= 2.6.1, != 2.11.0, != 2.12.2, != 2.18.0, < 2.20',
+     'texttable >= 0.9.0, < 0.10',
+     'websocket-client >= 0.32.0, < 1.0',
+     'docker >= 3.4.1, < 4.0',

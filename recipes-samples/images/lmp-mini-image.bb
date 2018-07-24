@@ -7,5 +7,4 @@ IMAGE_FEATURES += "ssh-server-dropbear"
 # Extras (for development)
 CORE_IMAGE_BASE_INSTALL += " \
     bash \
-    git \
 "

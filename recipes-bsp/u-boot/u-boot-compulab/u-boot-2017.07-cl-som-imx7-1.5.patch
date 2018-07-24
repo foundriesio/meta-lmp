@@ -4,13 +4,13 @@
  arch/arm/cpu/armv7/mx7/Kconfig                    |  10 +
  arch/arm/cpu/armv7/mx7/Makefile                   |   2 +-
  arch/arm/cpu/armv7/mx7/clock.c                    |  10 +-
- arch/arm/cpu/armv7/mx7/ddr.c                      | 201 +++++++
+ arch/arm/cpu/armv7/mx7/ddr.c                      | 229 ++++++++
  arch/arm/imx-common/spl.c                         |  23 +-
  arch/arm/include/asm/arch-mx6/clock.h             |   2 +-
  arch/arm/include/asm/arch-mx7/clock.h             |   2 +-
  arch/arm/include/asm/arch-mx7/crm_regs.h          |  51 +-
  arch/arm/include/asm/arch-mx7/imx-regs.h          |   2 +
- arch/arm/include/asm/arch-mx7/mx7-ddr.h           | 155 +++++
+ arch/arm/include/asm/arch-mx7/mx7-ddr.h           | 168 ++++++
  arch/arm/include/asm/arch-mx7/sys_proto.h         |   1 +
  arch/arm/include/asm/arch-mxs/clock.h             |   2 +-
  arch/arm/include/asm/imx-common/regs-bch.h        |   6 +-
@@ -20,20 +20,20 @@
  board/compulab/cl-som-imx7/Kconfig                |  28 +
  board/compulab/cl-som-imx7/MAINTAINERS            |   6 +
  board/compulab/cl-som-imx7/Makefile               |  18 +
- board/compulab/cl-som-imx7/cl-som-imx7.c          | 689 ++++++++++++++++++++++
+ board/compulab/cl-som-imx7/cl-som-imx7.c          | 664 ++++++++++++++++++++++
  board/compulab/cl-som-imx7/common.c               |  46 ++
- board/compulab/cl-som-imx7/common.h               |  58 ++
- board/compulab/cl-som-imx7/display.c              | 564 ++++++++++++++++++
- board/compulab/cl-som-imx7/mux.c                  | 241 ++++++++
- board/compulab/cl-som-imx7/spl.c                  | 208 +++++++
+ board/compulab/cl-som-imx7/common.h               |  69 +++
+ board/compulab/cl-som-imx7/display.c              | 567 ++++++++++++++++++
+ board/compulab/cl-som-imx7/mux.c                  | 276 +++++++++
+ board/compulab/cl-som-imx7/spl.c                  | 240 ++++++++
  board/compulab/cm_fx6/cm_fx6.c                    |   1 +
  board/compulab/cm_t335/cm_t335.c                  |   1 +
  board/compulab/cm_t35/cm_t35.c                    |   1 +
  board/compulab/cm_t3517/cm_t3517.c                |   1 +
  board/compulab/cm_t54/cm_t54.c                    |   1 +
  board/compulab/common/common.c                    | 204 ++++++-
- board/compulab/common/common.h                    |  32 +
- board/compulab/common/eeprom.c                    | 224 ++++---
+ board/compulab/common/common.h                    |  32 ++
+ board/compulab/common/eeprom.c                    | 224 +++++---
  board/compulab/common/eeprom.h                    |   5 +
  board/corscience/tricorder/tricorder-eeprom.c     |   4 +-
  board/freescale/mpc8323erdb/mpc8323erdb.c         |   2 +-
@@ -54,23 +54,23 @@
  common/eeprom/eeprom_field.c                      | 116 +++-
  common/eeprom/eeprom_layout.c                     |  58 +-
  common/env_eeprom.c                               |   4 +-
- configs/cl-som-imx7_defconfig                     |  71 +++
+ configs/cl-som-imx7_defconfig                     |  68 +++
  drivers/mtd/nand/mxs_nand.c                       | 218 +++++--
  drivers/net/fec_mxc.c                             |   7 +-
  drivers/usb/host/ehci-mx6.c                       |   9 +
  drivers/video/mxsfb.c                             |   5 +-
  include/common.h                                  |  10 +-
- include/configs/cl-som-imx7.h                     | 254 ++++++++
+ include/configs/cl-som-imx7.h                     | 261 +++++++++
  include/configs/imx7_spl.h                        |  67 +++
  include/configs/tam3517-common.h                  |   2 +-
  include/eeprom_field.h                            |  45 +-
  include/eeprom_layout.h                           |   2 +
  include/netdev.h                                  |   3 +-
  tools/logos/compulab.bmp                          | Bin 31810 -> 46978 bytes
- 69 files changed, 3511 insertions(+), 259 deletions(-)
+ 69 files changed, 3612 insertions(+), 259 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 119ad49..5ee9180 100644
+index 119ad49eec..14fea5b553 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -5,7 +5,7 @@
@@ -78,12 +78,12 @@ index 119ad49..5ee9180 100644
  PATCHLEVEL = 07
  SUBLEVEL =
 -EXTRAVERSION =
-+EXTRAVERSION = -cl-som-imx7-1.1
++EXTRAVERSION = -cl-som-imx7-1.5
  NAME =
  
  # *DOCUMENTATION*
 diff --git a/arch/arm/cpu/arm926ejs/mxs/clock.c b/arch/arm/cpu/arm926ejs/mxs/clock.c
-index b552e43..cb1ba00 100644
+index b552e4382c..cb1ba00f8d 100644
 --- a/arch/arm/cpu/arm926ejs/mxs/clock.c
 +++ b/arch/arm/cpu/arm926ejs/mxs/clock.c
 @@ -309,7 +309,7 @@ void mxs_set_ssp_busclock(unsigned int bus, uint32_t freq)
@@ -113,7 +113,7 @@ index b552e43..cb1ba00 100644
  
  uint32_t mxc_get_clock(enum mxc_clock clk)
 diff --git a/arch/arm/cpu/armv7/mx6/clock.c b/arch/arm/cpu/armv7/mx6/clock.c
-index 84bc213..e9ead5c 100644
+index 84bc2134fe..e9ead5cd66 100644
 --- a/arch/arm/cpu/armv7/mx6/clock.c
 +++ b/arch/arm/cpu/armv7/mx6/clock.c
 @@ -615,7 +615,7 @@ static int enable_pll_video(u32 pll_div, u32 pll_num, u32 pll_denom,
@@ -198,7 +198,7 @@ index 84bc213..e9ead5c 100644
  
  int enable_lcdif_clock(u32 base_addr, bool enable)
 diff --git a/arch/arm/cpu/armv7/mx7/Kconfig b/arch/arm/cpu/armv7/mx7/Kconfig
-index aea8526..19e52b0 100644
+index aea85265ef..19e52b0491 100644
 --- a/arch/arm/cpu/armv7/mx7/Kconfig
 +++ b/arch/arm/cpu/armv7/mx7/Kconfig
 @@ -18,6 +18,15 @@ choice
@@ -226,7 +226,7 @@ index aea8526..19e52b0 100644
  source "board/technexion/pico-imx7d/Kconfig"
  source "board/toradex/colibri_imx7/Kconfig"
 diff --git a/arch/arm/cpu/armv7/mx7/Makefile b/arch/arm/cpu/armv7/mx7/Makefile
-index d21f87f..ce289c1 100644
+index d21f87f18c..ce289c1415 100644
 --- a/arch/arm/cpu/armv7/mx7/Makefile
 +++ b/arch/arm/cpu/armv7/mx7/Makefile
 @@ -5,7 +5,7 @@
@@ -239,7 +239,7 @@ index d21f87f..ce289c1 100644
  ifdef CONFIG_ARMV7_PSCI
  obj-y  += psci-mx7.o psci.o
 diff --git a/arch/arm/cpu/armv7/mx7/clock.c b/arch/arm/cpu/armv7/mx7/clock.c
-index 2cfde46..0bef0ae 100644
+index 2cfde46a55..0bef0ae847 100644
 --- a/arch/arm/cpu/armv7/mx7/clock.c
 +++ b/arch/arm/cpu/armv7/mx7/clock.c
 @@ -889,7 +889,7 @@ int set_clk_nand(void)
@@ -288,10 +288,10 @@ index 2cfde46..0bef0ae 100644
  #ifdef CONFIG_FEC_MXC
 diff --git a/arch/arm/cpu/armv7/mx7/ddr.c b/arch/arm/cpu/armv7/mx7/ddr.c
 new file mode 100644
-index 0000000..801d81e
+index 0000000000..b3702b3bae
 --- /dev/null
 +++ b/arch/arm/cpu/armv7/mx7/ddr.c
-@@ -0,0 +1,201 @@
+@@ -0,0 +1,229 @@
 +/*
 + * DDR controller configuration for the i.MX7 architecture
 + *
@@ -309,6 +309,11 @@ index 0000000..801d81e
 +#include <asm/arch/mx7-ddr.h>
 +#include <common.h>
 +
++#define POLLING_COUNT_MAX 1000
++/* Recommended DDR PHY calibration value */
++#define CTRL_ZQ_CLK_DIV_VAL (0x7 & ZQ_CON2_CTRL_ZQ_CLK_DIV_MASK)
++#define DDR_PHY_CTRL_WAKE_UP_VAL 0xf
++
 +/*
 + * Routine: mx7_dram_cfg
 + * Description: DDR controller configuration
@@ -316,12 +321,10 @@ index 0000000..801d81e
 + * @ddrc_regs_val: DDRC registers value
 + * @ddrc_mp_val: DDRC_MP registers value
 + * @ddr_phy_regs_val: DDR_PHY registers value
-+ * @calib_param: calibration parameters
-+ *
++ * @return: 0 on success, 1 otherwise
 + */
-+void mx7_dram_cfg(struct ddrc *ddrc_regs_val, struct ddrc_mp *ddrc_mp_val,
-+		  struct ddr_phy *ddr_phy_regs_val,
-+		  struct mx7_calibration *calib_param)
++int mx7_dram_cfg(struct ddrc *ddrc_regs_val, struct ddrc_mp *ddrc_mp_val,
++		 struct ddr_phy *ddr_phy_regs_val)
 +{
 +	struct src *const src_regs = (struct src *)SRC_BASE_ADDR;
 +	struct ddrc *const ddrc_regs = (struct ddrc *)DDRC_IPS_BASE_ADDR;
@@ -330,7 +333,8 @@ index 0000000..801d81e
 +		(struct ddr_phy *)DDRPHY_IPS_BASE_ADDR;
 +	struct iomuxc_gpr_base_regs *const iomuxc_gpr_regs =
 +		(struct iomuxc_gpr_base_regs *)IOMUXC_GPR_BASE_ADDR;
-+	int i;
++	u32 reg_val;
++	int polling_count = 0;
 +
 +	/* Assert DDR Controller preset and DDR PHY reset */
 +	writel(SRC_DDRC_RCR_DDRC_CORE_RST_MASK, &src_regs->ddrc_rcr);
@@ -386,15 +390,39 @@ index 0000000..801d81e
 +	writel(ddr_phy_regs_val->offset_lp_con0, &ddr_phy_regs->offset_lp_con0);
 +
 +	/* calibration */
-+	for (i = 0; i < calib_param->num_val; i++)
-+		writel(calib_param->values[i], &ddr_phy_regs->zq_con0);
++	clrbits_le32(&ddr_phy_regs->zq_con0, ZQ_CON0_ZQ_MANUAL_STR_MASK);
++	clrbits_le32(&ddr_phy_regs->zq_con0, ZQ_CON0_ZQ_CLK_DIV_EN_MASK);
++	writel(CTRL_ZQ_CLK_DIV_VAL, &ddr_phy_regs->zq_con2);
++	setbits_le32(&ddr_phy_regs->zq_con0, ZQ_CON0_ZQ_CLK_DIV_EN_MASK);
++	reg_val = readl(&ddr_phy_regs->zq_con0);
++	reg_val &= ~ZQ_CON0_ZQ_MANUAL_MODE_MASK;
++	reg_val |= ZQ_CON0_ZQ_MANUAL_MODE_LONG_CALIB;
++	writel(reg_val, &ddr_phy_regs->zq_con0);
++	setbits_le32(&ddr_phy_regs->zq_con0, ZQ_CON0_ZQ_MANUAL_STR_MASK);
++	while (!(readl(&ddr_phy_regs->zq_con1) & ZQ_CON1_ZQ_DONE_MASK)) {
++		udelay(1);
++		if (++polling_count > POLLING_COUNT_MAX)
++			return 1;
++	}
++	clrbits_le32(&ddr_phy_regs->zq_con0, ZQ_CON0_ZQ_MANUAL_STR_MASK);
++	clrbits_le32(&ddr_phy_regs->zq_con0, ZQ_CON0_ZQ_CLK_DIV_EN_MASK);
 +
 +	/* Wake_up DDR PHY */
 +	HW_CCM_CCGR_WR(CCGR_IDX_DDR, CCM_CLK_ON_N_N);
-+	writel(IOMUXC_GPR_GPR8_ddr_phy_ctrl_wake_up(0xf) |
++	writel(IOMUXC_GPR_GPR8_ddr_phy_ctrl_wake_up(DDR_PHY_CTRL_WAKE_UP_VAL) |
 +	       IOMUXC_GPR_GPR8_ddr_phy_dfi_init_start_MASK,
 +	       &iomuxc_gpr_regs->gpr[8]);
 +	HW_CCM_CCGR_WR(CCGR_IDX_DDR, CCM_CLK_ON_R_W);
++
++	/* Validation of DDRC normal operation mode */
++	polling_count = 0;
++	while ((readl(&ddrc_regs->stat) & STAT_OPERATING_MODE_MASK) !=
++	       STAT_OPERATING_MODE_NORMAL) {
++		udelay(1);
++		if (++polling_count > POLLING_COUNT_MAX)
++			return 1;
++	}
++	return 0;
 +}
 +
 +/*
@@ -494,7 +522,7 @@ index 0000000..801d81e
 +	return 1 << bits;
 +}
 diff --git a/arch/arm/imx-common/spl.c b/arch/arm/imx-common/spl.c
-index f392941..e470868 100644
+index f392941f03..e470868290 100644
 --- a/arch/arm/imx-common/spl.c
 +++ b/arch/arm/imx-common/spl.c
 @@ -14,6 +14,7 @@
@@ -535,7 +563,7 @@ index f392941..e470868 100644
  #if defined(CONFIG_SPL_MMC_SUPPORT)
  /* called from spl_mmc to see type of boot mode for storage (RAW or FAT) */
 diff --git a/arch/arm/include/asm/arch-mx6/clock.h b/arch/arm/include/asm/arch-mx6/clock.h
-index 2d9c45e..c334564 100644
+index 2d9c45e255..c334564068 100644
 --- a/arch/arm/include/asm/arch-mx6/clock.h
 +++ b/arch/arm/include/asm/arch-mx6/clock.h
 @@ -77,7 +77,7 @@ void enable_enet_clk(unsigned char enable);
@@ -548,7 +576,7 @@ index 2d9c45e..c334564 100644
  void enable_eim_clk(unsigned char enable);
  #endif /* __ASM_ARCH_CLOCK_H */
 diff --git a/arch/arm/include/asm/arch-mx7/clock.h b/arch/arm/include/asm/arch-mx7/clock.h
-index 688d236..6835cd8 100644
+index 688d2361df..6835cd8a28 100644
 --- a/arch/arm/include/asm/arch-mx7/clock.h
 +++ b/arch/arm/include/asm/arch-mx7/clock.h
 @@ -343,6 +343,6 @@ void enable_usboh3_clk(unsigned char enable);
@@ -560,7 +588,7 @@ index 688d236..6835cd8 100644
  void enable_thermal_clk(void);
  #endif
 diff --git a/arch/arm/include/asm/arch-mx7/crm_regs.h b/arch/arm/include/asm/arch-mx7/crm_regs.h
-index d65d4d9..611190e 100644
+index d65d4d9daf..611190eee7 100644
 --- a/arch/arm/include/asm/arch-mx7/crm_regs.h
 +++ b/arch/arm/include/asm/arch-mx7/crm_regs.h
 @@ -2000,29 +2000,29 @@ struct mxc_ccm_anatop_reg {
@@ -629,7 +657,7 @@ index d65d4d9..611190e 100644
  #define CCM_ROOT_TGT_POST_DIV_SHIFT	0
  #define CCM_ROOT_TGT_PRE_DIV_SHIFT	15
 diff --git a/arch/arm/include/asm/arch-mx7/imx-regs.h b/arch/arm/include/asm/arch-mx7/imx-regs.h
-index d33be31..1443dd2 100644
+index d33be313c6..1443dd2e90 100644
 --- a/arch/arm/include/asm/arch-mx7/imx-regs.h
 +++ b/arch/arm/include/asm/arch-mx7/imx-regs.h
 @@ -268,6 +268,8 @@ struct src {
@@ -643,10 +671,10 @@ index d33be31..1443dd2 100644
  #define IOMUXC_GPR_GPR0_DMAREQ_MUX_SEL0_MASK     0x1u
 diff --git a/arch/arm/include/asm/arch-mx7/mx7-ddr.h b/arch/arm/include/asm/arch-mx7/mx7-ddr.h
 new file mode 100644
-index 0000000..d2f4eef
+index 0000000000..f6588b9dda
 --- /dev/null
 +++ b/arch/arm/include/asm/arch-mx7/mx7-ddr.h
-@@ -0,0 +1,155 @@
+@@ -0,0 +1,168 @@
 +/*
 + * DDR controller registers of the i.MX7 architecture
 + *
@@ -663,7 +691,8 @@ index 0000000..d2f4eef
 +/* DDRC Registers (DDRC_IPS_BASE_ADDR) */
 +struct ddrc {
 +	u32 mstr;		/* 0x0000 */
-+	u32 reserved1[0x18];
++	u32 stat;		/* 0x0004 */
++	u32 reserved1[0x17];
 +	u32 rfshtmg;		/* 0x0064 */
 +	u32 reserved2[0x1a];
 +	u32 init0;		/* 0x00d0 */
@@ -710,6 +739,10 @@ index 0000000..d2f4eef
 +#define MSTR_DATA_BUS_WIDTH_SHIFT	12
 +#define MSTR_DATA_ACTIVE_RANKS_MASK	0xf << 24
 +#define MSTR_DATA_ACTIVE_RANKS_SHIFT	24
++/* DDRC_STAT fields */
++#define STAT_OPERATING_MODE_MASK	0x3 << 0
++#define STAT_OPERATING_MODE_SHIFT	0
++#define STAT_OPERATING_MODE_NORMAL	0x1 << 0
 +/* DDRC_ADDRMAP1 fields */
 +#define ADDRMAP1_BANK_B0_MASK		0x1f << 0
 +#define ADDRMAP1_BANK_B0_SHIFT		0
@@ -786,24 +819,32 @@ index 0000000..d2f4eef
 +	u32 mdll_con0;		/* 0x00b0 */
 +	u32 reserved8[0x03];
 +	u32 zq_con0;		/* 0x00c0 */
++	u32 zq_con1;            /* 0x00c4 */
++	u32 zq_con2;            /* 0x00c8 */
 +};
 +
 +#define DDR_PHY_CMD_SDLL_CON0_CTRL_RESYNC_MASK (1 << 24)
++/* DDR_PHY_ZQ_CON0 */
++#define ZQ_CON0_ZQ_MANUAL_STR_MASK 0x1 << 1
++#define ZQ_CON0_ZQ_MANUAL_STR_SHIFT 1
++#define ZQ_CON0_ZQ_MANUAL_MODE_MASK 0x3 << 2
++#define ZQ_CON0_ZQ_MANUAL_MODE_SHIFT 2
++#define ZQ_CON0_ZQ_MANUAL_MODE_LONG_CALIB 0x1 << 2
++#define ZQ_CON0_ZQ_CLK_DIV_EN_MASK 1 << 18
++#define ZQ_CON0_ZQ_CLK_DIV_EN_SHIFT 18
++/* DDR_PHY_ZQ_CON1 */
++#define ZQ_CON1_ZQ_DONE_MASK 0x1 << 0
++#define ZQ_CON1_ZQ_DONE_SHIFT 0
++/* DDR_PHY_ZQ_CON2 */
++#define ZQ_CON2_CTRL_ZQ_CLK_DIV_MASK 0xffff << 0
++#define ZQ_CON2_CTRL_ZQ_CLK_DIV_SHIFT 0
 +
-+#define MX7_CAL_VAL_MAX 5
-+/* Calibration parameters */
-+struct mx7_calibration {
-+	int num_val;			/* Number of calibration values */
-+	u32 values[MX7_CAL_VAL_MAX];	/* calibration values */
-+};
-+
-+void mx7_dram_cfg(struct ddrc *ddrc_regs_val, struct ddrc_mp *ddrc_mp_val,
-+		  struct ddr_phy *ddr_phy_regs_val,
-+		  struct mx7_calibration *calib_param);
++int mx7_dram_cfg(struct ddrc *ddrc_regs_val, struct ddrc_mp *ddrc_mp_val,
++		 struct ddr_phy *ddr_phy_regs_val);
 +
 +#endif	/*__ASM_ARCH_MX7_DDR_H__ */
 diff --git a/arch/arm/include/asm/arch-mx7/sys_proto.h b/arch/arm/include/asm/arch-mx7/sys_proto.h
-index ca7608b..0debea5 100644
+index ca7608bd56..0debea59a2 100644
 --- a/arch/arm/include/asm/arch-mx7/sys_proto.h
 +++ b/arch/arm/include/asm/arch-mx7/sys_proto.h
 @@ -7,3 +7,4 @@
@@ -812,7 +853,7 @@ index ca7608b..0debea5 100644
  void set_wdog_reset(struct wdog_regs *wdog);
 +enum boot_device get_boot_device(void);
 diff --git a/arch/arm/include/asm/arch-mxs/clock.h b/arch/arm/include/asm/arch-mxs/clock.h
-index fdc5395..9785045 100644
+index fdc5395a70..9785045663 100644
 --- a/arch/arm/include/asm/arch-mxs/clock.h
 +++ b/arch/arm/include/asm/arch-mxs/clock.h
 @@ -46,7 +46,7 @@ uint32_t mxc_get_clock(enum mxc_clock clk);
@@ -825,7 +866,7 @@ index fdc5395..9785045 100644
  /* Compatibility with the FEC Ethernet driver */
  #define	imx_get_fecclk()	mxc_get_clock(MXC_AHB_CLK)
 diff --git a/arch/arm/include/asm/imx-common/regs-bch.h b/arch/arm/include/asm/imx-common/regs-bch.h
-index adfbace..9b8598b 100644
+index adfbace05d..9b8598b967 100644
 --- a/arch/arm/include/asm/imx-common/regs-bch.h
 +++ b/arch/arm/include/asm/imx-common/regs-bch.h
 @@ -5,7 +5,7 @@
@@ -856,7 +897,7 @@ index adfbace..9b8598b 100644
  #define	BCH_ENCODEPTR_ADDR_MASK				0xffffffff
  #define	BCH_ENCODEPTR_ADDR_OFFSET			0
 diff --git a/board/aries/m28evk/m28evk.c b/board/aries/m28evk/m28evk.c
-index c990ea9..cb61e89 100644
+index c990ea9fec..cb61e89277 100644
 --- a/board/aries/m28evk/m28evk.c
 +++ b/board/aries/m28evk/m28evk.c
 @@ -131,13 +131,15 @@ int board_eth_init(bd_t *bis)
@@ -878,7 +919,7 @@ index c990ea9..cb61e89 100644
  		printf("FEC MXS: Unable to init FEC1\n");
  		return ret;
 diff --git a/board/compulab/cl-som-am57x/cl-som-am57x.c b/board/compulab/cl-som-am57x/cl-som-am57x.c
-index 389eebb..a45e5ab 100644
+index 389eebb589..a45e5ab4c5 100644
 --- a/board/compulab/cl-som-am57x/cl-som-am57x.c
 +++ b/board/compulab/cl-som-am57x/cl-som-am57x.c
 @@ -11,9 +11,11 @@
@@ -894,7 +935,7 @@ index 389eebb..a45e5ab 100644
  #include "../common/eeprom.h"
  
 diff --git a/board/compulab/cl-som-am57x/eth.c b/board/compulab/cl-som-am57x/eth.c
-index 0c4bf91..9e3edfa 100644
+index 0c4bf91c13..9e3edfa9dc 100644
 --- a/board/compulab/cl-som-am57x/eth.c
 +++ b/board/compulab/cl-som-am57x/eth.c
 @@ -11,6 +11,7 @@
@@ -907,7 +948,7 @@ index 0c4bf91..9e3edfa 100644
  #include "../common/eeprom.h"
 diff --git a/board/compulab/cl-som-imx7/Kconfig b/board/compulab/cl-som-imx7/Kconfig
 new file mode 100644
-index 0000000..6d69cf3
+index 0000000000..6d69cf31f4
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/Kconfig
 @@ -0,0 +1,28 @@
@@ -941,7 +982,7 @@ index 0000000..6d69cf3
 +endif
 diff --git a/board/compulab/cl-som-imx7/MAINTAINERS b/board/compulab/cl-som-imx7/MAINTAINERS
 new file mode 100644
-index 0000000..2b917a5
+index 0000000000..2b917a5c80
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/MAINTAINERS
 @@ -0,0 +1,6 @@
@@ -953,7 +994,7 @@ index 0000000..2b917a5
 +F:	configs/cl-som-imx7_defconfig
 diff --git a/board/compulab/cl-som-imx7/Makefile b/board/compulab/cl-som-imx7/Makefile
 new file mode 100644
-index 0000000..bc5361a
+index 0000000000..bc5361a63e
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/Makefile
 @@ -0,0 +1,18 @@
@@ -977,10 +1018,10 @@ index 0000000..bc5361a
 +endif
 diff --git a/board/compulab/cl-som-imx7/cl-som-imx7.c b/board/compulab/cl-som-imx7/cl-som-imx7.c
 new file mode 100644
-index 0000000..27c42ab
+index 0000000000..0ad69ed520
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/cl-som-imx7.c
-@@ -0,0 +1,689 @@
+@@ -0,0 +1,664 @@
 +/*
 + * U-Boot board functions for CompuLab CL-SOM-iMX7 module
 + *
@@ -1023,29 +1064,6 @@ index 0000000..27c42ab
 +/* Baseboard I2C bus is initialized flag */
 +int cl_som_imx7_base_i2c_init;
 +
-+#define I2C_PAD_CTRL		(PAD_CTL_DSE_3P3V_32OHM | PAD_CTL_SRE_SLOW | \
-+				PAD_CTL_HYS)
-+
-+#define CL_SOM_IMX7_GPIO_I2C2_SCL	IMX_GPIO_NR(1, 6)
-+#define CL_SOM_IMX7_GPIO_I2C2_SDA	IMX_GPIO_NR(1, 7)
-+
-+static struct i2c_pads_info cl_som_imx7_i2c_pad_info2 = {
-+	.scl = {
-+		.i2c_mode = MX7D_PAD_GPIO1_IO06__I2C2_SCL |
-+			MUX_PAD_CTRL(I2C_PAD_CTRL),
-+		.gpio_mode = MX7D_PAD_GPIO1_IO06__GPIO1_IO6 |
-+			MUX_PAD_CTRL(I2C_PAD_CTRL),
-+		.gp = CL_SOM_IMX7_GPIO_I2C2_SCL,
-+	},
-+	.sda = {
-+		.i2c_mode = MX7D_PAD_GPIO1_IO07__I2C2_SDA |
-+			MUX_PAD_CTRL(I2C_PAD_CTRL),
-+		.gpio_mode = MX7D_PAD_GPIO1_IO07__GPIO1_IO7 |
-+			MUX_PAD_CTRL(I2C_PAD_CTRL),
-+		.gp = CL_SOM_IMX7_GPIO_I2C2_SDA,
-+	},
-+};
-+
 +static struct i2c_pads_info cl_som_imx7_i2c_pad_info4 = {
 +	.scl = {
 +		.i2c_mode = MX7D_PAD_GPIO1_IO10__I2C4_SCL |
@@ -1069,10 +1087,6 @@ index 0000000..27c42ab
 +/*
 + * cl_som_imx7_setup_i2c() - I2C  pinmux configuration.
 + */
-+static void cl_som_imx7_setup_i2c0(void)
-+{
-+	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &cl_som_imx7_i2c_pad_info2);
-+}
 +static int cl_som_imx7_setup_i2c1(void)
 +{
 +	int ret;
@@ -1090,7 +1104,6 @@ index 0000000..27c42ab
 +	return 0;
 +}
 +#else /* !CONFIG_SYS_I2C_MXC */
-+static void cl_som_imx7_setup_i2c0(void) {}
 +static int cl_som_imx7_setup_i2c1(void) { return 0; }
 +#endif /* CONFIG_SYS_I2C_MXC */
 +
@@ -1396,6 +1409,7 @@ index 0000000..27c42ab
 +
 +static cl_som_imx7_base_board_param cl_som_imx7_base_board_param_db[] = {
 +       {"SB-SOM", "imx7d-sbc-imx7.dtb"},
++       {"SB-IOT", "imx7d-sbc-iot-imx7.dtb"},
 +       {"SBC-IOT", "imx7d-sbc-iot-imx7.dtb"},
 +       {"IOTG", "imx7d-sbc-iot-imx7.dtb"},
 +       {"other", "imx7d-cl-som-imx7.dtb"},
@@ -1414,7 +1428,7 @@ index 0000000..27c42ab
 +	int ret, i;
 +	char prod_name_base[CL_SOM_IMX7_PRODUCT_NAME_SIZE];
 +
-+	if (!cl_som_imx7_base_i2c_init)
++	if (sb_som_am57x_layout.data != sb_som_am57x_eeprom_buf)
 +		return;
 +
 +	ret = sb_som_am57x_layout.read(&sb_som_am57x_layout, "Product Name",
@@ -1488,7 +1502,10 @@ index 0000000..27c42ab
 +					 CL_SOM_IMX7_SERIAL_BUF_BIN_SIZE);
 +		break;
 +	case CL_SOM_IMX7_SB_IOT:
++	case CL_SOM_IMX7_SBC_IOT:
 +	case CL_SOM_IMX7_IOTG:
++		if (sb_som_am57x_layout.data != sb_som_am57x_eeprom_buf)
++			break;
 +		sb_som_am57x_layout.read(&sb_som_am57x_layout, "Serial Number",
 +					 (uchar*) &serial_buf_bin,
 +					 CL_SOM_IMX7_SERIAL_BUF_BIN_SIZE);
@@ -1536,14 +1553,13 @@ index 0000000..27c42ab
 +}
 +
 +#ifdef CONFIG_POWER
-+#define I2C_PMIC	0
 +int power_init_board(void)
 +{
 +	struct pmic *p;
 +	int ret;
 +	unsigned int reg, rev_id;
 +
-+	ret = power_pfuze3000_init(I2C_PMIC);
++	ret = power_pfuze3000_init(CL_SOM_IMX7_I2C_BUS_PMIC);
 +	if (ret)
 +		return ret;
 +
@@ -1672,7 +1688,7 @@ index 0000000..27c42ab
 +#endif /* CONFIG_OF_BOARD_SETUP */
 diff --git a/board/compulab/cl-som-imx7/common.c b/board/compulab/cl-som-imx7/common.c
 new file mode 100644
-index 0000000..1f90c62
+index 0000000000..1f90c6259d
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/common.c
 @@ -0,0 +1,46 @@
@@ -1724,10 +1740,10 @@ index 0000000..1f90c62
 +#endif /* CONFIG_FSL_ESDHC */
 diff --git a/board/compulab/cl-som-imx7/common.h b/board/compulab/cl-som-imx7/common.h
 new file mode 100644
-index 0000000..995a3c9
+index 0000000000..d6a21e00c6
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/common.h
-@@ -0,0 +1,58 @@
+@@ -0,0 +1,69 @@
 +/*
 + * SPL/U-Boot common header file for CompuLab CL-SOM-iMX7 module
 + *
@@ -1748,6 +1764,8 @@ index 0000000..995a3c9
 +#ifdef CONFIG_SPI
 +PADS_SET_PROT(espi1_pads)
 +#endif /* CONFIG_SPI */
++
++PADS_SET_PROT(wdog_pads)
 +
 +#ifndef CONFIG_SPL_BUILD
 +#ifdef CONFIG_FSL_ESDHC
@@ -1772,6 +1790,7 @@ index 0000000..995a3c9
 +typedef enum {
 +       CL_SOM_IMX7_SB_SOM,
 +       CL_SOM_IMX7_SB_IOT,
++       CL_SOM_IMX7_SBC_IOT,
 +       CL_SOM_IMX7_IOTG,
 +       CL_SOM_IMX7_OTHER,
 +} cl_som_imx7_base;
@@ -1786,12 +1805,20 @@ index 0000000..995a3c9
 +#endif /* CONFIG_VIDEO_MXS */
 +
 +#endif /* !CONFIG_SPL_BUILD */
++
++void cl_som_imx7_setup_i2c0(void);
++#define CL_SOM_IMX7_I2C_BUS_PMIC SYS_I2C_BUS_SOM
++
++#if defined(CONFIG_SYS_I2C_MXC) || defined(CONFIG_SPL_I2C_SUPPORT)
++#define I2C_PAD_CTRL		(PAD_CTL_DSE_3P3V_32OHM | PAD_CTL_SRE_SLOW | \
++				PAD_CTL_HYS)
++#endif /* CONFIG_SYS_I2C_MXC || CONFIG_SPL_I2C_SUPPORT */
 diff --git a/board/compulab/cl-som-imx7/display.c b/board/compulab/cl-som-imx7/display.c
 new file mode 100644
-index 0000000..9377fd1
+index 0000000000..9e42502341
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/display.c
-@@ -0,0 +1,564 @@
+@@ -0,0 +1,567 @@
 +/*
 + * Display configuration for the CompuLab CL-SOM-iMX7 board
 + *
@@ -2191,6 +2218,7 @@ index 0000000..9377fd1
 +int enable_display(void)
 +{
 +	int ret = 0;
++	char *stdout_env = getenv("stdout");
 +
 +	switch (disp_type) {
 +	case DISP_DVI:
@@ -2205,6 +2233,23 @@ index 0000000..9377fd1
 +		break;
 +	}
 +
++	/*
++	 * Update stdout and enderr environment parameters according to the
++	 * baseboard type
++	 */
++	if (stdout_env) /* stdout was set */
++		return 0;
++	if ((cl_som_imx7_base_id ==  CL_SOM_IMX7_SB_IOT) ||
++	    (cl_som_imx7_base_id ==  CL_SOM_IMX7_SBC_IOT) ||
++	    (cl_som_imx7_base_id ==  CL_SOM_IMX7_IOTG)) {
++		setenv("stdout", "serial,vga");
++		setenv("stderr", "serial,vga");
++	}
++	else {
++		setenv("stdout", "serial");
++		setenv("stderr", "serial");
++	}
++
 +	return ret;
 +}
 +
@@ -2217,7 +2262,6 @@ index 0000000..9377fd1
 +{
 +	int ret;
 +	char *displaytype = getenv("displaytype");
-+	char *stdout_env = getenv("stdout");
 +
 +	cl_som_imx7_lcd_pads_set();
 +	if (cl_som_imx7_base_id == CL_SOM_IMX7_SB_SOM)
@@ -2227,20 +2271,6 @@ index 0000000..9377fd1
 +	if (disp_type < 0) {
 +		printf("displaytype parsing failure\n");
 +		return ret;
-+	}
-+
-+	/* Update stdout and enderr environment parameters according to the
-+	   baseboard type */
-+	if (stdout_env) /* stdout was set */
-+		return 0;
-+	if ((cl_som_imx7_base_id ==  CL_SOM_IMX7_SB_IOT) ||
-+	    (cl_som_imx7_base_id ==  CL_SOM_IMX7_IOTG)) {
-+		setenv("stdout", "serial,vga");
-+		setenv("stderr", "serial,vga");
-+	}
-+	else {
-+		setenv("stdout", "serial");
-+		setenv("stderr", "serial");
 +	}
 +
 +	return 0;
@@ -2358,10 +2388,10 @@ index 0000000..9377fd1
 +}
 diff --git a/board/compulab/cl-som-imx7/mux.c b/board/compulab/cl-som-imx7/mux.c
 new file mode 100644
-index 0000000..7d04fde
+index 0000000000..62d87de36b
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/mux.c
-@@ -0,0 +1,241 @@
+@@ -0,0 +1,276 @@
 +/*
 + * SPL/U-Boot mux functions for CompuLab CL-SOM-iMX7 module
 + *
@@ -2374,7 +2404,9 @@ index 0000000..7d04fde
 +
 +#include <common.h>
 +#include <asm/imx-common/iomux-v3.h>
++#include <asm/imx-common/mxc_i2c.h>
 +#include <asm/arch-mx7/mx7-pins.h>
++#include "common.h"
 +
 +#define PADS_SET(pads_array)						       \
 +void cl_som_imx7_##pads_array##_set(void)				       \
@@ -2431,6 +2463,12 @@ index 0000000..7d04fde
 +PADS_SET(espi1_pads)
 +
 +#endif /* CONFIG_SPI */
++
++static iomux_v3_cfg_t const wdog_pads[] = {
++	MX7D_PAD_GPIO1_IO00__WDOG1_WDOG_B | MUX_PAD_CTRL(NO_PAD_CTRL),
++};
++
++PADS_SET(wdog_pads)
 +
 +#ifndef CONFIG_SPL_BUILD
 +
@@ -2513,12 +2551,6 @@ index 0000000..7d04fde
 +};
 +
 +PADS_SET(usb_otg1_pads)
-+
-+static iomux_v3_cfg_t const wdog_pads[] = {
-+	MX7D_PAD_GPIO1_IO00__WDOG1_WDOG_B | MUX_PAD_CTRL(NO_PAD_CTRL),
-+};
-+
-+PADS_SET(wdog_pads)
 +
 +#ifdef CONFIG_NAND_MXS
 +
@@ -2603,12 +2635,45 @@ index 0000000..7d04fde
 +#endif /* CONFIG_VIDEO_MXS */
 +
 +#endif /* !CONFIG_SPL_BUILD */
++
++#if defined(CONFIG_SYS_I2C_MXC) || defined(CONFIG_SPL_I2C_SUPPORT)
++
++#define CL_SOM_IMX7_GPIO_I2C2_SCL	IMX_GPIO_NR(1, 6)
++#define CL_SOM_IMX7_GPIO_I2C2_SDA	IMX_GPIO_NR(1, 7)
++
++static struct i2c_pads_info cl_som_imx7_i2c_pad_info2 = {
++	.scl = {
++		.i2c_mode = MX7D_PAD_GPIO1_IO06__I2C2_SCL |
++			MUX_PAD_CTRL(I2C_PAD_CTRL),
++		.gpio_mode = MX7D_PAD_GPIO1_IO06__GPIO1_IO6 |
++			MUX_PAD_CTRL(I2C_PAD_CTRL),
++		.gp = CL_SOM_IMX7_GPIO_I2C2_SCL,
++	},
++	.sda = {
++		.i2c_mode = MX7D_PAD_GPIO1_IO07__I2C2_SDA |
++			MUX_PAD_CTRL(I2C_PAD_CTRL),
++		.gpio_mode = MX7D_PAD_GPIO1_IO07__GPIO1_IO7 |
++			MUX_PAD_CTRL(I2C_PAD_CTRL),
++		.gp = CL_SOM_IMX7_GPIO_I2C2_SDA,
++	},
++};
++
++/*
++ * cl_som_imx7_setup_i2c() - I2C  pinmux configuration.
++ */
++void cl_som_imx7_setup_i2c0(void)
++{
++	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &cl_som_imx7_i2c_pad_info2);
++}
++#else /* !CONFIG_SYS_I2C_MXC && !CONFIG_SPL_I2C_SUPPORT */
++void cl_som_imx7_setup_i2c0(void) {}
++#endif /* CONFIG_SYS_I2C_MXC || CONFIG_SPL_I2C_SUPPORT */
 diff --git a/board/compulab/cl-som-imx7/spl.c b/board/compulab/cl-som-imx7/spl.c
 new file mode 100644
-index 0000000..238cb42
+index 0000000000..e79a9ad130
 --- /dev/null
 +++ b/board/compulab/cl-som-imx7/spl.c
-@@ -0,0 +1,208 @@
+@@ -0,0 +1,240 @@
 +/*
 + * SPL board functions for CompuLab CL-SOM-iMX7 module
 + *
@@ -2621,11 +2686,15 @@ index 0000000..238cb42
 +
 +#include <common.h>
 +#include <spl.h>
++#include <i2c.h>
 +#include <fsl_esdhc.h>
++#include <power/pfuze3000_pmic.h>
 +#include <asm/imx-common/iomux-v3.h>
 +#include <asm/arch-mx7/mx7-pins.h>
 +#include <asm/arch-mx7/clock.h>
 +#include <asm/arch-mx7/mx7-ddr.h>
++#include <eeprom_layout.h>
++#include "../common/eeprom.h"
 +#include "common.h"
 +
 +#ifdef CONFIG_FSL_ESDHC
@@ -2685,18 +2754,7 @@ index 0000000..238cb42
 +	.offset_lp_con0	= 0x0000000F,
 +};
 +
-+struct mx7_calibration cl_som_imx7_spl_calib_param = {
-+	.num_val	= 5,
-+	.values		= {
-+		0x0E407304,
-+		0x0E447304,
-+		0x0E447306,
-+		0x0E447304,
-+		0x0E407304,
-+	},
-+};
-+
-+static void cl_som_imx7_spl_dram_cfg_size(u32 ram_size)
++static int cl_som_imx7_spl_dram_cfg_size(u32 ram_size)
 +{
 +	switch (ram_size) {
 +	case SZ_256M:
@@ -2745,26 +2803,62 @@ index 0000000..238cb42
 +		break;
 +	}
 +
-+	mx7_dram_cfg(&cl_som_imx7_spl_ddrc_regs_val,
-+		     &cl_som_imx7_spl_ddrc_mp_val,
-+		     &cl_som_imx7_spl_ddr_phy_regs_val,
-+		     &cl_som_imx7_spl_calib_param);
++	return mx7_dram_cfg(&cl_som_imx7_spl_ddrc_regs_val,
++			    &cl_som_imx7_spl_ddrc_mp_val,
++			    &cl_som_imx7_spl_ddr_phy_regs_val);
 +}
 +
++#define CL_SOM_IMX7_WD_RESET_VAL 0x1C /* Watchdog reset value */
++
++static void cl_som_imx7_spl_reset(void)
++{
++	struct wdog_regs *wdog = (struct wdog_regs *)WDOG1_BASE_ADDR;
++
++	cl_som_imx7_wdog_pads_set();
++	clrsetbits_le16(&wdog->wcr, 0, CL_SOM_IMX7_WD_RESET_VAL);
++	while (1);
++}
 +static void cl_som_imx7_spl_dram_cfg(void)
 +{
 +	ulong ram_size_test, ram_size = 0;
++	int init_failure;
 +
 +	for (ram_size = SZ_2G; ram_size >= SZ_256M; ram_size >>= 1) {
-+		cl_som_imx7_spl_dram_cfg_size(ram_size);
++		init_failure = cl_som_imx7_spl_dram_cfg_size(ram_size);
++		if (init_failure)
++			break;
 +		ram_size_test = get_ram_size((long int *)PHYS_SDRAM, ram_size);
 +		if (ram_size_test == ram_size)
 +			break;
 +	}
 +
-+	if (ram_size < SZ_256M) {
-+		puts("!!!ERROR!!! DRAM detection failed!!!\n");
-+		hang();
++	/* Reset the board in case of DRAM initialization failure */
++	if (init_failure || (ram_size < SZ_256M)) {
++		puts("DRAM detection failed!!! Resetting ...\n");
++		cl_som_imx7_spl_reset();
++	}
++}
++
++#define PFUZE3000_INTSTAT0_POR 0x01
++#define CL_SOM_IMX7_DUAL_RESET_MIN_BORAD_REV 120
++
++/* Reset module after power on  */
++static void cl_som_imx7_spl_por(void)
++{
++	u8 buf;
++
++	i2c_set_bus_num(CL_SOM_IMX7_I2C_BUS_PMIC);
++	i2c_read(CONFIG_POWER_PFUZE3000_I2C_ADDR, PFUZE3000_INTSTAT0, 1,
++		 &buf, 1);
++	if (buf == PFUZE3000_INTSTAT0_POR) {
++		u32 rev = cl_eeprom_get_board_rev(CONFIG_SYS_I2C_EEPROM_BUS);
++		/* Reset only if board revision is 1.20 or higher */
++		if (rev < CL_SOM_IMX7_DUAL_RESET_MIN_BORAD_REV)
++			return;
++
++		i2c_write(CONFIG_POWER_PFUZE3000_I2C_ADDR, PFUZE3000_INTSTAT0,
++			  1, &buf, 1);
++		cl_som_imx7_spl_reset();
 +	}
 +}
 +
@@ -2785,6 +2879,9 @@ index 0000000..238cb42
 +	arch_cpu_init();
 +	/* setup GP timer */
 +	timer_init();
++	cl_som_imx7_setup_i2c0();
++	/* Reset module after power on  */
++	cl_som_imx7_spl_por();
 +	cl_som_imx7_spl_spi_init();
 +	cl_som_imx7_uart1_pads_set();
 +	/* UART clocks enabled and gd valid - init serial console */
@@ -2818,7 +2915,7 @@ index 0000000..238cb42
 +	}
 +}
 diff --git a/board/compulab/cm_fx6/cm_fx6.c b/board/compulab/cm_fx6/cm_fx6.c
-index 80b5dc9..43a2b43 100644
+index 80b5dc9026..43a2b43883 100644
 --- a/board/compulab/cm_fx6/cm_fx6.c
 +++ b/board/compulab/cm_fx6/cm_fx6.c
 @@ -19,6 +19,7 @@
@@ -2830,7 +2927,7 @@ index 80b5dc9..43a2b43 100644
  #include <asm/arch/sys_proto.h>
  #include <asm/arch/iomux.h>
 diff --git a/board/compulab/cm_t335/cm_t335.c b/board/compulab/cm_t335/cm_t335.c
-index c4506b9..05588f7 100644
+index c4506b910e..05588f7ef9 100644
 --- a/board/compulab/cm_t335/cm_t335.c
 +++ b/board/compulab/cm_t335/cm_t335.c
 @@ -12,6 +12,7 @@
@@ -2842,7 +2939,7 @@ index c4506b9..05588f7 100644
  #include <asm/arch/sys_proto.h>
  #include <asm/arch/hardware_am33xx.h>
 diff --git a/board/compulab/cm_t35/cm_t35.c b/board/compulab/cm_t35/cm_t35.c
-index f169125..1a474e4 100644
+index f1691257e7..1a474e4a3f 100644
 --- a/board/compulab/cm_t35/cm_t35.c
 +++ b/board/compulab/cm_t35/cm_t35.c
 @@ -21,6 +21,7 @@
@@ -2854,7 +2951,7 @@ index f169125..1a474e4 100644
  
  #include <asm/io.h>
 diff --git a/board/compulab/cm_t3517/cm_t3517.c b/board/compulab/cm_t3517/cm_t3517.c
-index 38eb641..042e6fc 100644
+index 38eb641bc4..042e6fc9b2 100644
 --- a/board/compulab/cm_t3517/cm_t3517.c
 +++ b/board/compulab/cm_t3517/cm_t3517.c
 @@ -12,6 +12,7 @@
@@ -2866,7 +2963,7 @@ index 38eb641..042e6fc 100644
  #include <linux/usb/musb.h>
  
 diff --git a/board/compulab/cm_t54/cm_t54.c b/board/compulab/cm_t54/cm_t54.c
-index 6437718..40a25ac 100644
+index 6437718415..40a25acd39 100644
 --- a/board/compulab/cm_t54/cm_t54.c
 +++ b/board/compulab/cm_t54/cm_t54.c
 @@ -14,6 +14,7 @@
@@ -2878,7 +2975,7 @@ index 6437718..40a25ac 100644
  #include <asm/gpio.h>
  #include <asm/arch/sys_proto.h>
 diff --git a/board/compulab/common/common.c b/board/compulab/common/common.c
-index bf2ac7b..9a5b2bd 100644
+index bf2ac7bd7f..9a5b2bd40f 100644
 --- a/board/compulab/common/common.c
 +++ b/board/compulab/common/common.c
 @@ -10,7 +10,7 @@
@@ -3097,7 +3194,7 @@ index bf2ac7b..9a5b2bd 100644
 +}
 +#endif
 diff --git a/board/compulab/common/common.h b/board/compulab/common/common.h
-index 759ec31..329b75b 100644
+index 759ec31317..329b75b27f 100644
 --- a/board/compulab/common/common.h
 +++ b/board/compulab/common/common.h
 @@ -35,4 +35,36 @@ static inline int cl_omap3_smc911x_init(int id, int cs, u32 base_addr,
@@ -3138,7 +3235,7 @@ index 759ec31..329b75b 100644
 +
  #endif /* _CL_COMMON_ */
 diff --git a/board/compulab/common/eeprom.c b/board/compulab/common/eeprom.c
-index bb4c9e9..1a5bf0d 100644
+index bb4c9e9740..ed6d3d06d7 100644
 --- a/board/compulab/common/eeprom.c
 +++ b/board/compulab/common/eeprom.c
 @@ -187,6 +187,42 @@ int cl_eeprom_get_product_name(uchar *buf, uint eeprom_bus)
@@ -3478,13 +3575,13 @@ index bb4c9e9..1a5bf0d 100644
  		return LAYOUT_VERSION_VER2;
  	case 3:
  		return LAYOUT_VERSION_VER3;
-+	case 4:
++	case 4 ... 0x1f:
 +		return LAYOUT_VERSION_VER4;
  	}
  
  	if (data[EEPROM_LAYOUT_VER_OFFSET] >= 0x20)
 diff --git a/board/compulab/common/eeprom.h b/board/compulab/common/eeprom.h
-index c0b4739..79f1a5d 100644
+index c0b4739ea2..79f1a5d327 100644
 --- a/board/compulab/common/eeprom.h
 +++ b/board/compulab/common/eeprom.h
 @@ -12,6 +12,11 @@
@@ -3500,7 +3597,7 @@ index c0b4739..79f1a5d 100644
  u32 cl_eeprom_get_board_rev(uint eeprom_bus);
  int cl_eeprom_get_product_name(uchar *buf, uint eeprom_bus);
 diff --git a/board/corscience/tricorder/tricorder-eeprom.c b/board/corscience/tricorder/tricorder-eeprom.c
-index aeacd6a..61d5bea 100644
+index aeacd6a253..61d5beae8c 100644
 --- a/board/corscience/tricorder/tricorder-eeprom.c
 +++ b/board/corscience/tricorder/tricorder-eeprom.c
 @@ -168,12 +168,12 @@ int tricorder_eeprom_write(unsigned devaddr, const char *name,
@@ -3519,7 +3616,7 @@ index aeacd6a..61d5bea 100644
  		printf("Tricorder: Could not read EEPROM content!\n");
  
 diff --git a/board/freescale/mpc8323erdb/mpc8323erdb.c b/board/freescale/mpc8323erdb/mpc8323erdb.c
-index f30a151..bbada0a 100644
+index f30a1510ee..bbada0ac83 100644
 --- a/board/freescale/mpc8323erdb/mpc8323erdb.c
 +++ b/board/freescale/mpc8323erdb/mpc8323erdb.c
 @@ -197,7 +197,7 @@ int mac_read_from_eeprom(void)
@@ -3532,7 +3629,7 @@ index f30a151..bbada0a 100644
  		       CONFIG_SYS_I2C_EEPROM_ADDR);
  	} else {
 diff --git a/board/freescale/mx28evk/mx28evk.c b/board/freescale/mx28evk/mx28evk.c
-index 5005fe2..577acfc 100644
+index 5005fe23dd..577acfcdc2 100644
 --- a/board/freescale/mx28evk/mx28evk.c
 +++ b/board/freescale/mx28evk/mx28evk.c
 @@ -118,13 +118,15 @@ int board_eth_init(bd_t *bis)
@@ -3554,7 +3651,7 @@ index 5005fe2..577acfc 100644
  		puts("FEC MXS: Unable to init FEC1\n");
  		return ret;
 diff --git a/board/freescale/mx6sxsabreauto/mx6sxsabreauto.c b/board/freescale/mx6sxsabreauto/mx6sxsabreauto.c
-index e7ab810..1c6cb3b 100644
+index e7ab81091d..1c6cb3becf 100644
 --- a/board/freescale/mx6sxsabreauto/mx6sxsabreauto.c
 +++ b/board/freescale/mx6sxsabreauto/mx6sxsabreauto.c
 @@ -101,7 +101,7 @@ int board_eth_init(bd_t *bis)
@@ -3567,7 +3664,7 @@ index e7ab810..1c6cb3b 100644
  		printf("FEC%d MXC: %s:failed\n", 1, __func__);
  
 diff --git a/board/freescale/mx6ul_14x14_evk/mx6ul_14x14_evk.c b/board/freescale/mx6ul_14x14_evk/mx6ul_14x14_evk.c
-index a5746fe..ce1eb70 100644
+index a5746fe086..ce1eb70ce4 100644
 --- a/board/freescale/mx6ul_14x14_evk/mx6ul_14x14_evk.c
 +++ b/board/freescale/mx6ul_14x14_evk/mx6ul_14x14_evk.c
 @@ -518,7 +518,8 @@ int board_eth_init(bd_t *bis)
@@ -3581,7 +3678,7 @@ index a5746fe..ce1eb70 100644
  
  static int setup_fec(int fec_id)
 diff --git a/board/freescale/mx7dsabresd/mx7dsabresd.c b/board/freescale/mx7dsabresd/mx7dsabresd.c
-index ecea5a5..304cc5d 100644
+index ecea5a529a..304cc5dfbe 100644
 --- a/board/freescale/mx7dsabresd/mx7dsabresd.c
 +++ b/board/freescale/mx7dsabresd/mx7dsabresd.c
 @@ -243,7 +243,7 @@ int board_eth_init(bd_t *bis)
@@ -3594,7 +3691,7 @@ index ecea5a5..304cc5d 100644
  		printf("FEC1 MXC: %s:failed\n", __func__);
  
 diff --git a/board/kosagi/novena/novena.c b/board/kosagi/novena/novena.c
-index f6972c2..c8e62b9 100644
+index f6972c2d14..c8e62b97f1 100644
 --- a/board/kosagi/novena/novena.c
 +++ b/board/kosagi/novena/novena.c
 @@ -251,7 +251,7 @@ int misc_init_r(void)
@@ -3607,7 +3704,7 @@ index f6972c2..c8e62b9 100644
  		puts("Cannot read I2C EEPROM.\n");
  		return 0;
 diff --git a/board/ppcag/bg0900/bg0900.c b/board/ppcag/bg0900/bg0900.c
-index 06612fa..305fa5e 100644
+index 06612fa34d..305fa5e7c3 100644
 --- a/board/ppcag/bg0900/bg0900.c
 +++ b/board/ppcag/bg0900/bg0900.c
 @@ -68,7 +68,8 @@ int board_eth_init(bd_t *bis)
@@ -3621,7 +3718,7 @@ index 06612fa..305fa5e 100644
  		puts("FEC MXS: Unable to init FEC0\n");
  		return ret;
 diff --git a/board/samtec/vining_2000/vining_2000.c b/board/samtec/vining_2000/vining_2000.c
-index c92f37c..cfc9c9a 100644
+index c92f37c9bb..cfc9c9a021 100644
 --- a/board/samtec/vining_2000/vining_2000.c
 +++ b/board/samtec/vining_2000/vining_2000.c
 @@ -158,7 +158,7 @@ int board_eth_init(bd_t *bis)
@@ -3634,7 +3731,7 @@ index c92f37c..cfc9c9a 100644
  		goto eth_fail;
  
 diff --git a/board/samtec/vining_fpga/socfpga.c b/board/samtec/vining_fpga/socfpga.c
-index f888ecb..bfe7abf 100644
+index f888ecbbc1..bfe7abffce 100644
 --- a/board/samtec/vining_fpga/socfpga.c
 +++ b/board/samtec/vining_fpga/socfpga.c
 @@ -60,7 +60,7 @@ int misc_init_r(void)
@@ -3647,7 +3744,7 @@ index f888ecb..bfe7abf 100644
  		puts("Cannot read I2C EEPROM.\n");
  		return 0;
 diff --git a/board/schulercontrol/sc_sps_1/sc_sps_1.c b/board/schulercontrol/sc_sps_1/sc_sps_1.c
-index 7f0b591..ba9735d 100644
+index 7f0b591b63..ba9735df1b 100644
 --- a/board/schulercontrol/sc_sps_1/sc_sps_1.c
 +++ b/board/schulercontrol/sc_sps_1/sc_sps_1.c
 @@ -79,13 +79,15 @@ int board_eth_init(bd_t *bis)
@@ -3669,7 +3766,7 @@ index 7f0b591..ba9735d 100644
  		printf("FEC MXS: Unable to init FEC1\n");
  		return ret;
 diff --git a/board/technexion/pico-imx7d/pico-imx7d.c b/board/technexion/pico-imx7d/pico-imx7d.c
-index 799751d..42a3d4a 100644
+index 799751d699..42a3d4ac40 100644
 --- a/board/technexion/pico-imx7d/pico-imx7d.c
 +++ b/board/technexion/pico-imx7d/pico-imx7d.c
 @@ -169,7 +169,7 @@ int board_eth_init(bd_t *bis)
@@ -3682,7 +3779,7 @@ index 799751d..42a3d4a 100644
  
  static int setup_fec(void)
 diff --git a/board/toradex/colibri_imx7/colibri_imx7.c b/board/toradex/colibri_imx7/colibri_imx7.c
-index e54afa1..4f837d7 100644
+index e54afa1952..4f837d77e6 100644
 --- a/board/toradex/colibri_imx7/colibri_imx7.c
 +++ b/board/toradex/colibri_imx7/colibri_imx7.c
 @@ -253,7 +253,7 @@ int board_eth_init(bd_t *bis)
@@ -3695,7 +3792,7 @@ index e54afa1..4f837d7 100644
  		printf("FEC1 MXC: %s:failed\n", __func__);
  
 diff --git a/board/xilinx/zynq/board.c b/board/xilinx/zynq/board.c
-index b2fbecf..8a21e4d 100644
+index b2fbecf6de..8a21e4d93d 100644
 --- a/board/xilinx/zynq/board.c
 +++ b/board/xilinx/zynq/board.c
 @@ -122,7 +122,7 @@ int zynq_board_read_rom_ethaddr(unsigned char *ethaddr)
@@ -3708,7 +3805,7 @@ index b2fbecf..8a21e4d 100644
  #endif
  
 diff --git a/board/xilinx/zynqmp/zynqmp.c b/board/xilinx/zynqmp/zynqmp.c
-index 51a3d9f..2d6514e 100644
+index 51a3d9f276..2d6514ecd0 100644
 --- a/board/xilinx/zynqmp/zynqmp.c
 +++ b/board/xilinx/zynqmp/zynqmp.c
 @@ -180,7 +180,7 @@ int zynq_board_read_rom_ethaddr(unsigned char *ethaddr)
@@ -3721,7 +3818,7 @@ index 51a3d9f..2d6514e 100644
  #endif
  
 diff --git a/cmd/eeprom.c b/cmd/eeprom.c
-index c61b396..d342048 100644
+index c61b396a62..d342048e23 100644
 --- a/cmd/eeprom.c
 +++ b/cmd/eeprom.c
 @@ -126,7 +126,7 @@ static int eeprom_len(unsigned offset, unsigned end)
@@ -3837,7 +3934,7 @@ index c61b396..d342048 100644
  
  	return rcode;
 diff --git a/common/eeprom/eeprom_field.c b/common/eeprom/eeprom_field.c
-index 7f095a6..decda0b 100644
+index 7f095a64a2..decda0b81a 100644
 --- a/common/eeprom/eeprom_field.c
 +++ b/common/eeprom/eeprom_field.c
 @@ -12,7 +12,7 @@
@@ -4102,7 +4199,7 @@ index 7f095a6..decda0b 100644
  	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
  	printf("(%d bytes)\n", field->size);
 diff --git a/common/eeprom/eeprom_layout.c b/common/eeprom/eeprom_layout.c
-index c059233..3d8b4ec 100644
+index c05923328a..3d8b4ec1b6 100644
 --- a/common/eeprom/eeprom_layout.c
 +++ b/common/eeprom/eeprom_layout.c
 @@ -15,8 +15,8 @@
@@ -4152,10 +4249,11 @@ index c059233..3d8b4ec 100644
  		if (err)
  			printf("Invalid data for field %s\n", field_name);
  
-@@ -95,6 +97,42 @@ static int eeprom_layout_update_field(struct eeprom_layout *layout,
+@@ -94,6 +96,42 @@ static int eeprom_layout_update_field(struct eeprom_layout *layout,
+ 	return -1;
  }
  
- /*
++/*
 + * eeprom_layout_read_field() - read a single field from the layout data
 + * @layout:    A pointer to an existing struct layout.
 + * @field_name:        The name of the field to update.
@@ -4191,10 +4289,9 @@ index c059233..3d8b4ec 100644
 +	return -1;
 +}
 +
-+/*
+ /*
   * eeprom_layout_setup() - setup layout struct with the layout data and
   *			   metadata as dictated by layout_version
-  * @layout:	A pointer to an existing struct layout.
 @@ -105,8 +143,6 @@ static int eeprom_layout_update_field(struct eeprom_layout *layout,
  void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
  			 unsigned int buf_size, int layout_version)
@@ -4219,7 +4316,7 @@ index c059233..3d8b4ec 100644
 +	layout->read = eeprom_layout_read_field;
  }
 diff --git a/common/env_eeprom.c b/common/env_eeprom.c
-index 5f63a6c..2584c88 100644
+index 5f63a6cd4a..2584c88c68 100644
 --- a/common/env_eeprom.c
 +++ b/common/env_eeprom.c
 @@ -36,7 +36,7 @@ static int eeprom_bus_read(unsigned dev_addr, unsigned offset,
@@ -4242,18 +4339,16 @@ index 5f63a6c..2584c88 100644
  	i2c_set_bus_num(old_bus);
 diff --git a/configs/cl-som-imx7_defconfig b/configs/cl-som-imx7_defconfig
 new file mode 100644
-index 0000000..a6eb2cf
+index 0000000000..a7b1b1d417
 --- /dev/null
 +++ b/configs/cl-som-imx7_defconfig
-@@ -0,0 +1,71 @@
+@@ -0,0 +1,68 @@
 +CONFIG_ARM=y
 +CONFIG_ARCH_MX7=y
 +CONFIG_SPL_GPIO_SUPPORT=y
 +CONFIG_SPL_LIBCOMMON_SUPPORT=y
 +CONFIG_SPL_LIBGENERIC_SUPPORT=y
 +CONFIG_TARGET_CL_SOM_IMX7=y
-+CONFIG_SYS_I2C_EEPROM_BASE_BUS=1
-+CONFIG_SYS_I2C_EEPROM_BASE_ADDR=0x54
 +CONFIG_SPL_MMC_SUPPORT=y
 +CONFIG_SPL_SERIAL_SUPPORT=y
 +CONFIG_SPL_SPI_FLASH_SUPPORT=y
@@ -4278,8 +4373,6 @@ index 0000000..a6eb2cf
 +# CONFIG_CMD_IMI is not set
 +# CONFIG_CMD_IMLS is not set
 +# CONFIG_CMD_XIMG is not set
-+# CONFIG_CMD_EXPORTENV is not set
-+# CONFIG_CMD_IMPORTENV is not set
 +CONFIG_CMD_GREPENV=y
 +CONFIG_CMD_MMC=y
 +CONFIG_CMD_SF=y
@@ -4314,11 +4407,12 @@ index 0000000..a6eb2cf
 +CONFIG_USB_EHCI_HCD=y
 +CONFIG_MXC_USB_OTG_HACTIVE=y
 +CONFIG_USB_STORAGE=y
++CONFIG_USB_KEYBOARD=y
 +CONFIG_USB_GADGET=y
 +CONFIG_CI_UDC=y
 +CONFIG_OF_LIBFDT=y
 diff --git a/drivers/mtd/nand/mxs_nand.c b/drivers/mtd/nand/mxs_nand.c
-index 9200544..1a5b5f7 100644
+index 92005448d2..1a5b5f78dc 100644
 --- a/drivers/mtd/nand/mxs_nand.c
 +++ b/drivers/mtd/nand/mxs_nand.c
 @@ -7,7 +7,7 @@
@@ -4663,7 +4757,7 @@ index 9200544..1a5b5f7 100644
  	writel(0, &bch_regs->hw_bch_layoutselect);
  
 diff --git a/drivers/net/fec_mxc.c b/drivers/net/fec_mxc.c
-index 6840908..d020378 100644
+index 6840908fb2..d0203781fb 100644
 --- a/drivers/net/fec_mxc.c
 +++ b/drivers/net/fec_mxc.c
 @@ -1110,7 +1110,8 @@ err1:
@@ -4695,7 +4789,7 @@ index 6840908..d020378 100644
  #endif
  
 diff --git a/drivers/usb/host/ehci-mx6.c b/drivers/usb/host/ehci-mx6.c
-index f348ec9..7bb3e5c 100644
+index f348ec9bca..7bb3e5cf73 100644
 --- a/drivers/usb/host/ehci-mx6.c
 +++ b/drivers/usb/host/ehci-mx6.c
 @@ -338,6 +338,8 @@ int ehci_mx6_common_init(struct usb_ehci *ehci, int index)
@@ -4729,7 +4823,7 @@ index f348ec9..7bb3e5c 100644
  	if (ret)
  		return ret;
 diff --git a/drivers/video/mxsfb.c b/drivers/video/mxsfb.c
-index 20455ff..197b9df 100644
+index 20455ffb54..197b9dfaa2 100644
 --- a/drivers/video/mxsfb.c
 +++ b/drivers/video/mxsfb.c
 @@ -50,12 +50,15 @@ __weak void mxsfb_system_setup(void)
@@ -4750,7 +4844,7 @@ index 20455ff..197b9df 100644
  	/* Restart the LCDIF block */
  	mxs_reset_block(&regs->hw_lcdif_ctrl_reg);
 diff --git a/include/common.h b/include/common.h
-index 1a98512..9dbb34f 100644
+index 1a98512ab6..9dbb34f6a6 100644
 --- a/include/common.h
 +++ b/include/common.h
 @@ -379,16 +379,18 @@ void	fdc_hw_init   (void);
@@ -4778,10 +4872,10 @@ index 1a98512..9dbb34f 100644
  /*
 diff --git a/include/configs/cl-som-imx7.h b/include/configs/cl-som-imx7.h
 new file mode 100644
-index 0000000..ba0ab8c
+index 0000000000..93c5930311
 --- /dev/null
 +++ b/include/configs/cl-som-imx7.h
-@@ -0,0 +1,254 @@
+@@ -0,0 +1,261 @@
 +/*
 + * Copyright (C) 2015 CompuLab, Ltd.
 + *
@@ -4863,12 +4957,13 @@ index 0000000..ba0ab8c
 +	"script=boot.scr\0" \
 +	"loadscript=load ${storagetype} ${storagedev} ${loadaddr} ${script};\0" \
 +	"loadkernel=load ${storagetype} ${storagedev} ${loadaddr} ${kernel};\0" \
-+	"loadkernel_nand=nand read ${loadaddr} 0 600000\0" \
++	"loadkernel_nand=nand read ${loadaddr} 0 ${kernel_size}\0" \
 +	"loadfdt=load ${storagetype} ${storagedev} ${fdtaddr} ${fdtfile};\0" \
 +	"loadfdt_nand=nand read ${fdtaddr} 980000 10000\0" \
 +	"bootscript=echo Running bootscript from ${storagetype} ...; source ${loadaddr};\0" \
 +	"storagebootcmd=echo Booting from ${storagetype} ...; run ${storagetype}args; run doboot;\0" \
 +	"kernel=zImage\0" \
++	"kernel_size=800000\0" \
 +	"console=ttymxc0\0" \
 +	"fdt_high=0xffffffff\0" \
 +	"initrd_high=0xffffffff\0" \
@@ -4908,7 +5003,7 @@ index 0000000..ba0ab8c
 +		"setenv storagedev ${usbdev}:${usbpart};" \
 +		"if run loadscript; then " \
 +			"run bootscript; " \
-+		"fi; " \
++		"fi;\0" \
 +	"sdboot=setenv mmcdev ${mmcdev_def}; setenv mmcblk 0; run mmcboot\0" \
 +	"emmcbootscript=setenv mmcdev 1; setenv mmcblk 2; run mmcbootscript\0" \
 +	"emmcboot=setenv mmcdev 1; setenv mmcblk 2; run mmcboot\0" \
@@ -4930,6 +5025,8 @@ index 0000000..ba0ab8c
 +	"echo eMMC boot attempt ...; run emmcbootscript; run emmcboot; " \
 +	"echo USB boot attempt ...; run usbbootscript; " \
 +	"echo NAND boot attempt  ...; run nandboot"
++
++#define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 +
 +#define CONFIG_SYS_MEMTEST_START	0x80000000
 +#define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_MEMTEST_START + 0x20000000)
@@ -4993,9 +5090,13 @@ index 0000000..ba0ab8c
 +#define CONFIG_MXC_USB_PORTSC  (PORT_PTS_UTMI | PORT_PTS_PTW)
 +#define CONFIG_MXC_USB_FLAGS   0
 +#define CONFIG_USB_MAX_CONTROLLER_COUNT 2
-+#define CONFIG_USB_KEYBOARD
 +#define CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP
-+#define CONFIG_SYS_STDIO_DEREGISTER
++/* USB Networking options */
++#define CONFIG_USB_HOST_ETHER
++#define CONFIG_USB_ETHER_SMSC95XX
++#define CONFIG_USB_ETHER_RNDIS
++#define CONFIG_USB_ETHER_ASIX
++#define CONFIG_USB_ETHER_MCS7830
 +
 +/* Uncomment to enable iMX thermal driver support */
 +/*#define CONFIG_IMX_THERMAL*/
@@ -5038,7 +5139,7 @@ index 0000000..ba0ab8c
 +#endif	/* __CONFIG_H */
 diff --git a/include/configs/imx7_spl.h b/include/configs/imx7_spl.h
 new file mode 100644
-index 0000000..e562cdb
+index 0000000000..9240c00f89
 --- /dev/null
 +++ b/include/configs/imx7_spl.h
 @@ -0,0 +1,67 @@
@@ -5069,7 +5170,7 @@ index 0000000..e562cdb
 + *    and some padding thus 'our' max size is really 0x00946BB8 - 0x00911000.
 + *    64KB is more then enough for the SPL.
 + */
-+#define CONFIG_SPL_TEXT_BASE		0x00911000
++#define CONFIG_SPL_TEXT_BASE		0x00912000
 +#define CONFIG_SPL_MAX_SIZE		0x10000
 +#define CONFIG_SPL_STACK		0x00946BB8
 +/*
@@ -5110,7 +5211,7 @@ index 0000000..e562cdb
 +
 +#endif /* __IMX7_SPL_CONFIG_H */
 diff --git a/include/configs/tam3517-common.h b/include/configs/tam3517-common.h
-index 0b87c9c..97db6d0 100644
+index 0b87c9ca97..97db6d08f5 100644
 --- a/include/configs/tam3517-common.h
 +++ b/include/configs/tam3517-common.h
 @@ -321,7 +321,7 @@ struct tam3517_module_info {
@@ -5123,7 +5224,7 @@ index 0b87c9c..97db6d0 100644
  	else							\
  		ret = 0;					\
 diff --git a/include/eeprom_field.h b/include/eeprom_field.h
-index 94e259f..aff91a3 100644
+index 94e259ff73..aff91a31dc 100644
 --- a/include/eeprom_field.h
 +++ b/include/eeprom_field.h
 @@ -15,25 +15,36 @@
@@ -5181,7 +5282,7 @@ index 94e259f..aff91a3 100644
  
  #endif
 diff --git a/include/eeprom_layout.h b/include/eeprom_layout.h
-index 459b99d..808a458 100644
+index 459b99d861..808a458ab0 100644
 --- a/include/eeprom_layout.h
 +++ b/include/eeprom_layout.h
 @@ -23,6 +23,8 @@ struct eeprom_layout {
@@ -5194,7 +5295,7 @@ index 459b99d..808a458 100644
  
  void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
 diff --git a/include/netdev.h b/include/netdev.h
-index c06b908..5aa98ac 100644
+index c06b90886b..5aa98ac725 100644
 --- a/include/netdev.h
 +++ b/include/netdev.h
 @@ -46,7 +46,8 @@ int eth_3com_initialize (bd_t * bis);
@@ -5207,6 +5308,3 @@ index c06b908..5aa98ac 100644
  int ftgmac100_initialize(bd_t *bits);
  int ftmac100_initialize(bd_t *bits);
  int ftmac110_initialize(bd_t *bits);
-diff --git a/tools/logos/compulab.bmp b/tools/logos/compulab.bmp
-index df5435c..cae6779 100644
-Binary files a/tools/logos/compulab.bmp and b/tools/logos/compulab.bmp differ

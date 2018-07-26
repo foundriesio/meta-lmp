@@ -1,5 +1,8 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+DEPENDS += "dtc-native"
+DEPENDS_remove = "dtc-145-native"
+
 RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
 
 SRC_URI_append += " \

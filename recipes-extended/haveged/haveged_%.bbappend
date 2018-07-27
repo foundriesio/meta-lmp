@@ -2,6 +2,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = " \
     file://haveged.service \
+    file://fix-cpu-cache-size-detection.patch \
 "
 
 do_install_append() {

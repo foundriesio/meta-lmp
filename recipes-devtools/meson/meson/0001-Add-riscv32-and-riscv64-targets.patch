@@ -1,0 +1,26 @@
+From 0e4a781bbc1c06ad6f33488056df2c30a8539c39 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Fri, 27 Jul 2018 13:41:14 -0300
+Subject: [PATCH] Add riscv32 and riscv64 targets
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ mesonbuild/environment.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mesonbuild/environment.py b/mesonbuild/environment.py
+index a0580a2..b204142 100644
+--- a/mesonbuild/environment.py
++++ b/mesonbuild/environment.py
+@@ -83,6 +83,8 @@ known_cpu_families = (
+     'ppc',
+     'ppc64',
+     'ppc64le',
++    'riscv32',
++    'riscv64',
+     'sparc64',
+     'x86',
+     'x86_64'
+-- 
+2.7.4
+

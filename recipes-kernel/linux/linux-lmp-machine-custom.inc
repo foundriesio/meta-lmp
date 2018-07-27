@@ -21,6 +21,9 @@ KERNEL_LD_append_riscv64 = " -no-pie"
 SRC_URI_append_freedom-u540 += " file://freedom-u540.scc file://freedom-u540.cfg"
 CMDLINE_freedom-u540 = "earlyprintk root=/dev/mmcblk0p2 rootwait console=ttySI0"
 
+# QEMU
+KERNEL_FEATURES_remove_qemuall = "features/kernel-sample/kernel-sample.scc"
+
 # Beagle
 KBUILD_DEFCONFIG_beaglebone-yocto ?= "omap2plus_defconfig"
 

@@ -14,6 +14,7 @@ SRC_URI = "\
     file://sysctl-panic.conf \
     file://path-sbin.sh \
     file://sudoers \
+    file://ostree-pending-reboot.service \
 "
 
 # let's make sure we have a good image..
@@ -36,6 +37,9 @@ CORE_IMAGE_BASE_INSTALL += " \
 fakeroot do_populate_rootfs_common_src () {
     # Allow sudo group users to use sudo
     install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/lmp
+
+    # Systemd service files
+    install -m 0644 ${WORKDIR}/ostree-pending-reboot.service ${IMAGE_ROOTFS}${systemd_system_unitdir}/
 
     # Configs that are specific to this image
     install -m 0644 ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}${exec_prefix}/lib/systemd/network/60-bt-6lowpan.network

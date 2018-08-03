@@ -23,6 +23,7 @@ CORE_IMAGE_BASE_INSTALL += " \
 CORE_IMAGE_BASE_INSTALL += " \
     docker \
     bluez5-noinst-tools \
+    ethtool \
     git \
     less \
     linux-firmware-ar3k \

@@ -25,6 +25,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     bluez5-noinst-tools \
     ethtool \
     git \
+    jool \
     less \
     linux-firmware-ar3k \
     linux-firmware-ath9k \

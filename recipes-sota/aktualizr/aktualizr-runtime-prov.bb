@@ -11,7 +11,7 @@ RDEPENDS_${PN} = "aktualizr"
 do_install() {
     install -d ${D}${libdir}/sota
 
-    AKTUALIZR_PARAMETERS_CONFIGFILE="--config /var/sota/sota.toml"
+    AKTUALIZR_PARAMETERS_CONFIGFILE=""
     echo "AKTUALIZR_CMDLINE_PARAMETERS=${AKTUALIZR_PARAMETERS_CONFIGFILE}" > ${D}${libdir}/sota/sota.env
 }
 

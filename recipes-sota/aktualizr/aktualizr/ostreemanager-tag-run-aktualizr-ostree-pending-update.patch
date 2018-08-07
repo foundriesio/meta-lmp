@@ -1,8 +1,8 @@
-From 6e7ed5f8e2f6ab4ff8b83e01fe3072315eb17839 Mon Sep 17 00:00:00 2001
+From 3c3e1262565e0f0f0c8d58c9f558764c96c3e0c8 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Mon, 30 Jul 2018 15:27:57 -0300
-Subject: [PATCH] ostreemanager: tag /run/aktualizr/ostree-pending-update after
- updates
+Subject: [PATCH 3/3] ostreemanager: tag /run/aktualizr/ostree-pending-update
+ after updates
 
 Have an easy way for userspace to know when there is a pending ostree
 update, allowing custom automatic reboot mechanisms.
@@ -13,10 +13,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  1 file changed, 10 insertions(+)
 
 diff --git a/src/libaktualizr/package_manager/ostreemanager.cc b/src/libaktualizr/package_manager/ostreemanager.cc
-index 73514953..54de1945 100644
+index 5de48f77..a1f4fc53 100644
 --- a/src/libaktualizr/package_manager/ostreemanager.cc
 +++ b/src/libaktualizr/package_manager/ostreemanager.cc
-@@ -141,6 +141,16 @@ data::InstallOutcome OstreeManager::install(const Uptane::Target &target) const
+@@ -195,6 +195,16 @@ data::InstallOutcome OstreeManager::install(const Uptane::Target &target) const
    }
    LOG_INFO << "Performing sync()";
    sync();
@@ -30,7 +30,7 @@ index 73514953..54de1945 100644
 +  file.close();
 +  LOG_INFO << "Created empty /run/aktualizr/ostree-pending-update";
 +
-   return data::InstallOutcome(data::OK, "Installation successful");
+   return data::InstallOutcome(data::UpdateResultCode::kOk, "Installation successful");
  }
  
 -- 

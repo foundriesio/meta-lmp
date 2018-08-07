@@ -1,0 +1,31 @@
+From 4c9355060a489ac5b2539494a6455669d83f1a86 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 7 Aug 2018 11:42:28 -0300
+Subject: [PATCH] storage_config: force sqlite as filesystem is not supported
+ anymore
+
+Instead of aborting the execution, force sqlite to allow converting the
+configuration to the supported format.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/libaktualizr/storage/storage_config.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/libaktualizr/storage/storage_config.h b/src/libaktualizr/storage/storage_config.h
+index 0467bfbd..779b1835 100644
+--- a/src/libaktualizr/storage/storage_config.h
++++ b/src/libaktualizr/storage/storage_config.h
+@@ -50,7 +50,8 @@ inline void CopyFromConfig(StorageType& dest, const std::string& option_name, co
+     if (storage_type == "sqlite") {
+       dest = StorageType::kSqlite;
+     } else {
+-      dest = StorageType::kFileSystem;
++      LOG_WARNING << "Storage type filesystem is not supported anymore, forcing sqlite";
++      dest = StorageType::kSqlite;
+     }
+   }
+ }
+-- 
+2.18.0
+

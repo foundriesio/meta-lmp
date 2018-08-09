@@ -1,0 +1,12 @@
+diff --git a/src/Makefile b/src/Makefile
+index 917bf6b..92cecad 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -94,7 +94,6 @@ $(PACKAGENAME)-compressed: $(PACKAGENAME)-static
+ 	upx -9 -o $@ $<
+ 
+ $(PACKAGENAME).1: $(PACKAGENAME).sgml
+-	docbook2man $<
+ 
+ pci.ids:
+ 	wget http://pciids.sourceforge.net/pci.ids

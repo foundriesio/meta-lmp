@@ -11,23 +11,23 @@ SRC_URI[sha256sum] = "915cdd0ea7aff349d27a8e0585124ac38695635201770a35612837b25e
 SRC_URI_append = " file://support-newer-version-of-requests.patch"
 
 RDEPENDS_${PN} = "\
-  ${PYTHON_PN}-cached-property \
-  ${PYTHON_PN}-certifi \
-  ${PYTHON_PN}-chardet \
-  ${PYTHON_PN}-colorama \
-  ${PYTHON_PN}-docker \
-  ${PYTHON_PN}-docker-pycreds \
-  ${PYTHON_PN}-dockerpty \
-  ${PYTHON_PN}-docopt \
-  ${PYTHON_PN}-fcntl \
-  ${PYTHON_PN}-idna \
-  ${PYTHON_PN}-jsonschema \
-  ${PYTHON_PN}-misc \
-  ${PYTHON_PN}-pyyaml \
-  ${PYTHON_PN}-requests \
-  ${PYTHON_PN}-six \
-  ${PYTHON_PN}-terminal \
-  ${PYTHON_PN}-texttable \
-  ${PYTHON_PN}-urllib3 \
-  ${PYTHON_PN}-websocket-client \
-  "
+    ${PYTHON_PN}-cached-property \
+    ${PYTHON_PN}-certifi \
+    ${PYTHON_PN}-chardet \
+    ${PYTHON_PN}-colorama \
+    ${PYTHON_PN}-docker \
+    ${PYTHON_PN}-docker-pycreds \
+    ${PYTHON_PN}-dockerpty \
+    ${PYTHON_PN}-docopt \
+    ${PYTHON_PN}-fcntl \
+    ${PYTHON_PN}-idna \
+    ${PYTHON_PN}-jsonschema \
+    ${PYTHON_PN}-misc \
+    ${PYTHON_PN}-pyyaml \
+    ${PYTHON_PN}-requests \
+    ${PYTHON_PN}-six \
+    ${PYTHON_PN}-terminal \
+    ${PYTHON_PN}-texttable \
+    ${PYTHON_PN}-urllib3 \
+    ${PYTHON_PN}-websocket-client \
+"

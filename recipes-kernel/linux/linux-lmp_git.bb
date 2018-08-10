@@ -6,8 +6,8 @@ FIO_LMP_GIT_URL ?= "source.foundries.io"
 FIO_LMP_GIT_NAMESPACE ?= ""
 
 SRC_URI = "git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}linux.git;protocol=https;branch=${SRCBRANCH};name=kernel \
-           file://distro.scc \
-           file://distro.cfg \
+    file://distro.scc \
+    file://distro.cfg \
 "
 
 require linux-lmp.inc

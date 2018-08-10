@@ -11,7 +11,7 @@ SRC_URI[sha256sum] = "ad077b49660b711d20f50f344f70cfae014d635ef094bf21b0d7df5f0a
 DEPENDS += "${PYTHON_PN}-pip-native"
 
 RDEPENDS_${PN} += " \
-	python3-docker-pycreds \
-	python3-requests \
-	python3-websocket-client \
+    python3-docker-pycreds \
+    python3-requests \
+    python3-websocket-client \
 "

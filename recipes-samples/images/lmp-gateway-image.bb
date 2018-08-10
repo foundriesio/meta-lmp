@@ -4,6 +4,9 @@ require lmp-image-common.inc
 
 IMAGE_FEATURES += "ssh-server-openssh"
 
+# Enough free space for a full image update
+IMAGE_OVERHEAD_FACTOR = "2.3"
+
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
     coreutils \

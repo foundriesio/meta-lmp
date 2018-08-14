@@ -1,0 +1,38 @@
+From 4a389b308294c0dd6a82578ad320703b268f16ba Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 14 Aug 2018 12:38:15 +0200
+Subject: [PATCH] Avoid race condition in case tests directory does not exist
+
+Make sure the tests directory exists before symlinking files
+into it.
+
+Closes: #1703
+
+Closes: #1704
+Approved by: cgwalters
+
+Upstream-Status: Backport
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+
+---
+ Makefile-tests.am | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile-tests.am b/Makefile-tests.am
+index 85995aa6..3323c5f3 100644
+--- a/Makefile-tests.am
++++ b/Makefile-tests.am
+@@ -360,7 +360,8 @@ EXTRA_DIST += \
+ 	$(NULL)
+ 
+ tests/libreaddir-rand.so: Makefile
+-	$(AM_V_GEN) ln -fns ../.libs/libreaddir-rand.so tests
++	mkdir -p tests/
++	$(AM_V_GEN) ln -fns ../.libs/libreaddir-rand.so tests/
+ ALL_LOCAL_RULES += tests/libreaddir-rand.so
+ CLEANFILES += tests/libreaddir-rand.so tests/ostree-symlink-stamp \
+ 		tests/ostree-prepare-root-symlink-stamp tests/ostree-remount-symlink-stamp \
+-- 
+2.18.0
+

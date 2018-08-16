@@ -12,7 +12,10 @@ ostree_run() {
 		# without bootloader support (no ostree= cmdline argument)
 		if ! grep -q "ostree=" /proc/cmdline; then
 			info "Fetching OSTree target from $ROOTFS_DIR/boot/loader/entries"
-			ostree_entry="$ROOTFS_DIR/boot/loader/entries/ostree-lmp-0.conf"
+			# Fetch from the latest entry available
+			entries=`ls $ROOTFS_DIR/boot/loader/entries`
+			last_entry=`echo $entries | sed -e "s/.* //g"`
+			ostree_entry="$ROOTFS_DIR/boot/loader/entries/$last_entry"
 			if [ ! -f $ostree_entry ]; then
 				fatal "ERROR: Unable to find default OSTree LMP boot entry $ostree_entry"
 			fi

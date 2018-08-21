@@ -1,4 +1,0 @@
-define KFEATURE_DESCRIPTION "Features specific to RISC-V platforms"
-define KFEATURE_COMPATIBILITY board
-
-kconf hardware riscv.cfg

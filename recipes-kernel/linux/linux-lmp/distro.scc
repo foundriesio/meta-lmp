@@ -1,4 +1,0 @@
-define KFEATURE_DESCRIPTION "Linux microPlatform distro configuration"
-define KFEATURE_COMPATIBILITY all
-
-kconf non-hardware distro.cfg

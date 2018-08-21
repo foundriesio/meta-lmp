@@ -1,4 +1,0 @@
-define KFEATURE_DESCRIPTION "iMX SoC specific configs"
-define KFEATURE_COMPATIBILITY board
-
-kconf hardware imx.cfg

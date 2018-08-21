@@ -20,17 +20,6 @@ KERNEL_INITRAMFS ?= '${@oe.utils.conditional("INITRAMFS_IMAGE_BUNDLE", "1", "1",
 # No need for extra fragments besides what is provided by LMP
 KERNEL_FEATURES_remove += " features/debug/printk.scc"
 
-# Always have a package to allow forcing package dependency
-ALLOW_EMPTY_${KERNEL_PACKAGE_NAME}-devicetree = "1"
-
-python __anonymous () {
-    import bb
-    devicetree = d.getVar('KERNEL_DEVICETREE', True) or ''
-    if devicetree:
-        depends = d.getVar("DEPENDS", True)
-        d.setVar("DEPENDS", "%s dtc-native" % depends)
-}
-
 # Set a variable in .configure
 # $1 - Configure variable to be set
 # $2 - value [n/y/value]
@@ -107,12 +96,6 @@ do_configure_prepend() {
     rm -f ${B}/.config.patched
 }
 
-do_install_append() {
-    install -d ${D}/boot
-    make -C ${S} O=${B} ARCH=$ARCH dtbs || true
-    install -m 0644 ${B}/arch/$ARCH/boot/dts/*.dtb ${D}/boot || true
-}
-
 do_deploy_append() {
     # Workaround for usrmerge
     if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
@@ -130,10 +113,3 @@ do_deploy_append() {
     cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_BASE_NAME}
     ln -sf ${KERNEL_CONFIG_BASE_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_SYMLINK_NAME}
 }
-
-PACKAGES =+ "${KERNEL_PACKAGE_NAME}-devicetree-overlays"
-FILES_${KERNEL_PACKAGE_NAME}-devicetree-overlays = "${nonarch_base_libdir}/firmware/*.dtbo ${nonarch_base_libdir}/firmware/*.dts"
-FILES_${KERNEL_PACKAGE_NAME}-devicetree += "/boot/*.dtb"
-
-RDEPENDS_${KERNEL_PACKAGE_NAME}-image_append = " ${KERNEL_PACKAGE_NAME}-devicetree"
-RRECOMMENDS_${KERNEL_PACKAGE_NAME}-image_append = " ${KERNEL_PACKAGE_NAME}-devicetree-overlays"

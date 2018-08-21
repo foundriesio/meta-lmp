@@ -96,20 +96,19 @@ do_configure_prepend() {
     rm -f ${B}/.config.patched
 }
 
-do_deploy_append() {
-    # Workaround for usrmerge
-    if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
-        mkdir -p ${D}${nonarch_base_libdir}
-        tar -cvzf $deployDir/${MODULE_TARBALL_BASE_NAME} -C ${D} ${nonarch_base_libdir#/}
-    fi
-}
-
 # Kernel config
 KERNEL_CONFIG_BASE_NAME ?= "${KERNEL_PACKAGE_NAME}-config-${PKGE}-${PKGV}-${MACHINE}-${DATETIME}"
 KERNEL_CONFIG_BASE_NAME[vardepsexclude] = "DATETIME"
 KERNEL_CONFIG_SYMLINK_NAME ?= "${KERNEL_PACKAGE_NAME}-config"
 
 do_deploy_append() {
+    # Publish final kernel config with a proper datetime-based link
     cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_BASE_NAME}
     ln -sf ${KERNEL_CONFIG_BASE_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_SYMLINK_NAME}
+
+    # Workaround for usrmerge
+    if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
+        mkdir -p ${D}${nonarch_base_libdir}
+        tar -cvzf $deployDir/${MODULE_TARBALL_BASE_NAME} -C ${D} ${nonarch_base_libdir#/}
+    fi
 }

@@ -1,11 +1,13 @@
-LINUX_VERSION ?= "4.16.18"
+LINUX_VERSION ?= "4.18.7"
 
 FIO_LMP_GIT_URL ?= "source.foundries.io"
 FIO_LMP_GIT_NAMESPACE ?= ""
 
-SRCREV_machine = "0a7619473e7896f83d26872254eea443d21c4b22"
-SRCREV_meta = "9b6bde200242cc2ee9b0cfccd2f4374243bfdf8f"
-KBRANCH = "linux-v4.16.y"
+SRCREV_machine = "fd0a4374fc94981ff996c607632b76a4722f584e"
+SRCREV_meta = "ec875b44e9063b64e388ef6b71e195f79e9cff5d"
+KBRANCH = "linux-v4.18.y"
+
+LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
 SRC_URI = "git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}linux.git;protocol=https;branch=${KBRANCH};name=machine; \
     git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}lmp-kernel-cache.git;protocol=https;type=kmeta;name=meta;branch=master;destsuffix=${KMETA} \

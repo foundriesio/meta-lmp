@@ -56,6 +56,7 @@ do_deploy_append() {
     # Workaround for usrmerge
     if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
         mkdir -p ${D}${nonarch_base_libdir}
-        tar -cvzf $deployDir/${MODULE_TARBALL_BASE_NAME} -C ${D} ${nonarch_base_libdir#/}
+        tar -cvzf $deployDir/modules-${MODULE_TARBALL_NAME}.tgz -C ${D} ${nonarch_base_libdir#/}
+        ln -sf modules-${MODULE_TARBALL_NAME}.tgz $deployDir/modules-${MODULE_TARBALL_LINK_NAME}.tgz
     fi
 }

@@ -12,7 +12,7 @@ IMAGE_LINGUAS = ""
 
 LICENSE = "MIT"
 
-IMAGE_FSTYPES = "${OSTREE_INITRAMFS_FSTYPES}"
+IMAGE_FSTYPES = "cpio.gz"
 IMAGE_FSTYPES_remove = "wic wic.gz wic.bmap ext4 ext4.gz"
 
 # avoid circular dependencies

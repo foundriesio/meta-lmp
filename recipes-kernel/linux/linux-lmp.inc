@@ -45,14 +45,13 @@ do_configure_prepend() {
 }
 
 # Kernel config
-KERNEL_CONFIG_BASE_NAME ?= "${KERNEL_PACKAGE_NAME}-config-${PKGE}-${PKGV}-${MACHINE}-${DATETIME}"
-KERNEL_CONFIG_BASE_NAME[vardepsexclude] = "DATETIME"
-KERNEL_CONFIG_SYMLINK_NAME ?= "${KERNEL_PACKAGE_NAME}-config"
+KERNEL_CONFIG_NAME ?= "${KERNEL_PACKAGE_NAME}-config-${KERNEL_ARTIFACT_NAME}"
+KERNEL_CONFIG_LINK_NAME ?= "${KERNEL_PACKAGE_NAME}-config"
 
 do_deploy_append() {
     # Publish final kernel config with a proper datetime-based link
-    cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_BASE_NAME}
-    ln -sf ${KERNEL_CONFIG_BASE_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_SYMLINK_NAME}
+    cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_NAME}
+    ln -sf ${KERNEL_CONFIG_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_LINK_NAME}
 
     # Workaround for usrmerge
     if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then

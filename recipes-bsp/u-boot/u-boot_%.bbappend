@@ -14,6 +14,7 @@ SRC_URI_append_sota += " \
     file://0002-db410c-config-updates.patch \
     file://0003-db820c-config-updates.patch \
     file://fix_load_addr_db820c.patch \
+    file://configs-dragonboard-disable-autoboot-console-check.patch \
 "
 
 # Boot image for Qcom-based machines

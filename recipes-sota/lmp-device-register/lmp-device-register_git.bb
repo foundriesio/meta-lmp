@@ -14,4 +14,4 @@ S = "${WORKDIR}/git"
 
 inherit cmake
 
-RDEPENDS_${PN} += "openssl"
+RDEPENDS_${PN} += "openssl-bin"

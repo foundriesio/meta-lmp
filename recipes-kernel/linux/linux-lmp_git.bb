@@ -1,9 +1,9 @@
-LINUX_VERSION ?= "4.18.9"
+LINUX_VERSION ?= "4.18.10"
 
 FIO_LMP_GIT_URL ?= "source.foundries.io"
 FIO_LMP_GIT_NAMESPACE ?= ""
 
-SRCREV_machine = "656ec805de7e8afcc6f6d1d71b130b4e36fd8089"
+SRCREV_machine = "927a219fc14cbfd960607aac97421b9d9c251ae8"
 SRCREV_meta = "1c67180cfe3daae94cd7835edcf72b857fabaf90"
 KBRANCH = "linux-v4.18.y"
 

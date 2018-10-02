@@ -52,6 +52,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     strace \
     tcpdump \
     vim-tiny \
+    wpanusb \
 "
 
 fakeroot do_populate_rootfs_src () {

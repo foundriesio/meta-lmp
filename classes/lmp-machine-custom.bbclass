@@ -23,7 +23,6 @@ KERNEL_IMAGETYPE_hikey = "Image.gz"
 IMAGE_FSTYPES_remove_hikey = "wic.gz wic.bmap"
 
 # Raspberry Pi
-RPI_USE_U_BOOT = "1"
 VC4DTBO_raspberrypi3-64 = "vc4-kms-v3d"
 IMAGE_FSTYPES_remove_rpi = " ext3 rpi-sdimg"
 IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"

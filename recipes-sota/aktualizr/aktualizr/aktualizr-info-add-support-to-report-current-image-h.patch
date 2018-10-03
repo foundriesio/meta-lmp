@@ -1,4 +1,4 @@
-From 73c8501f22d834c0fd5dfcc1f4afea951ac3dbf0 Mon Sep 17 00:00:00 2001
+From efc21c681c6997e2266d8bc89e72d7d03d0a37f1 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Thu, 10 May 2018 19:07:14 -0300
 Subject: [PATCH 2/3] aktualizr-info: add support to report current image hash
@@ -10,10 +10,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  1 file changed, 10 insertions(+)
 
 diff --git a/src/aktualizr_info/main.cc b/src/aktualizr_info/main.cc
-index 04cbbfc7..b181627a 100644
+index 91f933ab..786dbd3e 100644
 --- a/src/aktualizr_info/main.cc
 +++ b/src/aktualizr_info/main.cc
-@@ -93,6 +93,16 @@ int main(int argc, char **argv) {
+@@ -100,6 +100,16 @@ int main(int argc, char **argv) {
      std::cout << "Provisioned on server: " << (registered ? "yes" : "no") << std::endl;
      std::cout << "Fetched metadata: " << (has_metadata ? "yes" : "no") << std::endl;
  

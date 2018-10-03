@@ -1,9 +1,9 @@
 diff --git a/aktualizr.service b/aktualizr.service
-index 1c2e1df..96dbe8b 100644
+index 6de4474..7794c93 100644
 --- a/aktualizr.service
 +++ b/aktualizr.service
-@@ -5,7 +5,7 @@ After=network.target network-online.target
- Requires=network-online.target
+@@ -3,7 +3,7 @@ Description=Aktualizr SOTA Client
+ After=network.target
  
  [Service]
 -RestartSec=10

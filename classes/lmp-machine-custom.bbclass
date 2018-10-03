@@ -29,6 +29,8 @@ IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 OSTREE_KERNEL_rpi = "${KERNEL_IMAGETYPE}"
 KERNEL_IMAGETYPE_sota_raspberrypi0-wifi = "zImage"
 KERNEL_IMAGETYPE_sota_raspberrypi3-64 = "Image.gz"
+## Rollback is not yet supported on rpi
+SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
 ## We don't want fitimage by default yet as it blocks overlay support
 KERNEL_CLASSES_remove_rpi = "kernel-fitimage"
 KERNEL_DEVICETREE_raspberrypi0-wifi_sota = "bcm2708-rpi-0-w.dtb bcm2835-rpi-zero-w.dtb \

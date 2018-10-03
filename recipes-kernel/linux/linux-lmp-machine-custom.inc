@@ -14,8 +14,6 @@ CMDLINE_freedom-u540 = "earlyprintk root=/dev/mmcblk0p2 rootwait console=ttySI0"
 KERNEL_FEATURES_remove_qemuall = "features/kernel-sample/kernel-sample.scc"
 
 # Raspberry Pi
-UBOOT_ENTRYPOINT_RPI = "0x00008000"
-KERNEL_EXTRA_ARGS_rpi += "LOADADDR=${UBOOT_ENTRYPOINT_RPI}"
 ## Default cmdline
 SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "console=serial0,115200", "", d)}"
 CMDLINE_rpi ?= "dwc_otg.lpm_enable=0 ${SERIAL} rootwait"
@@ -26,8 +24,7 @@ do_deploy_append_rpi() {
     echo "${CMDLINE}" > ${DEPLOYDIR}/bcm2835-bootfiles/cmdline.txt
 }
 
-## Build issues
-## TODO: Validate if still required
+## Required to generate correct dtb files
 do_compile_append_raspberrypi3-64() {
     cc_extra=$(get_cc_option)
     oe_runmake dtbs CC="${KERNEL_CC} $cc_extra " LD="${KERNEL_LD}" ${KERNEL_EXTRA_ARGS}

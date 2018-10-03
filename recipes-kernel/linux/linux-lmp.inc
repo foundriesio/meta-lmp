@@ -52,11 +52,4 @@ do_deploy_append() {
     # Publish final kernel config with a proper datetime-based link
     cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_NAME}
     ln -sf ${KERNEL_CONFIG_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_LINK_NAME}
-
-    # Workaround for usrmerge
-    if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
-        mkdir -p ${D}${nonarch_base_libdir}
-        tar -cvzf $deployDir/modules-${MODULE_TARBALL_NAME}.tgz -C ${D} ${nonarch_base_libdir#/}
-        ln -sf modules-${MODULE_TARBALL_NAME}.tgz $deployDir/modules-${MODULE_TARBALL_LINK_NAME}.tgz
-    fi
 }

@@ -33,17 +33,7 @@ KERNEL_IMAGETYPE_sota_raspberrypi3-64 = "Image.gz"
 SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
 ## We don't want fitimage by default yet as it blocks overlay support
 KERNEL_CLASSES_remove_rpi = "kernel-fitimage"
-KERNEL_DEVICETREE_raspberrypi0-wifi_sota = "bcm2708-rpi-0-w.dtb bcm2835-rpi-zero-w.dtb \
-    overlays/i2c-rtc.dtbo overlays/rpi-ft5406.dtbo overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo \
-    overlays/pitft22.dtbo overlays/pitft28-resistive.dtbo overlays/pitft35-resistive.dtbo \
-    overlays/w1-gpio.dtbo overlays/w1-gpio-pullup.dtbo overlays/at86rf233.dtbo overlays/dwc2.dtbo \
-"
-KERNEL_DEVICETREE_raspberrypi3-64_sota = "\
-    broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2837-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb \
-    overlays/i2c-rtc.dtbo overlays/rpi-ft5406.dtbo overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo \
-    overlays/pitft22.dtbo overlays/pitft28-resistive.dtbo overlays/pitft35-resistive.dtbo \
-    overlays/w1-gpio.dtbo overlays/w1-gpio-pullup.dtbo overlays/at86rf233.dtbo \
-"
+KERNEL_DEVICETREE_raspberrypi3_sota = "${RPI_KERNEL_DEVICETREE} ${RPI_KERNEL_DEVICETREE_OVERLAYS}"
 OSTREE_KERNEL_ARGS_sota_rpi = "root=LABEL=otaroot rootfstype=ext4"
 
 # RISC-V targets

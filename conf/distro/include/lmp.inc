@@ -11,6 +11,7 @@ TARGET_VENDOR = "-lmp"
 TCLIBCAPPEND = ""
 
 require conf/distro/include/arm-defaults.inc
+require conf/distro/include/security_flags.inc
 
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
 PREFERRED_PROVIDER_iasl-native = "acpica-native"

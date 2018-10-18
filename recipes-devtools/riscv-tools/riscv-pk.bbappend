@@ -1,1 +1,1 @@
-PROVIDES = "virtual/bootloader"
+PROVIDES_freedom-u540 = "virtual/bootloader"

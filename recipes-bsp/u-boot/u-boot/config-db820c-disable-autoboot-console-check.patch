@@ -9,23 +9,7 @@ issue is understood, lets disable boot interrupt via
 the console.
 
 Signed-off-by: Tyler Baker <tyler@foundries.io>
----
- configs/dragonboard410c_defconfig | 1 +
- configs/dragonboard820c_defconfig | 1 +
- 2 files changed, 2 insertions(+)
 
-diff --git a/configs/dragonboard410c_defconfig b/configs/dragonboard410c_defconfig
-index 08bcf99d27..dccd25dca5 100644
---- a/configs/dragonboard410c_defconfig
-+++ b/configs/dragonboard410c_defconfig
-@@ -7,6 +7,7 @@ CONFIG_DISTRO_DEFAULTS=y
- CONFIG_OF_BOARD_SETUP=y
- CONFIG_USE_BOOTARGS=y
- CONFIG_BOOTARGS="console=ttyMSM0,115200n8"
-+CONFIG_BOOTDELAY=-2
- # CONFIG_DISPLAY_CPUINFO is not set
- # CONFIG_DISPLAY_BOARDINFO is not set
- CONFIG_SYS_PROMPT="dragonboard410c => "
 diff --git a/configs/dragonboard820c_defconfig b/configs/dragonboard820c_defconfig
 index 36ad6d675c..e25cd0202c 100644
 --- a/configs/dragonboard820c_defconfig

@@ -7,14 +7,20 @@ SRC_URI_append_beaglebone-yocto += " \
     file://beaglebone-extend-usb-ether.patch \
 "
 
-# LMP specific changes
-SRC_URI_append_sota += " \
-    file://configs-dragonboard410-820-remove-qcom-dir-from-fdtf.patch \
+# DB410c specific changes
+SRC_URI_append_dragonboard-410c += " \
+    file://config-db410c-remove-qcom-dir-from-fdtf.patch \
     file://0001-HACK-disable-emmc.patch \
     file://0002-db410c-config-updates.patch \
+    file://config-db410c-disable-autoboot-console-check.patch \
+"
+
+# DB820c specific changes
+SRC_URI_append_dragonboard-820c += " \
+    file://config-db820c-remove-qcom-dir-from-fdtf.patch \
     file://0003-db820c-config-updates.patch \
     file://fix_load_addr_db820c.patch \
-    file://configs-dragonboard-disable-autoboot-console-check.patch \
+    file://config-db820c-disable-autoboot-console-check.patch \
 "
 
 # Boot image for Qcom-based machines

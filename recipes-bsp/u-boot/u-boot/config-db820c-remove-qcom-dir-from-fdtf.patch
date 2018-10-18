@@ -1,29 +1,12 @@
 From 6f900c882a4abed38cfdcbd4d4257bb3f61b85b4 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@opensourcefoundries.com>
 Date: Thu, 7 Jun 2018 19:22:27 -0300
-Subject: [PATCH] configs/dragonboard410-820: remove qcom dir from fdtfile
+Subject: [PATCH] configs/dragonboard820: remove qcom dir from fdtfile
 
 OE installs the device tree at the vfat root.
 
 Signed-off-by: Ricardo Salveti <ricardo@opensourcefoundries.com>
----
- include/configs/dragonboard410c.h | 2 +-
- include/configs/dragonboard820c.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/configs/dragonboard410c.h b/include/configs/dragonboard410c.h
-index 86fa735..07bb7c0 100644
---- a/include/configs/dragonboard410c.h
-+++ b/include/configs/dragonboard410c.h
-@@ -85,7 +85,7 @@ REFLASH(dragonboard/u-boot.img, 8)\
- 	"initrd_high=0xffffffffffffffff\0" \
- 	"linux_image=Image\0" \
- 	"kernel_addr_r=0x81000000\0"\
--	"fdtfile=qcom/apq8016-sbc.dtb\0" \
-+	"fdtfile=apq8016-sbc.dtb\0" \
- 	"fdt_addr_r=0x83000000\0"\
- 	"ramdisk_addr_r=0x84000000\0"\
- 	"scriptaddr=0x90000000\0"\
 diff --git a/include/configs/dragonboard820c.h b/include/configs/dragonboard820c.h
 index 12ae6bc..b0d33dd 100644
 --- a/include/configs/dragonboard820c.h

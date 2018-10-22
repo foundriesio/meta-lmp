@@ -1,7 +1,7 @@
 # Machine specific configuration
 
 # Machines that were tested and known to work
-COMPATIBLE_MACHINE = "(beaglebone-yocto|cl-som-imx7|colibri-imx7|cubox-i|hikey|dragonboard-410c|dragonboard-820c|rpi|intel-corei7-64|qemuriscv64|freedom-u540)"
+COMPATIBLE_MACHINE = "(beaglebone-yocto|cl-som-imx7|colibri-imx7|cubox-i|hikey|hikey960|dragonboard-410c|dragonboard-820c|rpi|intel-corei7-64|qemuriscv64|freedom-u540)"
 
 # Generic configs for RISC-V
 DEPENDS_append_riscv64 = " libgcc"

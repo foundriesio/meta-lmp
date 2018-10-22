@@ -22,6 +22,13 @@ OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA3,115200n8 efi=no
 KERNEL_IMAGETYPE_hikey = "Image.gz"
 IMAGE_FSTYPES_remove_hikey = "wic.gz wic.bmap"
 
+# Hikey960
+CMDLINE_remove_hikey960 = "quiet"
+OSTREE_BOOTLOADER_hikey960 = "grub"
+OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA6,115200n8 efi=noruntime"
+KERNEL_IMAGETYPE_hikey960 = "Image.gz"
+IMAGE_FSTYPES_remove_hikey960 = "wic.gz wic.bmap"
+
 # Raspberry Pi
 IMAGE_FSTYPES_remove_rpi = "ext3"
 IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"

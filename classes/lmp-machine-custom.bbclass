@@ -39,7 +39,7 @@ KERNEL_IMAGETYPE_sota_raspberrypi3-64 = "Image.gz"
 SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
 ## We don't want fitimage by default yet as it blocks overlay support
 KERNEL_CLASSES_remove_rpi = "kernel-fitimage"
-KERNEL_DEVICETREE_raspberrypi3_sota = "${RPI_KERNEL_DEVICETREE} ${RPI_KERNEL_DEVICETREE_OVERLAYS}"
+KERNEL_DEVICETREE_raspberrypi3_sota = "${RPI_KERNEL_DEVICETREE} ${RPI_KERNEL_DEVICETREE_OVERLAYS} overlays/rpi-7inch.dtbo"
 OSTREE_KERNEL_ARGS_sota_rpi = "root=LABEL=otaroot rootfstype=ext4"
 
 # RISC-V targets

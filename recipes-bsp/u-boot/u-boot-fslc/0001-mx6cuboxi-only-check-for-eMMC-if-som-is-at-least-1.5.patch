@@ -1,0 +1,29 @@
+From 14f3803a2cda372596222339b541ab2e3e625028 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 13 Nov 2018 01:29:52 -0200
+Subject: [PATCH] mx6cuboxi: only check for eMMC if som is at least 1.5
+
+eMMC is not available by default on older soms.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ board/solidrun/mx6cuboxi/mx6cuboxi.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/board/solidrun/mx6cuboxi/mx6cuboxi.c b/board/solidrun/mx6cuboxi/mx6cuboxi.c
+index cf63427e52..087c14552c 100644
+--- a/board/solidrun/mx6cuboxi/mx6cuboxi.c
++++ b/board/solidrun/mx6cuboxi/mx6cuboxi.c
+@@ -530,6 +530,9 @@ static bool is_rev_15_som(void)
+ static bool has_emmc(void)
+ {
+ 	struct mmc *mmc;
++	/* eMMC is only available on som rev >= 1.5 */
++	if (!is_rev_15_som())
++		return 0;
+ 	mmc = find_mmc_device(1);
+ 	if (!mmc)
+ 		return 0;
+-- 
+2.17.1
+

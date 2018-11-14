@@ -58,7 +58,7 @@ WKS_FILE_sota_freedom-u540 = "freedom-u540-bbl-sota.wks"
 IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"
 OSTREE_KERNEL_ARGS_append_intel-corei7-64 = " console=ttyS0,115200"
 EFI_PROVIDER_intel-corei7-64 = "grub-efi"
-WKS_FILE_append_intel-corei7-64 = "efidisk-sota.wks"
+WKS_FILE_append_intel-corei7-64 = " efidisk-sota.wks"
 
 # Toradex (support both NAND and eMMC targets with one single image)
 OSTREE_KERNEL_ARGS_append_colibri-imx7 = " console=tty1 console=ttymxc0,115200"

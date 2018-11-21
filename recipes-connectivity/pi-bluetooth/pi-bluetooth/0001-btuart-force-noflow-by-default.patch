@@ -1,0 +1,36 @@
+From 8131cf6f2878e4bc2cd9726694a4766b7756a9fd Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 20 Nov 2018 23:05:18 -0200
+Subject: [PATCH] btuart: force noflow by default
+
+Default raspberry pi bcm firmware is not yet able to properly manage
+flow control (hardware errors and timeouts), so disable it by default
+and reduce the baud rate to 921600.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ usr/bin/btuart | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/usr/bin/btuart b/usr/bin/btuart
+index eb8cf37..f986d9b 100755
+--- a/usr/bin/btuart
++++ b/usr/bin/btuart
+@@ -11,12 +11,8 @@ uart0="`cat /proc/device-tree/aliases/uart0`"
+ serial1="`cat /proc/device-tree/aliases/serial1`"
+ 
+ if [ "$uart0" = "$serial1" ] ; then
+-	uart0_pins="`wc -c /proc/device-tree/soc/gpio@7e200000/uart0_pins/brcm\,pins | cut -f 1 -d ' '`"
+-	if [ "$uart0_pins" = "16" ] ; then
+-		$HCIATTACH /dev/serial1 bcm43xx 3000000 flow - $BDADDR
+-	else
+-		$HCIATTACH /dev/serial1 bcm43xx 921600 noflow - $BDADDR
+-	fi
++	# Force noflow as flow control doesn't work properly with the current fw
++	$HCIATTACH /dev/serial1 bcm43xx 921600 noflow - $BDADDR
+ else
+ 	$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
+ fi
+-- 
+2.19.1
+

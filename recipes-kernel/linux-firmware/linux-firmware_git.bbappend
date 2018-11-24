@@ -3,7 +3,7 @@
 # version is not available in the linux-firmware repository.
 #
 SRC_URI_append = "\
-     https://git.ti.com/ti-bt/service-packs/blobs/raw/c290f8af9e388f37e509ecb111a1b64572b7c225/initscripts/TIInit_11.8.32.bts;name=TIInit_11.8.32 \
+    https://git.ti.com/ti-bt/service-packs/blobs/raw/c290f8af9e388f37e509ecb111a1b64572b7c225/initscripts/TIInit_11.8.32.bts;name=TIInit_11.8.32 \
 "
 SRC_URI_append_beaglebone-yocto = "\
     https://github.com/beagleboard/beaglebone-black-wireless/raw/d9135000a223228158d92fd2e3f00e495f642fee/firmware/wl18xx-conf.bin;name=wl18xx-conf \
@@ -26,11 +26,11 @@ SRC_URI[firmware-6.md5sum] = "f248b22e3f7c8602887203efe1d96bc8"
 SRC_URI[firmware-6.sha256sum] = "5554d6aa0de07394938a0094bae725ed24d4ceee3b38c849b4099a496ec50b48"
 
 do_install_append() {
-     cp ${WORKDIR}/TIInit_11.8.32.bts ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
-     cp ${WORKDIR}/board-2.bin ${D}${nonarch_base_libdir}/firmware/ath10k/QCA6174/hw3.0/
-     cp ${WORKDIR}/firmware-6.bin_WLAN.RM.4.4.1-00079-QCARMSWPZ-1 ${D}${nonarch_base_libdir}/firmware/ath10k/QCA6174/hw3.0/firmware-6.bin
+    cp ${WORKDIR}/TIInit_11.8.32.bts ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
+    cp ${WORKDIR}/board-2.bin ${D}${nonarch_base_libdir}/firmware/ath10k/QCA6174/hw3.0/
+    cp ${WORKDIR}/firmware-6.bin_WLAN.RM.4.4.1-00079-QCARMSWPZ-1 ${D}${nonarch_base_libdir}/firmware/ath10k/QCA6174/hw3.0/firmware-6.bin
 }
 
 do_install_append_beaglebone-yocto() {
-     cp ${WORKDIR}/wl18xx-conf.bin ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
+    cp ${WORKDIR}/wl18xx-conf.bin ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
 }

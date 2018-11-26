@@ -1,8 +1,8 @@
 diff --git a/include/configs/dragonboard820c.h b/include/configs/dragonboard820c.h
-index d62c032..a9928fc 100644
+index 75f83812ba..73350b7145 100644
 --- a/include/configs/dragonboard820c.h
 +++ b/include/configs/dragonboard820c.h
-@@ -43,14 +43,14 @@
+@@ -39,14 +39,14 @@
  	func(MMC, mmc, 0)
  
  #define CONFIG_EXTRA_ENV_SETTINGS \

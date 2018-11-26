@@ -1,8 +1,8 @@
 diff --git a/configs/am335x_boneblack_defconfig b/configs/am335x_boneblack_defconfig
-index ed430e7..94e87d5 100644
+index 90ccf9adfe..28e316c48a 100644
 --- a/configs/am335x_boneblack_defconfig
 +++ b/configs/am335x_boneblack_defconfig
-@@ -41,6 +41,11 @@ CONFIG_USB_GADGET_MANUFACTURER="Texas Instruments"
+@@ -46,6 +46,11 @@ CONFIG_USB_GADGET_MANUFACTURER="Texas Instruments"
  CONFIG_USB_GADGET_VENDOR_NUM=0x0451
  CONFIG_USB_GADGET_PRODUCT_NUM=0xd022
  CONFIG_USB_ETHER=y

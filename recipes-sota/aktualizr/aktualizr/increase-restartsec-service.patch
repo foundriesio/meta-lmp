@@ -1,5 +1,5 @@
 diff --git a/aktualizr.service b/aktualizr.service
-index 6de4474..7794c93 100644
+index 726809e..ef9d211 100644
 --- a/aktualizr.service
 +++ b/aktualizr.service
 @@ -3,7 +3,7 @@ Description=Aktualizr SOTA Client
@@ -9,5 +9,5 @@ index 6de4474..7794c93 100644
 -RestartSec=10
 +RestartSec=180
  Restart=always
- EnvironmentFile=/usr/lib/sota/sota.env
- EnvironmentFile=-/etc/sota/sota.env
+ ExecStart=/usr/bin/aktualizr $AKTUALIZR_CMDLINE_PARAMETERS
+ 

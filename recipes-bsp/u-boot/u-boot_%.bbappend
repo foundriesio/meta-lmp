@@ -20,6 +20,7 @@ SRC_URI_append_dragonboard-820c += " \
     file://config-db820c-remove-qcom-dir-from-fdtf.patch \
     file://0003-db820c-config-updates.patch \
     file://fix_load_addr_db820c.patch \
+    file://0001-Revert-Revert-Revert-efi_loader-efi_allocate_pages-i.patch \
     file://config-db820c-disable-autoboot-console-check.patch \
 "
 

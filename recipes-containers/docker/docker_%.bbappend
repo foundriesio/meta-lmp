@@ -4,7 +4,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 GOBUILDFLAGS_remove = "-buildmode=pie"
 
 SRC_URI_append = " \
-    file://custom-dockerd-config.patch \
+    file://dockerd-daemon-use-default-system-config-when-none-i.patch \
     file://daemon.json \
 "
 

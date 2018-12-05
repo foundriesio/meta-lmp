@@ -5,8 +5,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=a8d5a1d1c2d53025e2282c511033f6f7"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/python-requests:"
 
-SRC_URI[md5sum] = "cf034ab571854453719594120366f467"
-SRC_URI[sha256sum] = "99dcfdaaeb17caf6e526f32b6a7b780461512ab3f1d992187801694cba42770c"
+SRC_URI[md5sum] = "2918817ea4688f4ea21cb4b11e353448"
+SRC_URI[sha256sum] = "ea881206e59f41dbd0bd445437d792e43906703fff75ca8ff43ccdb11f33f263"
 
 inherit setuptools3 pypi
 

@@ -9,8 +9,8 @@ python __anonymous() {
         raise bb.parse.SkipRecipe(msg)
 }
 
-FIO_LMP_GIT_URL ?= "source.foundries.io"
-FIO_LMP_GIT_NAMESPACE ?= ""
+FIO_LMP_GIT_URL ?= "github.com"
+FIO_LMP_GIT_NAMESPACE ?= "foundriesio"
 
 LINUX_VERSION ?= "4.19-rc"
 LINUX_VERSION_EXTENSION ?= "-lmpdev-${LINUX_KERNEL_TYPE}"

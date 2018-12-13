@@ -1,7 +1,7 @@
 LINUX_VERSION ?= "4.18.18"
 
 FIO_LMP_GIT_URL ?= "github.com"
-FIO_LMP_GIT_NAMESPACE ?= "foundriesio"
+FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
 SRCREV_machine = "2835754ba8ec8d71b6eedd6009d23790b5db5983"
 SRCREV_meta = "b15a38120a74e117938321c996e04484567e6e6d"

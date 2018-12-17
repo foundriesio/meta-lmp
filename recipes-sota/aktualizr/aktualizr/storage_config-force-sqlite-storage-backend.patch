@@ -1,8 +1,8 @@
-From 4c9355060a489ac5b2539494a6455669d83f1a86 Mon Sep 17 00:00:00 2001
+From ad0fdb7bc2d0c742510ac9a7ec2146cedec5a713 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Tue, 7 Aug 2018 11:42:28 -0300
-Subject: [PATCH] storage_config: force sqlite as filesystem is not supported
- anymore
+Subject: [PATCH 3/3] storage_config: force sqlite as filesystem is not
+ supported anymore
 
 Instead of aborting the execution, force sqlite to allow converting the
 configuration to the supported format.
@@ -27,5 +27,5 @@ index 0467bfbd..779b1835 100644
    }
  }
 -- 
-2.18.0
+2.17.1
 

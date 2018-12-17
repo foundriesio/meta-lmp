@@ -1,0 +1,81 @@
+From 40eeef37acfee261f237d5e2258633aea6279135 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Mon, 17 Dec 2018 16:17:51 -0200
+Subject: [PATCH] grub2: add support for devicetree
+
+Similar as done with syslinux and u-boot, add support for grub2 to load
+a devicetree file.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/boot/grub2/ostree-grub-generator    |  7 +++++++
+ src/libostree/ostree-bootloader-grub2.c | 14 ++++++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/src/boot/grub2/ostree-grub-generator b/src/boot/grub2/ostree-grub-generator
+index 5b7ea1ab..cf54f988 100644
+--- a/src/boot/grub2/ostree-grub-generator
++++ b/src/boot/grub2/ostree-grub-generator
+@@ -32,6 +32,7 @@ read_config()
+     initrd=""
+     options=""
+     linux=""
++    devicetree=""
+ 
+     while read -r line
+     do
+@@ -47,6 +48,9 @@ read_config()
+             "linux")
+                 linux=${value}
+                 ;;
++            "devicetree")
++                devicetree=${value}
++                ;;
+             "options")
+                 options=${value}
+                 ;;
+@@ -73,6 +77,9 @@ populate_menu()
+         if [ -n "${initrd}" ] ; then
+             menu="${menu}\t initrd ${boot_prefix}${initrd}\n"
+         fi
++        if [ -n "${devicetree}" ] ; then
++            menu="${menu}\t devicetree ${boot_prefix}${devicetree}\n"
++        fi
+         menu="${menu}}\n\n"
+     done
+     # The printf command seems to be more reliable across shells for special character (\n, \t) evaluation
+diff --git a/src/libostree/ostree-bootloader-grub2.c b/src/libostree/ostree-bootloader-grub2.c
+index 6831382c..41abe0d0 100644
+--- a/src/libostree/ostree-bootloader-grub2.c
++++ b/src/libostree/ostree-bootloader-grub2.c
+@@ -191,6 +191,7 @@ _ostree_bootloader_grub2_generate_config (OstreeSysroot                 *sysroot
+       const char *options;
+       const char *kernel;
+       const char *initrd;
++      const char *devicetree;
+       char *quoted_title = NULL;
+       char *uuid = NULL;
+       char *quoted_uuid = NULL;
+@@ -246,6 +247,19 @@ _ostree_bootloader_grub2_generate_config (OstreeSysroot                 *sysroot
+           g_string_append_c (output, '\n');
+         }
+ 
++      devicetree = ostree_bootconfig_parser_get (config, "devicetree");
++      if (devicetree)
++        {
++          g_string_append (output, "devicetree");
++          if (is_efi)
++            g_string_append (output, GRUB2_EFI_SUFFIX);
++          else
++            g_string_append (output, GRUB2_SUFFIX);
++          g_string_append_c (output, ' ');
++          g_string_append (output, devicetree);
++          g_string_append_c (output, '\n');
++        }
++
+       g_string_append (output, "}\n");
+     }
+ 
+-- 
+2.17.1
+

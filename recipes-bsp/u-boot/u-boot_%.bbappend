@@ -3,6 +3,11 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
 DEPENDS_remove_rpi = "rpi-u-boot-scr"
 
+SRC_URI_append_rpi = " \
+    file://0001-rpi-set-CONFIG_SYS_BOOTM_LEN-to-32M.patch \
+    file://0001-rpi_defconfig-enable-support-for-FIT.patch \
+"
+
 SRC_URI_append_beaglebone-yocto = " \
     file://beaglebone-extend-usb-ether.patch \
 "

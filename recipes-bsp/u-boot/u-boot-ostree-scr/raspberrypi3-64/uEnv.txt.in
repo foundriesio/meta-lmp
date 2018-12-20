@@ -1,7 +1,0 @@
-bootcmd_dtb=fdt addr ${fdt_addr}; fdt get value bootargs_fdt /chosen bootargs
-bootcmd_otenv=ext2load mmc 0:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}
-bootcmd_args=setenv bootargs "${bootargs_fdt} ${bootargs}"
-bootcmd_load_k=ext2load mmc 0:2 ${kernel_addr_load} "/boot"${kernel_image}; unzip $kernel_addr_load $kernel_addr_r
-bootcmd_load_r=ext2load mmc 0:2 ${ramdisk_addr_r} "/boot"${ramdisk_image}; setenv ramdisk_size ${filesize}
-bootcmd_run=@@KERNEL_BOOTCMD@@ ${kernel_addr_r} ${ramdisk_addr_r}:${ramdisk_size} ${fdt_addr}
-bootcmd=run bootcmd_dtb; run bootcmd_otenv; run bootcmd_args; run bootcmd_load_k; run bootcmd_load_r; run bootcmd_run

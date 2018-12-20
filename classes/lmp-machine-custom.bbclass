@@ -50,18 +50,19 @@ IMAGE_FSTYPES_remove_hikey960 = "wic.gz wic.bmap"
 
 # Raspberry Pi
 IMAGE_FSTYPES_remove_rpi = "ext3"
-IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
-OSTREE_KERNEL_rpi = "${KERNEL_IMAGETYPE}"
-KERNEL_IMAGETYPE_sota_raspberrypi0-wifi = "zImage"
-KERNEL_IMAGETYPE_sota_raspberrypi3-64 = "Image.gz"
+IMAGE_BOOT_FILES_append_rpi = " boot.scr uEnv.txt"
 ## Rollback is not yet supported on rpi
 SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
-## We don't want fitimage by default yet as it blocks overlay support
-KERNEL_CLASSES_remove_rpi = "kernel-fitimage"
-## lirc-rpi was removed in 4.19
-RPI_KERNEL_DEVICETREE_OVERLAYS_remove_rpi = "overlays/lirc-rpi.dtbo"
-KERNEL_DEVICETREE_raspberrypi3_sota = "${RPI_KERNEL_DEVICETREE} ${RPI_KERNEL_DEVICETREE_OVERLAYS} overlays/rpi-7inch.dtbo"
-OSTREE_KERNEL_ARGS_sota_rpi = "root=LABEL=otaroot rootfstype=ext4"
+KERNEL_DEVICETREE_raspberrypi0-wifi = "bcm2708-rpi-0-w.dtb overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
+KERNEL_DEVICETREE_raspberrypi3_sota = "${RPI_KERNEL_DEVICETREE} overlays/vc4-kms-v3d.dtbo overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
+## Mimic meta-raspberrypi behavior
+KERNEL_SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "8250.nr_uarts=1 console=serial0,115200", "", d)}"
+OSTREE_KERNEL_ARGS_sota_raspberrypi0-wifi = "bcm2708_fb.fbwidth=720 bcm2708_fb.fbheight=480 bcm2708_fb.fbswap=1 vc_mem.mem_base=0x1ec00000 vc_mem.mem_size=0x20000000 dwc_otg.lpm_enable=0 ${KERNEL_SERIAL} root=LABEL=otaroot rootfstype=ext4"
+OSTREE_KERNEL_ARGS_sota_raspberrypi3 = "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 dwc_otg.lpm_enable=0 ${KERNEL_SERIAL} console=ttyS0,115200 root=LABEL=otaroot rootfstype=ext4"
+## U-Boot entrypoints for rpi
+UBOOT_ENTRYPOINT_rpi = "0x00008000"
+UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
+UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
 
 # RISC-V targets
 ## QEMU target doesn't support complete disk images

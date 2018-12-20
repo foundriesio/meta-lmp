@@ -3,12 +3,12 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
 DEPENDS_remove_rpi = "rpi-u-boot-scr"
 
-SRC_URI_append_beaglebone-yocto += " \
+SRC_URI_append_beaglebone-yocto = " \
     file://beaglebone-extend-usb-ether.patch \
 "
 
 # DB410c specific changes
-SRC_URI_append_dragonboard-410c += " \
+SRC_URI_append_dragonboard-410c = " \
     file://config-db410c-remove-qcom-dir-from-fdtf.patch \
     file://0001-HACK-disable-emmc.patch \
     file://0002-db410c-config-updates.patch \
@@ -16,7 +16,7 @@ SRC_URI_append_dragonboard-410c += " \
 "
 
 # DB820c specific changes
-SRC_URI_append_dragonboard-820c += " \
+SRC_URI_append_dragonboard-820c = " \
     file://config-db820c-remove-qcom-dir-from-fdtf.patch \
     file://0003-db820c-config-updates.patch \
     file://fix_load_addr_db820c.patch \

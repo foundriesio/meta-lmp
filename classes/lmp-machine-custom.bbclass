@@ -3,7 +3,12 @@
 # Beaglebone
 OSTREE_KERNEL_ARGS_append_beaglebone-yocto = " console=ttyO0,115200n8"
 KERNEL_DEVICETREE_append_beaglebone-yocto = " am335x-boneblack-wireless.dtb"
-IMAGE_BOOT_FILES_append_beaglebone-yocto = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
+IMAGE_BOOT_FILES_beaglebone-yocto = "u-boot.img MLO boot.scr uEnv.txt"
+KERNEL_IMAGETYPE_beaglebone-yocto = "fitImage"
+KERNEL_CLASSES_beaglebone-yocto = " kernel-fitimage "
+OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+## beaglebone-yocto.conf appends kernel-image-zimage by default
+IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Dragonboard (DB410/DB820), u-boot as boot image and rootfs on sdcard
 UBOOT_MACHINE_dragonboard-410c = "dragonboard410c_defconfig"

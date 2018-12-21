@@ -15,7 +15,6 @@ SRC_URI_append_beaglebone-yocto = " \
 
 # DB410c specific changes
 SRC_URI_append_dragonboard-410c = " \
-    file://config-db410c-remove-qcom-dir-from-fdtf.patch \
     file://0001-HACK-disable-emmc.patch \
     file://0002-db410c-config-updates.patch \
     file://config-db410c-disable-autoboot-console-check.patch \

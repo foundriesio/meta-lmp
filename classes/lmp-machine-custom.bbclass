@@ -22,10 +22,15 @@ UBOOT_DTB_LOADADDRESS_dragonboard-410c = "0x83000000"
 UBOOT_RD_LOADADDRESS_dragonboard-410c = "0x84000000"
 
 # Dragonboard 820c, u-boot as boot image and rootfs on sdcard
-UBOOT_MACHINE_dragonboard-820c = "dragonboard820c_defconfig"
-IMAGE_BOOT_FILES_append_dragonboard-820c = " boot.scr uEnv.txt apq8096-db820c.dtb"
+IMAGE_BOOT_FILES_append_dragonboard-820c = " boot.scr uEnv.txt"
 OSTREE_KERNEL_ARGS_append_dragonboard-820c = " console=tty0 console=ttyMSM0,115200n8 androidboot.baseband=apq mdss_mdp.panel=0"
+KERNEL_IMAGETYPE_dragonboard-820c = "fitImage"
+KERNEL_CLASSES_dragonboard-820c = " kernel-fitimage "
+OSTREE_KERNEL_dragonboard-820c = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 WKS_FILES_sota_dragonboard-820c = "sdimage-sota.wks"
+UBOOT_ENTRYPOINT_dragonboard-820c = "0x81000000"
+UBOOT_DTB_LOADADDRESS_dragonboard-820c = "0x83000000"
+UBOOT_RD_LOADADDRESS_dragonboard-820c = "0x84000000"
 
 # HiKey
 CMDLINE_remove_hikey = "quiet"

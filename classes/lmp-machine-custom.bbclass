@@ -98,7 +98,12 @@ KERNEL_DEVICETREE_append_cubox-i = " \
     imx6dl-hummingboard2-emmc-som-v15.dtb imx6q-hummingboard2-emmc-som-v15.dtb \
     imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb \
 "
-IMAGE_BOOT_FILES_append_cubox-i = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
+IMAGE_BOOT_FILES_append_cubox-i = " boot.scr uEnv.txt"
+KERNEL_IMAGETYPE_cubox-i = "fitImage"
+KERNEL_CLASSES_cubox-i = " kernel-fitimage "
+OSTREE_KERNEL_cubox-i = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+UBOOT_DTB_LOADADDRESS_cubox-i = "0x18000000"
+UBOOT_RD_LOADADDRESS_cubox-i = "0x13000000"
 WKS_FILES_sota_cubox-i = "sdimage-imx6-spl-sota.wks"
 UBOOT_EXTLINUX_cubox-i = ""
 

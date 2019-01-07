@@ -88,7 +88,12 @@ IMAGE_BOOT_FILES_append_colibri-imx7 = " boot.scr uEnv.txt u-boot-colibri-imx7.i
 
 # cl-som-imx7 (IOT-GATE-iMX7)
 OSTREE_KERNEL_ARGS_append_cl-som-imx7 = " console=tty1 console=ttymxc0,115200"
-IMAGE_BOOT_FILES_append_cl-som-imx7 = " boot.scr uEnv.txt ${KERNEL_DEVICETREE}"
+IMAGE_BOOT_FILES_append_cl-som-imx7 = " boot.scr uEnv.txt"
+KERNEL_IMAGETYPE_cl-som-imx7 = "fitImage"
+KERNEL_CLASSES_cl-som-imx7 = " kernel-fitimage "
+OSTREE_KERNEL_cl-som-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+UBOOT_DTB_LOADADDRESS_cl-som-imx7 = "0x82000000"
+UBOOT_RD_LOADADDRESS_cl-som-imx7 = "0x82100000"
 WKS_FILE_sota_cl-som-imx7 = "sdimage-imx7-spl-sota.wks"
 
 # cubox-i (hummingboard)

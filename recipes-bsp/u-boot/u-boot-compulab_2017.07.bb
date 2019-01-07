@@ -14,6 +14,7 @@ SRC_URI = "git://git.denx.de/u-boot.git;branch=${SRCBRANCH} \
     file://0001-net-Use-packed-structures-for-networking.patch \
     file://u-boot-2017.07-cl-som-imx7-1.5.patch \
     file://enable_distro_defaults.patch \
+    file://enable_support_for_fitimage.patch \
     file://standard_boot_env.patch \
 "
 

@@ -1,0 +1,10 @@
+Index: git/configs/cl-som-imx7_defconfig
+===================================================================
+--- git.orig/configs/cl-som-imx7_defconfig
++++ git/configs/cl-som-imx7_defconfig
+@@ -66,3 +66,5 @@ CONFIG_USB_KEYBOARD=y
+ CONFIG_USB_GADGET=y
+ CONFIG_CI_UDC=y
+ CONFIG_OF_LIBFDT=y
++CONFIG_FIT=y
++CONFIG_FIT_VERBOSE=y

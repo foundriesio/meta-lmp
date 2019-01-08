@@ -84,7 +84,12 @@ WKS_FILE_append_intel-corei7-64 = " efidisk-sota.wks"
 # Toradex (support both NAND and eMMC targets with one single image)
 OSTREE_KERNEL_ARGS_append_colibri-imx7 = " console=tty1 console=ttymxc0,115200"
 EXTRA_IMAGEDEPENDS_append_colibri-imx7 = " u-boot-script-toradex"
-IMAGE_BOOT_FILES_append_colibri-imx7 = " boot.scr uEnv.txt u-boot-colibri-imx7.imx;u-boot-nand.imx u-boot-colibri-imx7.imx-sd;u-boot-emmc.imx ${MACHINE_ARCH}/*;${MACHINE_ARCH}"
+IMAGE_BOOT_FILES_colibri-imx7 = "boot.scr uEnv.txt u-boot-colibri-imx7.imx;u-boot-nand.imx u-boot-colibri-imx7.imx-sd;u-boot-emmc.imx ${MACHINE_ARCH}/*;${MACHINE_ARCH}"
+KERNEL_IMAGETYPE_colibri-imx7 = "fitImage"
+KERNEL_CLASSES_colibri-imx7 = " kernel-fitimage "
+OSTREE_KERNEL_colibri-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+UBOOT_DTB_LOADADDRESS_colibri-imx7 = "0x82000000"
+UBOOT_RD_LOADADDRESS_colibri-imx7 = "0x82100000"
 
 # cl-som-imx7 (IOT-GATE-iMX7)
 OSTREE_KERNEL_ARGS_append_cl-som-imx7 = " console=tty1 console=ttymxc0,115200"

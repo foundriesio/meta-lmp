@@ -30,9 +30,10 @@ CORE_IMAGE_BASE_INSTALL += " \
     sudo \
 "
 
-# OTA+ extras (OSF device provisioning)
+# OTA+ extras (e.g. device provisioning)
 CORE_IMAGE_BASE_INSTALL += " \
     lmp-device-register \
+    softhsm \
 "
 
 fakeroot do_populate_rootfs_common_src () {

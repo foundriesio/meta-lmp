@@ -6,7 +6,7 @@
 # tune = 'armv7at' below but then this is for your own distro.
 
 def arm_tune_handler(d):
-    features = d.getVar('TUNE_FEATURES', True).split()
+    features = d.getVar('TUNE_FEATURES').split()
     if 'armv7a' in features or 'armv7ve' in features:
         tune = 'armv7athf'
         if 'bigendian' in features:
@@ -20,7 +20,7 @@ def arm_tune_handler(d):
         if 'vfpv4' in features:
             tune += '-vfpv4'
     else:
-        tune = d.getVar('DEFAULTTUNE', True)
+        tune = d.getVar('DEFAULTTUNE')
     return tune
 
 DEFAULTTUNE_lmp := "${@arm_tune_handler(d)}"

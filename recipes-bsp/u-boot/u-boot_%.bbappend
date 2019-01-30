@@ -30,7 +30,7 @@ SRC_URI_append_dragonboard-820c = " \
 
 # Boot image for Qcom-based machines
 def get_include_handler(d):
-    machine = d.getVar('MACHINE', True)
+    machine = d.getVar('MACHINE')
     if (machine == "dragonboard-410c"):
         include = "recipes-bsp/u-boot/u-boot-qcom.inc"
     elif (machine == "dragonboard-820c"):

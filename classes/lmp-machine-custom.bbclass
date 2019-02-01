@@ -56,9 +56,9 @@ SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
 KERNEL_DEVICETREE_raspberrypi0-wifi = "bcm2708-rpi-0-w.dtb overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
 KERNEL_DEVICETREE_raspberrypi3_sota = "${RPI_KERNEL_DEVICETREE} overlays/vc4-kms-v3d.dtbo overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
 ## Mimic meta-raspberrypi behavior
-KERNEL_SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "console=serial0,115200", "", d)}"
+KERNEL_SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 OSTREE_KERNEL_ARGS_sota_raspberrypi0-wifi = "8250.nr_uarts=1 vc_mem.mem_base=0x1ec00000 vc_mem.mem_size=0x20000000 dwc_otg.lpm_enable=0 ${KERNEL_SERIAL} root=LABEL=otaroot rootfstype=ext4"
-OSTREE_KERNEL_ARGS_sota_raspberrypi3 = "8250.nr_uarts=1 cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 dwc_otg.lpm_enable=0 ${KERNEL_SERIAL} console=ttyS0,115200 root=LABEL=otaroot rootfstype=ext4"
+OSTREE_KERNEL_ARGS_sota_raspberrypi3 = "8250.nr_uarts=1 cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 dwc_otg.lpm_enable=0 ${KERNEL_SERIAL} root=LABEL=otaroot rootfstype=ext4"
 ## U-Boot entrypoints for rpi
 UBOOT_ENTRYPOINT_rpi = "0x00008000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"

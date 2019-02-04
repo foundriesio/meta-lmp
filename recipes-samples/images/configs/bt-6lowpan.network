@@ -1,6 +1,0 @@
-[Match]
-Name=bt0
-
-[Network]
-Address=fe80:0:0:0:d4e7::1/80
-DHCP=no

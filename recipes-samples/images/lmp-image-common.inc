@@ -9,7 +9,6 @@ IMAGE_FSTYPES_append_intel-corei7-64 = " wic.vmdk wic.vdi"
 inherit core-image distro_features_check extrausers
 
 SRC_URI = "\
-    file://bt-6lowpan.network \
     file://modules-6lowpan.conf \
     file://sysctl-panic.conf \
     file://sysctl-net-queuing.conf \
@@ -44,7 +43,6 @@ fakeroot do_populate_rootfs_common_src () {
     install -m 0644 ${WORKDIR}/ostree-pending-reboot.service ${IMAGE_ROOTFS}${systemd_system_unitdir}/
 
     # Configs that are specific to this image
-    install -m 0644 ${WORKDIR}/bt-6lowpan.network ${IMAGE_ROOTFS}${exec_prefix}/lib/systemd/network/60-bt-6lowpan.network
     install -m 0644 ${WORKDIR}/modules-6lowpan.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/modules-load.d/6lowpan.conf
     install -m 0644 ${WORKDIR}/sysctl-panic.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/sysctl.d/60-panic.conf
     install -m 0644 ${WORKDIR}/sysctl-net-queuing.conf ${IMAGE_ROOTFS}${exec_prefix}/lib/sysctl.d/90-net-queuing.conf

@@ -1,0 +1,26 @@
+Fixes on musl + armv8:
+
+error: redefinition of 'struct prctl_mm_map'
+ struct prctl_mm_map {
+        ^~~~~~~~~~~~
+In file included from work/aarch64-lmp-linux-musl/strace/4.26-r0/recipe-sysroot/usr/include/asm/ptrace.h:67,
+                 from work/aarch64-lmp-linux-musl/strace/4.26-r0/recipe-sysroot/usr/include/linux/ptrace.h:107,
+                 from ../strace-4.26/ptrace.h:36,
+                 from ../strace-4.26/strace.c:16:
+work/aarch64-lmp-linux-musl/strace/4.26-r0/recipe-sysroot/usr/include/linux/prctl.h:134:8: note: originally defined here
+ struct prctl_mm_map {
+        ^~~~~~~~~~~~
+
+Index: strace-4.26/strace.c
+===================================================================
+--- strace-4.26.orig/strace.c
++++ strace-4.26/strace.c
+@@ -26,7 +26,7 @@
+ #include <locale.h>
+ #include <sys/utsname.h>
+ #ifdef HAVE_PRCTL
+-# include <sys/prctl.h>
++# include <linux/prctl.h>
+ #endif
+ #include <asm/unistd.h>
+ 

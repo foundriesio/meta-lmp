@@ -17,6 +17,11 @@ SRC_URI = "git://github.com/lyonel/lshw.git \
     file://docbook2man.patch \
 "
 
+SRC_URI_append_libc-musl = " \
+    file://0001-sysfs-Fix-basename-build-with-musl.patch \
+    file://0002-Fix-use-of-LONG_BIT.patch \
+"
+
 SRCREV = "20cda77239e8604e798b87a0441e694edb0214d1"
 
 S = "${WORKDIR}/git"

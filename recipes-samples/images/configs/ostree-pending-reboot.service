@@ -1,6 +1,6 @@
 [Unit]
 Description=Aktualizr OSTree Update Automatic Reboot
-ConditionPathExists=/run/aktualizr/ostree-pending-update
+ConditionPathExists=/var/run/aktualizr-session/need_reboot
 
 [Service]
 Type=simple

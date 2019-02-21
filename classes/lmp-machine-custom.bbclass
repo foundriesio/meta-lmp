@@ -82,7 +82,7 @@ OSTREE_KERNEL_ARGS_append_intel-corei7-64 = " console=ttyS0,115200"
 EFI_PROVIDER_intel-corei7-64 = "grub-efi"
 WKS_FILE_append_intel-corei7-64 = " efidisk-sota.wks"
 
-# Toradex (support both NAND and eMMC targets with one single image)
+# Toradex Colibri iMX7 (support both NAND and eMMC targets with one single image)
 OSTREE_KERNEL_ARGS_append_colibri-imx7 = " console=tty1 console=ttymxc0,115200"
 EXTRA_IMAGEDEPENDS_append_colibri-imx7 = " u-boot-script-toradex"
 IMAGE_BOOT_FILES_colibri-imx7 = "boot.scr uEnv.txt u-boot-colibri-imx7.imx;u-boot-nand.imx u-boot-colibri-imx7.imx-sd;u-boot-emmc.imx ${MACHINE_ARCH}/*;${MACHINE_ARCH}"
@@ -101,6 +101,16 @@ OSTREE_KERNEL_cl-som-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-$
 UBOOT_DTB_LOADADDRESS_cl-som-imx7 = "0x82000000"
 UBOOT_RD_LOADADDRESS_cl-som-imx7 = "0x82100000"
 WKS_FILE_sota_cl-som-imx7 = "sdimage-imx7-spl-sota.wks"
+
+# Toradex Apalis iMX6 (support both NAND and eMMC targets with one single image)
+OSTREE_KERNEL_ARGS_append_apalis-imx6 = " console=tty1 console=ttymxc0,115200"
+EXTRA_IMAGEDEPENDS_append_apalis-imx6 = " u-boot-script-toradex"
+IMAGE_BOOT_FILES_apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.imx-spl ${MACHINE_ARCH}/flash_blk.img;flash_blk.img"
+KERNEL_IMAGETYPE_apalis-imx6 = "fitImage"
+KERNEL_CLASSES_apalis-imx6 = " kernel-fitimage "
+OSTREE_KERNEL_apalis-imx6 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"
+UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x13000000"
 
 # cubox-i (hummingboard)
 OSTREE_KERNEL_ARGS_append_cubox-i = " console=tty1 console=ttymxc0,115200"

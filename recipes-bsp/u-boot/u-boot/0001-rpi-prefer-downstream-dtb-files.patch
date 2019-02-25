@@ -12,10 +12,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/board/raspberrypi/rpi/rpi.c b/board/raspberrypi/rpi/rpi.c
-index 649127c5bf..ff8e690e97 100644
+index 153a1fdcb7..cb0473548b 100644
 --- a/board/raspberrypi/rpi/rpi.c
 +++ b/board/raspberrypi/rpi/rpi.c
-@@ -122,7 +122,7 @@ static const struct rpi_model rpi_models_new_scheme[] = {
+@@ -115,7 +115,7 @@ static const struct rpi_model rpi_models_new_scheme[] = {
  	},
  	[0x8] = {
  		"3 Model B",
@@ -24,7 +24,7 @@ index 649127c5bf..ff8e690e97 100644
  		true,
  	},
  	[0x9] = {
-@@ -137,12 +137,12 @@ static const struct rpi_model rpi_models_new_scheme[] = {
+@@ -130,12 +130,12 @@ static const struct rpi_model rpi_models_new_scheme[] = {
  	},
  	[0xC] = {
  		"Zero W",
@@ -38,7 +38,7 @@ index 649127c5bf..ff8e690e97 100644
 +		DTB_DIR "bcm2710-rpi-3-b-plus.dtb",
  		true,
  	},
- };
+ 	[0xE] = {
 -- 
 2.17.1
 

@@ -7,7 +7,8 @@ LIC_FILES_CHKSUM = "file://${S}/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 SRC_URI = "git://github.com/NICMx/Jool.git"
 
-SRCREV = "89b3c1098d2e05a67931805c6eed3182b03b8a83"
+PV = "4.0.0"
+SRCREV = "de72f5f5a15a7218dc7cd566b108f8f2323b3a3a"
 
 S = "${WORKDIR}/git"
 
@@ -21,16 +22,16 @@ EXTRA_OEMAKE += 'ARCH="${ARCH}" CROSS_COMPILE="${TARGET_PREFIX}" \
 do_compile() {
     # Only build the kernel modules
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
-    oe_runmake -C "${S}/mod/stateful" CC="${KERNEL_CC}" LD="${KERNEL_LD}" \
+    oe_runmake -C "${S}/src/mod/nat64" CC="${KERNEL_CC}" LD="${KERNEL_LD}" \
             AR="${KERNEL_AR}" O=${STAGING_KERNEL_BUILDDIR}
-    oe_runmake -C "${S}/mod/stateless" CC="${KERNEL_CC}" LD="${KERNEL_LD}" \
+    oe_runmake -C "${S}/src/mod/siit" CC="${KERNEL_CC}" LD="${KERNEL_LD}" \
             AR="${KERNEL_AR}" O=${STAGING_KERNEL_BUILDDIR}
 }
 
 do_install() {
     install -d ${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}/jool
-    install -m 0755 ${S}/mod/stateful/jool.ko \
+    install -m 0755 ${S}/src/mod/nat64/jool.ko \
             ${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}/jool/
-    install -m 0755 ${S}/mod/stateless/jool_siit.ko \
+    install -m 0755 ${S}/src/mod/siit/jool_siit.ko \
             ${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}/jool/
 }

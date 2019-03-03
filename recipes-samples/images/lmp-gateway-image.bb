@@ -44,6 +44,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     python3-docker \
     python3-docker-compose \
     python3-json \
+    python3-multiprocessing \
     python3-netclient \
     python3-pkgutil \
     python3-shell \

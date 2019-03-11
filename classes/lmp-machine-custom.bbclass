@@ -102,7 +102,7 @@ UBOOT_DTB_LOADADDRESS_cl-som-imx7 = "0x82000000"
 UBOOT_RD_LOADADDRESS_cl-som-imx7 = "0x82100000"
 WKS_FILE_sota_cl-som-imx7 = "sdimage-imx7-spl-sota.wks"
 
-# Toradex Apalis iMX6 (support both NAND and eMMC targets with one single image)
+# Toradex Apalis iMX6
 OSTREE_KERNEL_ARGS_append_apalis-imx6 = " console=tty1 console=ttymxc0,115200"
 EXTRA_IMAGEDEPENDS_append_apalis-imx6 = " u-boot-script-toradex"
 IMAGE_BOOT_FILES_apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.imx-spl ${MACHINE_ARCH}/flash_blk.img;flash_blk.img"

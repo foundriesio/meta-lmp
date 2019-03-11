@@ -76,6 +76,24 @@ KERNEL_INITRAMFS_freedom-u540 = '-initramfs'
 RISCV_BBL_PAYLOAD_freedom-u540 = "${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin"
 WKS_FILE_sota_freedom-u540 = "freedom-u540-bbl-sota.wks"
 
+# QEMU ARM
+PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot"
+UBOOT_MACHINE_qemuarm64 = "qemu_arm64_defconfig"
+IMAGE_BOOT_FILES_qemuarm64 = "boot.scr uEnv.txt"
+KERNEL_IMAGETYPE_qemuarm64 = "fitImage"
+KERNEL_CLASSES_qemuarm64 = " kernel-fitimage "
+OSTREE_KERNEL_qemuarm64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_append_qemuarm64 = " console=ttyAMA0"
+UBOOT_ENTRYPOINT_qemuarm64 = "0x40080000"
+MACHINE_FEATURES_append_qemuarm64 = " optee"
+EXTRA_IMAGEDEPENDS_append_qemuarm64 = " atf"
+QB_MACHINE_qemuarm64 = "-machine virt,secure=on"
+## Use same minimal memory amount as suggested by op-tee
+QB_MEM_qemuarm64 = "-m 1057"
+QB_DRIVE_TYPE_qemuarm64 = "/dev/vd"
+## Bios/bl1.bin is ATF, which requires semihosting for the remaining boot artifacts
+QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config enable,target=native"
+
 # Intel
 IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"
 OSTREE_KERNEL_ARGS_append_intel-corei7-64 = " console=ttyS0,115200"

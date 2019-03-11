@@ -1,0 +1,27 @@
+From 33e278bff4d3aacfb1e803a5809ad3beb104ff5e Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Mon, 11 Mar 2019 15:47:29 -0300
+Subject: [PATCH] apalis_imx6: use imx6q-apalis-ixora-v1.1.dtb as default
+ fdt_file
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ include/configs/apalis_imx6.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/apalis_imx6.h b/include/configs/apalis_imx6.h
+index 71dfeb56f5..72cfc0561c 100644
+--- a/include/configs/apalis_imx6.h
++++ b/include/configs/apalis_imx6.h
+@@ -249,7 +249,7 @@
+ 		"${fdt_file} && setenv dtbparam \" - ${fdt_addr_r}\" && true\0"
+ 
+ #ifndef CONFIG_TDX_APALIS_IMX6_V1_0
+-#define FDT_FILE "imx6q-apalis-eval.dtb"
++#define FDT_FILE "imx6q-apalis-ixora-v1.1.dtb"
+ #define FDT_FILE_V1_0 "imx6q-apalis_v1_0-eval.dtb"
+ #else
+ #define FDT_FILE "imx6q-apalis_v1_0-eval.dtb"
+-- 
+2.17.1
+

@@ -9,5 +9,5 @@ SRC_URI_append_colibri-imx7 = " \
 "
 
 SRC_URI_append_apalis-imx6 = " \
-    file://0001-apalis_imx6-run-distro-bootcmd-by-default.patch \
+    file://0001-apalis_imx6-use-imx6q-apalis-ixora-v1.1.dtb-as-defau.patch \
 "

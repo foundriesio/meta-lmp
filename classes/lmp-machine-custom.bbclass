@@ -38,7 +38,7 @@ OSTREE_BOOTLOADER_hikey = "grub"
 OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA3,115200n8 efi=noruntime"
 OSTREE_DEPLOY_DEVICETREE_hikey = "1"
 KERNEL_IMAGETYPE_hikey = "Image.gz"
-IMAGE_FSTYPES_remove_hikey = "wic.gz wic.bmap"
+IMAGE_FSTYPES_remove_hikey = "wic wic.gz wic.bmap"
 
 # Hikey960
 CMDLINE_remove_hikey960 = "quiet"
@@ -46,7 +46,7 @@ OSTREE_BOOTLOADER_hikey960 = "grub"
 OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA6,115200n8 efi=noruntime"
 OSTREE_DEPLOY_DEVICETREE_hikey960 = "1"
 KERNEL_IMAGETYPE_hikey960 = "Image.gz"
-IMAGE_FSTYPES_remove_hikey960 = "wic.gz wic.bmap"
+IMAGE_FSTYPES_remove_hikey960 = "wic wic.gz wic.bmap"
 
 # Raspberry Pi
 IMAGE_FSTYPES_remove_rpi = "ext3"
@@ -66,7 +66,7 @@ UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
 
 # RISC-V targets
 ## QEMU target doesn't support complete disk images
-IMAGE_FSTYPES_remove_qemuriscv64 = "wic.gz wic.bmap"
+IMAGE_FSTYPES_remove_qemuriscv64 = "wic wic.gz wic.bmap"
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"
 KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
 RISCV_BBL_PAYLOAD_qemuriscv64 = "${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin"

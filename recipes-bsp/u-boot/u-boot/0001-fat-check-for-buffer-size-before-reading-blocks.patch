@@ -1,0 +1,26 @@
+From b892555dee7cd0ce86cb9192916159e0f7b7a005 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Thu, 14 Mar 2019 16:20:45 -0300
+Subject: [PATCH] fat: check for buffer size before reading blocks
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ fs/fat/fat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/fat/fat.c b/fs/fat/fat.c
+index 179bf4f3d8..49bc66093e 100644
+--- a/fs/fat/fat.c
++++ b/fs/fat/fat.c
+@@ -273,7 +273,7 @@ get_cluster(fsdata *mydata, __u32 clustnum, __u8 *buffer, unsigned long size)
+ 			buffer += mydata->sect_size;
+ 			size -= mydata->sect_size;
+ 		}
+-	} else {
++	} else if (size >= mydata->sect_size) {
+ 		idx = size / mydata->sect_size;
+ 		ret = disk_read(startsect, idx, buffer);
+ 		if (ret != idx) {
+-- 
+2.17.1
+

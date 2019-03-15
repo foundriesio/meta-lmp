@@ -9,6 +9,7 @@ SRC_URI_append = " \
 
 SRC_URI_append_qemuarm64 = " \
     file://0001-qemuarm64-enable-support-for-fitimage.patch \
+    file://0001-qemuarm64-make-u-boot-an-ATF-payload.patch \
 "
 
 SRC_URI_append_rpi = " \

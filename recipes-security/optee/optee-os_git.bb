@@ -47,6 +47,10 @@ do_install() {
     # OP-TEE OS firmware
     install -d ${D}/${nonarch_base_libdir}/firmware
     install -m 644 ${B}/out/arm/core/*.bin ${D}/${nonarch_base_libdir}/firmware/
+
+    # OP-TEE OS TAs
+    install -d ${D}${nonarch_base_libdir}/optee_armtz
+    install -m 0444 ${S}/out/arm/ta/*/*.ta ${D}${nonarch_base_libdir}/optee_armtz
 }
 
 do_deploy() {
@@ -58,7 +62,9 @@ do_deploy() {
 
 addtask deploy before do_build after do_install
 
+PACKAGES += "${PN}-ta"
 FILES_${PN} += "${nonarch_base_libdir}/firmware"
+FILES_${PN}-ta = "${nonarch_base_libdir}/optee_armtz"
 FILES_${PN}-dev = "${includedir}/optee"
 INSANE_SKIP_${PN}-dev = "staticdev"
 INHIBIT_PACKAGE_STRIP = "1"

@@ -39,9 +39,9 @@ EXTRA_OEMAKE_append_armv7a = " \
 
 do_install() {
     # TA devkit
-    install -d ${D}/usr/include/optee/export-user_ta/
+    install -d ${D}${includedir}/optee/export-user_ta/
     for f in ${B}/out/arm/export-ta_${OPTEE_ARCH}/* ; do
-        cp -aR $f ${D}/usr/include/optee/export-user_ta/
+        cp -aR $f ${D}${includedir}/optee/export-user_ta/
     done
 }
 
@@ -54,6 +54,6 @@ do_deploy() {
 
 addtask deploy before do_build after do_install
 
-FILES_${PN}-dev = "/usr/include/optee"
+FILES_${PN}-dev = "${includedir}/optee"
 INSANE_SKIP_${PN}-dev = "staticdev"
 INHIBIT_PACKAGE_STRIP = "1"

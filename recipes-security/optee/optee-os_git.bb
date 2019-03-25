@@ -43,6 +43,10 @@ do_install() {
     for f in ${B}/out/arm/export-ta_${OPTEE_ARCH}/* ; do
         cp -aR $f ${D}${includedir}/optee/export-user_ta/
     done
+
+    # OP-TEE OS firmware
+    install -d ${D}/${nonarch_base_libdir}/firmware
+    install -m 644 ${B}/out/arm/core/*.bin ${D}/${nonarch_base_libdir}/firmware/
 }
 
 do_deploy() {
@@ -54,6 +58,7 @@ do_deploy() {
 
 addtask deploy before do_build after do_install
 
+FILES_${PN} += "${nonarch_base_libdir}/firmware"
 FILES_${PN}-dev = "${includedir}/optee"
 INSANE_SKIP_${PN}-dev = "staticdev"
 INHIBIT_PACKAGE_STRIP = "1"

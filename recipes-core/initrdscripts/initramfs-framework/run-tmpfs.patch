@@ -16,10 +16,10 @@ index 717383e..f34edd8 100755
  		cd $ROOTFS_DIR
  		exec switch_root -c /dev/console $ROOTFS_DIR ${bootparam_init:-/sbin/init}
 diff --git a/init b/init
-index 37527a8..8688de5 100755
+index c71ce0c..79cf5c1 100755
 --- a/init
 +++ b/init
-@@ -77,9 +77,11 @@ MODULES_DIR=/init.d  # place to look for modules
+@@ -78,9 +78,11 @@ EFI_DIR=/sys/firmware/efi  # place to store device firmware information
  touch /etc/fstab
  
  # initialize /proc, /sys, /run/lock and /var/lock
@@ -30,5 +30,5 @@ index 37527a8..8688de5 100755
 +mount -t tmpfs tmpfs /run
 +mkdir -p /run/lock
  
- # populate bootparam environment
- for p in `cat /proc/cmdline`; do
+ if [ -d $EFI_DIR ];then
+ 	mount -t efivarfs none /sys/firmware/efi/efivars

@@ -5,8 +5,12 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=435b266b3899aa8a959f17d41c56def8"
 
 inherit pypi setuptools3
 
-SRC_URI[md5sum] = "717831bff861e88d848477e2cd438030"
-SRC_URI[sha256sum] = "ff079e9e39cde7e437ed87dd5434ea1647f7e203f6327cc5f7db7ef10fa452f4"
+SRC_URI[md5sum] = "8d12f41dd8d3abbc777ae2c277421f42"
+SRC_URI[sha256sum] = "5582a51827676f5243473310e911503e1016bbdf3be1b89dcb4201f42b5fa369"
+
+SRC_URI += " \
+    file://support-requests-up-to-2.21.0.patch \
+"
 
 RDEPENDS_${PN} = "\
     ${PYTHON_PN}-cached-property \
@@ -21,6 +25,7 @@ RDEPENDS_${PN} = "\
     ${PYTHON_PN}-idna \
     ${PYTHON_PN}-jsonschema \
     ${PYTHON_PN}-misc \
+    ${PYTHON_PN}-paramiko \
     ${PYTHON_PN}-pyyaml \
     ${PYTHON_PN}-requests \
     ${PYTHON_PN}-six \

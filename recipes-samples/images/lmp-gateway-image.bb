@@ -61,9 +61,6 @@ fakeroot do_populate_rootfs_src () {
     ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service
 }
 
-# docker pulls runc/containerd, which in turn recommend lxc unecessarily
-BAD_RECOMMENDATIONS_append = " lxc"
-
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "
 
 EXTRA_USERS_PARAMS += "\

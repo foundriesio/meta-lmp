@@ -78,6 +78,8 @@ UBOOT_RD_LOADADDRESS_qemuriscv64 = "0x81000000"
 RISCV_SBI_PAYLOAD_qemuriscv64 = "u-boot-${MACHINE}.bin"
 QB_DEFAULT_KERNEL_qemuriscv64 = "fw_payload.elf"
 QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"
+## Replace QB_OPT_APPEND with opensbi + u-boot instead of default loader
+QB_OPT_APPEND_qemuriscv64 = " -kernel ${DEPLOY_DIR_IMAGE}/fw_payload.elf -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0"
 
 ## Freedom U540 target doesn't yet support standard bootloaders (e.g. u-boot)
 INITRAMFS_IMAGE_BUNDLE_freedom-u540 = "1"

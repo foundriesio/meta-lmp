@@ -67,7 +67,6 @@ UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
 # RISC-V targets
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"
 KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
-PREFERRED_PROVIDER_virtual/bootloader_qemuriscv64 = "u-boot"
 UBOOT_MACHINE_qemuriscv64 = "qemu-riscv64_smode_defconfig"
 IMAGE_BOOT_FILES_qemuriscv64 = "boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_qemuriscv64 = "fitImage"
@@ -76,8 +75,6 @@ OSTREE_KERNEL_qemuriscv64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-$
 OSTREE_KERNEL_ARGS_append_qemuriscv64 = " earlycon=sbi"
 UBOOT_ENTRYPOINT_qemuriscv64 = "0x80400000"
 UBOOT_RD_LOADADDRESS_qemuriscv64 = "0x81000000"
-EXTRA_IMAGEDEPENDS_append_qemuriscv64 = " opensbi"
-RISCV_SBI_PLAT_qemuriscv64 = "qemu/virt"
 RISCV_SBI_PAYLOAD_qemuriscv64 = "u-boot-${MACHINE}.bin"
 QB_DEFAULT_KERNEL_qemuriscv64 = "fw_payload.elf"
 QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"

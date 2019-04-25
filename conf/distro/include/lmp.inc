@@ -15,6 +15,7 @@ require conf/distro/include/security_flags.inc
 
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
 PREFERRED_PROVIDER_iasl-native = "acpica-native"
+PREFERRED_RPROVIDER_virtual/network-configuration ?= "networkmanager"
 
 # No need for x11 even for native
 DISTRO_FEATURES_NATIVE_remove = "x11"

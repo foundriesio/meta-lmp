@@ -49,6 +49,7 @@ KERNEL_IMAGETYPE_hikey960 = "Image.gz"
 IMAGE_FSTYPES_remove_hikey960 = "wic wic.gz wic.bmap"
 
 # Raspberry Pi
+IMAGE_INSTALL_remove_rpi = "fit-conf"
 IMAGE_FSTYPES_remove_rpi = "ext3"
 IMAGE_BOOT_FILES_append_rpi = " boot.scr uEnv.txt"
 ## Rollback is not yet supported on rpi

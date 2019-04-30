@@ -75,7 +75,7 @@ OSTREE_KERNEL_qemuriscv64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-$
 OSTREE_KERNEL_ARGS_append_qemuriscv64 = " earlycon=sbi"
 UBOOT_ENTRYPOINT_qemuriscv64 = "0x80400000"
 UBOOT_RD_LOADADDRESS_qemuriscv64 = "0x81000000"
-RISCV_SBI_PAYLOAD_qemuriscv64 = "u-boot-${MACHINE}.bin"
+RISCV_SBI_PAYLOAD_qemuriscv64 = "u-boot.bin"
 QB_DEFAULT_KERNEL_qemuriscv64 = "fw_payload.elf"
 QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"
 ## Replace QB_OPT_APPEND with opensbi + u-boot instead of default loader

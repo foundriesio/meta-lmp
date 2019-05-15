@@ -10,28 +10,6 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 ## beaglebone-yocto.conf appends kernel-image-zimage by default
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
-# Dragonboard 410c, u-boot as boot image and rootfs on sdcard
-OSTREE_KERNEL_ARGS_append_dragonboard-410c = " console=tty0 console=ttyMSM0,115200n8 androidboot.baseband=apq mdss_mdp.panel=0:dsi:0:"
-IMAGE_BOOT_FILES_append_dragonboard-410c = " boot.scr uEnv.txt"
-KERNEL_IMAGETYPE_dragonboard-410c = "fitImage"
-KERNEL_CLASSES_dragonboard-410c = " kernel-fitimage "
-OSTREE_KERNEL_dragonboard-410c = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
-WKS_FILES_sota_dragonboard-410c = "sdimage-sota.wks"
-UBOOT_ENTRYPOINT_dragonboard-410c = "0x81000000"
-UBOOT_DTB_LOADADDRESS_dragonboard-410c = "0x83000000"
-UBOOT_RD_LOADADDRESS_dragonboard-410c = "0x84000000"
-
-# Dragonboard 820c, u-boot as boot image and rootfs on sdcard
-IMAGE_BOOT_FILES_append_dragonboard-820c = " boot.scr uEnv.txt"
-OSTREE_KERNEL_ARGS_append_dragonboard-820c = " console=tty0 console=ttyMSM0,115200n8 androidboot.baseband=apq mdss_mdp.panel=0"
-KERNEL_IMAGETYPE_dragonboard-820c = "fitImage"
-KERNEL_CLASSES_dragonboard-820c = " kernel-fitimage "
-OSTREE_KERNEL_dragonboard-820c = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
-WKS_FILES_sota_dragonboard-820c = "sdimage-sota.wks"
-UBOOT_ENTRYPOINT_dragonboard-820c = "0x81000000"
-UBOOT_DTB_LOADADDRESS_dragonboard-820c = "0x83000000"
-UBOOT_RD_LOADADDRESS_dragonboard-820c = "0x84000000"
-
 # HiKey
 CMDLINE_remove_hikey = "quiet"
 OSTREE_BOOTLOADER_hikey = "grub"

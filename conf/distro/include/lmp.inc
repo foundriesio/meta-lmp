@@ -62,3 +62,6 @@ WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     unknown-configure-option useless-rpaths"
 WARN_QA_remove = "${WARN_TO_ERROR_QA}"
 ERROR_QA_append = " ${WARN_TO_ERROR_QA}"
+
+LMP_USER ?= "osf"
+LMP_PASSWORD ?= "osf"

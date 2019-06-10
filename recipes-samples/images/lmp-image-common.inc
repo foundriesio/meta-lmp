@@ -65,6 +65,6 @@ python () {
 }
 
 EXTRA_USERS_PARAMS = "\
-useradd -P osf osf; \
-usermod -a -G sudo,users,plugdev osf; \
+useradd -P ${LMP_USER} ${LMP_PASSWORD}; \
+usermod -a -G sudo,users,plugdev ${LMP_USER}; \
 "

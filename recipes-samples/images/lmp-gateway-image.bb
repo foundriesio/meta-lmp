@@ -64,5 +64,5 @@ fakeroot do_populate_rootfs_src () {
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "
 
 EXTRA_USERS_PARAMS += "\
-usermod -a -G docker osf; \
+usermod -a -G docker ${LMP_USER}; \
 "

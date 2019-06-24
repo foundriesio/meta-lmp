@@ -1,0 +1,11 @@
+[Unit]
+Description=Systemd Timesync Update Fixes
+After=local-fs.target
+Before=systemd-timesyncd.service
+DefaultDependencies=no
+
+[Service]
+ExecStart=/bin/sh -c 'if [ -L /var/lib/systemd/timesync ]; then /bin/rm -fv /var/lib/systemd/timesync && /bin/mv /var/lib/private/systemd/timesync /var/lib/systemd/timesync; fi'
+
+[Install]
+WantedBy=sysinit.target

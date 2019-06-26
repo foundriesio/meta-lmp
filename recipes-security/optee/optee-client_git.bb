@@ -6,8 +6,8 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=69663ab153298557a59c67a60a743e5b"
 SRC_URI = "git://github.com/OP-TEE/optee_client.git \
            file://tee-supplicant.service"
 
-PV = "3.4.0+git${SRCPV}"
-SRCREV = "34d4375ab4460ad3af83c0af8ff35d6b391b75b3"
+PV = "3.5.0+git${SRCPV}"
+SRCREV = "1cdf49d9259ad83c3fbdf416e5ea223a18a28da8"
 
 S = "${WORKDIR}/git"
 
@@ -15,7 +15,10 @@ inherit pythonnative systemd
 
 SYSTEMD_SERVICE_${PN} = "tee-supplicant.service"
 
-EXTRA_OEMAKE = "DESTDIR=${D}"
+EXTRA_OEMAKE = "DESTDIR=${D} CFG_TEE_FS_PARENT_PATH=${localstatedir}/tee"
+
+# Other security flags already maintained via flags.mk
+SECURITY_CFLAGS = "${SECURITY_STACK_PROTECTOR}"
 
 do_install() {
     oe_runmake install

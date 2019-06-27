@@ -9,7 +9,7 @@ index 97ef4d69..b418c2fb 100644
 -default=boot
 -timeout=10
 +default=0
-+timeout=3
++timeout=1
  
  EOF
  }

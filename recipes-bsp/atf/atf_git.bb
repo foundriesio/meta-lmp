@@ -1,14 +1,14 @@
 DESCRIPTION = "ARM Trusted Firmware"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://license.rst;md5=c709b197e22b81ede21109dbffd5f363"
+LIC_FILES_CHKSUM = "file://license.rst;md5=90153916317c204fade8b8df15739cde"
 
 DEPENDS = "u-boot openssl-native zip-native"
 DEPENDS += " ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-os", "", d)}"
 
 SRC_URI = "git://github.com/ARM-software/arm-trusted-firmware.git"
 
-PV = "2.0+git${SRCPV}"
-SRCREV = "34efb683e32254b8c325ac3071c5776d243a7b99"
+PV = "2.1+git${SRCPV}"
+SRCREV = "e9e74aa4c8b06d40c7fd300d9dd0e668f25f2b6e"
 
 S = "${WORKDIR}/git"
 

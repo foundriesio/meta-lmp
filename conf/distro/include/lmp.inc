@@ -26,7 +26,7 @@ DISTRO_FEATURES_NATIVESDK_remove = "x11"
 
 # TODO: review default distro features
 DISTRO_FEATURES_append = " pam systemd usrmerge virtualization"
-DISTRO_FEATURES_remove = "3g alsa irda pcmcia nfc pulseaudio sysvinit"
+DISTRO_FEATURES_remove = "3g alsa pcmcia nfc pulseaudio sysvinit"
 VIRTUAL-RUNTIME_init_manager = "systemd"
 PACKAGECONFIG_append_pn-systemd = " journal-upload resolved networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"

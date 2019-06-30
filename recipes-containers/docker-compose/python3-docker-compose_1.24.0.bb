@@ -9,7 +9,7 @@ SRC_URI[md5sum] = "8d12f41dd8d3abbc777ae2c277421f42"
 SRC_URI[sha256sum] = "5582a51827676f5243473310e911503e1016bbdf3be1b89dcb4201f42b5fa369"
 
 SRC_URI += " \
-    file://support-requests-up-to-2.21.0.patch \
+    file://0001-support-requests-up-to-2.22.x-version.patch \
 "
 
 RDEPENDS_${PN} = "\

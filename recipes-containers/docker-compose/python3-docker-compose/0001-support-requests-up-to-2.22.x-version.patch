@@ -1,48 +1,43 @@
-From 0afd03938e1e10e26879cb9b51c4c40a6bd9b240 Mon Sep 17 00:00:00 2001
-From: Sergey Fursov <geyser85@gmail.com>
-Date: Mon, 15 Apr 2019 15:27:28 +0300
-Subject: [PATCH] support requests up to 2.21.0 version
+From 9bdcaf0336b3ffb8ce8e2d777b9c8578a3173273 Mon Sep 17 00:00:00 2001
+From: Ming Liu <liu.ming50@gmail.com>
+Date: Sun, 30 Jun 2019 15:35:32 +0800
+Subject: [PATCH] support requests up to 2.22.x version
 
-https://github.com/docker/compose/pull/6649
+Upstream-Status: Backport
 
 Signed-off-by: Sergey Fursov <geyser85@gmail.com>
+Signed-off-by: Ming Liu <liu.ming50@gmail.com>
 ---
- requirements.txt | 4 ++--
+ requirements.txt | 2 +-
  setup.py         | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/requirements.txt b/requirements.txt
-index 5e8ec2ed7..3eb3f4ef6 100644
+index 5e8ec2e..d115b7b 100644
 --- a/requirements.txt
 +++ b/requirements.txt
-@@ -9,7 +9,7 @@ dockerpty==0.4.1
- docopt==0.6.2
- enum34==1.1.6; python_version < '3.4'
- functools32==3.2.3.post2; python_version < '3.2'
--idna==2.5
-+idna==2.8
- ipaddress==1.0.18
- jsonschema==2.6.0
- paramiko==2.4.2
 @@ -17,7 +17,7 @@ pypiwin32==219; sys_platform == 'win32' and python_version < '3.6'
  pypiwin32==223; sys_platform == 'win32' and python_version >= '3.6'
  PySocks==1.6.7
  PyYAML==4.2b1
 -requests==2.20.0
-+requests==2.21.0
++requests==2.22.0
  six==1.10.0
  texttable==0.9.1
  urllib3==1.21.1; python_version == '3.3'
 diff --git a/setup.py b/setup.py
-index 8371cc756..b5dbd6ebc 100644
+index 8371cc7..e0ab41b 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -33,7 +33,7 @@ def find_version(*file_paths):
+@@ -33,7 +33,7 @@ install_requires = [
      'cached-property >= 1.2.0, < 2',
      'docopt >= 0.6.1, < 0.7',
      'PyYAML >= 3.10, < 4.3',
 -    'requests >= 2.6.1, != 2.11.0, != 2.12.2, != 2.18.0, < 2.21',
-+    'requests >= 2.6.1, != 2.11.0, != 2.12.2, != 2.18.0, <= 2.21',
++    'requests >= 2.6.1, != 2.11.0, != 2.12.2, != 2.18.0, < 2.23',
      'texttable >= 0.9.0, < 0.10',
      'websocket-client >= 0.32.0, < 1.0',
      'docker[ssh] >= 3.7.0, < 4.0',
+-- 
+2.7.4
+

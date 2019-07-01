@@ -1,10 +1,10 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_hikey += " \
+SRC_URI_append_hikey = " \
     file://sota_compatible_grub_config.patch;patchdir=.. \
 "
 
-SRC_URI_append_hikey960 += " \
+SRC_URI_append_hikey960 = " \
     file://sota_compatible_grub_config.patch;patchdir=.. \
 "
 

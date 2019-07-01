@@ -88,7 +88,7 @@ QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config e
 
 # Intel
 IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"
-OSTREE_KERNEL_ARGS_append_intel-corei7-64 = " console=ttyS0,115200"
+OSTREE_KERNEL_ARGS_intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 EFI_PROVIDER_intel-corei7-64 = "grub-efi"
 WKS_FILE_append_intel-corei7-64 = " efidisk-sota.wks"
 

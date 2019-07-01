@@ -138,7 +138,5 @@ WKS_FILES_sota_cubox-i = "sdimage-imx6-spl-sota.wks"
 UBOOT_EXTLINUX_cubox-i = ""
 
 # Cross machines / BSPs
-## Drop IMX BSP that is not needed
-MACHINE_EXTRA_RRECOMMENDS_remove_imx = "imx-alsa-plugins"
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"

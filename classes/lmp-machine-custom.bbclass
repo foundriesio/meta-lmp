@@ -11,9 +11,8 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # HiKey
-CMDLINE_remove_hikey = "quiet"
 OSTREE_BOOTLOADER_hikey = "grub"
-OSTREE_KERNEL_ARGS_append_hikey = " console=tty0 console=ttyAMA3,115200n8 efi=noruntime"
+OSTREE_KERNEL_ARGS_hikey ?= "console=tty0 console=ttyAMA3,115200n8 efi=noruntime ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_DEPLOY_DEVICETREE_hikey = "1"
 KERNEL_IMAGETYPE_hikey = "Image.gz"
 IMAGE_FSTYPES_remove_hikey = "wic wic.gz wic.bmap"

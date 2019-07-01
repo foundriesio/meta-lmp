@@ -1,7 +1,7 @@
 # LMP specific configuration
 
 # Beaglebone
-OSTREE_KERNEL_ARGS_append_beaglebone-yocto = " console=ttyS0,115200n8"
+OSTREE_KERNEL_ARGS_beaglebone-yocto ?= "console=ttyS0,115200n8 ${OSTREE_KERNEL_ARGS_COMMON}"
 KERNEL_DEVICETREE_append_beaglebone-yocto = " am335x-boneblack-wireless.dtb"
 IMAGE_BOOT_FILES_beaglebone-yocto = "u-boot.img MLO boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_beaglebone-yocto = "fitImage"

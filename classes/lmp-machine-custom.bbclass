@@ -18,9 +18,8 @@ KERNEL_IMAGETYPE_hikey = "Image.gz"
 IMAGE_FSTYPES_remove_hikey = "wic wic.gz wic.bmap"
 
 # Hikey960
-CMDLINE_remove_hikey960 = "quiet"
 OSTREE_BOOTLOADER_hikey960 = "grub"
-OSTREE_KERNEL_ARGS_append_hikey960 = " console=tty0 console=ttyAMA6,115200n8 efi=noruntime"
+OSTREE_KERNEL_ARGS_hikey960 ?= "console=tty0 console=ttyAMA6,115200n8 efi=noruntime ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_DEPLOY_DEVICETREE_hikey960 = "1"
 KERNEL_IMAGETYPE_hikey960 = "Image.gz"
 IMAGE_FSTYPES_remove_hikey960 = "wic wic.gz wic.bmap"

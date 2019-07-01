@@ -35,6 +35,7 @@ SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
 KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
 KERNEL_DEVICETREE_raspberrypi0-wifi_sota ?= "bcm2708-rpi-0-w.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi3_sota ?= "${RPI_KERNEL_DEVICETREE} ${KERNEL_DEVICETREE_COMMON_RPI}"
+KERNEL_DEVICETREE_raspberrypi3-64_sota ?= "${RPI_KERNEL_DEVICETREE} ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi-cm3_sota ?= "${RPI_KERNEL_DEVICETREE} ${KERNEL_DEVICETREE_COMMON_RPI}"
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"

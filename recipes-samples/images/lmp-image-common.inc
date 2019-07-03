@@ -33,6 +33,7 @@ CORE_IMAGE_BASE_INSTALL += " \
 # OTA+ extras (e.g. device provisioning)
 CORE_IMAGE_BASE_INSTALL += " \
     lmp-device-register \
+    opensc \
     softhsm \
 "
 

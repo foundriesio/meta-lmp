@@ -1,7 +1,8 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append += " \
+SRC_URI_append = " \
 	file://tmpfiles.d-var.conf-also-create-var-lib-misc.patch \
+	file://systemd-networkd-wait-online.service.in-use-any-by-d.patch \
 	file://systemd-timesyncd-update.service \
 "
 

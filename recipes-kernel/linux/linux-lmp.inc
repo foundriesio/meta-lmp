@@ -12,30 +12,6 @@ KCONFIG_MODE = "--alldefconfig"
 
 LINUX_VERSION_EXTENSION ?= "-lmp-${LINUX_KERNEL_TYPE}"
 
-# Set a variable in .configure
-# $1 - Configure variable to be set
-# $2 - value [n/y/value]
-kernel_configure_variable() {
-    # Remove the config
-    CONF_SED_SCRIPT="$CONF_SED_SCRIPT /CONFIG_$1[ =]/d;"
-    if test "$2" = "n"
-    then
-        echo "# CONFIG_$1 is not set" >> ${B}/.config
-    else
-        echo "CONFIG_$1=$2" >> ${B}/.config
-    fi
-}
-
-do_configure_prepend() {
-    mv -f ${B}/.config ${B}/.config.patched
-    CONF_SED_SCRIPT=""
-
-    # Keep this the last line
-    # Remove all modified configs and add the rest to .config
-    sed -e "${CONF_SED_SCRIPT}" < '${B}/.config.patched' >> '${B}/.config'
-    rm -f ${B}/.config.patched
-}
-
 # Kernel config
 KERNEL_CONFIG_NAME ?= "${KERNEL_PACKAGE_NAME}-config-${KERNEL_ARTIFACT_NAME}"
 KERNEL_CONFIG_LINK_NAME ?= "${KERNEL_PACKAGE_NAME}-config"

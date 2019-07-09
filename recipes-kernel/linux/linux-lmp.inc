@@ -12,11 +12,6 @@ KCONFIG_MODE = "--alldefconfig"
 
 LINUX_VERSION_EXTENSION ?= "-lmp-${LINUX_KERNEL_TYPE}"
 
-# You can define CMDLINE_DEBUG as "debug" in your local.conf or distro.conf
-# to enable kernel debugging.
-CMDLINE_DEBUG ?= ""
-CMDLINE_append = " ${CMDLINE_DEBUG}"
-
 # Set a variable in .configure
 # $1 - Configure variable to be set
 # $2 - value [n/y/value]
@@ -34,9 +29,6 @@ kernel_configure_variable() {
 do_configure_prepend() {
     mv -f ${B}/.config ${B}/.config.patched
     CONF_SED_SCRIPT=""
-
-    # Set cmdline
-    kernel_configure_variable CMDLINE "\"${CMDLINE}\""
 
     # Keep this the last line
     # Remove all modified configs and add the rest to .config

@@ -1,8 +1,5 @@
 # Machine specific configuration
 
-# Machines that were tested and known to work
-COMPATIBLE_MACHINE = "(apalis-imx6|beaglebone-yocto|cl-som-imx7|colibri-imx7|cubox-i|hikey|hikey960|rpi|intel-corei7-64|qemuarm64|qemuriscv64|freedom-u540)"
-
 # Generic configs for RISC-V
 DEPENDS_append_riscv64 = " libgcc"
 KERNEL_CC_append_riscv64 = " ${TOOLCHAIN_OPTIONS} ${SECURITY_NOPIE_CFLAGS}"

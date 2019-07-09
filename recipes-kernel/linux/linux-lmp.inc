@@ -1,4 +1,4 @@
-DESCRIPTION = "Common Open Source Foundries Linux microPlatform Kernel"
+DESCRIPTION = "Common Foundries.io Linux microPlatform Kernel"
 
 PV = "${LINUX_VERSION}+git${SRCPV}"
 

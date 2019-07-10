@@ -1,10 +1,5 @@
 # Machine specific configuration
 
-# Generic configs for RISC-V
-DEPENDS_append_riscv64 = " libgcc"
-KERNEL_CC_append_riscv64 = " ${TOOLCHAIN_OPTIONS} ${SECURITY_NOPIE_CFLAGS}"
-KERNEL_LD_append_riscv64 = " -no-pie"
-
 # QEMU
 KERNEL_FEATURES_remove_qemuall = "features/kernel-sample/kernel-sample.scc"
 

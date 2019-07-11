@@ -1,0 +1,16 @@
+[Unit]
+Description=Bluetooth Serial Attach Initialization
+ConditionFileNotEmpty=/etc/bluetooth/btattach.conf
+After=rc-local.service
+
+[Service]
+EnvironmentFile=/etc/bluetooth/btattach.conf
+ExecStart=/usr/bin/btattach -B $HCITTY -S $HCISPEED -P $HCIPROTO
+# Assume interface 0 by default
+ExecStop=-/usr/bin/btmgmt --index 0 power off
+TimeoutStartSec=3
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

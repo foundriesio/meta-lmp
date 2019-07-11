@@ -20,9 +20,6 @@ PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_RPROVIDER_virtual/network-configuration ?= "networkmanager"
 
-# Prefer released version instead of git from meta-updater
-PREFERRED_VERSION_libp11 ?= "0.4.10"
-
 # No need for x11 even for native
 DISTRO_FEATURES_NATIVE_remove = "x11"
 DISTRO_FEATURES_NATIVESDK_remove = "x11"

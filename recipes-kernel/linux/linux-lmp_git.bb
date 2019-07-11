@@ -4,7 +4,7 @@ FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
 SRCREV_machine = "94463260cb6dc246ec2a1a99a86179cef188b034"
-SRCREV_meta = "c137cbf6cb00991d177a59895bf44b25ce0ad1e8"
+SRCREV_meta = "40d4b067b3d2a9fec1fff00df11c1e9d9440cab6"
 KBRANCH = "linux-v5.0.y"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"

@@ -10,20 +10,6 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 ## beaglebone-yocto.conf appends kernel-image-zimage by default
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
-# HiKey
-OSTREE_BOOTLOADER_hikey = "grub"
-OSTREE_KERNEL_ARGS_hikey ?= "console=tty0 console=ttyAMA3,115200n8 efi=noruntime ${OSTREE_KERNEL_ARGS_COMMON}"
-OSTREE_DEPLOY_DEVICETREE_hikey = "1"
-KERNEL_IMAGETYPE_hikey = "Image.gz"
-IMAGE_FSTYPES_remove_hikey = "wic wic.gz wic.bmap"
-
-# Hikey960
-OSTREE_BOOTLOADER_hikey960 = "grub"
-OSTREE_KERNEL_ARGS_hikey960 ?= "console=tty0 console=ttyAMA6,115200n8 efi=noruntime ${OSTREE_KERNEL_ARGS_COMMON}"
-OSTREE_DEPLOY_DEVICETREE_hikey960 = "1"
-KERNEL_IMAGETYPE_hikey960 = "Image.gz"
-IMAGE_FSTYPES_remove_hikey960 = "wic wic.gz wic.bmap"
-
 # Raspberry Pi
 IMAGE_INSTALL_remove_rpi = "fit-conf"
 IMAGE_FSTYPES_remove_rpi = "ext3"

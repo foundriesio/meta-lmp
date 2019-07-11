@@ -36,7 +36,8 @@ KERNEL_DEVICETREE_raspberrypi3_sota ?= "bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus
 KERNEL_DEVICETREE_raspberrypi3-64_sota ?= "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb broadcom/bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi-cm3_sota ?= "bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 ## Mimic meta-raspberrypi behavior
-KERNEL_SERIAL_rpi = "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
+KERNEL_SERIAL_rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
+KERNEL_SERIAL_raspberrypi-cm3 ?= "console=ttyAMA0,115200"
 OSTREE_KERNEL_ARGS_COMMON_RPI ?= "8250.nr_uarts=1 dwc_otg.lpm_enable=0 console=tty1 ${KERNEL_SERIAL} ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_raspberrypi0-wifi_sota ?= "vc_mem.mem_base=0x1ec00000 vc_mem.mem_size=0x20000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS_raspberrypi3_sota ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"

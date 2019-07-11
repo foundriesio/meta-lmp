@@ -1,34 +1,45 @@
-From 107b16c709865d9048921a26ff487ab2a212cd0b Mon Sep 17 00:00:00 2001
+From a0bb98bf4ceaa025e00eec60580d1e3086f4eab9 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Wed, 19 Dec 2018 18:49:25 -0200
 Subject: [PATCH] rpi_defconfig: enable support for FIT
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- configs/rpi_0_w_defconfig | 2 ++
- configs/rpi_3_defconfig   | 2 ++
- 2 files changed, 4 insertions(+)
+ configs/rpi_0_w_defconfig   | 2 ++
+ configs/rpi_3_32b_defconfig | 2 ++
+ configs/rpi_3_defconfig     | 2 ++
+ 3 files changed, 6 insertions(+)
 
 diff --git a/configs/rpi_0_w_defconfig b/configs/rpi_0_w_defconfig
-index 66b0de31b6..bfc0c4841c 100644
+index 39da54c3e7..c115f13bb2 100644
 --- a/configs/rpi_0_w_defconfig
 +++ b/configs/rpi_0_w_defconfig
-@@ -39,3 +39,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+@@ -38,3 +38,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+ CONFIG_CONSOLE_SCROLL_LINES=10
+ CONFIG_PHYS_TO_BUS=y
+ CONFIG_OF_LIBFDT_OVERLAY=y
++CONFIG_FIT=y
++CONFIG_FIT_VERBOSE=y
+diff --git a/configs/rpi_3_32b_defconfig b/configs/rpi_3_32b_defconfig
+index bbf902bb91..e5e9540aaa 100644
+--- a/configs/rpi_3_32b_defconfig
++++ b/configs/rpi_3_32b_defconfig
+@@ -41,3 +41,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
  CONFIG_CONSOLE_SCROLL_LINES=10
  CONFIG_PHYS_TO_BUS=y
  CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_FIT=y
 +CONFIG_FIT_VERBOSE=y
 diff --git a/configs/rpi_3_defconfig b/configs/rpi_3_defconfig
-index 54b6303c2d..eac1255f5e 100644
+index ea40351dc4..5106769e1a 100644
 --- a/configs/rpi_3_defconfig
 +++ b/configs/rpi_3_defconfig
-@@ -42,3 +42,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+@@ -41,3 +41,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
  CONFIG_CONSOLE_SCROLL_LINES=10
  CONFIG_PHYS_TO_BUS=y
  CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_FIT=y
 +CONFIG_FIT_VERBOSE=y
 -- 
-2.17.1
+2.22.0
 

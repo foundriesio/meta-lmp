@@ -11,6 +11,7 @@ SRC_URI_append_rpi = " \
     file://0001-rpi-set-CONFIG_SYS_BOOTM_LEN-to-32M.patch \
     file://0001-rpi_defconfig-enable-support-for-FIT.patch \
     file://0001-rpi-prefer-downstream-dtb-files.patch \
+    file://0001-rpi-prefer-device-tree-provided-by-the-firmware.patch \
 "
 
 SRC_URI_append_beaglebone-yocto = " \

@@ -13,7 +13,7 @@ IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 # Raspberry Pi
 IMAGE_INSTALL_remove_rpi = "fit-conf"
 IMAGE_FSTYPES_remove_rpi = "ext3"
-IMAGE_BOOT_FILES_append_rpi = " boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 ## Rollback is not yet supported on rpi
 SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
 KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"

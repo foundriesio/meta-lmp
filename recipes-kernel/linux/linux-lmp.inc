@@ -5,7 +5,7 @@ PV = "${LINUX_VERSION}+git${SRCPV}"
 DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
 DEPENDS += "openssl-native util-linux-native"
 
-inherit kernel
+inherit kernel siteinfo
 require recipes-kernel/linux/linux-yocto.inc
 
 KCONFIG_MODE = "--alldefconfig"

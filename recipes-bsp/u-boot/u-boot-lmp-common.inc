@@ -14,6 +14,10 @@ SRC_URI_append_rpi = " \
     file://0001-rpi-prefer-device-tree-provided-by-the-firmware.patch \
 "
 
+SRC_URI_append_raspberrypi4 = " \
+    file://0001-rpi4-enable-OF_BOARD-and-FIT.patch \
+"
+
 SRC_URI_append_beaglebone-yocto = " \
     file://beaglebone-extend-usb-ether.patch \
 "

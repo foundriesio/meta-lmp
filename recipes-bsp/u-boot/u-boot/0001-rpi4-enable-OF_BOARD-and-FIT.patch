@@ -1,0 +1,52 @@
+From 5f6f566e2c2fd69a357bcca5a034a9dca38855fd Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 17 Jul 2019 17:52:12 -0300
+Subject: [PATCH] rpi4: enable OF_BOARD and FIT
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ configs/rpi_4_32b_defconfig | 4 +++-
+ configs/rpi_4_defconfig     | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/configs/rpi_4_32b_defconfig b/configs/rpi_4_32b_defconfig
+index b71a14735a..5e9026d820 100644
+--- a/configs/rpi_4_32b_defconfig
++++ b/configs/rpi_4_32b_defconfig
+@@ -15,7 +15,7 @@ CONFIG_CMD_GPIO=y
+ CONFIG_CMD_MMC=y
+ CONFIG_CMD_USB=y
+ CONFIG_CMD_FS_UUID=y
+-CONFIG_OF_EMBED=y
++CONFIG_OF_BOARD=y
+ CONFIG_DEFAULT_DEVICE_TREE="bcm2838-rpi-4-b"
+ CONFIG_ENV_FAT_INTERFACE="mmc"
+ CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+@@ -38,3 +38,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+ CONFIG_CONSOLE_SCROLL_LINES=10
+ CONFIG_PHYS_TO_BUS=y
+ CONFIG_OF_LIBFDT_OVERLAY=y
++CONFIG_FIT=y
++CONFIG_FIT_VERBOSE=y
+diff --git a/configs/rpi_4_defconfig b/configs/rpi_4_defconfig
+index b27e3f823b..e3db1dce63 100644
+--- a/configs/rpi_4_defconfig
++++ b/configs/rpi_4_defconfig
+@@ -15,7 +15,7 @@ CONFIG_CMD_GPIO=y
+ CONFIG_CMD_MMC=y
+ CONFIG_CMD_USB=y
+ CONFIG_CMD_FS_UUID=y
+-CONFIG_OF_EMBED=y
++CONFIG_OF_BOARD=y
+ CONFIG_DEFAULT_DEVICE_TREE="bcm2838-rpi-4-b"
+ CONFIG_ENV_FAT_INTERFACE="mmc"
+ CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+@@ -38,3 +38,5 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+ CONFIG_CONSOLE_SCROLL_LINES=10
+ CONFIG_PHYS_TO_BUS=y
+ CONFIG_OF_LIBFDT_OVERLAY=y
++CONFIG_FIT=y
++CONFIG_FIT_VERBOSE=y
+-- 
+2.22.0
+

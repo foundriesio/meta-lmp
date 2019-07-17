@@ -11,7 +11,7 @@ SRC_URI = "git://github.com/OP-TEE/optee_test.git \
     file://allow-custom-bin-lib-dir.patch \
 "
 
-PV = "3.5.0+git${SRCPV}"
+PV = "3.6.0"
 SRCREV = "40aacb6dc33bbf6ee329f40274bfe7bb438bbf53"
 
 S = "${WORKDIR}/git"

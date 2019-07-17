@@ -11,7 +11,7 @@ SRC_URI = "git://github.com/linaro-swg/optee_examples.git \
     file://respect-ldflags-host-build.patch \
 "
 
-PV = "3.5.0+git${SRCPV}"
+PV = "3.6.0"
 SRCREV = "292da2fd8db0176e0e96989268c63ef9ab910a6c"
 
 S = "${WORKDIR}/git"

@@ -3,7 +3,7 @@ DESCRIPTION = "OPTEE OS"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=c1f21c4f72f372ef38a5a4aee55ec173"
 
-DEPENDS = "python-pycrypto-native python-pyelftools-native"
+DEPENDS = "python-pycrypto-native python3-pyelftools-native"
 
 SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-allow-setting-sysroot-for-libgcc-lookup.patch \
@@ -13,12 +13,12 @@ SRC_URI_append_qemuarm64 = " \
     file://0001-Revert-generic_boot-reserve-optee_tzdram-memory.patch \
 "
 
-PV = "3.5.0+git${SRCPV}"
-SRCREV = "ddba18316ddd3d774497fe835cffd0ef18f42e7f"
+PV = "3.6.0"
+SRCREV = "f398d4923da875370149ffee45c963d7adb41495"
 
 S = "${WORKDIR}/git"
 
-inherit deploy pythonnative
+inherit deploy python3native
 
 OPTEEMACHINE ?= "${MACHINE}"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"

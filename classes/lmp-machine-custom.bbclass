@@ -48,6 +48,7 @@ KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
 UBOOT_MACHINE_qemuriscv64 = "qemu-riscv64_smode_defconfig"
 IMAGE_BOOT_FILES_qemuriscv64 = "boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_qemuriscv64 = "fitImage"
+KERNEL_IMAGETYPES_remove_qemuriscv64 = "uImage"
 KERNEL_CLASSES_qemuriscv64 = " kernel-fitimage "
 OSTREE_KERNEL_qemuriscv64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 OSTREE_KERNEL_ARGS_qemuriscv64 ?= "earlycon=sbi ${OSTREE_KERNEL_ARGS_COMMON}"

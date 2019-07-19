@@ -14,8 +14,9 @@ SRC_URI_append_rpi = " \
     file://0001-rpi-prefer-device-tree-provided-by-the-firmware.patch \
 "
 
-SRC_URI_append_raspberrypi4 = " \
-    file://0001-rpi4-enable-OF_BOARD-and-FIT.patch \
+UBOOT_RPI4_SUPPORT_PATCHES_append_raspberrypi4 = " \
+    file://0001-rpi4-enable-support-for-FIT.patch \
+    file://0001-rpi4-prefer-downstream-dtb.patch \
 "
 
 SRC_URI_append_beaglebone-yocto = " \

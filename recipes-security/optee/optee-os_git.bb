@@ -18,7 +18,7 @@ SRCREV = "f398d4923da875370149ffee45c963d7adb41495"
 
 S = "${WORKDIR}/git"
 
-inherit deploy python3native
+inherit deploy pythonnative python3native
 
 OPTEEMACHINE ?= "${MACHINE}"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"

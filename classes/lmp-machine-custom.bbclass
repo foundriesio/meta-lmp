@@ -41,6 +41,7 @@ KERNEL_REPO_raspberrypi4 = "git://github.com/raspberrypi/linux.git"
 KERNEL_BRANCH_raspberrypi4 = "rpi-4.19.y"
 KERNEL_META_BRANCH_raspberrypi4 = "linux-v4.19.y"
 KERNEL_DEVICETREE_COMMON_RPI_raspberrypi4 = "overlays/vc4-fkms-v3d.dtbo"
+MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"

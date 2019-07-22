@@ -26,11 +26,11 @@ KERNEL_DEVICETREE_raspberrypi4-64_sota ?= "broadcom/bcm2711-rpi-4-b.dtb ${KERNEL
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL_rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 KERNEL_SERIAL_raspberrypi-cm3 ?= "console=ttyAMA0,115200"
-OSTREE_KERNEL_ARGS_COMMON_RPI ?= "8250.nr_uarts=1 dwc_otg.lpm_enable=0 console=tty1 ${KERNEL_SERIAL} ${OSTREE_KERNEL_ARGS_COMMON}"
+OSTREE_KERNEL_ARGS_COMMON_RPI ?= "coherent_pool=1M 8250.nr_uarts=1 dwc_otg.lpm_enable=0 console=tty1 ${KERNEL_SERIAL} ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_raspberrypi0-wifi_sota ?= "vc_mem.mem_base=0x1ec00000 vc_mem.mem_size=0x20000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS_raspberrypi3_sota ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS_raspberrypi-cm3_sota ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
-OSTREE_KERNEL_ARGS_raspberrypi4_sota ?= "coherent_pool=1M 8250.nr_uarts=1 cma=64M ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
+OSTREE_KERNEL_ARGS_raspberrypi4_sota ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 ## U-Boot entrypoints for rpi
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"

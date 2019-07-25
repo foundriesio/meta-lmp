@@ -1,0 +1,7 @@
+[Unit]
+Description=Automatic Docker Prune
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker system prune --force

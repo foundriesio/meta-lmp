@@ -1,0 +1,9 @@
+[Unit]
+Description=Automatic Docker Prune Timer
+
+[Timer]
+OnCalendar=@@DOCKER_PRUNE_ONCALENDAR@@
+Persistent=false
+
+[Install]
+WantedBy=timers.target

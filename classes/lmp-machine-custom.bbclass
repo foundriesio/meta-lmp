@@ -62,15 +62,8 @@ QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"
 QB_OPT_APPEND_qemuriscv64 = " -kernel ${DEPLOY_DIR_IMAGE}/fw_payload.elf -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0"
 
 ## Freedom U540
-WKS_FILE_sota_freedom-u540 = "freedom-u540-opensbi-sota.wks"
-OSTREE_KERNEL_freedom-u540 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
-OSTREE_KERNEL_ARGS_freedom-u540 ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL_ARGS_COMMON}"
 IMAGE_BOOT_FILES_freedom-u540 = "fw_payload.bin boot.scr uEnv.txt"
-KERNEL_DEVICETREE_freedom-u540 = "sifive/${RISCV_SBI_FDT}"
-KERNEL_IMAGETYPE_freedom-u540 = "fitImage"
-KERNEL_IMAGETYPES_remove_freedom-u540 = "uImage"
-KERNEL_CLASSES_freedom-u540 = " kernel-fitimage "
-UBOOT_DTB_LOADADDRESS_freedom-u540 = "0x82200000"
+OSTREE_KERNEL_ARGS_freedom-u540_sota ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL_ARGS_COMMON}"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot"

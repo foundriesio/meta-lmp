@@ -18,7 +18,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     iptables \
     kernel-modules \
     networkmanager-nmtui \
-    ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-os-ta optee-client optee-test optee-examples", "", d)} \
+    ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-os-ta optee-client optee-test optee-examples optee-sks pkcs11test", "", d)} \
     rsync \
     sshfs-fuse \
 "

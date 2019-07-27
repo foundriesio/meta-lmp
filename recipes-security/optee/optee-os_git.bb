@@ -13,8 +13,8 @@ SRC_URI_append_qemuarm64 = " \
     file://0001-Revert-generic_boot-reserve-optee_tzdram-memory.patch \
 "
 
-PV = "3.6.0"
-SRCREV = "f398d4923da875370149ffee45c963d7adb41495"
+PV = "3.6.0+git"
+SRCREV = "cfc0f0743ad9d68bbdd31ec0e50e4643f3a51dc7"
 
 S = "${WORKDIR}/git"
 

@@ -1,0 +1,85 @@
+From e7ec79989030f2f8612611a440c4cd8a3dc776d3 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Mon, 15 Jul 2019 15:17:05 -0500
+Subject: [PATCH 01/12] [FIO toup] aktualizr-lite: Mock
+ OstreeManager::getCurrent
+
+This allows us to make calls to find the active ostree deployment
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/CMakeLists.txt |  3 ++-
+ src/aktualizr_lite/ostree_mock.cc | 12 ++++++++++++
+ src/aktualizr_lite/test_lite.sh   |  7 ++++---
+ 3 files changed, 18 insertions(+), 4 deletions(-)
+ create mode 100644 src/aktualizr_lite/ostree_mock.cc
+
+diff --git a/src/aktualizr_lite/CMakeLists.txt b/src/aktualizr_lite/CMakeLists.txt
+index b08079bf..408c9546 100644
+--- a/src/aktualizr_lite/CMakeLists.txt
++++ b/src/aktualizr_lite/CMakeLists.txt
+@@ -15,10 +15,11 @@ add_test(test_aktualizr-lite
+         ${PROJECT_SOURCE_DIR}/tests
+         ${RUN_VALGRIND}
+ )
++add_library(t_lite-mock SHARED ostree_mock.cc)
+ 
+ endif(BUILD_OSTREE)
+ 
+ add_aktualizr_test(NAME lite-version SOURCES version_test.cc)
+ 
+-aktualizr_source_file_checks(main.cc version.h version_test.cc)
++aktualizr_source_file_checks(main.cc version.h version_test.cc ostree_mock.cc)
+ # vim: set tabstop=4 shiftwidth=4 expandtab:
+diff --git a/src/aktualizr_lite/ostree_mock.cc b/src/aktualizr_lite/ostree_mock.cc
+new file mode 100644
+index 00000000..71eb5010
+--- /dev/null
++++ b/src/aktualizr_lite/ostree_mock.cc
+@@ -0,0 +1,12 @@
++#include <ostree.h>
++
++extern "C" OstreeDeployment *ostree_sysroot_get_booted_deployment(OstreeSysroot *self) {
++  (void)self;
++  const char *hash = getenv("OSTREE_HASH");
++  return ostree_deployment_new(0, "dummy-os", hash, 1, hash, 1);
++}
++
++extern "C" const char *ostree_deployment_get_csum(OstreeDeployment *self) {
++  (void)self;
++  return getenv("OSTREE_HASH");
++}
+diff --git a/src/aktualizr_lite/test_lite.sh b/src/aktualizr_lite/test_lite.sh
+index a17e68b1..2a07522c 100755
+--- a/src/aktualizr_lite/test_lite.sh
++++ b/src/aktualizr_lite/test_lite.sh
+@@ -7,6 +7,7 @@ akrepo_bin=$2
+ tests_dir=$3
+ #valgrind=$4
+ valgrind=""
++mock_ostree=$(dirname $aklite)/libt_lite-mock.so
+ 
+ dest_dir=$(mktemp -d)
+ 
+@@ -84,7 +85,7 @@ EOF
+ $valgrind $aklite -h | grep "Command to execute: status, list, update"
+ 
+ ## Check that we can do the list command
+-out=$($valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml list)
++out=$(OSTREE_HASH="foobar" LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml list)
+ if [[ ! "$out" =~ "foo1" ]] ; then
+     echo "ERROR: foo1 update missing"
+     exit 1
+@@ -101,7 +102,7 @@ sha=$(echo $update | cut -d\  -f2 | sed 's/\.0$//')
+ echo "Adding new target: $name / $sha"
+ add_target $name $sha
+ 
+-$valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update --update-name $name
++OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update --update-name $name
+ ostree admin status
+ 
+-$valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update | grep "Updating to: Target(zlast"
++OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update | grep "Updating to: Target(zlast"
+-- 
+2.22.0
+

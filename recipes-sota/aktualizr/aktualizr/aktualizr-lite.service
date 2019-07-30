@@ -1,0 +1,12 @@
+[Unit]
+Description=Aktualizr Lite SOTA Client
+After=network.target
+ConditionPathExists=/var/sota/sota.toml
+
+[Service]
+RestartSec=180
+Restart=always
+ExecStart=/usr/bin/aktualizr-lite --update-lockfile /run/lock/aktualizr-lite-update --reboot-command /usr/sbin/reboot daemon
+
+[Install]
+WantedBy=multi-user.target

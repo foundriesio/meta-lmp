@@ -1,0 +1,40 @@
+From 429a09179718ba20f12ec659f37a4c432de4a891 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Fri, 21 Jun 2019 15:50:47 -0500
+Subject: [PATCH 07/12] aktualizr-lite: Include ostree hash in request headers
+
+This allows the OTA server to passively understand what levels of
+code are being run.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/main.cc | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index 90b8625c..5f8011fc 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -53,7 +53,18 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
+     storage->storeEcuSerials(ecu_serials);
+   }
+ 
+-  auto http_client = std::make_shared<HttpClient>();
++  std::vector<std::string> headers;
++  GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.pacman.sysroot);
++  OstreeDeployment *deployment = ostree_sysroot_get_booted_deployment(sysroot_smart.get());
++  std::string header("x-ats-ostreehash: ");
++  if (deployment != nullptr) {
++    header += ostree_deployment_get_csum(deployment);
++  } else {
++    header += "?";
++  }
++  headers.push_back(header);
++
++  auto http_client = std::make_shared<HttpClient>(&headers);
+   auto bootloader = std::make_shared<Bootloader>(config.bootloader, *storage);
+   auto report_queue = std::make_shared<ReportQueue>(config, http_client);
+ 
+-- 
+2.22.0
+

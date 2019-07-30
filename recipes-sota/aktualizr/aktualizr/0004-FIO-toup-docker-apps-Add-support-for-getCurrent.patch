@@ -1,0 +1,131 @@
+From ec1d90ef9000cd9e7fb9329e5ee6aaeef997d533 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Sun, 30 Jun 2019 16:16:34 -0500
+Subject: [PATCH 04/12] [FIO toup] docker-apps: Add support for getCurrent
+
+This will be needed for aktualizr-lite so that it can understand
+what version of a docker app is deployed.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ .../package_manager/dockerappmanager.cc        | 18 ++++++++++++++++++
+ .../package_manager/dockerappmanager.h         |  4 ++++
+ .../package_manager/dockerappmanager_test.cc   | 14 +++++++++++++-
+ src/libaktualizr/uptane/tuf.h                  |  1 +
+ 4 files changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/src/libaktualizr/package_manager/dockerappmanager.cc b/src/libaktualizr/package_manager/dockerappmanager.cc
+index 30d83d0e..2eaf9ec6 100644
+--- a/src/libaktualizr/package_manager/dockerappmanager.cc
++++ b/src/libaktualizr/package_manager/dockerappmanager.cc
+@@ -99,6 +99,10 @@ bool DockerAppManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher
+ 
+ data::InstallationResult DockerAppManager::install(const Uptane::Target &target) const {
+   auto res = OstreeManager::install(target);
++  if (config.docker_apps.empty()) {
++    return res;
++  }
++  Utils::writeFile(config.docker_apps_root / "target_apps", target.custom_data()["docker_apps"], true);
+   auto cb = [this](const std::string &app, const Uptane::Target &app_target) {
+     LOG_INFO << "Installing " << app << " -> " << app_target;
+     std::stringstream ss;
+@@ -114,3 +118,17 @@ data::InstallationResult DockerAppManager::install(const Uptane::Target &target)
+   }
+   return res;
+ }
++
++Uptane::Target DockerAppManager::getCurrent() const {
++  auto target = fakeGetCurrent ? Uptane::Target::Unknown() : OstreeManager::getCurrent();
++  Json::Value apps;
++
++  std::ifstream apps_stream((config.docker_apps_root / ("target_apps")).c_str());
++  if (!apps_stream.fail()) {
++    auto custom = target.custom_data();
++    apps_stream >> custom["docker_apps"];
++    target.updateCustom(custom);
++  }
++  return target;
++}
++bool DockerAppManager::fakeGetCurrent = false;
+diff --git a/src/libaktualizr/package_manager/dockerappmanager.h b/src/libaktualizr/package_manager/dockerappmanager.h
+index a8e5a851..a9f65a87 100644
+--- a/src/libaktualizr/package_manager/dockerappmanager.h
++++ b/src/libaktualizr/package_manager/dockerappmanager.h
+@@ -17,6 +17,9 @@ class DockerAppManager : public OstreeManager {
+                    FetcherProgressCb progress_cb, const api::FlowControlToken *token = nullptr) override;
+   data::InstallationResult install(const Uptane::Target &target) const override;
+   std::string name() const override { return "ostree+docker-app"; }
++  Uptane::Target getCurrent() const override;
++
++  static bool fakeGetCurrent;
+ 
+  private:
+   bool iterate_apps(const Uptane::Target &target, DockerAppCb cb) const;
+@@ -25,4 +28,5 @@ class DockerAppManager : public OstreeManager {
+   // and we just need to construct a dummy one to make the compiler happy.
+   std::shared_ptr<Uptane::Fetcher> fake_fetcher_;
+ };
++
+ #endif  // DOCKERAPPMGR_H_
+diff --git a/src/libaktualizr/package_manager/dockerappmanager_test.cc b/src/libaktualizr/package_manager/dockerappmanager_test.cc
+index be3cd12d..0666372f 100644
+--- a/src/libaktualizr/package_manager/dockerappmanager_test.cc
++++ b/src/libaktualizr/package_manager/dockerappmanager_test.cc
+@@ -5,6 +5,7 @@
+ 
+ #include "config/config.h"
+ #include "http/httpclient.h"
++#include "package_manager/dockerappmanager.h"
+ #include "package_manager/packagemanagerfactory.h"
+ #include "package_manager/packagemanagerinterface.h"
+ #include "primary/sotauptaneclient.h"
+@@ -81,8 +82,12 @@ TEST(DockerAppManager, DockerApp_Fetch) {
+   KeyManager keys(storage, config.keymanagerConfig());
+   auto http = std::make_shared<HttpClient>();
+   auto client = newTestClient(config, storage, http, nullptr);
+-  ASSERT_TRUE(client->updateImagesMeta());
+ 
++  // Make sure we can read an empty target
++  auto current = client->package_manager_->getCurrent();
++  ASSERT_EQ("", current.custom_data()["docker_apps"].asString());
++
++  ASSERT_TRUE(client->updateImagesMeta());
+   std::string targets = Utils::readFile(repo / "repo/image/targets.json");
+   LOG_INFO << "Repo targets " << targets;
+ 
+@@ -100,6 +105,9 @@ TEST(DockerAppManager, DockerApp_Fetch) {
+   client->package_manager_->install(target);
+   std::string content = Utils::readFile(config.pacman.docker_apps_root / "app1/docker-compose.yml");
+   ASSERT_EQ("DOCKER-APP RENDER OUTPUT\nfake contents of a docker app\n", content);
++
++  current = client->package_manager_->getCurrent();
++  ASSERT_EQ("foo.dockerapp", current.custom_data()["docker_apps"]["app1"]["filename"].asString());
+ }
+ 
+ #ifndef __NO_MAIN__
+@@ -127,6 +135,10 @@ int main(int argc, char** argv) {
+ 
+   TestUtils::waitForServer(treehub_server + "/");
+ 
++  // OstreeManager::getCurrent throws an exception because there's not
++  // a real booted deployment.
++  DockerAppManager::fakeGetCurrent = true;
++
+   return RUN_ALL_TESTS();
+ }
+ #endif
+diff --git a/src/libaktualizr/uptane/tuf.h b/src/libaktualizr/uptane/tuf.h
+index 84a35e7d..bb715860 100644
+--- a/src/libaktualizr/uptane/tuf.h
++++ b/src/libaktualizr/uptane/tuf.h
+@@ -236,6 +236,7 @@ class Target {
+   std::vector<HardwareIdentifier> hardwareIds() const { return hwids_; };
+   std::string custom_version() const { return custom_["version"].asString(); }
+   Json::Value custom_data() const { return custom_; }
++  void updateCustom(Json::Value &custom) { custom_ = custom; };
+   std::string correlation_id() const { return correlation_id_; };
+   void setCorrelationId(std::string correlation_id) { correlation_id_ = std::move(correlation_id); };
+   uint64_t length() const { return length_; }
+-- 
+2.22.0
+

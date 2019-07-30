@@ -1,0 +1,114 @@
+From 36b3a25b22fcf9416e2c33473b02b61d153890eb Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Tue, 2 Jul 2019 00:03:19 -0500
+Subject: [PATCH 08/12] aktualizr-lite: Add targets equal helper
+
+aktualizr-lite needs to know not just when the ostree hash is the
+same for a target, but also when the dockers apps are the same.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/helpers.cc      | 25 ++++++++++++++++++
+ src/aktualizr_lite/helpers.h       |  1 +
+ src/aktualizr_lite/helpers_test.cc | 41 ++++++++++++++++++++++++++++++
+ 3 files changed, 67 insertions(+)
+
+diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
+index e14293d3..c96932ec 100644
+--- a/src/aktualizr_lite/helpers.cc
++++ b/src/aktualizr_lite/helpers.cc
+@@ -13,3 +13,28 @@ bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& co
+   }
+   return true;
+ }
++
++bool targets_eq(const Uptane::Target& t1, const Uptane::Target& t2, bool compareDockerApps) {
++  // target equality check looks at hashes
++  if (t1 == t2) {
++    if (compareDockerApps) {
++      auto t1_apps = t1.custom_data()["docker_apps"];
++      auto t2_apps = t2.custom_data()["docker_apps"];
++      for (Json::ValueIterator i = t1_apps.begin(); i != t1_apps.end(); ++i) {
++        auto app = i.key().asString();
++        if (!t2_apps.isMember(app)) {
++          return false;  // an app has been removed
++        }
++        if ((*i)["filename"].asString() != t2_apps[app]["filename"].asString()) {
++          return false;  // tuf target filename changed
++        }
++        t2_apps.removeMember(app);
++      }
++      if (t2_apps.size() > 0) {
++        return false;  // an app has been added
++      }
++    }
++    return true;  // docker apps are the same, or there are none
++  }
++  return false;
++}
+diff --git a/src/aktualizr_lite/helpers.h b/src/aktualizr_lite/helpers.h
+index 81a9d8f9..f027bb9c 100644
+--- a/src/aktualizr_lite/helpers.h
++++ b/src/aktualizr_lite/helpers.h
+@@ -15,5 +15,6 @@ struct Version {
+ };
+ 
+ bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags);
++bool targets_eq(const Uptane::Target& t1, const Uptane::Target& t2, bool compareDockerApps);
+ 
+ #endif  // AKTUALIZR_LITE_HELPERS
+diff --git a/src/aktualizr_lite/helpers_test.cc b/src/aktualizr_lite/helpers_test.cc
+index c5fea698..a9d946b6 100644
+--- a/src/aktualizr_lite/helpers_test.cc
++++ b/src/aktualizr_lite/helpers_test.cc
+@@ -50,6 +50,47 @@ TEST(version, target_has_tags) {
+   ASSERT_FALSE(target_has_tags(t, config_tags));
+ }
+ 
++TEST(version, targets_eq) {
++  auto t1 = Uptane::Target::Unknown();
++  auto t2 = Uptane::Target::Unknown();
++
++  // t1 should equal t2 when there a no docker-apps
++  ASSERT_TRUE(targets_eq(t1, t2, false));
++  ASSERT_TRUE(targets_eq(t1, t2, true));
++
++  auto custom = t1.custom_data();
++  custom["docker_apps"]["app1"]["filename"] = "app1-v1";
++  t1.updateCustom(custom);
++  ASSERT_TRUE(targets_eq(t1, t2, false));  // still equal, ignoring docker-apps
++  ASSERT_FALSE(targets_eq(t1, t2, true));
++
++  custom = t2.custom_data();
++  custom["docker_apps"]["app1"]["filename"] = "app1-v1";
++  t2.updateCustom(custom);
++  ASSERT_TRUE(targets_eq(t1, t2, true));
++
++  custom["docker_apps"]["app1"]["filename"] = "app1-v2";
++  t2.updateCustom(custom);
++  ASSERT_FALSE(targets_eq(t1, t2, true));  // version has changed
++
++  // Get things the same again
++  custom["docker_apps"]["app1"]["filename"] = "app1-v1";
++  t2.updateCustom(custom);
++
++  custom["docker_apps"]["app2"]["filename"] = "app2-v2";
++  t2.updateCustom(custom);
++  ASSERT_FALSE(targets_eq(t1, t2, true));  // t2 has an app that t1 doesn't
++
++  custom = t1.custom_data();
++  custom["docker_apps"]["app2"]["filename"] = "app2-v1";
++  t1.updateCustom(custom);
++  ASSERT_FALSE(targets_eq(t1, t2, true));  // app2 versions differ
++
++  custom["docker_apps"]["app2"]["filename"] = "app2-v2";
++  t1.updateCustom(custom);
++  ASSERT_TRUE(targets_eq(t1, t2, true));
++}
++
+ #ifndef __NO_MAIN__
+ int main(int argc, char **argv) {
+   ::testing::InitGoogleTest(&argc, argv);
+-- 
+2.22.0
+

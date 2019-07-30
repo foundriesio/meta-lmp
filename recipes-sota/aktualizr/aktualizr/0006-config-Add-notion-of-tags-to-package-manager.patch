@@ -1,0 +1,183 @@
+From 270a0aca06a31cc363dc38890f832931e18a1da8 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Fri, 28 Jun 2019 09:36:22 -0500
+Subject: [PATCH 06/12] config: Add notion of "tags" to package manager
+
+The idea here is that the aktualizr lite client can look at tags
+in each target to decide if its applicable to for the device. This
+would allow us to use one TUF repo to support things like premerge
+and release builds.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/CMakeLists.txt             |  4 +--
+ src/aktualizr_lite/helpers.cc                 | 15 +++++++++
+ src/aktualizr_lite/helpers.h                  |  9 ++++++
+ src/aktualizr_lite/helpers_test.cc            | 31 +++++++++++++++++++
+ src/aktualizr_lite/main.cc                    |  3 ++
+ .../package_manager/packagemanagerconfig.cc   |  7 ++++-
+ .../package_manager/packagemanagerconfig.h    |  1 +
+ 7 files changed, 67 insertions(+), 3 deletions(-)
+ create mode 100644 src/aktualizr_lite/helpers.cc
+
+diff --git a/src/aktualizr_lite/CMakeLists.txt b/src/aktualizr_lite/CMakeLists.txt
+index 92b2f0cd..f8b6b519 100644
+--- a/src/aktualizr_lite/CMakeLists.txt
++++ b/src/aktualizr_lite/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-set(AKTUALIZR_LITE_SRC main.cc)
++set(AKTUALIZR_LITE_SRC main.cc helpers.cc)
+ set(AKTUALIZR_LITE_HEADERS helpers.h)
+ 
+ if(BUILD_OSTREE)
+@@ -22,7 +22,7 @@ add_library(t_lite-mock SHARED ostree_mock.cc)
+ 
+ endif(BUILD_OSTREE)
+ 
+-add_aktualizr_test(NAME lite-helpers SOURCES helpers_test.cc)
++add_aktualizr_test(NAME lite-helpers SOURCES helpers.cc helpers_test.cc)
+ 
+ aktualizr_source_file_checks(main.cc ${AKTUALIZR_LITE_SRC} ${AKTUALIZR_LITE_HEADERS} helpers_test.cc ostree_mock.cc)
+ # vim: set tabstop=4 shiftwidth=4 expandtab:
+diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
+new file mode 100644
+index 00000000..e14293d3
+--- /dev/null
++++ b/src/aktualizr_lite/helpers.cc
+@@ -0,0 +1,15 @@
++#include "helpers.h"
++
++bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags) {
++  if (!config_tags.empty()) {
++    auto tags = t.custom_data()["tags"];
++    for (Json::ValueIterator i = tags.begin(); i != tags.end(); ++i) {
++      auto tag = (*i).asString();
++      if (std::find(config_tags.begin(), config_tags.end(), tag) != config_tags.end()) {
++        return true;
++      }
++    }
++    return false;
++  }
++  return true;
++}
+diff --git a/src/aktualizr_lite/helpers.h b/src/aktualizr_lite/helpers.h
+index 6c643e8a..81a9d8f9 100644
+--- a/src/aktualizr_lite/helpers.h
++++ b/src/aktualizr_lite/helpers.h
+@@ -1,10 +1,19 @@
++#ifndef AKTUALIZR_LITE_HELPERS
++#define AKTUALIZR_LITE_HELPERS
++
+ #include <string>
+ 
+ #include <string.h>
+ 
++#include "uptane/tuf.h"
++
+ struct Version {
+   std::string raw_ver;
+   Version(std::string version) : raw_ver(std::move(version)) {}
+ 
+   bool operator<(const Version& other) { return strverscmp(raw_ver.c_str(), other.raw_ver.c_str()) < 0; }
+ };
++
++bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags);
++
++#endif  // AKTUALIZR_LITE_HELPERS
+diff --git a/src/aktualizr_lite/helpers_test.cc b/src/aktualizr_lite/helpers_test.cc
+index 96020ec7..c5fea698 100644
+--- a/src/aktualizr_lite/helpers_test.cc
++++ b/src/aktualizr_lite/helpers_test.cc
+@@ -19,6 +19,37 @@ TEST(version, good_versions) {
+   ASSERT_TRUE(Version("1.9.0") < Version("1.10"));
+ }
+ 
++TEST(version, target_has_tags) {
++  auto t = Uptane::Target::Unknown();
++
++  // No tags defined in target:
++  std::vector<std::string> config_tags;
++  ASSERT_TRUE(target_has_tags(t, config_tags));
++  config_tags.push_back("foo");
++  ASSERT_FALSE(target_has_tags(t, config_tags));
++
++  // Set target tags to: premerge, qa
++  auto custom = t.custom_data();
++  custom["tags"].append("premerge");
++  custom["tags"].append("qa");
++  t.updateCustom(custom);
++
++  config_tags.clear();
++  ASSERT_TRUE(target_has_tags(t, config_tags));
++
++  config_tags.push_back("qa");
++  config_tags.push_back("blah");
++  ASSERT_TRUE(target_has_tags(t, config_tags));
++
++  config_tags.clear();
++  config_tags.push_back("premerge");
++  ASSERT_TRUE(target_has_tags(t, config_tags));
++
++  config_tags.clear();
++  config_tags.push_back("foo");
++  ASSERT_FALSE(target_has_tags(t, config_tags));
++}
++
+ #ifndef __NO_MAIN__
+ int main(int argc, char **argv) {
+   ::testing::InitGoogleTest(&argc, argv);
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index b8fb6bdf..90b8625c 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -120,6 +120,9 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
+ 
+   LOG_INFO << "Updates available to " << hwid << ":";
+   for (auto &t : client->allTargets()) {
++    if (!target_has_tags(t, config.pacman.tags)) {
++      continue;
++    }
+     for (auto const &it : t.hardwareIds()) {
+       if (it == hwid) {
+         log_info_target("", config, t);
+diff --git a/src/libaktualizr/package_manager/packagemanagerconfig.cc b/src/libaktualizr/package_manager/packagemanagerconfig.cc
+index 53677bd8..c36ef082 100644
+--- a/src/libaktualizr/package_manager/packagemanagerconfig.cc
++++ b/src/libaktualizr/package_manager/packagemanagerconfig.cc
+@@ -33,8 +33,12 @@ void PackageConfig::updateFromPropertyTree(const boost::property_tree::ptree& pt
+   CopyFromConfig(ostree_server, "ostree_server", pt);
+   CopyFromConfig(packages_file, "packages_file", pt);
+   CopyFromConfig(fake_need_reboot, "fake_need_reboot", pt);
+-#ifdef BUILD_DOCKERAPP
+   std::string val;
++  CopyFromConfig(val, "tags", pt);
++  if (val.length() > 0) {
++    boost::split(tags, val, boost::is_any_of(", "), boost::token_compress_on);
++  }
++#ifdef BUILD_DOCKERAPP
+   CopyFromConfig(val, "docker_apps", pt);
+   if (val.length() > 0) {
+     // token_compress_on allows lists like: "foo,bar", "foo, bar", or "foo bar"
+@@ -54,6 +58,7 @@ void PackageConfig::writeToStream(std::ostream& out_stream) const {
+   writeOption(out_stream, ostree_server, "ostree_server");
+   writeOption(out_stream, packages_file, "packages_file");
+   writeOption(out_stream, fake_need_reboot, "fake_need_reboot");
++  writeOption(out_stream, boost::algorithm::join(tags, ","), "tags");
+ #ifdef BUILD_DOCKERAPP
+   writeOption(out_stream, boost::algorithm::join(docker_apps, ","), "docker_apps");
+   writeOption(out_stream, docker_apps_root, "docker_apps_root");
+diff --git a/src/libaktualizr/package_manager/packagemanagerconfig.h b/src/libaktualizr/package_manager/packagemanagerconfig.h
+index d19bdd87..f0f3c9a1 100644
+--- a/src/libaktualizr/package_manager/packagemanagerconfig.h
++++ b/src/libaktualizr/package_manager/packagemanagerconfig.h
+@@ -16,6 +16,7 @@ struct PackageConfig {
+   boost::filesystem::path sysroot;
+   std::string ostree_server;
+   boost::filesystem::path packages_file{"/usr/package.manifest"};
++  std::vector<std::string> tags;
+ 
+ #ifdef BUILD_DOCKERAPP
+   std::vector<std::string> docker_apps;
+-- 
+2.22.0
+

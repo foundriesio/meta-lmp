@@ -1,0 +1,214 @@
+From c50443a6a0171e66b65a2b79d31da9458cfdc812 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Mon, 29 Jul 2019 13:04:13 -0500
+Subject: [PATCH 12/12] Create new "aktualizr-get" command
+
+I find myself carefully crafting `wget` commands to debug issues
+between my device and device-gateway. This has gotten more complex
+now that my team is using HSMs. This adds a simple tool to work
+a bit like wget.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/CMakeLists.txt               |  1 +
+ src/aktualizr_get/CMakeLists.txt | 13 ++++++
+ src/aktualizr_get/get.cc         | 18 ++++++++
+ src/aktualizr_get/get.h          |  8 ++++
+ src/aktualizr_get/get_test.cc    | 29 ++++++++++++
+ src/aktualizr_get/main.cc        | 77 ++++++++++++++++++++++++++++++++
+ 6 files changed, 146 insertions(+)
+ create mode 100644 src/aktualizr_get/CMakeLists.txt
+ create mode 100644 src/aktualizr_get/get.cc
+ create mode 100644 src/aktualizr_get/get.h
+ create mode 100644 src/aktualizr_get/get_test.cc
+ create mode 100644 src/aktualizr_get/main.cc
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index e5da11ba..eaf2d751 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -14,5 +14,6 @@ add_subdirectory("aktualizr_repo")
+ add_subdirectory("cert_provider")
+ add_subdirectory("hmi_stub")
+ add_subdirectory("aktualizr_lite")
++add_subdirectory("aktualizr_get")
+ 
+ add_subdirectory("load_tests")
+diff --git a/src/aktualizr_get/CMakeLists.txt b/src/aktualizr_get/CMakeLists.txt
+new file mode 100644
+index 00000000..d815d6cc
+--- /dev/null
++++ b/src/aktualizr_get/CMakeLists.txt
+@@ -0,0 +1,13 @@
++
++add_executable(aktualizr-get main.cc get.cc)
++target_link_libraries(aktualizr-get aktualizr_static_lib ${AKTUALIZR_EXTERNAL_LIBS})
++
++install(TARGETS aktualizr-get RUNTIME DESTINATION bin COMPONENT aktualizr-get)
++
++add_aktualizr_test(NAME aktualizr_get
++                   SOURCES get.cc get_test.cc
++                   PROJECT_WORKING_DIRECTORY)
++
++aktualizr_source_file_checks(main.cc get.cc get.h get_test.cc)
++
++# vim: set tabstop=4 shiftwidth=4 expandtab:
+diff --git a/src/aktualizr_get/get.cc b/src/aktualizr_get/get.cc
+new file mode 100644
+index 00000000..99c709e9
+--- /dev/null
++++ b/src/aktualizr_get/get.cc
+@@ -0,0 +1,18 @@
++#include "get.h"
++#include "crypto/keymanager.h"
++#include "http/httpclient.h"
++
++std::string aktualizrGet(Config &config, const std::string url) {
++  auto storage = INvStorage::newStorage(config.storage);
++  storage->importData(config.import);
++
++  auto client = std_::make_unique<HttpClient>();
++  KeyManager keys(storage, config.keymanagerConfig());
++  keys.copyCertsToCurl(*client);
++  auto resp = client->get(url, HttpInterface::kNoLimit);
++  if (resp.http_status_code != 200) {
++    throw std::runtime_error("Unable to get " + url + ": HTTP_" + std::to_string(resp.http_status_code) + "\n" +
++                             resp.body);
++  }
++  return resp.body;
++}
+diff --git a/src/aktualizr_get/get.h b/src/aktualizr_get/get.h
+new file mode 100644
+index 00000000..c9b54d7e
+--- /dev/null
++++ b/src/aktualizr_get/get.h
+@@ -0,0 +1,8 @@
++#ifndef AKTUALIZR_GET_HELPERS
++#define AKTUALIZR_GET_HELPERS
++
++#include "config/config.h"
++
++std::string aktualizrGet(Config &config, std::string url);
++
++#endif  // AKTUALIZR_GET_HELPERS
+diff --git a/src/aktualizr_get/get_test.cc b/src/aktualizr_get/get_test.cc
+new file mode 100644
+index 00000000..80257297
+--- /dev/null
++++ b/src/aktualizr_get/get_test.cc
+@@ -0,0 +1,29 @@
++#include <gtest/gtest.h>
++
++#include <boost/process.hpp>
++
++#include "get.h"
++#include "test_utils.h"
++
++static std::string server = "http://127.0.0.1:";
++
++TEST(aktualizr_get, good) {
++  Config config;
++  TemporaryDirectory dir;
++  config.storage.path = dir.Path();
++
++  std::string body = aktualizrGet(config, server + "/path/1/2/3");
++  EXPECT_EQ("{\"path\": \"/path/1/2/3\"}", body);
++}
++
++#ifndef __NO_MAIN__
++int main(int argc, char **argv) {
++  ::testing::InitGoogleTest(&argc, argv);
++
++  std::string port = TestUtils::getFreePort();
++  server += port;
++  boost::process::child server_process("tests/fake_http_server/fake_test_server.py", port);
++  TestUtils::waitForServer(server + "/");
++  return RUN_ALL_TESTS();
++}
++#endif
+diff --git a/src/aktualizr_get/main.cc b/src/aktualizr_get/main.cc
+new file mode 100644
+index 00000000..1e106d39
+--- /dev/null
++++ b/src/aktualizr_get/main.cc
+@@ -0,0 +1,77 @@
++#include <unistd.h>
++#include <iostream>
++
++#include <openssl/ssl.h>
++#include <boost/filesystem.hpp>
++#include <boost/program_options.hpp>
++
++#include "config/config.h"
++#include "get.h"
++
++#include "utilities/aktualizr_version.h"
++
++namespace bpo = boost::program_options;
++
++bpo::variables_map parse_options(int argc, char *argv[]) {
++  bpo::options_description description("aktualizr-get command line options");
++  // clang-format off
++  // Try to keep these options in the same order as Config::updateFromCommandLine().
++  // The first three are commandline only.
++  description.add_options()
++      ("help,h", "print usage")
++      ("version,v", "Current aktualizr version")
++      ("config,c", bpo::value<std::vector<boost::filesystem::path> >()->composing(), "configuration file or directory")
++      ("loglevel", bpo::value<int>(), "set log level 0-5 (trace, debug, info, warning, error, fatal)")
++      ("url,u", bpo::value<std::string>(), "url to get");
++  // clang-format on
++
++  bpo::variables_map vm;
++  std::vector<std::string> unregistered_options;
++  try {
++    bpo::basic_parsed_options<char> parsed_options = bpo::command_line_parser(argc, argv).options(description).run();
++    bpo::store(parsed_options, vm);
++    bpo::notify(vm);
++    if (vm.count("help") != 0) {
++      std::cout << description << '\n';
++      exit(EXIT_SUCCESS);
++    }
++
++  } catch (const bpo::required_option &ex) {
++    // print the error and append the default commandline option description
++    std::cout << ex.what() << std::endl << description;
++    exit(EXIT_FAILURE);
++  } catch (const bpo::error &ex) {
++    std::cout << ex.what() << std::endl;
++    std::cout << description;
++    exit(EXIT_FAILURE);
++  }
++
++  return vm;
++}
++
++int main(int argc, char *argv[]) {
++  logger_init(isatty(1) == 1);
++  logger_set_threshold(boost::log::trivial::info);
++
++  bpo::variables_map commandline_map = parse_options(argc, argv);
++
++  int r = EXIT_FAILURE;
++  try {
++    if (geteuid() != 0) {
++      LOG_WARNING << "\033[31mRunning as non-root and may not work as expected!\033[0m\n";
++    }
++
++    Config config(commandline_map);
++    if (config.logger.loglevel <= boost::log::trivial::debug) {
++      SSL_load_error_strings();
++    }
++
++    std::string body = aktualizrGet(config, commandline_map["url"].as<std::string>());
++    std::cout << body;
++
++    r = EXIT_SUCCESS;
++  } catch (const std::exception &ex) {
++    LOG_ERROR << ex.what();
++  }
++  return r;
++}
+-- 
+2.22.0
+

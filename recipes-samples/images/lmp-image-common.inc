@@ -25,6 +25,7 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 CORE_IMAGE_BASE_INSTALL += " \
     aktualizr-get \
     bluetooth-attach \
+    docker-credential-helper-fio \
     haveged \
     networkmanager \
     resize-helper \

@@ -13,3 +13,7 @@ S = "${WORKDIR}/git"
 inherit cmake
 
 RDEPENDS_${PN} += "openssl-bin"
+
+EXTRA_OECMAKE += "\
+    ${@oe.utils.conditional('SOTA_CLIENT', 'aktualizr-lite', '-DDEVICE_API=https://api.foundries.io/ota/devices/', '', d)} \
+"

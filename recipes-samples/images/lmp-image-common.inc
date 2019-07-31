@@ -24,7 +24,6 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
     aktualizr-get \
-    aktualizr-host-tools \
     bluetooth-attach \
     haveged \
     networkmanager \

@@ -14,6 +14,7 @@ SRC_URI_append_lmp = " \
     file://0010-aktualizr-lite-Add-ability-to-reboot-after-an-update.patch \
     file://0011-aktualizr-lite-Add-lockfile-for-daemon-mode-updates.patch \
     file://0012-Create-new-aktualizr-get-command.patch \
+    file://0013-aktualizr-lite-Fix-incorrect-storing-of-ecu-hwid.patch \
     file://aktualizr-lite.service \
     file://increase-restartsec-service.patch;patchdir=.. \
 "

@@ -7,8 +7,8 @@ LIC_FILES_CHKSUM = "file://${S}/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 SRC_URI = "git://github.com/NICMx/Jool.git"
 
-PV = "4.0.0"
-SRCREV = "de72f5f5a15a7218dc7cd566b108f8f2323b3a3a"
+PV = "4.0.4"
+SRCREV = "4c3e99d00242cf54832985fbe5374225512de3d5"
 
 S = "${WORKDIR}/git"
 

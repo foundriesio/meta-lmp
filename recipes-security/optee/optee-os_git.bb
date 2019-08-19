@@ -62,6 +62,7 @@ do_deploy() {
     for f in ${B}/out/arm/core/*.bin; do
         install -m 644 $f ${DEPLOYDIR}/optee/
     done
+    install -m 644 ${B}/out/arm/core/tee-init_load_addr.txt ${DEPLOYDIR}/optee/
 }
 
 addtask deploy before do_build after do_install

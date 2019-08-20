@@ -1,0 +1,32 @@
+/dts-v1/;
+
+/ {
+	description = "Configuration to load non legacy U-Boot boot script";
+	#address-cells = <1>;
+	images {
+		default = "bootscr";
+		bootscr {
+			description = "U-Boot boot script";
+			data = /incbin/("boot.cmd");
+			type = "script";
+			os = "U-Boot";
+			arch = "arm";
+			compression = "none";
+			hash-1 {
+				algo = "@@FIT_HASH_ALG@@";
+			};
+		};
+	};
+	configurations {
+		default = "config-1";
+		config-1 {
+			description = "Boot using U-Boot boot script";
+			script = "bootscr";
+			signature {
+				algo = "@@FIT_HASH_ALG@@,rsa2048";
+				key-name-hint = "@@UBOOT_SIGN_KEYNAME@@";
+				sign-images = "script";
+			};
+		};
+	};
+};

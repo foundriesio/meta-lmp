@@ -39,6 +39,11 @@ CORE_IMAGE_BASE_INSTALL += " \
     softhsm \
 "
 
+# Machine family specifics
+CORE_IMAGE_BASE_INSTALL_append_imx = " \
+    crucible \
+"
+
 fakeroot do_populate_rootfs_common_src () {
     # Allow sudo group users to use sudo
     install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/lmp

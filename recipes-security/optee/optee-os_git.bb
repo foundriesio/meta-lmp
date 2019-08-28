@@ -24,6 +24,7 @@ S = "${WORKDIR}/git"
 inherit deploy pythonnative python3native
 
 OPTEEMACHINE ?= "${MACHINE}"
+OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE_cubox-i = "imx-mx6dhmbedge"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
 
@@ -49,6 +50,11 @@ EXTRA_OEMAKE_append_aarch64 = " \
 EXTRA_OEMAKE_append_armv7a = " \
                 CROSS_COMPILE_ta_arm32=${HOST_PREFIX} \
                 ta-targets=ta_arm32 \
+"
+EXTRA_OEMAKE_append_apalis-imx6 = " \
+                CFG_NS_ENTRY_ADDR= CFG_IMX_WDOG_EXT_RESET=y \
+                CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x18200000 \
+                CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
 "
 EXTRA_OEMAKE_append_cubox-i = " \
                 CFG_NS_ENTRY_ADDR= CFG_IMX_WDOG_EXT_RESET=y \

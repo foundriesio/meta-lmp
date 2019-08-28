@@ -24,6 +24,9 @@ OPTEEMACHINE ?= "${MACHINE}"
 OPTEEMACHINE_cubox-i = "imx-mx6dhmbedge"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
 
+# TA Signing Key, can be set to replace the default RSA 2048 key (default_key.pem)
+OPTEE_TA_SIGN_KEY ?= ""
+
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 OPTEE_ARCH_armv7a = "arm32"
 OPTEE_ARCH_aarch64 = "arm64"
@@ -33,6 +36,8 @@ EXTRA_OEMAKE = "PLATFORM=${OPTEEMACHINE} O=out/arm \
                 DEBUG=0 LDFLAGS= \
                 LIBGCC_LOCATE_CFLAGS=--sysroot=${STAGING_DIR_HOST} \
 "
+EXTRA_OEMAKE += "${@oe.utils.ifelse('${OPTEE_TA_SIGN_KEY}' != '', 'TA_SIGN_KEY=${OPTEE_TA_SIGN_KEY}', '')}"
+
 EXTRA_OEMAKE_append_aarch64 = " \
                 CFG_ARM64_core=y \
                 CROSS_COMPILE_ta_arm64=${HOST_PREFIX} \

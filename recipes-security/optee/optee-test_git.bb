@@ -33,6 +33,7 @@ EXTRA_OEMAKE = "ARCH=${OPTEE_ARCH} TA_DEV_KIT_DIR=${TA_DEV_KIT_DIR} \
                 BINDIR=${base_bindir} LIBDIR=${nonarch_base_libdir} \
                 DESTDIR=${D} \
 "
+EXTRA_OEMAKE += "${@oe.utils.ifelse('${OPTEE_TA_SIGN_KEY}' != '', 'TA_SIGN_KEY=${OPTEE_TA_SIGN_KEY}', '')}"
 
 do_install () {
     oe_runmake install

@@ -2,6 +2,22 @@ SUMMARY = "Basic console-based gateway image"
 
 require lmp-image-common.inc
 
+require lmp-feature-ota.inc
+require lmp-feature-docker.inc
+require lmp-feature-bluetooth.inc
+require lmp-feature-wifi.inc
+require lmp-feature-nat64.inc
+require lmp-feature-debug.inc
+require lmp-feature-sbin-path-helper.inc
+require lmp-feature-sysctl-hang-crash-helper.inc
+require lmp-feature-sysctl-net-queue-pfifo-fast.inc
+
+BT_6LOWPAN_NETWORK = "fe80:0:0:0:d4e7::1/80"
+require lmp-feature-bt-6lowpan.inc
+
+require lmp-service-bluetooth-disable.inc
+require lmp-service-ostree-pending-reboot.inc
+
 IMAGE_FEATURES += "ssh-server-openssh"
 
 # Enough free space for a full image update
@@ -13,8 +29,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     cpufrequtils \
     ldd \
     gptfdisk \
-    hostapd \
-    htop \
     iptables \
     kernel-modules \
     networkmanager-nmtui \
@@ -24,25 +38,15 @@ CORE_IMAGE_BASE_INSTALL += " \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \
-    docker \
-    bluez5-noinst-tools \
     ethtool \
     git \
-    jool \
     less \
-    linux-firmware-ar3k \
-    linux-firmware-ath9k \
-    linux-firmware-ath10k \
-    linux-firmware-qca \
-    linux-firmware-wl18xx \
     openssh-sftp-server \
     packagegroup-core-full-cmdline-utils \
     packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
     python3-compression \
     python3-distutils \
-    python3-docker \
-    python3-docker-compose \
     python3-json \
     python3-multiprocessing \
     python3-netclient \
@@ -50,19 +54,4 @@ CORE_IMAGE_BASE_INSTALL += " \
     python3-shell \
     python3-unixadmin \
     pciutils \
-    strace \
-    tcpdump \
-    vim-tiny \
-    wpanusb \
-"
-
-fakeroot do_populate_rootfs_src () {
-    # Disable bluetooth service by default (allow to be contained in docker)
-    ln -sf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/bluetooth.service
-}
-
-IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_src; "
-
-EXTRA_USERS_PARAMS += "\
-usermod -a -G docker ${LMP_USER}; \
 "

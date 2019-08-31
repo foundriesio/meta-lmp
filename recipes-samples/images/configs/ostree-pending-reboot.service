@@ -1,7 +1,0 @@
-[Unit]
-Description=Aktualizr OSTree Update Automatic Reboot
-ConditionPathExists=/var/run/aktualizr-session/need_reboot
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/systemctl --force reboot

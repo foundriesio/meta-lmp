@@ -1,10 +1,9 @@
-From e7ec79989030f2f8612611a440c4cd8a3dc776d3 Mon Sep 17 00:00:00 2001
+From d5fb4c823db2388e237a0665647bb5218def8286 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Mon, 15 Jul 2019 15:17:05 -0500
-Subject: [PATCH 01/12] [FIO toup] aktualizr-lite: Mock
- OstreeManager::getCurrent
+Subject: [PATCH 02/14] aktualizr-lite: Mock OstreeManager::getCurrent
 
-This allows us to make calls to find the active ostree deployment
+This allows us to make calls to find the active ostree deployment.
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
@@ -50,7 +49,7 @@ index 00000000..71eb5010
 +  return getenv("OSTREE_HASH");
 +}
 diff --git a/src/aktualizr_lite/test_lite.sh b/src/aktualizr_lite/test_lite.sh
-index a17e68b1..2a07522c 100755
+index a93f37d4..5d769b5a 100755
 --- a/src/aktualizr_lite/test_lite.sh
 +++ b/src/aktualizr_lite/test_lite.sh
 @@ -7,6 +7,7 @@ akrepo_bin=$2
@@ -61,7 +60,7 @@ index a17e68b1..2a07522c 100755
  
  dest_dir=$(mktemp -d)
  
-@@ -84,7 +85,7 @@ EOF
+@@ -85,7 +86,7 @@ EOF
  $valgrind $aklite -h | grep "Command to execute: status, list, update"
  
  ## Check that we can do the list command
@@ -70,7 +69,7 @@ index a17e68b1..2a07522c 100755
  if [[ ! "$out" =~ "foo1" ]] ; then
      echo "ERROR: foo1 update missing"
      exit 1
-@@ -101,7 +102,7 @@ sha=$(echo $update | cut -d\  -f2 | sed 's/\.0$//')
+@@ -102,7 +103,7 @@ sha=$(echo $update | cut -d\  -f2 | sed 's/\.0$//')
  echo "Adding new target: $name / $sha"
  add_target $name $sha
  
@@ -81,5 +80,5 @@ index a17e68b1..2a07522c 100755
 -$valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update | grep "Updating to: Target(zlast"
 +OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update | grep "Updating to: Target(zlast"
 -- 
-2.22.0
+2.23.0
 

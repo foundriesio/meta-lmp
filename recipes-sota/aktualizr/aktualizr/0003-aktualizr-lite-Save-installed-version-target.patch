@@ -1,35 +1,41 @@
-From 4403a1b7d5770adba59c8fb667d673fcf80a9dfb Mon Sep 17 00:00:00 2001
+From 3cf60f2c3f8459cebae27b27da06464f841d4f63 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Wed, 10 Jul 2019 14:33:04 -0500
-Subject: [PATCH 02/12] [FIO toup] aktualizr-lite: Save installed version
- target
+Subject: [PATCH 03/14] aktualizr-lite: Save installed version target
 
 This will help make the getTarget method of the packagemanager work
-which is needed so that daemon mode will know when to do an update.
+as expected.
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- src/aktualizr_lite/main.cc                  | 67 ++++++++++++++-------
+ src/aktualizr_lite/main.cc                  | 74 +++++++++++++++------
  src/libaktualizr/primary/sotauptaneclient.h |  1 +
- 2 files changed, 47 insertions(+), 21 deletions(-)
+ 2 files changed, 54 insertions(+), 21 deletions(-)
 
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index e1569592..0243a62b 100644
+index e1569592..65425044 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
-@@ -16,9 +16,25 @@
+@@ -16,9 +16,32 @@
  
  namespace bpo = boost::program_options;
  
 -static std::shared_ptr<SotaUptaneClient> liteClient(Config &config) {
-+static void finalizeIfNeeded(INvStorage &storage, const Uptane::Target &curTarget) {
++static void finalizeIfNeeded(INvStorage &storage, PackageConfig &config) {
 +  std::vector<Uptane::Target> installed_versions;
 +  size_t pending_index = SIZE_MAX;
 +  storage.loadInstalledVersions("", &installed_versions, nullptr, &pending_index);
 +
 +  if (pending_index < installed_versions.size()) {
++    GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.sysroot);
++    OstreeDeployment *booted_deployment = ostree_sysroot_get_booted_deployment(sysroot_smart.get());
++    if (booted_deployment == nullptr) {
++      throw std::runtime_error("Could not get booted deployment in " + config.sysroot.string());
++    }
++    std::string current_hash = ostree_deployment_get_csum(booted_deployment);
++
 +    const Uptane::Target &target = installed_versions[pending_index];
-+    if (curTarget == target) {
++    if (current_hash == target.sha256Hash()) {
 +      LOG_INFO << "Marking target install complete for: " << target;
 +      storage.saveInstalledVersion("", target, InstalledVersionUpdateMode::kCurrent);
 +    }
@@ -45,18 +51,18 @@ index e1569592..0243a62b 100644
    storage->importData(config.import);
  
    EcuSerials ecu_serials;
-@@ -44,7 +60,9 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config) {
+@@ -44,7 +67,9 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config) {
    KeyManager keys(storage, config.keymanagerConfig());
    keys.copyCertsToCurl(*http_client);
  
 -  return std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
 +  auto client = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
-+  finalizeIfNeeded(*storage, client->getCurrent());
++  finalizeIfNeeded(*storage, config.pacman);
 +  return client;
  }
  
  static int status_main(Config &config, const bpo::variables_map &unused) {
-@@ -61,7 +79,7 @@ static int status_main(Config &config, const bpo::variables_map &unused) {
+@@ -61,7 +86,7 @@ static int status_main(Config &config, const bpo::variables_map &unused) {
  
  static int list_main(Config &config, const bpo::variables_map &unused) {
    (void)unused;
@@ -65,7 +71,7 @@ index e1569592..0243a62b 100644
    Uptane::HardwareIdentifier hwid(config.provision.primary_ecu_hardware_id);
  
    LOG_INFO << "Refreshing target metadata";
-@@ -136,30 +154,22 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
+@@ -136,30 +161,22 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
    throw std::runtime_error("Unable to find update");
  }
  
@@ -105,7 +111,7 @@ index e1569592..0243a62b 100644
      LOG_ERROR << "Unable to install update: " << iresult.description;
      return 1;
    }
-@@ -167,6 +177,21 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+@@ -167,6 +184,21 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
    return 0;
  }
  
@@ -128,7 +134,7 @@ index e1569592..0243a62b 100644
    const char *name;
    int (*main)(Config &, const bpo::variables_map &);
 diff --git a/src/libaktualizr/primary/sotauptaneclient.h b/src/libaktualizr/primary/sotauptaneclient.h
-index 529b8477..12147390 100644
+index 87f4ccd6..a55ff04a 100644
 --- a/src/libaktualizr/primary/sotauptaneclient.h
 +++ b/src/libaktualizr/primary/sotauptaneclient.h
 @@ -58,6 +58,7 @@ class SotaUptaneClient {
@@ -140,5 +146,5 @@ index 529b8477..12147390 100644
    bool updateImagesMeta();  // TODO: make private once aktualizr has a proper TUF API
    bool checkImagesMetaOffline();
 -- 
-2.22.0
+2.23.0
 

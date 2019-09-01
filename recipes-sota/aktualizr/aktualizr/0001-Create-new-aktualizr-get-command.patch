@@ -1,7 +1,7 @@
-From c50443a6a0171e66b65a2b79d31da9458cfdc812 Mon Sep 17 00:00:00 2001
+From 50ee02b88c90be33f2b8fa196eb7f20359b45a10 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Mon, 29 Jul 2019 13:04:13 -0500
-Subject: [PATCH 12/12] Create new "aktualizr-get" command
+Subject: [PATCH 01/14] Create new "aktualizr-get" command
 
 I find myself carefully crafting `wget` commands to debug issues
 between my device and device-gateway. This has gotten more complex
@@ -24,10 +24,10 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  create mode 100644 src/aktualizr_get/main.cc
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index e5da11ba..eaf2d751 100644
+index bd702ca8..d0ead242 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -14,5 +14,6 @@ add_subdirectory("aktualizr_repo")
+@@ -15,5 +15,6 @@ add_subdirectory("aktualizr_repo")
  add_subdirectory("cert_provider")
  add_subdirectory("hmi_stub")
  add_subdirectory("aktualizr_lite")
@@ -210,5 +210,5 @@ index 00000000..1e106d39
 +  return r;
 +}
 -- 
-2.22.0
+2.23.0
 

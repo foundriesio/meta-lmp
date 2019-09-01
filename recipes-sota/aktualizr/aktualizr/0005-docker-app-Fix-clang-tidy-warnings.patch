@@ -1,0 +1,116 @@
+From 5cfa9fd10a258506dd916aff0aaad3fcda9b7227 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Wed, 14 Aug 2019 09:45:29 -0500
+Subject: [PATCH 05/14] docker-app: Fix clang-tidy warnings
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ .../package_manager/dockerappmanager.cc       | 30 ++++++++-----------
+ .../package_manager/dockerappmanager.h        |  6 ++--
+ 2 files changed, 15 insertions(+), 21 deletions(-)
+
+diff --git a/src/libaktualizr/package_manager/dockerappmanager.cc b/src/libaktualizr/package_manager/dockerappmanager.cc
+index ed8c5fbf..b9147936 100644
+--- a/src/libaktualizr/package_manager/dockerappmanager.cc
++++ b/src/libaktualizr/package_manager/dockerappmanager.cc
+@@ -3,12 +3,12 @@
+ #include <sstream>
+ 
+ struct DockerApp {
+-  DockerApp(const std::string app_name, const PackageConfig &config)
+-      : name(std::move(app_name)),
+-        app_root(std::move(config.docker_apps_root / app_name)),
+-        app_params(std::move(config.docker_app_params)),
+-        app_bin(std::move(config.docker_app_bin)),
+-        compose_bin(std::move(config.docker_compose_bin)) {}
++  DockerApp(std::string app_name, const PackageConfig &config)
++      : name(app_name),
++        app_root(config.docker_apps_root / app_name),
++        app_params(config.docker_app_params),
++        app_bin(config.docker_app_bin),
++        compose_bin(config.docker_compose_bin) {}
+ 
+   bool render(const std::string &app_content) {
+     auto bin = boost::filesystem::canonical(app_bin).string();
+@@ -33,10 +33,7 @@ struct DockerApp {
+     // stdout/stderr is streamed while docker sets things up.
+     auto bin = boost::filesystem::canonical(compose_bin).string();
+     std::string cmd("cd " + app_root.string() + " && " + bin + " up --remove-orphans -d");
+-    if (std::system(cmd.c_str()) != 0) {
+-      return false;
+-    }
+-    return true;
++    return std::system(cmd.c_str()) == 0;
+   }
+ 
+   std::string name;
+@@ -46,7 +43,7 @@ struct DockerApp {
+   boost::filesystem::path compose_bin;
+ };
+ 
+-bool DockerAppManager::iterate_apps(const Uptane::Target &target, DockerAppCb cb) const {
++bool DockerAppManager::iterate_apps(const Uptane::Target &target, const DockerAppCb &cb) const {
+   auto apps = target.custom_data()["docker_apps"];
+   bool res = true;
+   Uptane::ImagesRepository repo;
+@@ -56,7 +53,7 @@ bool DockerAppManager::iterate_apps(const Uptane::Target &target, DockerAppCb cb
+ 
+   if (!apps) {
+     LOG_DEBUG << "Detected an update target from Director with no docker-apps data";
+-    for (const auto t : Uptane::LazyTargetsList(repo, storage_, fake_fetcher_)) {
++    for (const auto &t : Uptane::LazyTargetsList(repo, storage_, fake_fetcher_)) {
+       if (t.MatchTarget(target)) {
+         LOG_DEBUG << "Found the match " << t;
+         apps = t.custom_data()["docker_apps"];
+@@ -65,10 +62,10 @@ bool DockerAppManager::iterate_apps(const Uptane::Target &target, DockerAppCb cb
+     }
+   }
+ 
+-  for (const auto t : Uptane::LazyTargetsList(repo, storage_, fake_fetcher_)) {
++  for (const auto &t : Uptane::LazyTargetsList(repo, storage_, fake_fetcher_)) {
+     for (Json::ValueIterator i = apps.begin(); i != apps.end(); ++i) {
+       if ((*i).isObject() && (*i).isMember("filename")) {
+-        for (auto app : config.docker_apps) {
++        for (const auto &app : config.docker_apps) {
+           if (i.key().asString() == app && (*i)["filename"].asString() == t.filename()) {
+             if (!cb(app, t)) {
+               res = false;
+@@ -104,10 +101,7 @@ data::InstallationResult DockerAppManager::install(const Uptane::Target &target)
+     std::stringstream ss;
+     ss << *storage_->openTargetFile(app_target);
+     DockerApp dapp(app, config);
+-    if (!dapp.render(ss.str()) || !dapp.start()) {
+-      return false;
+-    }
+-    return true;
++    return dapp.render(ss.str()) && dapp.start();
+   };
+   if (!iterate_apps(target, cb)) {
+     return data::InstallationResult(data::ResultCode::Numeric::kInstallFailed, "Could not render docker app");
+diff --git a/src/libaktualizr/package_manager/dockerappmanager.h b/src/libaktualizr/package_manager/dockerappmanager.h
+index a8e5a851..ea66a3fd 100644
+--- a/src/libaktualizr/package_manager/dockerappmanager.h
++++ b/src/libaktualizr/package_manager/dockerappmanager.h
+@@ -10,16 +10,16 @@ class DockerAppManager : public OstreeManager {
+  public:
+   DockerAppManager(PackageConfig pconfig, std::shared_ptr<INvStorage> storage, std::shared_ptr<Bootloader> bootloader,
+                    std::shared_ptr<HttpInterface> http)
+-      : OstreeManager(pconfig, storage, bootloader, http) {
++      : OstreeManager(std::move(pconfig), std::move(storage), std::move(bootloader), std::move(http)) {
+     fake_fetcher_ = std::make_shared<Uptane::Fetcher>(Config(), http_);
+   }
+   bool fetchTarget(const Uptane::Target &target, Uptane::Fetcher &fetcher, const KeyManager &keys,
+-                   FetcherProgressCb progress_cb, const api::FlowControlToken *token = nullptr) override;
++                   FetcherProgressCb progress_cb, const api::FlowControlToken *token) override;
+   data::InstallationResult install(const Uptane::Target &target) const override;
+   std::string name() const override { return "ostree+docker-app"; }
+ 
+  private:
+-  bool iterate_apps(const Uptane::Target &target, DockerAppCb cb) const;
++  bool iterate_apps(const Uptane::Target &target, const DockerAppCb &cb) const;
+ 
+   // iterate_apps needs an Uptane::Fetcher. However, its an unused parameter
+   // and we just need to construct a dummy one to make the compiler happy.
+-- 
+2.23.0
+

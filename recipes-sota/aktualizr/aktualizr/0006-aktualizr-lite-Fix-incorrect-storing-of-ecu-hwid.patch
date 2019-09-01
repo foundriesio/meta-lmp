@@ -1,7 +1,7 @@
-From f17fff85d59e885acf50d95548a1bd0d2537d43a Mon Sep 17 00:00:00 2001
+From c8c4fcdf04bebcb9593441003a51cda07b022495 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Wed, 14 Aug 2019 14:12:37 -0500
-Subject: [PATCH 13/13] aktualizr-lite: Fix incorrect storing of ecu hwid
+Subject: [PATCH 06/14] aktualizr-lite: Fix incorrect storing of ecu hwid
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
@@ -9,10 +9,10 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 8634e961..6cf36d07 100644
+index 9bc6efad..9b544a50 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
-@@ -50,7 +50,7 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
+@@ -56,7 +56,7 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
        boost::uuids::uuid tmp = boost::uuids::random_generator()();
        serial = boost::uuids::to_string(tmp);
      }
@@ -22,5 +22,5 @@ index 8634e961..6cf36d07 100644
    }
  
 -- 
-2.22.0
+2.23.0
 

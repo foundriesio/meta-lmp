@@ -1,23 +1,27 @@
-From 2b70423942096380486711174d0d714e03983254 Mon Sep 17 00:00:00 2001
+From 7006e5e3ea0283c56510b3834633dfbaa28ce598 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Wed, 10 Jul 2019 18:17:26 -0500
-Subject: [PATCH 03/12] [FIO toup] aktualizr-lite: Use current target for
- status
+Subject: [PATCH 04/14] aktualizr-lite: Use current target for status
 
 Now that we are tracking the installed target properly, we can use
 getCurrent to make this easier and more informative.
 
+This also uses a reverse iterator for the OstreeManager:getCurrent
+method. In the event you have two targets with the same hash, you
+should probably match on the newest one rather than the oldest one.
+
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- src/aktualizr_lite/main.cc      | 56 +++++++++++++++++++--------------
- src/aktualizr_lite/test_lite.sh |  7 +++++
- 2 files changed, 39 insertions(+), 24 deletions(-)
+ src/aktualizr_lite/main.cc                    | 56 +++++++++++--------
+ src/aktualizr_lite/test_lite.sh               |  7 +++
+ .../package_manager/ostreemanager.cc          |  4 +-
+ 3 files changed, 41 insertions(+), 26 deletions(-)
 
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 0243a62b..46bb2402 100644
+index 65425044..9bc6efad 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
-@@ -65,14 +65,41 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
+@@ -72,14 +72,41 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
    return client;
  }
  
@@ -51,7 +55,7 @@ index 0243a62b..46bb2402 100644
 -  if (deployment == nullptr) {
 +  auto target = liteClient(config, nullptr)->getCurrent();
 +
-+  if (target == Uptane::Target::Unknown()) {
++  if (target.MatchTarget(Uptane::Target::Unknown())) {
      LOG_INFO << "No active deployment found";
    } else {
 -    LOG_INFO << "Active image is: " << ostree_deployment_get_csum(deployment);
@@ -63,7 +67,7 @@ index 0243a62b..46bb2402 100644
    }
    return 0;
  }
-@@ -95,26 +122,7 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
+@@ -102,26 +129,7 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
    for (auto &t : client->allTargets()) {
      for (auto const &it : t.hardwareIds()) {
        if (it == hwid) {
@@ -92,10 +96,10 @@ index 0243a62b..46bb2402 100644
        }
      }
 diff --git a/src/aktualizr_lite/test_lite.sh b/src/aktualizr_lite/test_lite.sh
-index 2a07522c..df57da54 100755
+index 5d769b5a..2dbb2eb5 100755
 --- a/src/aktualizr_lite/test_lite.sh
 +++ b/src/aktualizr_lite/test_lite.sh
-@@ -106,3 +106,10 @@ OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota
+@@ -107,3 +107,10 @@ OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota
  ostree admin status
  
  OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update | grep "Updating to: Target(zlast"
@@ -106,6 +110,21 @@ index 2a07522c..df57da54 100755
 +    echo $out
 +    exit 1
 +fi
+diff --git a/src/libaktualizr/package_manager/ostreemanager.cc b/src/libaktualizr/package_manager/ostreemanager.cc
+index e2f2ab8e..21658dc2 100644
+--- a/src/libaktualizr/package_manager/ostreemanager.cc
++++ b/src/libaktualizr/package_manager/ostreemanager.cc
+@@ -272,8 +272,8 @@ Uptane::Target OstreeManager::getCurrent() const {
+   storage_->loadPrimaryInstalledVersions(&installed_versions, nullptr, nullptr);
+ 
+   // Version should be in installed versions
+-  std::vector<Uptane::Target>::iterator it;
+-  for (it = installed_versions.begin(); it != installed_versions.end(); it++) {
++  std::vector<Uptane::Target>::reverse_iterator it;
++  for (it = installed_versions.rbegin(); it != installed_versions.rend(); it++) {
+     if (it->sha256Hash() == current_hash) {
+       return *it;
+     }
 -- 
-2.22.0
+2.23.0
 

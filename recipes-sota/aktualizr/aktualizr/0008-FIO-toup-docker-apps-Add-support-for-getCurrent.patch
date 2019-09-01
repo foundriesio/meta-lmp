@@ -1,7 +1,7 @@
-From ec1d90ef9000cd9e7fb9329e5ee6aaeef997d533 Mon Sep 17 00:00:00 2001
+From 809ec03a3dcfe7e9474e3eb7d774397b8ec2459d Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Sun, 30 Jun 2019 16:16:34 -0500
-Subject: [PATCH 04/12] [FIO toup] docker-apps: Add support for getCurrent
+Subject: [PATCH 08/14] [FIO toup] docker-apps: Add support for getCurrent
 
 This will be needed for aktualizr-lite so that it can understand
 what version of a docker app is deployed.
@@ -15,10 +15,10 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  4 files changed, 36 insertions(+), 1 deletion(-)
 
 diff --git a/src/libaktualizr/package_manager/dockerappmanager.cc b/src/libaktualizr/package_manager/dockerappmanager.cc
-index 30d83d0e..2eaf9ec6 100644
+index b9147936..dccd9d7d 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager.cc
 +++ b/src/libaktualizr/package_manager/dockerappmanager.cc
-@@ -99,6 +99,10 @@ bool DockerAppManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher
+@@ -96,6 +96,10 @@ bool DockerAppManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher
  
  data::InstallationResult DockerAppManager::install(const Uptane::Target &target) const {
    auto res = OstreeManager::install(target);
@@ -29,7 +29,7 @@ index 30d83d0e..2eaf9ec6 100644
    auto cb = [this](const std::string &app, const Uptane::Target &app_target) {
      LOG_INFO << "Installing " << app << " -> " << app_target;
      std::stringstream ss;
-@@ -114,3 +118,17 @@ data::InstallationResult DockerAppManager::install(const Uptane::Target &target)
+@@ -108,3 +112,17 @@ data::InstallationResult DockerAppManager::install(const Uptane::Target &target)
    }
    return res;
  }
@@ -48,11 +48,11 @@ index 30d83d0e..2eaf9ec6 100644
 +}
 +bool DockerAppManager::fakeGetCurrent = false;
 diff --git a/src/libaktualizr/package_manager/dockerappmanager.h b/src/libaktualizr/package_manager/dockerappmanager.h
-index a8e5a851..a9f65a87 100644
+index ea66a3fd..4bb37100 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager.h
 +++ b/src/libaktualizr/package_manager/dockerappmanager.h
 @@ -17,6 +17,9 @@ class DockerAppManager : public OstreeManager {
-                    FetcherProgressCb progress_cb, const api::FlowControlToken *token = nullptr) override;
+                    FetcherProgressCb progress_cb, const api::FlowControlToken *token) override;
    data::InstallationResult install(const Uptane::Target &target) const override;
    std::string name() const override { return "ostree+docker-app"; }
 +  Uptane::Target getCurrent() const override;
@@ -60,7 +60,7 @@ index a8e5a851..a9f65a87 100644
 +  static bool fakeGetCurrent;
  
   private:
-   bool iterate_apps(const Uptane::Target &target, DockerAppCb cb) const;
+   bool iterate_apps(const Uptane::Target &target, const DockerAppCb &cb) const;
 @@ -25,4 +28,5 @@ class DockerAppManager : public OstreeManager {
    // and we just need to construct a dummy one to make the compiler happy.
    std::shared_ptr<Uptane::Fetcher> fake_fetcher_;
@@ -68,7 +68,7 @@ index a8e5a851..a9f65a87 100644
 +
  #endif  // DOCKERAPPMGR_H_
 diff --git a/src/libaktualizr/package_manager/dockerappmanager_test.cc b/src/libaktualizr/package_manager/dockerappmanager_test.cc
-index be3cd12d..0666372f 100644
+index 7af35110..fecc7d70 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager_test.cc
 +++ b/src/libaktualizr/package_manager/dockerappmanager_test.cc
 @@ -5,6 +5,7 @@
@@ -115,10 +115,10 @@ index be3cd12d..0666372f 100644
  }
  #endif
 diff --git a/src/libaktualizr/uptane/tuf.h b/src/libaktualizr/uptane/tuf.h
-index 84a35e7d..bb715860 100644
+index 944780d6..38e7cf74 100644
 --- a/src/libaktualizr/uptane/tuf.h
 +++ b/src/libaktualizr/uptane/tuf.h
-@@ -236,6 +236,7 @@ class Target {
+@@ -240,6 +240,7 @@ class Target {
    std::vector<HardwareIdentifier> hardwareIds() const { return hwids_; };
    std::string custom_version() const { return custom_["version"].asString(); }
    Json::Value custom_data() const { return custom_; }
@@ -127,5 +127,5 @@ index 84a35e7d..bb715860 100644
    void setCorrelationId(std::string correlation_id) { correlation_id_ = std::move(correlation_id); };
    uint64_t length() const { return length_; }
 -- 
-2.22.0
+2.23.0
 

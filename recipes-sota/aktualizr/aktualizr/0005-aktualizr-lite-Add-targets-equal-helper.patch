@@ -1,7 +1,7 @@
-From 36b3a25b22fcf9416e2c33473b02b61d153890eb Mon Sep 17 00:00:00 2001
+From d7d4ce21153f32d933e6905093341f10eee65be2 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 2 Jul 2019 00:03:19 -0500
-Subject: [PATCH 08/12] aktualizr-lite: Add targets equal helper
+Subject: [PATCH 5/8] aktualizr-lite: Add targets equal helper
 
 aktualizr-lite needs to know not just when the ostree hash is the
 same for a target, but also when the dockers apps are the same.
@@ -14,7 +14,7 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  3 files changed, 67 insertions(+)
 
 diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
-index e14293d3..c96932ec 100644
+index e14293d3..5272cda2 100644
 --- a/src/aktualizr_lite/helpers.cc
 +++ b/src/aktualizr_lite/helpers.cc
 @@ -13,3 +13,28 @@ bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& co
@@ -24,7 +24,7 @@ index e14293d3..c96932ec 100644
 +
 +bool targets_eq(const Uptane::Target& t1, const Uptane::Target& t2, bool compareDockerApps) {
 +  // target equality check looks at hashes
-+  if (t1 == t2) {
++  if (t1.MatchTarget(t2)) {
 +    if (compareDockerApps) {
 +      auto t1_apps = t1.custom_data()["docker_apps"];
 +      auto t2_apps = t2.custom_data()["docker_apps"];
@@ -110,5 +110,5 @@ index c5fea698..a9d946b6 100644
  int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);
 -- 
-2.22.0
+2.23.0
 

@@ -1,7 +1,7 @@
-From ec1d90ef9000cd9e7fb9329e5ee6aaeef997d533 Mon Sep 17 00:00:00 2001
+From b409150978e89d0232cb10e4bd4ebc35f04c4a43 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Sun, 30 Jun 2019 16:16:34 -0500
-Subject: [PATCH 04/12] [FIO toup] docker-apps: Add support for getCurrent
+Subject: [PATCH 2/8] [FIO toup] docker-apps: Add support for getCurrent
 
 This will be needed for aktualizr-lite so that it can understand
 what version of a docker app is deployed.
@@ -10,15 +10,15 @@ Signed-off-by: Andy Doan <andy@foundries.io>
 ---
  .../package_manager/dockerappmanager.cc        | 18 ++++++++++++++++++
  .../package_manager/dockerappmanager.h         |  4 ++++
- .../package_manager/dockerappmanager_test.cc   | 14 +++++++++++++-
+ .../package_manager/dockerappmanager_test.cc   | 16 ++++++++++++++--
  src/libaktualizr/uptane/tuf.h                  |  1 +
- 4 files changed, 36 insertions(+), 1 deletion(-)
+ 4 files changed, 37 insertions(+), 2 deletions(-)
 
 diff --git a/src/libaktualizr/package_manager/dockerappmanager.cc b/src/libaktualizr/package_manager/dockerappmanager.cc
-index 30d83d0e..2eaf9ec6 100644
+index f30e22cd..b9d15a88 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager.cc
 +++ b/src/libaktualizr/package_manager/dockerappmanager.cc
-@@ -99,6 +99,10 @@ bool DockerAppManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher
+@@ -98,6 +98,10 @@ bool DockerAppManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher
  
  data::InstallationResult DockerAppManager::install(const Uptane::Target &target) const {
    auto res = OstreeManager::install(target);
@@ -29,9 +29,9 @@ index 30d83d0e..2eaf9ec6 100644
    auto cb = [this](const std::string &app, const Uptane::Target &app_target) {
      LOG_INFO << "Installing " << app << " -> " << app_target;
      std::stringstream ss;
-@@ -114,3 +118,17 @@ data::InstallationResult DockerAppManager::install(const Uptane::Target &target)
+@@ -128,3 +132,17 @@ TargetStatus DockerAppManager::verifyTarget(const Uptane::Target &target) const
    }
-   return res;
+   return TargetStatus::kGood;
  }
 +
 +Uptane::Target DockerAppManager::getCurrent() const {
@@ -48,27 +48,27 @@ index 30d83d0e..2eaf9ec6 100644
 +}
 +bool DockerAppManager::fakeGetCurrent = false;
 diff --git a/src/libaktualizr/package_manager/dockerappmanager.h b/src/libaktualizr/package_manager/dockerappmanager.h
-index a8e5a851..a9f65a87 100644
+index 3931791a..025b29a4 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager.h
 +++ b/src/libaktualizr/package_manager/dockerappmanager.h
-@@ -17,6 +17,9 @@ class DockerAppManager : public OstreeManager {
-                    FetcherProgressCb progress_cb, const api::FlowControlToken *token = nullptr) override;
+@@ -18,6 +18,9 @@ class DockerAppManager : public OstreeManager {
    data::InstallationResult install(const Uptane::Target &target) const override;
+   TargetStatus verifyTarget(const Uptane::Target &target) const override;
    std::string name() const override { return "ostree+docker-app"; }
 +  Uptane::Target getCurrent() const override;
 +
 +  static bool fakeGetCurrent;
  
   private:
-   bool iterate_apps(const Uptane::Target &target, DockerAppCb cb) const;
-@@ -25,4 +28,5 @@ class DockerAppManager : public OstreeManager {
+   bool iterate_apps(const Uptane::Target &target, const DockerAppCb &cb) const;
+@@ -26,4 +29,5 @@ class DockerAppManager : public OstreeManager {
    // and we just need to construct a dummy one to make the compiler happy.
    std::shared_ptr<Uptane::Fetcher> fake_fetcher_;
  };
 +
  #endif  // DOCKERAPPMGR_H_
 diff --git a/src/libaktualizr/package_manager/dockerappmanager_test.cc b/src/libaktualizr/package_manager/dockerappmanager_test.cc
-index be3cd12d..0666372f 100644
+index 0e89ead5..a1e9bb2d 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager_test.cc
 +++ b/src/libaktualizr/package_manager/dockerappmanager_test.cc
 @@ -5,6 +5,7 @@
@@ -79,20 +79,22 @@ index be3cd12d..0666372f 100644
  #include "package_manager/packagemanagerfactory.h"
  #include "package_manager/packagemanagerinterface.h"
  #include "primary/sotauptaneclient.h"
-@@ -81,8 +82,12 @@ TEST(DockerAppManager, DockerApp_Fetch) {
+@@ -81,9 +82,13 @@ TEST(DockerAppManager, DockerApp_Fetch) {
    KeyManager keys(storage, config.keymanagerConfig());
    auto http = std::make_shared<HttpClient>();
    auto client = newTestClient(config, storage, http, nullptr);
 -  ASSERT_TRUE(client->updateImagesMeta());
  
+-  std::string targets = Utils::readFile(repo / "repo/repo/targets.json");
 +  // Make sure we can read an empty target
 +  auto current = client->package_manager_->getCurrent();
 +  ASSERT_EQ("", current.custom_data()["docker_apps"].asString());
 +
 +  ASSERT_TRUE(client->updateImagesMeta());
-   std::string targets = Utils::readFile(repo / "repo/image/targets.json");
++  std::string targets = Utils::readFile(repo / "repo/image/targets.json");
    LOG_INFO << "Repo targets " << targets;
  
+   bool result = client->package_manager_->fetchTarget(target, *(client->uptane_fetcher), keys, progress_cb, nullptr);
 @@ -100,6 +105,9 @@ TEST(DockerAppManager, DockerApp_Fetch) {
    client->package_manager_->install(target);
    std::string content = Utils::readFile(config.pacman.docker_apps_root / "app1/docker-compose.yml");
@@ -115,10 +117,10 @@ index be3cd12d..0666372f 100644
  }
  #endif
 diff --git a/src/libaktualizr/uptane/tuf.h b/src/libaktualizr/uptane/tuf.h
-index 84a35e7d..bb715860 100644
+index 944780d6..38e7cf74 100644
 --- a/src/libaktualizr/uptane/tuf.h
 +++ b/src/libaktualizr/uptane/tuf.h
-@@ -236,6 +236,7 @@ class Target {
+@@ -240,6 +240,7 @@ class Target {
    std::vector<HardwareIdentifier> hardwareIds() const { return hwids_; };
    std::string custom_version() const { return custom_["version"].asString(); }
    Json::Value custom_data() const { return custom_; }
@@ -127,5 +129,5 @@ index 84a35e7d..bb715860 100644
    void setCorrelationId(std::string correlation_id) { correlation_id_ = std::move(correlation_id); };
    uint64_t length() const { return length_; }
 -- 
-2.22.0
+2.23.0
 

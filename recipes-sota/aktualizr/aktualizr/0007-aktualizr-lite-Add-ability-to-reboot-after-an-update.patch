@@ -1,0 +1,60 @@
+From e05c6370d4db6ba664f5fd07421442904447be58 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Wed, 3 Jul 2019 23:10:04 -0500
+Subject: [PATCH 7/8] aktualizr-lite: Add ability to reboot after an update
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/main.cc | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index 24fa568e..afe81165 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -259,6 +259,11 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+ }
+ 
+ static int daemon_main(Config &config, const bpo::variables_map &variables_map) {
++  if (access(config.bootloader.reboot_command.c_str(), X_OK) != 0) {
++    LOG_ERROR << "reboot command: " << config.bootloader.reboot_command << " is not executable";
++    return 1;
++  }
++
+   auto storage = INvStorage::newStorage(config.storage);
+   auto client = liteClient(config, storage);
+   bool compareDockerApps = should_compare_docker_apps(config);
+@@ -281,7 +286,10 @@ static int daemon_main(Config &config, const bpo::variables_map &variables_map)
+     if (target != nullptr && !targets_eq(*target, current, compareDockerApps)) {
+       LOG_INFO << "Updating base image to: " << *target;
+       if (do_update(*client, *storage, *target) == 0) {
+-        // TODO reboot
++        if (std::system(config.bootloader.reboot_command.c_str()) != 0) {
++          LOG_ERROR << "Unable to reboot system";
++          return 1;
++        }
+       }
+     }
+     sleep(interval);
+@@ -333,6 +341,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
+       ("primary-ecu-hardware-id", bpo::value<std::string>(), "hardware ID of primary ecu")
+       ("update-name", bpo::value<std::string>(), "optional name of the update when running \"update\". default=latest")
+       ("interval", bpo::value<unsigned int>(), "optional interval in seconds to poll for update when in daemon mode. default=300")
++      ("reboot-command", bpo::value<std::string>(), "reboot command to call after an update is applied from daemon mode")
+       ("command", bpo::value<std::string>(), subs.c_str());
+   // clang-format on
+ 
+@@ -391,6 +400,10 @@ int main(int argc, char *argv[]) {
+     config.storage.uptane_metadata_path = BasedPath(config.storage.path / "metadata");
+     LOG_DEBUG << "Current directory: " << boost::filesystem::current_path().string();
+ 
++    if (commandline_map.count("reboot-command") == 1) {
++      config.bootloader.reboot_command = commandline_map["reboot-command"].as<std::string>();
++    }
++
+     std::string cmd = commandline_map["command"].as<std::string>();
+     for (size_t i = 0; i < sizeof(commands) / sizeof(SubCommand); i++) {
+       if (cmd == commands[i].name) {
+-- 
+2.23.0
+

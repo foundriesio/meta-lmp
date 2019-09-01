@@ -1,32 +1,34 @@
-From 5dca8121ae5e17b91c690bad4fbc104b691fb9c9 Mon Sep 17 00:00:00 2001
+From 818bb5fe75e908aa888862920df510638b3b9db8 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 2 Jul 2019 00:06:35 -0500
-Subject: [PATCH 09/12] aktualizr-lite: Add a daemon mode
+Subject: [PATCH 6/8] aktualizr-lite: Add a daemon mode
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- src/aktualizr_lite/main.cc | 40 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ src/aktualizr_lite/main.cc | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 5f8011fc..37781ec5 100644
+index 96ce2a36..24fa568e 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
-@@ -199,6 +199,13 @@ static int do_update(SotaUptaneClient &client, INvStorage &storage, Uptane::Targ
-   return 0;
- }
+@@ -16,12 +16,15 @@
+ namespace bpo = boost::program_options;
  
-+#ifdef BUILD_DOCKERAPP
+ #ifdef BUILD_DOCKERAPP
 +#define should_compare_docker_apps(config) \
 +  (config.pacman.type == PackageManager::kOstreeDockerApp && !config.pacman.docker_apps.empty())
-+#else
+ static void add_apps_header(std::vector<std::string> &headers, PackageConfig &config) {
+   if (config.type == PackageManager::kOstreeDockerApp) {
+     headers.emplace_back("x-ats-dockerapps: " + boost::algorithm::join(config.docker_apps, ","));
+   }
+ }
+ #else
 +#define should_compare_docker_apps(config) (false)
-+#endif
-+
- static int update_main(Config &config, const bpo::variables_map &variables_map) {
-   auto storage = INvStorage::newStorage(config.storage);
-   auto client = liteClient(config, storage);
-@@ -214,6 +221,37 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+ #define add_apps_header(headers, config) \
+   {}
+ #endif
+@@ -255,6 +258,37 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
    return do_update(*client, *storage, *target);
  }
  
@@ -49,8 +51,8 @@ index 5f8011fc..37781ec5 100644
 +    if (!client->updateImagesMeta()) {
 +      LOG_WARNING << "Unable to update latest metadata, using local copy";
 +    }
-+    auto target = find_target(client, hwid, "latest");
-+    if (!targets_eq(*target, current, compareDockerApps)) {
++    auto target = find_target(client, hwid, config.pacman.tags, "latest");
++    if (target != nullptr && !targets_eq(*target, current, compareDockerApps)) {
 +      LOG_INFO << "Updating base image to: " << *target;
 +      if (do_update(*client, *storage, *target) == 0) {
 +        // TODO reboot
@@ -64,7 +66,7 @@ index 5f8011fc..37781ec5 100644
  struct SubCommand {
    const char *name;
    int (*main)(Config &, const bpo::variables_map &);
-@@ -222,6 +260,7 @@ static SubCommand commands[] = {
+@@ -263,6 +297,7 @@ static SubCommand commands[] = {
      {"status", status_main},
      {"list", list_main},
      {"update", update_main},
@@ -72,7 +74,7 @@ index 5f8011fc..37781ec5 100644
  };
  
  void check_info_options(const bpo::options_description &description, const bpo::variables_map &vm) {
-@@ -256,6 +295,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
+@@ -297,6 +332,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
        ("ostree-server", bpo::value<std::string>(), "url of the ostree repository")
        ("primary-ecu-hardware-id", bpo::value<std::string>(), "hardware ID of primary ecu")
        ("update-name", bpo::value<std::string>(), "optional name of the update when running \"update\". default=latest")
@@ -81,5 +83,5 @@ index 5f8011fc..37781ec5 100644
    // clang-format on
  
 -- 
-2.22.0
+2.23.0
 

@@ -1,18 +1,18 @@
-From a9fdfd85d544b1be68de8fc6347d2eef4f1e8a44 Mon Sep 17 00:00:00 2001
+From 0bcfc37f2041c1914a6f34c3597c6aad9e0dc748 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Wed, 3 Jul 2019 23:36:27 -0500
-Subject: [PATCH 11/12] aktualizr-lite: Add lockfile for daemon mode updates
+Subject: [PATCH 8/8] aktualizr-lite: Add lockfile for daemon mode updates
 
 This allows a different process to block the aktualizr-lite daemon
 from doing updates (and the reboot) if its doing something important.
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- src/aktualizr_lite/main.cc | 36 +++++++++++++++++++++++++++++++++---
- 1 file changed, 33 insertions(+), 3 deletions(-)
+ src/aktualizr_lite/main.cc | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 3a32a879..8634e961 100644
+index afe81165..903bae18 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
 @@ -1,3 +1,4 @@
@@ -20,7 +20,7 @@ index 3a32a879..8634e961 100644
  #include <unistd.h>
  #include <iostream>
  
-@@ -176,7 +177,22 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
+@@ -219,12 +220,33 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
    throw std::runtime_error("Unable to find update");
  }
  
@@ -41,13 +41,12 @@ index 3a32a879..8634e961 100644
 +}
 +
 +static int do_update(SotaUptaneClient &client, INvStorage &storage, Uptane::Target &target, const char *lockfile) {
-   std::vector<Uptane::Target> targets{target};
-   auto result = client.downloadImages(targets);
-   if (result.status != result::DownloadStatus::kSuccess &&
-@@ -185,6 +201,11 @@ static int do_update(SotaUptaneClient &client, INvStorage &storage, Uptane::Targ
+   if (!client.downloadImage(target).first) {
      return 1;
    }
  
+   // TODO make pacman->verifyTarget something we can get to via client->
++
 +  int lockfd = 0;
 +  if (lockfile != nullptr && (lockfd = get_lock(lockfile)) < 0) {
 +    return 1;
@@ -56,7 +55,7 @@ index 3a32a879..8634e961 100644
    auto iresult = client.PackageInstall(target);
    if (iresult.result_code.num_code == data::ResultCode::Numeric::kNeedCompletion) {
      LOG_INFO << "Update complete. Please reboot the device to activate";
-@@ -193,6 +214,8 @@ static int do_update(SotaUptaneClient &client, INvStorage &storage, Uptane::Targ
+@@ -233,6 +255,8 @@ static int do_update(SotaUptaneClient &client, INvStorage &storage, Uptane::Targ
      storage.saveInstalledVersion("", target, InstalledVersionUpdateMode::kCurrent);
    } else {
      LOG_ERROR << "Unable to install update: " << iresult.description;
@@ -65,17 +64,17 @@ index 3a32a879..8634e961 100644
      return 1;
    }
    LOG_INFO << iresult.description;
-@@ -218,7 +241,7 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
-   LOG_INFO << "Finding " << version << " to update to...";
-   auto target = find_target(client, hwid, version);
+@@ -255,7 +279,7 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+     return 0;
+   }
    LOG_INFO << "Updating to: " << *target;
 -  return do_update(*client, *storage, *target);
 +  return do_update(*client, *storage, *target, nullptr);
  }
  
  static int daemon_main(Config &config, const bpo::variables_map &variables_map) {
-@@ -227,6 +250,12 @@ static int daemon_main(Config &config, const bpo::variables_map &variables_map)
-     LOG_ERROR << "reboot command: " << rebootCmd << " is not executable";
+@@ -263,6 +287,12 @@ static int daemon_main(Config &config, const bpo::variables_map &variables_map)
+     LOG_ERROR << "reboot command: " << config.bootloader.reboot_command << " is not executable";
      return 1;
    }
 +  const char *lockfile = nullptr;
@@ -87,23 +86,23 @@ index 3a32a879..8634e961 100644
  
    auto storage = INvStorage::newStorage(config.storage);
    auto client = liteClient(config, storage);
-@@ -249,7 +278,7 @@ static int daemon_main(Config &config, const bpo::variables_map &variables_map)
-     auto target = find_target(client, hwid, "latest");
-     if (!targets_eq(*target, current, compareDockerApps)) {
+@@ -285,7 +315,7 @@ static int daemon_main(Config &config, const bpo::variables_map &variables_map)
+     auto target = find_target(client, hwid, config.pacman.tags, "latest");
+     if (target != nullptr && !targets_eq(*target, current, compareDockerApps)) {
        LOG_INFO << "Updating base image to: " << *target;
 -      if (do_update(*client, *storage, *target) == 0) {
 +      if (do_update(*client, *storage, *target, lockfile) == 0) {
-         if (std::system(rebootCmd.c_str()) != 0) {
+         if (std::system(config.bootloader.reboot_command.c_str()) != 0) {
            LOG_ERROR << "Unable to reboot system";
            return 1;
-@@ -311,6 +340,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
+@@ -342,6 +372,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
        ("update-name", bpo::value<std::string>(), "optional name of the update when running \"update\". default=latest")
        ("interval", bpo::value<unsigned int>(), "optional interval in seconds to poll for update when in daemon mode. default=300")
-       ("reboot-command", bpo::value<boost::filesystem::path>(), "reboot command to call after an update is applied from daemon mode")
+       ("reboot-command", bpo::value<std::string>(), "reboot command to call after an update is applied from daemon mode")
 +      ("update-lockfile", bpo::value<boost::filesystem::path>(), "If provided, an flock(2) is applied to this file before performing an update in daemon mode")
        ("command", bpo::value<std::string>(), subs.c_str());
    // clang-format on
  
 -- 
-2.22.0
+2.23.0
 

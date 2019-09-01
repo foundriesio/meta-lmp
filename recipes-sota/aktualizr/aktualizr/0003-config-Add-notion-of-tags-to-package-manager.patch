@@ -1,7 +1,7 @@
-From 270a0aca06a31cc363dc38890f832931e18a1da8 Mon Sep 17 00:00:00 2001
+From 265dcf1e11bd9529d9353d2bd61d262b731632d0 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 28 Jun 2019 09:36:22 -0500
-Subject: [PATCH 06/12] config: Add notion of "tags" to package manager
+Subject: [PATCH 3/8] config: Add notion of "tags" to package manager
 
 The idea here is that the aktualizr lite client can look at tags
 in each target to decide if its applicable to for the device. This
@@ -14,14 +14,15 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  src/aktualizr_lite/helpers.cc                 | 15 +++++++++
  src/aktualizr_lite/helpers.h                  |  9 ++++++
  src/aktualizr_lite/helpers_test.cc            | 31 +++++++++++++++++++
- src/aktualizr_lite/main.cc                    |  3 ++
+ src/aktualizr_lite/main.cc                    | 15 +++++++--
+ src/aktualizr_lite/test_lite.sh               | 15 ++++++---
  .../package_manager/packagemanagerconfig.cc   |  7 ++++-
  .../package_manager/packagemanagerconfig.h    |  1 +
- 7 files changed, 67 insertions(+), 3 deletions(-)
+ 8 files changed, 87 insertions(+), 10 deletions(-)
  create mode 100644 src/aktualizr_lite/helpers.cc
 
 diff --git a/src/aktualizr_lite/CMakeLists.txt b/src/aktualizr_lite/CMakeLists.txt
-index 92b2f0cd..f8b6b519 100644
+index f6f42375..7fb93a26 100644
 --- a/src/aktualizr_lite/CMakeLists.txt
 +++ b/src/aktualizr_lite/CMakeLists.txt
 @@ -1,4 +1,4 @@
@@ -127,10 +128,10 @@ index 96020ec7..c5fea698 100644
  int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index b8fb6bdf..90b8625c 100644
+index 3f7ca258..f336b8fd 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
-@@ -120,6 +120,9 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
+@@ -125,6 +125,9 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
  
    LOG_INFO << "Updates available to " << hwid << ":";
    for (auto &t : client->allTargets()) {
@@ -140,6 +141,74 @@ index b8fb6bdf..90b8625c 100644
      for (auto const &it : t.hardwareIds()) {
        if (it == hwid) {
          log_info_target("", config, t);
+@@ -136,7 +139,8 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
+ }
+ 
+ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUptaneClient> &client,
+-                                                   Uptane::HardwareIdentifier &hwid, const std::string &version) {
++                                                   Uptane::HardwareIdentifier &hwid,
++                                                   const std::vector<std::string> &tags, const std::string &version) {
+   std::unique_ptr<Uptane::Target> rv;
+   if (!client->updateImagesMeta()) {
+     LOG_WARNING << "Unable to update latest metadata, using local copy";
+@@ -149,6 +153,9 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
+   bool find_latest = (version == "latest");
+   std::unique_ptr<Uptane::Target> latest = nullptr;
+   for (auto &t : client->allTargets()) {
++    if (!target_has_tags(t, tags)) {
++      continue;
++    }
+     for (auto const &it : t.hardwareIds()) {
+       if (it == hwid) {
+         if (find_latest) {
+@@ -197,7 +204,11 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+     version = variables_map["update-name"].as<std::string>();
+   }
+   LOG_INFO << "Finding " << version << " to update to...";
+-  auto target = find_target(client, hwid, version);
++  auto target = find_target(client, hwid, config.pacman.tags, version);
++  if (target == nullptr) {
++    LOG_INFO << "Already up-to-date";
++    return 0;
++  }
+   LOG_INFO << "Updating to: " << *target;
+   return do_update(*client, *storage, *target);
+ }
+diff --git a/src/aktualizr_lite/test_lite.sh b/src/aktualizr_lite/test_lite.sh
+index ccdeafa1..d2b17423 100755
+--- a/src/aktualizr_lite/test_lite.sh
++++ b/src/aktualizr_lite/test_lite.sh
+@@ -70,16 +70,16 @@ repo_server = "http://localhost:$port/repo/repo"
+ [provision]
+ primary_ecu_hardware_id = "hwid-for-test"
+ 
+-[pacman]
+-type = "ostree"
+-sysroot = "$OSTREE_SYSROOT"
+-os = "dummy-os"
+-
+ [storage]
+ type = "sqlite"
+ path = "$sota_dir"
+ sqldb_path = "sql.db"
+ uptane_metadata_path = "$sota_dir/metadata"
++
++[pacman]
++type = "ostree"
++sysroot = "$OSTREE_SYSROOT"
++os = "dummy-os"
+ EOF
+ 
+ ## Check that we can do the info command
+@@ -114,3 +114,8 @@ if [[ ! "$out" =~ "Active image is: zlast	sha256:$sha" ]] ; then
+     echo $out
+     exit 1
+ fi
++
++## Make sure we obey tags
++echo 'tags = "promoted"' >> $sota_dir/sota.toml
++cd /tmp/
++OSTREE_HASH=$sha LD_PRELOAD=$mock_ostree $valgrind $aklite --loglevel 1 -c $sota_dir/sota.toml update | grep "Already up-to-date"
 diff --git a/src/libaktualizr/package_manager/packagemanagerconfig.cc b/src/libaktualizr/package_manager/packagemanagerconfig.cc
 index 53677bd8..c36ef082 100644
 --- a/src/libaktualizr/package_manager/packagemanagerconfig.cc
@@ -179,5 +248,5 @@ index d19bdd87..f0f3c9a1 100644
  #ifdef BUILD_DOCKERAPP
    std::vector<std::string> docker_apps;
 -- 
-2.22.0
+2.23.0
 

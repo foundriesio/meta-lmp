@@ -90,7 +90,8 @@ EFI_PROVIDER_intel-corei7-64 = "grub-efi"
 WKS_FILE_append_intel-corei7-64 = " efidisk-sota.wks"
 
 # Common for iMX targets
-OSTREE_KERNEL_ARGS_imx ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
+OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
+OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
 # Toradex Colibri iMX7 (support both NAND and eMMC targets with one single image)
 EXTRA_IMAGEDEPENDS_append_colibri-imx7 = " u-boot-script-toradex"

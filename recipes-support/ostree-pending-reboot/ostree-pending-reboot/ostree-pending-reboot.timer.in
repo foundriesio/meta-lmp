@@ -1,0 +1,8 @@
+[Unit]
+Description=Automatic OSTree Update Reboot Scheduling
+
+[Timer]
+OnCalendar=*:0/@@OSTREE_PENDING_REBOOT_CHECK_MINUTES@@
+
+[Install]
+WantedBy=multi-user.target

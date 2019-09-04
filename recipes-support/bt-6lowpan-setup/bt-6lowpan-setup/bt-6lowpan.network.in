@@ -1,0 +1,6 @@
+[Match]
+Name=@@BT_6LOWPAN_INTERFACE@@
+
+[Network]
+Address=@@BT_6LOWPAN_NETWORK@@
+DHCP=no

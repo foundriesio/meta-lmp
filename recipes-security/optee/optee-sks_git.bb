@@ -1,7 +1,7 @@
 SUMMARY = "OP-TEE TA/Library for Secure Key Services (PKCS#11)"
 HOMEPAGE = "https://github.com/foundriesio/optee-sks"
 LICENSE = "BSD-2-Clause"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=8bef8e6712b1be5aa76af1ebde9d6378"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31daea161b1bc15da69f"
 
 inherit pythonnative
 

@@ -56,10 +56,9 @@ OSTREE_KERNEL_ARGS_qemuriscv64 ?= "earlycon=sbi ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT_qemuriscv64 = "0x80400000"
 UBOOT_RD_LOADADDRESS_qemuriscv64 = "0x81000000"
 RISCV_SBI_PAYLOAD_qemuriscv64 = "u-boot.bin"
-QB_DEFAULT_KERNEL_qemuriscv64 = "fw_payload.elf"
+QB_DEFAULT_BIOS_qemuriscv64 = "fw_payload.elf"
 QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"
-## Replace QB_OPT_APPEND with opensbi + u-boot instead of default loader
-QB_OPT_APPEND_qemuriscv64 = " -kernel ${DEPLOY_DIR_IMAGE}/fw_payload.elf -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0"
+QB_OPT_APPEND_append_qemuriscv64 = " -bios ${DEPLOY_DIR_IMAGE}/fw_payload.elf"
 
 ## Freedom U540
 IMAGE_BOOT_FILES_freedom-u540 = "fw_payload.bin boot.scr uEnv.txt"

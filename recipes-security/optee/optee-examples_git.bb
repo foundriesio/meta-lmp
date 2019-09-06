@@ -22,6 +22,9 @@ OPTEE_CLIENT_EXPORT = "${STAGING_DIR_HOST}${prefix}"
 TEEC_EXPORT         = "${STAGING_DIR_HOST}${prefix}"
 TA_DEV_KIT_DIR      = "${STAGING_INCDIR}/optee/export-user_ta"
 
+# TA Signing Key, can be set to replace the default RSA 2048 key (default_key.pem)
+OPTEE_TA_SIGN_KEY ?= ""
+
 EXTRA_OEMAKE = "TA_DEV_KIT_DIR=${TA_DEV_KIT_DIR} \
                 OPTEE_CLIENT_EXPORT=${OPTEE_CLIENT_EXPORT} \
                 TEEC_EXPORT=${TEEC_EXPORT} \

@@ -12,6 +12,9 @@ SRC_URI = "git://github.com/OP-TEE/optee_os.git \
 SRC_URI_append_qemuarm64 = " \
     file://0001-Revert-generic_boot-reserve-optee_tzdram-memory.patch \
 "
+SRC_URI_append_imx = " \
+    file://0001-Minimal-HUK-implementation-without-full-CAAM-driver.patch \
+"
 
 PV = "3.6.0+git"
 SRCREV = "cfc0f0743ad9d68bbdd31ec0e50e4643f3a51dc7"

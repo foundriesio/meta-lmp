@@ -11,6 +11,7 @@ SRC_URI[sha256sum] = "a5d58e974fd717e24b0dda6669a46bc03548d9023ef38d965acdc32d4d
 SRC_URI += " \
     file://0001-support-requests-up-to-2.22.x-version.patch \
     file://0001-requirements-update-jsonschema-dependency.patch \
+    file://make-it-compatible-with-pyyaml-5.1-series.patch \
 "
 
 RDEPENDS_${PN} = "\

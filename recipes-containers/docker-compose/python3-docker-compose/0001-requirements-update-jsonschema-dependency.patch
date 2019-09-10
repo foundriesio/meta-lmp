@@ -1,0 +1,53 @@
+From 3b9afaf8dcf5bd68988e727e2efbf47f54e26425 Mon Sep 17 00:00:00 2001
+From: Antonio Gutierrez <chibby0ne@gmail.com>
+Date: Tue, 2 Apr 2019 15:04:26 +0200
+Subject: [PATCH] requirements: update jsonschema dependency
+
+Fixes: https://github.com/docker/compose/issues/6347
+
+Backport from upstream:
+https://github.com/docker/compose/commit/4cfa622de88b781448da64578794ec8958fb3cc7
+
+Signed-off-by: Antonio Gutierrez <chibby0ne@gmail.com>
+---
+ requirements.txt | 4 ++--
+ setup.py         | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/requirements.txt b/requirements.txt
+index 2f1bdad..a20680d 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -11,14 +11,14 @@ enum34==1.1.6; python_version < '3.4'
+ functools32==3.2.3.post2; python_version < '3.2'
+ idna==2.5
+ ipaddress==1.0.18
+-jsonschema==2.6.0
++jsonschema==3.0.1
+ paramiko==2.4.2
+ pypiwin32==219; sys_platform == 'win32' and python_version < '3.6'
+ pypiwin32==223; sys_platform == 'win32' and python_version >= '3.6'
+ PySocks==1.6.7
+ PyYAML==4.2b1
+ requests==2.22.0
+-six==1.10.0
++six==1.12.0
+ texttable==0.9.1
+ urllib3==1.21.1; python_version == '3.3'
+ websocket-client==0.56.0
+diff --git a/setup.py b/setup.py
+index e0ab41b..043cdf9 100644
+--- a/setup.py
++++ b/setup.py
+@@ -39,7 +39,7 @@ install_requires = [
+     'docker[ssh] >= 3.7.0, < 4.0',
+     'dockerpty >= 0.4.1, < 0.5',
+     'six >= 1.3.0, < 2',
+-    'jsonschema >= 2.5.1, < 3',
++    'jsonschema >= 2.5.1, < 4',
+ ]
+ 
+ 
+-- 
+2.23.0
+

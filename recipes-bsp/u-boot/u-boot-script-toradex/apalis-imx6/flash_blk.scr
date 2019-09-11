@@ -20,10 +20,6 @@ setenv update_spl 'load ${interface} ${drive}:1 ${fdt_addr_r} SPL && run set_blk
 setenv update_uboot_bin 'load ${interface} ${drive}:1 ${fdt_addr_r} u-boot.imx-spl && run set_blkcnt && mmc dev 0 ${uboot_hwpart} && mmc write ${fdt_addr_r} 8a ${blkcnt}'
 setenv update_uboot 'run update_uboot_bin && updt_fuse && mmc bootbus 0 2 0 1 && mmc partconf 0 1 1 0 && mmc rst-function 0 1'
 
-setenv update_kernel 'load ${interface} ${drive}:1 ${fdt_addr_r} ${board_name}/uImage && fatwrite mmc 0:1 ${fdt_addr_r} uImage ${filesize}'
-
-setenv update_fdt 'load ${interface} ${drive}:1 ${fdt_addr_r} ${board_name}/${fdt_file} && fatwrite mmc 0:1 ${fdt_addr_r} ${fdt_file} ${filesize}'
-
 setenv update_configblock 'run check_configblock; load ${interface} ${drive}:1 ${fdt_addr_r} ${board_name}/configblock.bin && mmc dev 0 1 && mmc write ${fdt_addr_r} ${conf_blk_offset} 1'
 
 setenv update_1 'load ${interface} ${drive}:1 ${fdt_addr_r} ${board_name}/mbr.bin && mmc dev 0 0 && mmc write ${fdt_addr_r} 0x0 0x1'
@@ -35,10 +31,7 @@ setenv echo_migrate echo "successfully updated U-Boot, power-cycle and enter \"r
 setenv migrate 'run migrate_configblock; run update_latest; reset'
 setenv update_v2.4b1 'run check_configblock || run migrate_configblock; run migrate_uboot_old && run echo_migrate'
 setenv update_v2.5b3 'run check_configblock || run migrate_configblock; run migrate_uboot && run echo_migrate'
-
-# Not migrated to SPL if no U-Boot Image Magic Number at 69k into the eMMC
-setenv update_to_spl 'mmc dev 0 1; mmc read $fdt_addr_r 8a 1; itest.l *12000000 -ne 56190527 && run update_spl'
-setenv update_latest 'run update_to_spl; run update_uboot; run update_1; run update_2; run update_kernel; run update_fdt; run update_3'
+setenv update_latest 'run update_spl; run update_uboot; run update_1; run update_2; run update_3'
 # 'updt_fuse' not available in V2.5 Beta 3 and earlier, migration needed
 setenv update_new 'updt_fuse -n && run update_latest && reset; run update_v2.5b3'
 # 'mmc bootbus' not available in in V2.4 Beta 1 and earlier, migration needed

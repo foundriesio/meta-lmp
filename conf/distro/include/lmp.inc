@@ -63,5 +63,5 @@ WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
 WARN_QA_remove = "${WARN_TO_ERROR_QA}"
 ERROR_QA_append = " ${WARN_TO_ERROR_QA}"
 
-LMP_USER ?= "osf"
-LMP_PASSWORD ?= "osf"
+LMP_USER ?= "fio"
+LMP_PASSWORD ?= "fio"

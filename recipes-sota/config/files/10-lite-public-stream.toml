@@ -1,0 +1,8 @@
+[uptane]
+polling_sec = 3600
+repo_server = "https://api.foundries.io/ota/repo/lmp/api/v1/user_repo/"
+
+[pacman]
+type = "ostree"
+ostree_server = "https://api.foundries.io/ota/treehub/lmp/api/v2/"
+tags = promoted

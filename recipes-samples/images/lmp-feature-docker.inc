@@ -1,7 +1,8 @@
 # Docker packages
 CORE_IMAGE_BASE_INSTALL += " \
-    docker-credential-helper-fio \
     docker \
+    docker-app \
+    docker-credential-helper-fio \
     python3-docker \
     python3-docker-compose \
 "

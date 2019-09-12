@@ -1,7 +1,8 @@
 [Unit]
 Description=Aktualizr Lite SOTA Client
 After=network.target
-ConditionPathExists=/var/sota/sota.toml
+ConditionPathExists=|/var/sota/sota.toml
+ConditionPathExists=|/usr/lib/sota/conf.d/10-lite-public-stream.toml
 
 [Service]
 RestartSec=180

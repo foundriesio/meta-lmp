@@ -10,6 +10,7 @@ SRC_URI_append_lmp = " \
     file://0006-aktualizr-lite-Add-a-daemon-mode.patch \
     file://0007-aktualizr-lite-Add-ability-to-reboot-after-an-update.patch \
     file://0008-aktualizr-lite-Add-lockfile-for-daemon-mode-updates.patch \
+    file://0001-FIO-toup-docker-apps-remove-extra-app-argument-from-.patch \
     file://aktualizr-lite.service \
     file://increase-restartsec-service.patch;patchdir=.. \
 "

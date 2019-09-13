@@ -5,7 +5,9 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=4859e97a9c7780e77972d989f0823f28"
 
 GO_IMPORT = "github.com/docker/app"
-SRC_URI = "git://${GO_IMPORT}"
+SRC_URI = "git://${GO_IMPORT} \
+	file://0001-packing-use-hub.foundries.io-cnab-app-base-for-cnab-.patch;patchdir=src/${GO_IMPORT} \
+"
 SRCREV = "7eea32b735b1830ca7de723a1ecb923eae65a2f7"
 
 UPSTREAM_CHECK_COMMITS = "1"

@@ -1,0 +1,29 @@
+From a27a4f3becead12320fe54a1c456b23fa3517227 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Fri, 13 Sep 2019 15:48:12 -0300
+Subject: [PATCH] packing: use hub.foundries.io/cnab-app-base for cnab base
+ image
+
+docker/cnab-app-base is not multi-arch, so only really useful on x86.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ internal/packager/packing.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/internal/packager/packing.go b/internal/packager/packing.go
+index 24ae89cb..3f55d33f 100644
+--- a/internal/packager/packing.go
++++ b/internal/packager/packing.go
+@@ -17,7 +17,7 @@ import (
+ 
+ const (
+ 	// DefaultCNABBaseImageName is the name of the default base invocation image.
+-	DefaultCNABBaseImageName = "docker/cnab-app-base"
++	DefaultCNABBaseImageName = "hub.foundries.io/cnab-app-base"
+ 
+ 	dockerIgnore = "Dockerfile"
+ )
+-- 
+2.23.0
+

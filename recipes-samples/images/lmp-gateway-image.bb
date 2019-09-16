@@ -18,7 +18,7 @@ BT_6LOWPAN_NETWORK = "fe80:0:0:0:d4e7::1/80"
 require lmp-feature-bt-6lowpan.inc
 
 require lmp-service-bluetooth-disable.inc
-require lmp-service-ostree-pending-reboot.inc
+require ${@bb.utils.contains('SOTA_CLIENT', 'aktualizr', 'lmp-service-ostree-pending-reboot.inc', '', d)}
 
 IMAGE_FEATURES += "ssh-server-openssh"
 

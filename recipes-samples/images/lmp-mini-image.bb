@@ -6,7 +6,7 @@ require lmp-feature-ota-utils.inc
 require lmp-feature-sbin-path-helper.inc
 require lmp-feature-sysctl-hang-crash-helper.inc
 
-require lmp-service-ostree-pending-reboot.inc
+require ${@bb.utils.contains('SOTA_CLIENT', 'aktualizr', 'lmp-service-ostree-pending-reboot.inc', '', d)}
 
 IMAGE_FEATURES += "ssh-server-dropbear"
 

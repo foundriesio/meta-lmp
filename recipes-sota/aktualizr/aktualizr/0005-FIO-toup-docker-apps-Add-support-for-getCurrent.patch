@@ -1,7 +1,7 @@
-From b409150978e89d0232cb10e4bd4ebc35f04c4a43 Mon Sep 17 00:00:00 2001
+From 503ed19aebf16740cd0f0efc505a9d577cc352ff Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Sun, 30 Jun 2019 16:16:34 -0500
-Subject: [PATCH 2/8] [FIO toup] docker-apps: Add support for getCurrent
+Subject: [PATCH 05/11] [FIO toup] docker-apps: Add support for getCurrent
 
 This will be needed for aktualizr-lite so that it can understand
 what version of a docker app is deployed.
@@ -15,7 +15,7 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  4 files changed, 37 insertions(+), 2 deletions(-)
 
 diff --git a/src/libaktualizr/package_manager/dockerappmanager.cc b/src/libaktualizr/package_manager/dockerappmanager.cc
-index f30e22cd..b9d15a88 100644
+index 63833294..e8927c61 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager.cc
 +++ b/src/libaktualizr/package_manager/dockerappmanager.cc
 @@ -98,6 +98,10 @@ bool DockerAppManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher
@@ -29,7 +29,7 @@ index f30e22cd..b9d15a88 100644
    auto cb = [this](const std::string &app, const Uptane::Target &app_target) {
      LOG_INFO << "Installing " << app << " -> " << app_target;
      std::stringstream ss;
-@@ -128,3 +132,17 @@ TargetStatus DockerAppManager::verifyTarget(const Uptane::Target &target) const
+@@ -131,3 +135,17 @@ TargetStatus DockerAppManager::verifyTarget(const Uptane::Target &target) const
    }
    return TargetStatus::kGood;
  }
@@ -68,7 +68,7 @@ index 3931791a..025b29a4 100644
 +
  #endif  // DOCKERAPPMGR_H_
 diff --git a/src/libaktualizr/package_manager/dockerappmanager_test.cc b/src/libaktualizr/package_manager/dockerappmanager_test.cc
-index 0e89ead5..a1e9bb2d 100644
+index 44406217..b9825e18 100644
 --- a/src/libaktualizr/package_manager/dockerappmanager_test.cc
 +++ b/src/libaktualizr/package_manager/dockerappmanager_test.cc
 @@ -5,6 +5,7 @@
@@ -95,17 +95,17 @@ index 0e89ead5..a1e9bb2d 100644
    LOG_INFO << "Repo targets " << targets;
  
    bool result = client->package_manager_->fetchTarget(target, *(client->uptane_fetcher), keys, progress_cb, nullptr);
-@@ -100,6 +105,9 @@ TEST(DockerAppManager, DockerApp_Fetch) {
-   client->package_manager_->install(target);
+@@ -101,6 +106,9 @@ TEST(DockerAppManager, DockerApp_Fetch) {
    std::string content = Utils::readFile(config.pacman.docker_apps_root / "app1/docker-compose.yml");
    ASSERT_EQ("DOCKER-APP RENDER OUTPUT\nfake contents of a docker app\n", content);
-+
+ 
 +  current = client->package_manager_->getCurrent();
 +  ASSERT_EQ("foo.dockerapp", current.custom_data()["docker_apps"]["app1"]["filename"].asString());
++
+   setenv("DOCKER_APP_FAIL", "1", 1);
+   ASSERT_EQ(TargetStatus::kInvalid, client->VerifyTarget(target));
  }
- 
- #ifndef __NO_MAIN__
-@@ -127,6 +135,10 @@ int main(int argc, char** argv) {
+@@ -130,6 +138,10 @@ int main(int argc, char** argv) {
  
    TestUtils::waitForServer(treehub_server + "/");
  

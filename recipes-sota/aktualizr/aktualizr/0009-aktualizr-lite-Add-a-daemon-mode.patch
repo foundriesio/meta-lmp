@@ -1,7 +1,7 @@
-From 818bb5fe75e908aa888862920df510638b3b9db8 Mon Sep 17 00:00:00 2001
+From cdef27f6fa4c180d6886f786c877561909d3d107 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 2 Jul 2019 00:06:35 -0500
-Subject: [PATCH 6/8] aktualizr-lite: Add a daemon mode
+Subject: [PATCH 09/11] aktualizr-lite: Add a daemon mode
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  1 file changed, 36 insertions(+)
 
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 96ce2a36..24fa568e 100644
+index 27a22463..aa8f616e 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
 @@ -16,12 +16,15 @@
@@ -28,7 +28,7 @@ index 96ce2a36..24fa568e 100644
  #define add_apps_header(headers, config) \
    {}
  #endif
-@@ -255,6 +258,37 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+@@ -259,6 +262,37 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
    return do_update(*client, *storage, *target);
  }
  
@@ -66,7 +66,7 @@ index 96ce2a36..24fa568e 100644
  struct SubCommand {
    const char *name;
    int (*main)(Config &, const bpo::variables_map &);
-@@ -263,6 +297,7 @@ static SubCommand commands[] = {
+@@ -267,6 +301,7 @@ static SubCommand commands[] = {
      {"status", status_main},
      {"list", list_main},
      {"update", update_main},
@@ -74,7 +74,7 @@ index 96ce2a36..24fa568e 100644
  };
  
  void check_info_options(const bpo::options_description &description, const bpo::variables_map &vm) {
-@@ -297,6 +332,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
+@@ -301,6 +336,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
        ("ostree-server", bpo::value<std::string>(), "url of the ostree repository")
        ("primary-ecu-hardware-id", bpo::value<std::string>(), "hardware ID of primary ecu")
        ("update-name", bpo::value<std::string>(), "optional name of the update when running \"update\". default=latest")

@@ -1,0 +1,54 @@
+From 53e6525e7968a1aa344d0c2c5bad5a9373c752cf Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Fri, 13 Sep 2019 16:11:54 -0500
+Subject: [PATCH 03/11] dockerapp: Fix docker-app invocation
+
+The version of docker-app I built and tested this with was done
+incorrectly. docker-app includes two binaries:
+
+ https://github.com/docker/app/tree/master/cmd
+
+There's a "standalone" and "docker-app". I mistakenly built the
+"docker-app" which is intended to become a plugin to the docker
+command. However, that's still marked "experimental". So, for now,
+we should use the standalone version. That version makes the invocations
+look like `docker-app render` rather than the current
+`docker-app app render`.
+
+In the near future we should change this to handle either approach.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/libaktualizr/package_manager/docker_fake.sh      | 2 +-
+ src/libaktualizr/package_manager/dockerappmanager.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/libaktualizr/package_manager/docker_fake.sh b/src/libaktualizr/package_manager/docker_fake.sh
+index 31c6d32f..290dbc16 100755
+--- a/src/libaktualizr/package_manager/docker_fake.sh
++++ b/src/libaktualizr/package_manager/docker_fake.sh
+@@ -6,7 +6,7 @@ if [ -n "$DOCKER_APP_FAIL" ] ; then
+   exit 1
+ fi
+ 
+-if [ "$1" = "app" ] ; then
++if [ "$1" = "render" ] ; then
+   echo "DOCKER-APP RENDER OUTPUT"
+   if [ ! -f app1.dockerapp ] ; then
+     echo "Missing docker app file!"
+diff --git a/src/libaktualizr/package_manager/dockerappmanager.cc b/src/libaktualizr/package_manager/dockerappmanager.cc
+index 2ae8a1ff..63833294 100644
+--- a/src/libaktualizr/package_manager/dockerappmanager.cc
++++ b/src/libaktualizr/package_manager/dockerappmanager.cc
+@@ -13,7 +13,7 @@ struct DockerApp {
+   bool render(const std::string &app_content, bool persist) {
+     auto bin = boost::filesystem::canonical(app_bin).string();
+     Utils::writeFile(app_root / (name + ".dockerapp"), app_content);
+-    std::string cmd("cd " + app_root.string() + " && " + bin + " app render " + name);
++    std::string cmd("cd " + app_root.string() + " && " + bin + " render " + name);
+     if (!app_params.empty()) {
+       cmd += " -f " + app_params.string();
+     }
+-- 
+2.23.0
+

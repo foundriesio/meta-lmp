@@ -1,11 +1,11 @@
-LINUX_VERSION ?= "5.0.21"
+LINUX_VERSION ?= "5.3.0"
 
 FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
-SRCREV_machine = "94463260cb6dc246ec2a1a99a86179cef188b034"
-SRCREV_meta = "efe812b6851dc267cc5316d7ceaa5fec970c2fde"
-KBRANCH = "linux-v5.0.y"
+SRCREV_machine = "a8e9a4ee373283606f9deaf5e2d6eab1760d377d"
+SRCREV_meta = "31b65f24e5d6f3a2598225fd58d7c1d0492af1bb"
+KBRANCH = "linux-v5.3.y"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 

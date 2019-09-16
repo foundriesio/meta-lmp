@@ -1,7 +1,7 @@
-From d7d4ce21153f32d933e6905093341f10eee65be2 Mon Sep 17 00:00:00 2001
+From 1332a6c4f70b7d53007e1913b781fca0cf8e5afd Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 2 Jul 2019 00:03:19 -0500
-Subject: [PATCH 5/8] aktualizr-lite: Add targets equal helper
+Subject: [PATCH 08/11] aktualizr-lite: Add targets equal helper
 
 aktualizr-lite needs to know not just when the ostree hash is the
 same for a target, but also when the dockers apps are the same.

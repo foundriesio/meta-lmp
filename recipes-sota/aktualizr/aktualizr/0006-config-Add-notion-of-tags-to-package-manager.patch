@@ -1,7 +1,7 @@
-From 265dcf1e11bd9529d9353d2bd61d262b731632d0 Mon Sep 17 00:00:00 2001
+From 2c84de3433dbd088e605d94aced9ad8182d0f27b Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 28 Jun 2019 09:36:22 -0500
-Subject: [PATCH 3/8] config: Add notion of "tags" to package manager
+Subject: [PATCH 06/11] config: Add notion of "tags" to package manager
 
 The idea here is that the aktualizr lite client can look at tags
 in each target to decide if its applicable to for the device. This
@@ -128,7 +128,7 @@ index 96020ec7..c5fea698 100644
  int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 3f7ca258..f336b8fd 100644
+index 868814d5..4751a7ca 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
 @@ -125,6 +125,9 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
@@ -161,7 +161,7 @@ index 3f7ca258..f336b8fd 100644
      for (auto const &it : t.hardwareIds()) {
        if (it == hwid) {
          if (find_latest) {
-@@ -197,7 +204,11 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+@@ -201,7 +208,11 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
      version = variables_map["update-name"].as<std::string>();
    }
    LOG_INFO << "Finding " << version << " to update to...";

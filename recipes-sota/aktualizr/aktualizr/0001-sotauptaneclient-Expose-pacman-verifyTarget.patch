@@ -1,0 +1,45 @@
+From 157b3d2c7ee9ce6a02d592ebe8aaecf9d794809d Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Thu, 12 Sep 2019 17:01:06 -0500
+Subject: [PATCH 01/11] sotauptaneclient: Expose pacman::verifyTarget
+
+This is needed for aktualizr-lite.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/main.cc                  | 6 +++++-
+ src/libaktualizr/primary/sotauptaneclient.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index c0fa7506..59faa2bf 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -172,7 +172,11 @@ static int do_update(SotaUptaneClient &client, INvStorage &storage, Uptane::Targ
+     return 1;
+   }
+ 
+-  // TODO make pacman->verifyTarget something we can get to via client->
++  if (client.VerifyTarget(target) != TargetStatus::kGood) {
++    LOG_ERROR << "Downloaded target is invalid";
++    return 1;
++  }
++
+   auto iresult = client.PackageInstall(target);
+   if (iresult.result_code.num_code == data::ResultCode::Numeric::kNeedCompletion) {
+     LOG_INFO << "Update complete. Please reboot the device to activate";
+diff --git a/src/libaktualizr/primary/sotauptaneclient.h b/src/libaktualizr/primary/sotauptaneclient.h
+index 3c8979cf..44dfd463 100644
+--- a/src/libaktualizr/primary/sotauptaneclient.h
++++ b/src/libaktualizr/primary/sotauptaneclient.h
+@@ -65,6 +65,7 @@ class SotaUptaneClient {
+   bool updateImagesMeta();  // TODO: make private once aktualizr has a proper TUF API
+   bool checkImagesMetaOffline();
+   data::InstallationResult PackageInstall(const Uptane::Target &target);
++  TargetStatus VerifyTarget(const Uptane::Target &target) { return package_manager_->verifyTarget(target); }
+ 
+  protected:
+   void addSecondary(const std::shared_ptr<Uptane::SecondaryInterface> &sec);
+-- 
+2.23.0
+

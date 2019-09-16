@@ -22,9 +22,6 @@ require ${@bb.utils.contains('SOTA_CLIENT', 'aktualizr', 'lmp-service-ostree-pen
 
 IMAGE_FEATURES += "ssh-server-openssh"
 
-# Enough free space for a full image update
-IMAGE_OVERHEAD_FACTOR = "2.3"
-
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
     coreutils \

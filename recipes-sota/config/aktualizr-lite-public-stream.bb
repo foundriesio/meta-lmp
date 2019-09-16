@@ -12,10 +12,10 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-OTA_LITE_TAG ?= "promoted"
+AKLITE_TAG ?= "promoted"
 
 do_compile() {
-	sed -e 's/@@OTA_LITE_TAG@@/${OTA_LITE_TAG}/' \
+	sed -e 's/@@AKLITE_TAG@@/${AKLITE_TAG}/' \
 		${WORKDIR}/10-lite-public-stream.toml.in > 10-lite-public-stream.toml
 }
 

@@ -33,8 +33,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     kernel-modules \
     networkmanager-nmtui \
     ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-os-ta optee-client optee-test optee-examples optee-sks pkcs11test", "", d)} \
-    rsync \
-    sshfs-fuse \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \

@@ -1,5 +1,4 @@
-# OTA packages
+# OTA utils
 CORE_IMAGE_BASE_INSTALL += " \
     aktualizr-get \
-    lmp-device-register \
 "

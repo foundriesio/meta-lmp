@@ -12,6 +12,9 @@ SRC_URI = "\
     file://sudoers \
 "
 
+# Enough free space for a full image update
+IMAGE_OVERHEAD_FACTOR = "2.3"
+
 # let's make sure we have a good image..
 REQUIRED_DISTRO_FEATURES = "pam systemd"
 

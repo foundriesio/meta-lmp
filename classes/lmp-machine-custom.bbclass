@@ -34,12 +34,6 @@ OSTREE_KERNEL_ARGS_raspberrypi4_sota ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_
 ## U-Boot entrypoints for rpi
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
-## RPI4: Force rpi upstream kernel for now until it is in a better shape
-PREFERRED_PROVIDER_virtual/kernel_raspberrypi4 = "linux-lmp-dev"
-LINUX_VERSION_raspberrypi4 = "4.19.y"
-KERNEL_REPO_raspberrypi4 = "git://github.com/raspberrypi/linux.git"
-KERNEL_BRANCH_raspberrypi4 = "rpi-4.19.y"
-KERNEL_META_BRANCH_raspberrypi4 = "linux-v4.19.y"
 KERNEL_DEVICETREE_COMMON_RPI_raspberrypi4 = "overlays/vc4-fkms-v3d.dtbo"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 

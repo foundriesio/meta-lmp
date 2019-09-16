@@ -41,17 +41,8 @@ CORE_IMAGE_BASE_INSTALL += " \
     ethtool \
     git \
     less \
-    openssh-sftp-server \
     packagegroup-core-full-cmdline-utils \
     packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
-    python3-compression \
-    python3-distutils \
-    python3-json \
-    python3-multiprocessing \
-    python3-netclient \
-    python3-pkgutil \
-    python3-shell \
-    python3-unixadmin \
     pciutils \
 "

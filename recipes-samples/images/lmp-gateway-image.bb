@@ -12,6 +12,8 @@ require lmp-feature-sbin-path-helper.inc
 require lmp-feature-sysctl-hang-crash-helper.inc
 require lmp-feature-sysctl-net-queue-pfifo-fast.inc
 
+require ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'lmp-feature-optee.inc', '', d)}
+
 BT_6LOWPAN_NETWORK = "fe80:0:0:0:d4e7::1/80"
 require lmp-feature-bt-6lowpan.inc
 
@@ -32,7 +34,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     iptables \
     kernel-modules \
     networkmanager-nmtui \
-    ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-os-ta optee-client optee-test optee-examples optee-sks pkcs11test", "", d)} \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \

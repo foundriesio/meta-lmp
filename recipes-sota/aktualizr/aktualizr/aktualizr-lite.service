@@ -7,7 +7,7 @@ ConditionPathExists=|/usr/lib/sota/conf.d/10-lite-public-stream.toml
 [Service]
 RestartSec=180
 Restart=always
-ExecStart=/usr/bin/aktualizr-lite --update-lockfile /run/lock/aktualizr-lite-update --reboot-command /usr/sbin/reboot daemon
+ExecStart=/usr/bin/aktualizr-lite --update-lockfile /run/lock/aktualizr-lite-update daemon
 
 [Install]
 WantedBy=multi-user.target

@@ -33,6 +33,7 @@ OPTEE_TA_SIGN_KEY ?= ""
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 OPTEE_ARCH_armv7a = "arm32"
+OPTEE_ARCH_armv7ve = "arm32"
 OPTEE_ARCH_aarch64 = "arm64"
 
 EXTRA_OEMAKE = "PLATFORM=${OPTEEMACHINE} O=out/arm \
@@ -48,6 +49,10 @@ EXTRA_OEMAKE_append_aarch64 = " \
                 ta-targets=ta_arm64 \
 "
 EXTRA_OEMAKE_append_armv7a = " \
+                CROSS_COMPILE_ta_arm32=${HOST_PREFIX} \
+                ta-targets=ta_arm32 \
+"
+EXTRA_OEMAKE_append_armv7ve = " \
                 CROSS_COMPILE_ta_arm32=${HOST_PREFIX} \
                 ta-targets=ta_arm32 \
 "

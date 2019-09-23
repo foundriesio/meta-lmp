@@ -18,6 +18,7 @@ S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 OPTEE_ARCH_armv7a = "arm"
+OPTEE_ARCH_armv7ve = "arm"
 OPTEE_ARCH_aarch64 = "arm64"
 
 OPTEE_CLIENT_EXPORT = "${STAGING_DIR_HOST}${prefix}"

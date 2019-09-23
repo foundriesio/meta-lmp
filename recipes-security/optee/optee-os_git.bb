@@ -14,6 +14,7 @@ SRC_URI_append_qemuarm64 = " \
 "
 SRC_URI_append_imx = " \
     file://0001-Minimal-HUK-implementation-without-full-CAAM-driver.patch \
+    file://0001-imx-huk-imx7-and-imx7ulp-caam-clock-support.patch \
 "
 
 PV = "3.6.0+git"

@@ -5,6 +5,7 @@ GOBUILDFLAGS_remove = "-buildmode=pie"
 
 SRC_URI_append = " \
     file://dockerd-daemon-use-default-system-config-when-none-i.patch \
+    file://cli-config-support-default-system-config.patch \
     file://daemon.json \
 "
 

@@ -4,4 +4,8 @@ CORE_IMAGE_BASE_INSTALL += " \
     strace \
     tcpdump \
     vim-tiny \
+    screen \
+    tmux \
+    minicom \
+    devmem2 \
 "

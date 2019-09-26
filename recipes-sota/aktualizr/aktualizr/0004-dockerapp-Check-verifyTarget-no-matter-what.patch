@@ -1,7 +1,7 @@
-From ce259c2ec58843c26e63f86d7eae053029168886 Mon Sep 17 00:00:00 2001
+From 5056b41d99e648be882f97edbaaafc86c25f5bd1 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 13 Sep 2019 16:06:49 -0500
-Subject: [PATCH 02/11] dockerapp: Check verifyTarget no matter what
+Subject: [PATCH 04/12] dockerapp: Check verifyTarget no matter what
 
 The Target given to the dockerapp package manager is always an Ostree
 target. That target's custom data are all the apps we need to verify.

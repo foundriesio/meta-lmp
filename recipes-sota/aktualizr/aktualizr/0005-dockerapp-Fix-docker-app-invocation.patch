@@ -1,7 +1,7 @@
-From 53e6525e7968a1aa344d0c2c5bad5a9373c752cf Mon Sep 17 00:00:00 2001
+From a43a399ad96904fbbfac4dd872728a42f31f2f6b Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 13 Sep 2019 16:11:54 -0500
-Subject: [PATCH 03/11] dockerapp: Fix docker-app invocation
+Subject: [PATCH 05/12] dockerapp: Fix docker-app invocation
 
 The version of docker-app I built and tested this with was done
 incorrectly. docker-app includes two binaries:

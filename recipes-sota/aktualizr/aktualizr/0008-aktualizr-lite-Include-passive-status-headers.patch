@@ -1,7 +1,7 @@
-From 31a289bac1b929ab8e148d5d8320029462fc8f7f Mon Sep 17 00:00:00 2001
+From c9ceb3373946418a41cca46aec83c50b53227106 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 21 Jun 2019 15:50:47 -0500
-Subject: [PATCH 07/11] aktualizr-lite: Include passive status headers
+Subject: [PATCH 08/12] aktualizr-lite: Include passive status headers
 
 This allows the OTA server to passively understand what levels of
 code are being run.

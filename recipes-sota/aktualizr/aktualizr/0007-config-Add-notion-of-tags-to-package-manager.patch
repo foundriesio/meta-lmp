@@ -1,7 +1,7 @@
-From 2c84de3433dbd088e605d94aced9ad8182d0f27b Mon Sep 17 00:00:00 2001
+From a6a358a81096f0375f6896e6fe5f4410a5ce5d6c Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 28 Jun 2019 09:36:22 -0500
-Subject: [PATCH 06/11] config: Add notion of "tags" to package manager
+Subject: [PATCH 07/12] config: Add notion of "tags" to package manager
 
 The idea here is that the aktualizr lite client can look at tags
 in each target to decide if its applicable to for the device. This

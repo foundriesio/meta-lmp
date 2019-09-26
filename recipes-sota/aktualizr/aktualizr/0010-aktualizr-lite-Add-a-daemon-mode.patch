@@ -1,7 +1,7 @@
-From cdef27f6fa4c180d6886f786c877561909d3d107 Mon Sep 17 00:00:00 2001
+From 2e0e8c99e1c2d21e0646d7cf8281fb15b5e26289 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 2 Jul 2019 00:06:35 -0500
-Subject: [PATCH 09/11] aktualizr-lite: Add a daemon mode
+Subject: [PATCH 10/12] aktualizr-lite: Add a daemon mode
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---

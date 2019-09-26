@@ -1,7 +1,7 @@
-From b442c9fc62deb45bfbdc4dbf4a33114125304a00 Mon Sep 17 00:00:00 2001
+From 323c6a4113e668b0d0bd7fc225f35da082199e64 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Wed, 10 Jul 2019 18:38:46 -0500
-Subject: [PATCH 04/11] [FIO toup] aktualizr-lite: Rename version* to helpers*
+Subject: [PATCH 06/12] [FIO toup] aktualizr-lite: Rename version* to helpers*
 
 More stuff can be moved into a helpers file which will also allow
 a bit more unit test coverage.

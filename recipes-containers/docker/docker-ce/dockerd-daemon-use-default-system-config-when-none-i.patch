@@ -9,13 +9,13 @@ still allowing the user to overwrite via /etc/docker/daemon.json.
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- src/import/cmd/dockerd/daemon.go | 5 +++++
+ src/import/components/engine/cmd/dockerd/daemon.go | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/src/import/cmd/dockerd/daemon.go b/src/import/cmd/dockerd/daemon.go
+diff --git a/src/import/components/engine/cmd/dockerd/daemon.go b/src/import/components/engine/cmd/dockerd/daemon.go
 index 839537316a..6cba2df859 100644
---- a/src/import/cmd/dockerd/daemon.go
-+++ b/src/import/cmd/dockerd/daemon.go
+--- a/src/import/components/engine/cmd/dockerd/daemon.go
++++ b/src/import/components/engine/cmd/dockerd/daemon.go
 @@ -80,6 +80,11 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
  
  	opts.SetDefaultOptions(opts.flags)

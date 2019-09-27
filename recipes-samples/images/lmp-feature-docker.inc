@@ -1,6 +1,6 @@
 # Docker packages
 CORE_IMAGE_BASE_INSTALL += " \
-    docker \
+    docker-ce \
     docker-app \
     docker-credential-helper-fio \
     python3-docker \

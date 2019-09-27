@@ -10,3 +10,5 @@ do_install_append() {
     install -d ${D}${libdir}/docker
     install -m 0644 ${WORKDIR}/daemon.json ${D}${libdir}/docker/
 }
+
+FILES_${PN} += "${libdir}/docker"

@@ -8,13 +8,13 @@ allows the OS to control and update a base config.
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- cli/config/config.go | 10 ++++++++++
+ src/import/components/cli/cli/config/config.go | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/cli/cli/config/config.go b/cli/cli/config/config.go
+diff --git a/src/import/components/cli/cli/config/config.go b/src/import/components/cli/cli/config/config.go
 index f5e33f2b3..ce9bc2d31 100644
---- a/cli/cli/config/config.go
-+++ b/cli/cli/config/config.go
+--- a/src/import/components/cli/cli/config/config.go
++++ b/src/import/components/cli/cli/config/config.go
 @@ -20,6 +20,7 @@ const (
  	configFileDir  = ".docker"
  	oldConfigfile  = ".dockercfg"

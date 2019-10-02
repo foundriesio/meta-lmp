@@ -35,6 +35,13 @@ uboot_fitimage_assemble() {
 	ubootloadaddr=${2}
 	opteeloadaddr=${3}
 
+	# u-boot dtb location depends on sign enable
+	if [ "${UBOOT_SIGN_ENABLE}" = "1" -a -n "${UBOOT_DTB_BINARY}" ]; then
+		uboot_dtb="${DEPLOY_DIR_IMAGE}/${UBOOT_DTB_IMAGE}"
+	else
+		uboot_dtb="u-boot.dtb"
+	fi
+
 cat << EOF > u-boot.its
 /dts-v1/;
 
@@ -56,7 +63,7 @@ cat << EOF > u-boot.its
 		};
 		ubootfdt {
 			description = "U-Boot dtb";
-			data = /incbin/("${DEPLOY_DIR_IMAGE}/${UBOOT_DTB_IMAGE}");
+			data = /incbin/("${uboot_dtb}");
 			type = "flat_dt";
 			compression = "none";
 			hash-1 {

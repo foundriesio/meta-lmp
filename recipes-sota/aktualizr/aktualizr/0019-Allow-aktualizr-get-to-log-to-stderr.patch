@@ -1,0 +1,103 @@
+From 4ff80aaa5c2485356a095f8afe4ce0adb9608f6b Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Fri, 4 Oct 2019 14:32:23 -0500
+Subject: [PATCH] Allow aktualizr-get to log to stderr
+
+We use aktualizr-get as the basis for our docker credential helper.
+However, the logging is going to STDOUT which messes things up if
+any logs are generated.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_get/main.cc                    | 2 +-
+ src/libaktualizr/logging/android_log_sink.cc | 3 ++-
+ src/libaktualizr/logging/default_log_sink.cc | 8 ++++++--
+ src/libaktualizr/logging/logging.cc          | 6 +++---
+ src/libaktualizr/logging/logging.h           | 2 +-
+ 5 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/src/aktualizr_get/main.cc b/src/aktualizr_get/main.cc
+index a766e21d..32d42519 100644
+--- a/src/aktualizr_get/main.cc
++++ b/src/aktualizr_get/main.cc
+@@ -50,7 +50,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
+ }
+ 
+ int main(int argc, char *argv[]) {
+-  logger_init(isatty(1) == 1);
++  logger_init(isatty(1) == 1, false);
+   logger_set_threshold(boost::log::trivial::info);
+ 
+   bpo::variables_map commandline_map = parse_options(argc, argv);
+diff --git a/src/libaktualizr/logging/android_log_sink.cc b/src/libaktualizr/logging/android_log_sink.cc
+index 0232115e..9c3ebc1d 100644
+--- a/src/libaktualizr/logging/android_log_sink.cc
++++ b/src/libaktualizr/logging/android_log_sink.cc
+@@ -16,8 +16,9 @@ class android_log_sink : public log::sinks::basic_sink_backend<log::sinks::synch
+   }
+ };
+ 
+-void logger_init_sink(bool use_colors = false) {
++void logger_init_sink(bool use_colors = false, bool use_stdout = true) {
+   (void)use_colors;
++  (void)use_stdout;
+   typedef log::sinks::synchronous_sink<android_log_sink> android_log_sink_t;
+   log::core::get()->add_sink(boost::shared_ptr<android_log_sink_t>(new android_log_sink_t()));
+ }
+diff --git a/src/libaktualizr/logging/default_log_sink.cc b/src/libaktualizr/logging/default_log_sink.cc
+index b0c150e5..cf64ebab 100644
+--- a/src/libaktualizr/logging/default_log_sink.cc
++++ b/src/libaktualizr/logging/default_log_sink.cc
+@@ -29,8 +29,12 @@ static void color_fmt(boost::log::record_view const& rec, boost::log::formatting
+   }
+ }
+ 
+-void logger_init_sink(bool use_colors = false) {
+-  auto sink = boost::log::add_console_log(std::cout, boost::log::keywords::format = "%Message%",
++void logger_init_sink(bool use_colors = false, bool use_stdout = true) {
++  auto stream = &std::cerr;
++  if (use_stdout) {
++    stream = &std::cout;
++  }
++  auto sink = boost::log::add_console_log(*stream, boost::log::keywords::format = "%Message%",
+                                           boost::log::keywords::auto_flush = true);
+   if (use_colors) {
+     sink->set_formatter(&color_fmt);
+diff --git a/src/libaktualizr/logging/logging.cc b/src/libaktualizr/logging/logging.cc
+index 30594919..7a3928ea 100644
+--- a/src/libaktualizr/logging/logging.cc
++++ b/src/libaktualizr/logging/logging.cc
+@@ -4,14 +4,14 @@ using boost::log::trivial::severity_level;
+ 
+ static severity_level gLoggingThreshold;
+ 
+-extern void logger_init_sink(bool use_colors = false);
++extern void logger_init_sink(bool use_colors = false, bool use_stdout = true);
+ 
+ int64_t get_curlopt_verbose() { return gLoggingThreshold <= boost::log::trivial::trace ? 1L : 0L; }
+ 
+-void logger_init(bool use_colors) {
++void logger_init(bool use_colors, bool use_stdout) {
+   gLoggingThreshold = boost::log::trivial::info;
+ 
+-  logger_init_sink(use_colors);
++  logger_init_sink(use_colors, use_stdout);
+ 
+   boost::log::core::get()->set_filter(boost::log::trivial::severity >= gLoggingThreshold);
+ }
+diff --git a/src/libaktualizr/logging/logging.h b/src/libaktualizr/logging/logging.h
+index 66b9955c..dc6dc7a6 100644
+--- a/src/libaktualizr/logging/logging.h
++++ b/src/libaktualizr/logging/logging.h
+@@ -30,7 +30,7 @@
+ // curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, get_curlopt_verbose());
+ int64_t get_curlopt_verbose();
+ 
+-void logger_init(bool use_colors = false);
++void logger_init(bool use_colors = false, bool use_stdout = true);
+ 
+ void logger_set_threshold(boost::log::trivial::severity_level threshold);
+ 
+-- 
+2.23.0
+

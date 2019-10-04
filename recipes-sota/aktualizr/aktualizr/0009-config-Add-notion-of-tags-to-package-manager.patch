@@ -1,7 +1,7 @@
-From a6a358a81096f0375f6896e6fe5f4410a5ce5d6c Mon Sep 17 00:00:00 2001
+From 463a645691653c84e3806bdfc890bea0323e6a61 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 28 Jun 2019 09:36:22 -0500
-Subject: [PATCH 07/12] config: Add notion of "tags" to package manager
+Subject: [PATCH 09/18] config: Add notion of "tags" to package manager
 
 The idea here is that the aktualizr lite client can look at tags
 in each target to decide if its applicable to for the device. This
@@ -10,45 +10,25 @@ and release builds.
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- src/aktualizr_lite/CMakeLists.txt             |  4 +--
- src/aktualizr_lite/helpers.cc                 | 15 +++++++++
- src/aktualizr_lite/helpers.h                  |  9 ++++++
+ src/aktualizr_lite/helpers.cc                 | 14 +++++++++
+ src/aktualizr_lite/helpers.h                  |  3 ++
  src/aktualizr_lite/helpers_test.cc            | 31 +++++++++++++++++++
  src/aktualizr_lite/main.cc                    | 15 +++++++--
  src/aktualizr_lite/test_lite.sh               | 15 ++++++---
  .../package_manager/packagemanagerconfig.cc   |  7 ++++-
  .../package_manager/packagemanagerconfig.h    |  1 +
- 8 files changed, 87 insertions(+), 10 deletions(-)
- create mode 100644 src/aktualizr_lite/helpers.cc
+ 7 files changed, 78 insertions(+), 8 deletions(-)
 
-diff --git a/src/aktualizr_lite/CMakeLists.txt b/src/aktualizr_lite/CMakeLists.txt
-index f6f42375..7fb93a26 100644
---- a/src/aktualizr_lite/CMakeLists.txt
-+++ b/src/aktualizr_lite/CMakeLists.txt
-@@ -1,4 +1,4 @@
--set(AKTUALIZR_LITE_SRC main.cc)
-+set(AKTUALIZR_LITE_SRC main.cc helpers.cc)
- set(AKTUALIZR_LITE_HEADERS helpers.h)
- 
- if(BUILD_OSTREE)
-@@ -22,7 +22,7 @@ add_library(t_lite-mock SHARED ostree_mock.cc)
- 
- endif(BUILD_OSTREE)
- 
--add_aktualizr_test(NAME lite-helpers SOURCES helpers_test.cc)
-+add_aktualizr_test(NAME lite-helpers SOURCES helpers.cc helpers_test.cc)
- 
- aktualizr_source_file_checks(main.cc ${AKTUALIZR_LITE_SRC} ${AKTUALIZR_LITE_HEADERS} helpers_test.cc ostree_mock.cc)
- # vim: set tabstop=4 shiftwidth=4 expandtab:
 diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
-new file mode 100644
-index 00000000..e14293d3
---- /dev/null
+index 1c2e54d9..6a81530a 100644
+--- a/src/aktualizr_lite/helpers.cc
 +++ b/src/aktualizr_lite/helpers.cc
-@@ -0,0 +1,15 @@
-+#include "helpers.h"
+@@ -56,3 +56,17 @@ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
+   primary = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
+   finalizeIfNeeded(*storage, config.pacman);
+ }
 +
-+bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags) {
++bool target_has_tags(const Uptane::Target &t, const std::vector<std::string> &config_tags) {
 +  if (!config_tags.empty()) {
 +    auto tags = t.custom_data()["tags"];
 +    for (Json::ValueIterator i = tags.begin(); i != tags.end(); ++i) {
@@ -62,38 +42,33 @@ index 00000000..e14293d3
 +  return true;
 +}
 diff --git a/src/aktualizr_lite/helpers.h b/src/aktualizr_lite/helpers.h
-index 6c643e8a..81a9d8f9 100644
+index 41ca0393..6214c5f6 100644
 --- a/src/aktualizr_lite/helpers.h
 +++ b/src/aktualizr_lite/helpers.h
-@@ -1,10 +1,19 @@
-+#ifndef AKTUALIZR_LITE_HELPERS
-+#define AKTUALIZR_LITE_HELPERS
-+
- #include <string>
- 
+@@ -6,6 +6,7 @@
  #include <string.h>
  
+ #include "primary/sotauptaneclient.h"
 +#include "uptane/tuf.h"
-+
+ 
  struct Version {
    std::string raw_ver;
-   Version(std::string version) : raw_ver(std::move(version)) {}
- 
-   bool operator<(const Version& other) { return strverscmp(raw_ver.c_str(), other.raw_ver.c_str()) < 0; }
+@@ -22,4 +23,6 @@ struct LiteClient {
+   std::shared_ptr<SotaUptaneClient> primary;
  };
-+
+ 
 +bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags);
 +
-+#endif  // AKTUALIZR_LITE_HELPERS
+ #endif  // AKTUALIZR_LITE_HELPERS
 diff --git a/src/aktualizr_lite/helpers_test.cc b/src/aktualizr_lite/helpers_test.cc
-index 96020ec7..c5fea698 100644
+index 245fd9b4..ca13ef13 100644
 --- a/src/aktualizr_lite/helpers_test.cc
 +++ b/src/aktualizr_lite/helpers_test.cc
-@@ -19,6 +19,37 @@ TEST(version, good_versions) {
-   ASSERT_TRUE(Version("1.9.0") < Version("1.10"));
+@@ -51,6 +51,37 @@ TEST(helpers, lite_client_finalize) {
+   ASSERT_FALSE(target.MatchHash(LiteClient(config).primary->getCurrent().hashes()[0]));
  }
  
-+TEST(version, target_has_tags) {
++TEST(helpers, target_has_tags) {
 +  auto t = Uptane::Target::Unknown();
 +
 +  // No tags defined in target:
@@ -128,20 +103,20 @@ index 96020ec7..c5fea698 100644
  int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);
 diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 868814d5..4751a7ca 100644
+index 57d052e2..ca5c87a5 100644
 --- a/src/aktualizr_lite/main.cc
 +++ b/src/aktualizr_lite/main.cc
-@@ -125,6 +125,9 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
+@@ -65,6 +65,9 @@ static int list_main(LiteClient &client, const bpo::variables_map &unused) {
  
    LOG_INFO << "Updates available to " << hwid << ":";
-   for (auto &t : client->allTargets()) {
-+    if (!target_has_tags(t, config.pacman.tags)) {
+   for (auto &t : client.primary->allTargets()) {
++    if (!target_has_tags(t, client.config.pacman.tags)) {
 +      continue;
 +    }
      for (auto const &it : t.hardwareIds()) {
        if (it == hwid) {
-         log_info_target("", config, t);
-@@ -136,7 +139,8 @@ static int list_main(Config &config, const bpo::variables_map &unused) {
+         log_info_target("", client.config, t);
+@@ -76,7 +79,8 @@ static int list_main(LiteClient &client, const bpo::variables_map &unused) {
  }
  
  static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUptaneClient> &client,
@@ -151,7 +126,7 @@ index 868814d5..4751a7ca 100644
    std::unique_ptr<Uptane::Target> rv;
    if (!client->updateImagesMeta()) {
      LOG_WARNING << "Unable to update latest metadata, using local copy";
-@@ -149,6 +153,9 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
+@@ -89,6 +93,9 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
    bool find_latest = (version == "latest");
    std::unique_ptr<Uptane::Target> latest = nullptr;
    for (auto &t : client->allTargets()) {
@@ -161,18 +136,18 @@ index 868814d5..4751a7ca 100644
      for (auto const &it : t.hardwareIds()) {
        if (it == hwid) {
          if (find_latest) {
-@@ -201,7 +208,11 @@ static int update_main(Config &config, const bpo::variables_map &variables_map)
+@@ -139,7 +146,11 @@ static int update_main(LiteClient &client, const bpo::variables_map &variables_m
      version = variables_map["update-name"].as<std::string>();
    }
    LOG_INFO << "Finding " << version << " to update to...";
--  auto target = find_target(client, hwid, version);
-+  auto target = find_target(client, hwid, config.pacman.tags, version);
+-  auto target = find_target(client.primary, hwid, version);
++  auto target = find_target(client.primary, hwid, client.config.pacman.tags, version);
 +  if (target == nullptr) {
 +    LOG_INFO << "Already up-to-date";
 +    return 0;
 +  }
    LOG_INFO << "Updating to: " << *target;
-   return do_update(*client, *storage, *target);
+   return do_update(client, *target);
  }
 diff --git a/src/aktualizr_lite/test_lite.sh b/src/aktualizr_lite/test_lite.sh
 index ccdeafa1..d2b17423 100755

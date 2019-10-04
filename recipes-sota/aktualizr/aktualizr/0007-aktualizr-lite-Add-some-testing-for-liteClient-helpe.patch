@@ -1,0 +1,267 @@
+From 6e89e9edd6eafe3a3b7bccada0a8001269c37b34 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Thu, 26 Sep 2019 12:54:43 -0500
+Subject: [PATCH 07/18] aktualizr-lite: Add some testing for liteClient helper
+
+This moves the liteClient function to helpers.{h|cc} and adds some
+minimal testing to the function.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/CMakeLists.txt  |  6 ++-
+ src/aktualizr_lite/helpers.cc      | 60 ++++++++++++++++++++++++++++++
+ src/aktualizr_lite/helpers.h       |  4 ++
+ src/aktualizr_lite/helpers_test.cc | 42 +++++++++++++++++++++
+ src/aktualizr_lite/main.cc         | 59 -----------------------------
+ 5 files changed, 110 insertions(+), 61 deletions(-)
+
+diff --git a/src/aktualizr_lite/CMakeLists.txt b/src/aktualizr_lite/CMakeLists.txt
+index 7fb93a26..82f5602b 100644
+--- a/src/aktualizr_lite/CMakeLists.txt
++++ b/src/aktualizr_lite/CMakeLists.txt
+@@ -19,10 +19,12 @@ add_test(test_aktualizr-lite
+         ${RUN_VALGRIND}
+ )
+ add_library(t_lite-mock SHARED ostree_mock.cc)
++add_aktualizr_test(NAME lite-helpers SOURCES helpers.cc helpers_test.cc
++                   ARGS ${PROJECT_BINARY_DIR}/ostree_repo)
++set_tests_properties(test_lite-helpers PROPERTIES
++        ENVIRONMENT LD_PRELOAD=$<TARGET_FILE:t_lite-mock>)
+ 
+ endif(BUILD_OSTREE)
+ 
+-add_aktualizr_test(NAME lite-helpers SOURCES helpers.cc helpers_test.cc)
+-
+ aktualizr_source_file_checks(main.cc ${AKTUALIZR_LITE_SRC} ${AKTUALIZR_LITE_HEADERS} helpers_test.cc ostree_mock.cc)
+ # vim: set tabstop=4 shiftwidth=4 expandtab:
+diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
+index 3e6ab73e..a2d7a9cc 100644
+--- a/src/aktualizr_lite/helpers.cc
++++ b/src/aktualizr_lite/helpers.cc
+@@ -1 +1,61 @@
+ #include "helpers.h"
++
++#include <boost/uuid/uuid_generators.hpp>
++#include <boost/uuid/uuid_io.hpp>
++
++#include "package_manager/ostreemanager.h"
++
++static void finalizeIfNeeded(INvStorage &storage, PackageConfig &config) {
++  boost::optional<Uptane::Target> pending_version;
++  storage.loadInstalledVersions("", nullptr, &pending_version);
++
++  if (!!pending_version) {
++    GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.sysroot);
++    OstreeDeployment *booted_deployment = ostree_sysroot_get_booted_deployment(sysroot_smart.get());
++    if (booted_deployment == nullptr) {
++      throw std::runtime_error("Could not get booted deployment in " + config.sysroot.string());
++    }
++    std::string current_hash = ostree_deployment_get_csum(booted_deployment);
++
++    const Uptane::Target &target = *pending_version;
++    if (current_hash == target.sha256Hash()) {
++      LOG_INFO << "Marking target install complete for: " << target;
++      storage.saveInstalledVersion("", target, InstalledVersionUpdateMode::kCurrent);
++    }
++  }
++}
++
++std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_ptr<INvStorage> storage) {
++  std::string pkey;
++  if (storage == nullptr) {
++    storage = INvStorage::newStorage(config.storage);
++  }
++  storage->importData(config.import);
++
++  EcuSerials ecu_serials;
++  if (!storage->loadEcuSerials(&ecu_serials)) {
++    // Set a "random" serial so we don't get warning messages.
++    std::string serial = config.provision.primary_ecu_serial;
++    std::string hwid = config.provision.primary_ecu_hardware_id;
++    if (hwid.empty()) {
++      hwid = Utils::getHostname();
++    }
++    if (serial.empty()) {
++      boost::uuids::uuid tmp = boost::uuids::random_generator()();
++      serial = boost::uuids::to_string(tmp);
++    }
++    ecu_serials.emplace_back(Uptane::EcuSerial(serial), Uptane::HardwareIdentifier(hwid));
++    storage->storeEcuSerials(ecu_serials);
++  }
++
++  auto http_client = std::make_shared<HttpClient>();
++  auto bootloader = std::make_shared<Bootloader>(config.bootloader, *storage);
++  auto report_queue = std::make_shared<ReportQueue>(config, http_client);
++
++  KeyManager keys(storage, config.keymanagerConfig());
++  keys.copyCertsToCurl(*http_client);
++
++  auto client = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
++  finalizeIfNeeded(*storage, config.pacman);
++  return client;
++}
+diff --git a/src/aktualizr_lite/helpers.h b/src/aktualizr_lite/helpers.h
+index c66ea05f..6b24158f 100644
+--- a/src/aktualizr_lite/helpers.h
++++ b/src/aktualizr_lite/helpers.h
+@@ -5,6 +5,8 @@
+ 
+ #include <string.h>
+ 
++#include "primary/sotauptaneclient.h"
++
+ struct Version {
+   std::string raw_ver;
+   Version(std::string version) : raw_ver(std::move(version)) {}
+@@ -12,4 +14,6 @@ struct Version {
+   bool operator<(const Version& other) { return strverscmp(raw_ver.c_str(), other.raw_ver.c_str()) < 0; }
+ };
+ 
++std::shared_ptr<SotaUptaneClient> liteClient(Config& config, std::shared_ptr<INvStorage> storage);
++
+ #endif  // AKTUALIZR_LITE_HELPERS
+diff --git a/src/aktualizr_lite/helpers_test.cc b/src/aktualizr_lite/helpers_test.cc
+index 96020ec7..c3d30829 100644
+--- a/src/aktualizr_lite/helpers_test.cc
++++ b/src/aktualizr_lite/helpers_test.cc
+@@ -2,6 +2,8 @@
+ 
+ #include "helpers.h"
+ 
++static boost::filesystem::path test_sysroot;
++
+ TEST(version, bad_versions) {
+   ASSERT_TRUE(Version("bar") < Version("foo"));
+   ASSERT_TRUE(Version("1.bar") < Version("2foo"));
+@@ -19,10 +21,50 @@ TEST(version, good_versions) {
+   ASSERT_TRUE(Version("1.9.0") < Version("1.10"));
+ }
+ 
++// Ensure we finalize an install if completed
++TEST(helpers, lite_client_finalize) {
++  TemporaryDirectory cfg_dir;
++
++  Config config;
++  config.storage.path = cfg_dir.Path();
++  config.pacman.type = PackageManager::kOstree;
++  config.pacman.sysroot = test_sysroot;
++  std::shared_ptr<INvStorage> storage = INvStorage::newStorage(config.storage);
++
++  Json::Value target_json;
++  target_json["hashes"]["sha256"] = "deadbeef";
++  target_json["custom"]["targetFormat"] = "OSTREE";
++  target_json["length"] = 0;
++  Uptane::Target target("test-finalize", target_json);
++
++  setenv("OSTREE_HASH", "deadbeef", 1);
++  storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kPending);
++  auto client = liteClient(config, storage);
++  ASSERT_TRUE(target.MatchHash(client->getCurrent().hashes()[0]));
++
++  setenv("OSTREE_HASH", "abcd", 1);
++  storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kPending);
++  client = liteClient(config, storage);
++  ASSERT_FALSE(target.MatchHash(client->getCurrent().hashes()[0]));
++}
++
+ #ifndef __NO_MAIN__
+ int main(int argc, char **argv) {
+   ::testing::InitGoogleTest(&argc, argv);
+ 
++  if (argc != 2) {
++    std::cerr << "Error: " << argv[0] << " requires the path to an OSTree sysroot.\n";
++    return EXIT_FAILURE;
++  }
++
++  TemporaryDirectory temp_dir;
++  // Utils::copyDir doesn't work here. Complaints about non existent symlink path
++  int r = system((std::string("cp -r ") + argv[1] + std::string(" ") + temp_dir.PathString()).c_str());
++  if (r != 0) {
++    return -1;
++  }
++  test_sysroot = (temp_dir.Path() / "ostree_repo").string();
++
+   return RUN_ALL_TESTS();
+ }
+ #endif
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index 868814d5..d5ca3c05 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -3,73 +3,14 @@
+ 
+ #include <boost/filesystem.hpp>
+ #include <boost/program_options.hpp>
+-#include <boost/uuid/uuid_generators.hpp>
+-#include <boost/uuid/uuid_io.hpp>
+ 
+ #include "config/config.h"
+ #include "helpers.h"
+-#include "package_manager/ostreemanager.h"
+-#include "primary/sotauptaneclient.h"
+ 
+ #include "utilities/aktualizr_version.h"
+ 
+ namespace bpo = boost::program_options;
+ 
+-static void finalizeIfNeeded(INvStorage &storage, PackageConfig &config) {
+-  boost::optional<Uptane::Target> pending_version;
+-  storage.loadInstalledVersions("", nullptr, &pending_version);
+-
+-  if (!!pending_version) {
+-    GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.sysroot);
+-    OstreeDeployment *booted_deployment = ostree_sysroot_get_booted_deployment(sysroot_smart.get());
+-    if (booted_deployment == nullptr) {
+-      throw std::runtime_error("Could not get booted deployment in " + config.sysroot.string());
+-    }
+-    std::string current_hash = ostree_deployment_get_csum(booted_deployment);
+-
+-    const Uptane::Target &target = *pending_version;
+-    if (current_hash == target.sha256Hash()) {
+-      LOG_INFO << "Marking target install complete for: " << target;
+-      storage.saveInstalledVersion("", target, InstalledVersionUpdateMode::kCurrent);
+-    }
+-  }
+-}
+-
+-static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_ptr<INvStorage> storage) {
+-  std::string pkey;
+-  if (storage == nullptr) {
+-    storage = INvStorage::newStorage(config.storage);
+-  }
+-  storage->importData(config.import);
+-
+-  EcuSerials ecu_serials;
+-  if (!storage->loadEcuSerials(&ecu_serials)) {
+-    // Set a "random" serial so we don't get warning messages.
+-    std::string serial = config.provision.primary_ecu_serial;
+-    std::string hwid = config.provision.primary_ecu_hardware_id;
+-    if (hwid.empty()) {
+-      hwid = Utils::getHostname();
+-    }
+-    if (serial.empty()) {
+-      boost::uuids::uuid tmp = boost::uuids::random_generator()();
+-      serial = boost::uuids::to_string(tmp);
+-    }
+-    ecu_serials.emplace_back(Uptane::EcuSerial(serial), Uptane::HardwareIdentifier(hwid));
+-    storage->storeEcuSerials(ecu_serials);
+-  }
+-
+-  auto http_client = std::make_shared<HttpClient>();
+-  auto bootloader = std::make_shared<Bootloader>(config.bootloader, *storage);
+-  auto report_queue = std::make_shared<ReportQueue>(config, http_client);
+-
+-  KeyManager keys(storage, config.keymanagerConfig());
+-  keys.copyCertsToCurl(*http_client);
+-
+-  auto client = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
+-  finalizeIfNeeded(*storage, config.pacman);
+-  return client;
+-}
+-
+ static void log_info_target(const std::string &prefix, const Config &config, const Uptane::Target &t) {
+   auto name = t.filename();
+   if (t.custom_version().length() > 0) {
+-- 
+2.23.0
+

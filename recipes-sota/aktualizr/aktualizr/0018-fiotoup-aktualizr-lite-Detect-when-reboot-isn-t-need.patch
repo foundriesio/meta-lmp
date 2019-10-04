@@ -1,0 +1,130 @@
+From c21c1054b56b002491f9816bd04b48076fdb0a10 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Fri, 4 Oct 2019 09:59:14 -0500
+Subject: [PATCH 18/18] [fiotoup] aktualizr-lite: Detect when reboot isn't
+ needed
+
+There is a situation where a device may be running a target like:
+
+ TargetV1 {
+   ostreehash(0xdeadbeef)
+   custom: {
+     "docker_apps": {"fluentbit": {"fluentbitv1.dockerapp"}
+   }
+
+Its then updated to:
+ TargetV2
+   ostreehash(0xdeadbeef)
+   custom: {
+     "docker_apps": {"fluentbit": {"fluentbitv2.dockerapp"}
+   }
+
+In this case the ostree hash hasn't changed and the dockerapp(s) will
+have been updated and restared. This means a device reboot isn't
+necessary. This change detects that, marks the install as complete,
+and doesn't make the user think a reboot is needed.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/main.cc | 41 ++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
+
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index bb6bd1ab..e766389a 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -137,42 +137,53 @@ static int get_lock(const char *lockfile) {
+   return fd;
+ }
+ 
+-static int do_update(LiteClient &client, Uptane::Target &target, const char *lockfile) {
++static data::ResultCode::Numeric do_update(LiteClient &client, Uptane::Target &target, const char *lockfile) {
+   generate_correlation_id(target);
+   client.notifyDownloadStarted(target);
+   if (!client.primary->downloadImage(target).first) {
+     client.notifyDownloadFinished(target, false);
+-    return 1;
++    return data::ResultCode::Numeric::kDownloadFailed;
+   }
+   client.notifyDownloadFinished(target, true);
+ 
+   if (client.primary->VerifyTarget(target) != TargetStatus::kGood) {
+     client.notifyInstallFinished(target, data::ResultCode::Numeric::kValidationFailed);
+     LOG_ERROR << "Downloaded target is invalid";
++    return data::ResultCode::Numeric::kValidationFailed;
+   }
+ 
+   int lockfd = 0;
+   if (lockfile != nullptr && (lockfd = get_lock(lockfile)) < 0) {
+-    return 1;
++    return data::ResultCode::Numeric::kInternalError;
+   }
+ 
++  Uptane::Target current = client.primary->getCurrent();
++
+   client.notifyInstallStarted(target);
+   auto iresult = client.primary->PackageInstall(target);
++  // Make sure the update wasn't just for docker-apps
++  if (iresult.result_code.num_code == data::ResultCode::Numeric::kNeedCompletion) {
++    for (const auto &it : current.hashes()) {
++      if (target.MatchHash(it)) {
++        iresult.result_code.num_code = data::ResultCode::Numeric::kOk;
++        break;
++      }
++    }
++  }
+   client.notifyInstallFinished(target, iresult.result_code.num_code);
+   if (iresult.result_code.num_code == data::ResultCode::Numeric::kNeedCompletion) {
+     LOG_INFO << "Update complete. Please reboot the device to activate";
+     client.storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kPending);
+   } else if (iresult.result_code.num_code == data::ResultCode::Numeric::kOk) {
++    LOG_INFO << "Update complete. No reboot needed";
+     client.storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kCurrent);
+     close(lockfd);
+   } else {
+     LOG_ERROR << "Unable to install update: " << iresult.description;
+     // let go of the lock since we couldn't update
+     close(lockfd);
+-    return 1;
+   }
+-  LOG_INFO << iresult.description;
+-  return 0;
++  return iresult.result_code.num_code;
+ }
+ 
+ static int update_main(LiteClient &client, const bpo::variables_map &variables_map) {
+@@ -189,7 +200,11 @@ static int update_main(LiteClient &client, const bpo::variables_map &variables_m
+     return 0;
+   }
+   LOG_INFO << "Updating to: " << *target;
+-  return do_update(client, *target, nullptr);
++  data::ResultCode::Numeric rc = do_update(client, *target, nullptr);
++  if (rc == data::ResultCode::Numeric::kNeedCompletion || rc == data::ResultCode::Numeric::kOk) {
++    return 0;
++  }
++  return 1;
+ }
+ 
+ static int daemon_main(LiteClient &client, const bpo::variables_map &variables_map) {
+@@ -229,12 +244,12 @@ static int daemon_main(LiteClient &client, const bpo::variables_map &variables_m
+     auto target = find_target(client.primary, hwid, client.config.pacman.tags, "latest");
+     if (target != nullptr && !targets_eq(*target, current, compareDockerApps)) {
+       LOG_INFO << "Updating base image to: " << *target;
+-      if (do_update(client, *target, lockfile) == 0) {
+-        if (target->MatchHash(current.hashes()[0])) {
+-          LOG_INFO << "Update applied, hashes haven't changed";
+-          client.storage->savePrimaryInstalledVersion(*target, InstalledVersionUpdateMode::kCurrent);
+-          current = *target;
+-        } else if (std::system(client.config.bootloader.reboot_command.c_str()) != 0) {
++
++      data::ResultCode::Numeric rc = do_update(client, *target, lockfile);
++      if (rc == data::ResultCode::Numeric::kOk) {
++        current = *target;
++      } else if (rc == data::ResultCode::Numeric::kNeedCompletion) {
++        if (std::system(client.config.bootloader.reboot_command.c_str()) != 0) {
+           LOG_ERROR << "Unable to reboot system";
+           return 1;
+         }
+-- 
+2.23.0
+

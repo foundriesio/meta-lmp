@@ -1,7 +1,7 @@
-From c6e4c95d3878bf815b9ff3ffb180c3ff7523ddf9 Mon Sep 17 00:00:00 2001
+From 1f2b0f8ad1fb1cbc4fa82460a2e009584db08f51 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 17 Sep 2019 17:18:11 -0500
-Subject: [PATCH 02/12] storage: Load/save custom data with installed version
+Subject: [PATCH 02/18] storage: Load/save custom data with installed version
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---

@@ -1,7 +1,7 @@
-From b75fa8e8da02dca38c292bcb8c3c3756dbf04174 Mon Sep 17 00:00:00 2001
+From af2de22dbddc28bfbd9184ba91dcca5c2aa24871 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 2 Jul 2019 00:03:19 -0500
-Subject: [PATCH 09/12] aktualizr-lite: Add targets equal helper
+Subject: [PATCH 11/18] aktualizr-lite: Add targets equal helper
 
 aktualizr-lite needs to know not just when the ostree hash is the
 same for a target, but also when the dockers apps are the same.
@@ -14,15 +14,15 @@ Signed-off-by: Andy Doan <andy@foundries.io>
  3 files changed, 67 insertions(+)
 
 diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
-index e14293d3..5272cda2 100644
+index ed8ea61d..c5215c1d 100644
 --- a/src/aktualizr_lite/helpers.cc
 +++ b/src/aktualizr_lite/helpers.cc
-@@ -13,3 +13,28 @@ bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& co
+@@ -112,3 +112,28 @@ bool target_has_tags(const Uptane::Target &t, const std::vector<std::string> &co
    }
    return true;
  }
 +
-+bool targets_eq(const Uptane::Target& t1, const Uptane::Target& t2, bool compareDockerApps) {
++bool targets_eq(const Uptane::Target &t1, const Uptane::Target &t2, bool compareDockerApps) {
 +  // target equality check looks at hashes
 +  if (t1.MatchTarget(t2)) {
 +    if (compareDockerApps) {
@@ -47,10 +47,10 @@ index e14293d3..5272cda2 100644
 +  return false;
 +}
 diff --git a/src/aktualizr_lite/helpers.h b/src/aktualizr_lite/helpers.h
-index 81a9d8f9..f027bb9c 100644
+index 6214c5f6..7b8d1178 100644
 --- a/src/aktualizr_lite/helpers.h
 +++ b/src/aktualizr_lite/helpers.h
-@@ -15,5 +15,6 @@ struct Version {
+@@ -24,5 +24,6 @@ struct LiteClient {
  };
  
  bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags);
@@ -58,14 +58,14 @@ index 81a9d8f9..f027bb9c 100644
  
  #endif  // AKTUALIZR_LITE_HELPERS
 diff --git a/src/aktualizr_lite/helpers_test.cc b/src/aktualizr_lite/helpers_test.cc
-index c5fea698..a9d946b6 100644
+index ca13ef13..8c52d769 100644
 --- a/src/aktualizr_lite/helpers_test.cc
 +++ b/src/aktualizr_lite/helpers_test.cc
-@@ -50,6 +50,47 @@ TEST(version, target_has_tags) {
+@@ -82,6 +82,47 @@ TEST(helpers, target_has_tags) {
    ASSERT_FALSE(target_has_tags(t, config_tags));
  }
  
-+TEST(version, targets_eq) {
++TEST(helpers, targets_eq) {
 +  auto t1 = Uptane::Target::Unknown();
 +  auto t2 = Uptane::Target::Unknown();
 +

@@ -1,0 +1,204 @@
+From dd6eea208ace945c6578b04a75dd0b135ecc1860 Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Fri, 27 Sep 2019 15:28:44 -0500
+Subject: [PATCH 15/18] aktualizr-lite: Start sending events during updates
+
+If we have TLS configured we should assume the device has been
+registered with a gateway and isn't running in an anonymous mode.
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ src/aktualizr_lite/helpers.cc | 64 ++++++++++++++++++++++++++++++-----
+ src/aktualizr_lite/helpers.h  | 10 ++++++
+ src/aktualizr_lite/main.cc    | 13 ++++++-
+ 3 files changed, 77 insertions(+), 10 deletions(-)
+
+diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
+index c5215c1d..bee2cf97 100644
+--- a/src/aktualizr_lite/helpers.cc
++++ b/src/aktualizr_lite/helpers.cc
+@@ -16,7 +16,7 @@ static void add_apps_header(std::vector<std::string> &headers, PackageConfig &co
+   {}
+ #endif
+ 
+-static Uptane::Target finalizeIfNeeded(INvStorage &storage, PackageConfig &config) {
++static std::pair<bool, Uptane::Target> finalizeIfNeeded(INvStorage &storage, PackageConfig &config) {
+   boost::optional<Uptane::Target> pending_version;
+   storage.loadInstalledVersions("", nullptr, &pending_version);
+ 
+@@ -32,7 +32,7 @@ static Uptane::Target finalizeIfNeeded(INvStorage &storage, PackageConfig &confi
+     if (current_hash == target.sha256Hash()) {
+       LOG_INFO << "Marking target install complete for: " << target;
+       storage.saveInstalledVersion("", target, InstalledVersionUpdateMode::kCurrent);
+-      return target;
++      return std::make_pair(true, target);
+     }
+   }
+ 
+@@ -46,13 +46,13 @@ static Uptane::Target finalizeIfNeeded(INvStorage &storage, PackageConfig &confi
+   std::vector<Uptane::Target>::reverse_iterator it;
+   for (it = installed_versions.rbegin(); it != installed_versions.rend(); it++) {
+     if (it->sha256Hash() == current_hash) {
+-      return *it;
++      return std::make_pair(false, *it);
+     }
+   }
+-  return Uptane::Target::Unknown();
++  return std::make_pair(false, Uptane::Target::Unknown());
+ }
+ 
+-LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
++LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)), primary_serial(Uptane::EcuSerial::Unknown()) {
+   std::string pkey;
+   storage = INvStorage::newStorage(config.storage);
+   storage->importData(config.import);
+@@ -69,8 +69,11 @@ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
+       boost::uuids::uuid tmp = boost::uuids::random_generator()();
+       serial = boost::uuids::to_string(tmp);
+     }
+-    ecu_serials.emplace_back(Uptane::EcuSerial(serial), Uptane::HardwareIdentifier(hwid));
++    primary_serial = Uptane::EcuSerial(serial);
++    ecu_serials.emplace_back(primary_serial, Uptane::HardwareIdentifier(hwid));
+     storage->storeEcuSerials(ecu_serials);
++  } else {
++    primary_serial = ecu_serials[0].first;
+   }
+ 
+   std::vector<std::string> headers;
+@@ -85,13 +88,17 @@ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
+   headers.push_back(header);
+   add_apps_header(headers, config.pacman);
+ 
+-  Uptane::Target tgt = finalizeIfNeeded(*storage, config.pacman);
+-  headers.emplace_back("x-ats-target: " + tgt.filename());
++  std::pair<bool, Uptane::Target> pair = finalizeIfNeeded(*storage, config.pacman);
++  headers.emplace_back("x-ats-target: " + pair.second.filename());
+   headers.emplace_back("x-ats-tags: " + boost::algorithm::join(config.pacman.tags, ","));
+ 
+   auto http_client = std::make_shared<HttpClient>(&headers);
+   auto bootloader = std::make_shared<Bootloader>(config.bootloader, *storage);
+-  auto report_queue = std::make_shared<ReportQueue>(config, http_client);
++  report_queue = std::make_shared<ReportQueue>(config, http_client);
++
++  if (pair.first) {
++    notifyInstallFinished(pair.second, data::ResultCode::Numeric::kOk);
++  }
+ 
+   KeyManager keys(storage, config.keymanagerConfig());
+   keys.copyCertsToCurl(*http_client);
+@@ -99,6 +106,45 @@ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
+   primary = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
+ }
+ 
++void LiteClient::notify(const Uptane::Target &t, std::unique_ptr<ReportEvent> event) {
++  if (!config.tls.server.empty()) {
++    event->custom["targetName"] = t.filename();
++    event->custom["version"] = t.custom_version();
++    report_queue->enqueue(std::move(event));
++  }
++}
++
++void LiteClient::notifyDownloadStarted(const Uptane::Target &t) {
++  notify(t, std_::make_unique<EcuDownloadStartedReport>(primary_serial, t.correlation_id()));
++}
++
++void LiteClient::notifyDownloadFinished(const Uptane::Target &t, bool success) {
++  notify(t, std_::make_unique<EcuDownloadCompletedReport>(primary_serial, t.correlation_id(), success));
++}
++
++void LiteClient::notifyInstallStarted(const Uptane::Target &t) {
++  notify(t, std_::make_unique<EcuInstallationStartedReport>(primary_serial, t.correlation_id()));
++}
++
++void LiteClient::notifyInstallFinished(const Uptane::Target &t, data::ResultCode::Numeric rc) {
++  if (rc == data::ResultCode::Numeric::kNeedCompletion) {
++    notify(t, std_::make_unique<EcuInstallationAppliedReport>(primary_serial, t.correlation_id()));
++  } else if (rc == data::ResultCode::Numeric::kOk) {
++    notify(t, std_::make_unique<EcuInstallationCompletedReport>(primary_serial, t.correlation_id(), true));
++  } else {
++    notify(t, std_::make_unique<EcuInstallationCompletedReport>(primary_serial, t.correlation_id(), false));
++  }
++}
++
++void generate_correlation_id(Uptane::Target &t) {
++  std::string id = t.custom_version();
++  if (id.empty()) {
++    id = t.filename();
++  }
++  boost::uuids::uuid tmp = boost::uuids::random_generator()();
++  t.setCorrelationId(id + "-" + boost::uuids::to_string(tmp));
++}
++
+ bool target_has_tags(const Uptane::Target &t, const std::vector<std::string> &config_tags) {
+   if (!config_tags.empty()) {
+     auto tags = t.custom_data()["tags"];
+diff --git a/src/aktualizr_lite/helpers.h b/src/aktualizr_lite/helpers.h
+index 7b8d1178..a7672065 100644
+--- a/src/aktualizr_lite/helpers.h
++++ b/src/aktualizr_lite/helpers.h
+@@ -21,8 +21,18 @@ struct LiteClient {
+   Config config;
+   std::shared_ptr<INvStorage> storage;
+   std::shared_ptr<SotaUptaneClient> primary;
++  std::shared_ptr<ReportQueue> report_queue;
++  Uptane::EcuSerial primary_serial;
++
++  void notifyDownloadStarted(const Uptane::Target& t);
++  void notifyDownloadFinished(const Uptane::Target& t, bool success);
++  void notifyInstallStarted(const Uptane::Target& t);
++  void notifyInstallFinished(const Uptane::Target& t, data::ResultCode::Numeric rc);
++
++  void notify(const Uptane::Target& t, std::unique_ptr<ReportEvent> event);
+ };
+ 
++void generate_correlation_id(Uptane::Target& t);
+ bool target_has_tags(const Uptane::Target& t, const std::vector<std::string>& config_tags);
+ bool targets_eq(const Uptane::Target& t1, const Uptane::Target& t2, bool compareDockerApps);
+ 
+diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
+index 26927050..04a5868e 100644
+--- a/src/aktualizr_lite/main.cc
++++ b/src/aktualizr_lite/main.cc
+@@ -138,11 +138,16 @@ static int get_lock(const char *lockfile) {
+ }
+ 
+ static int do_update(LiteClient &client, Uptane::Target &target, const char *lockfile) {
++  generate_correlation_id(target);
++  client.notifyDownloadStarted(target);
+   if (!client.primary->downloadImage(target).first) {
++    client.notifyDownloadFinished(target, false);
+     return 1;
+   }
++  client.notifyDownloadFinished(target, true);
+ 
+   if (client.primary->VerifyTarget(target) != TargetStatus::kGood) {
++    client.notifyInstallFinished(target, data::ResultCode::Numeric::kValidationFailed);
+     LOG_ERROR << "Downloaded target is invalid";
+   }
+ 
+@@ -151,7 +156,9 @@ static int do_update(LiteClient &client, Uptane::Target &target, const char *loc
+     return 1;
+   }
+ 
++  client.notifyInstallStarted(target);
+   auto iresult = client.primary->PackageInstall(target);
++  client.notifyInstallFinished(target, iresult.result_code.num_code);
+   if (iresult.result_code.num_code == data::ResultCode::Numeric::kNeedCompletion) {
+     LOG_INFO << "Update complete. Please reboot the device to activate";
+     client.storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kPending);
+@@ -220,7 +227,11 @@ static int daemon_main(LiteClient &client, const bpo::variables_map &variables_m
+     if (target != nullptr && !targets_eq(*target, current, compareDockerApps)) {
+       LOG_INFO << "Updating base image to: " << *target;
+       if (do_update(client, *target, lockfile) == 0) {
+-        if (std::system(client.config.bootloader.reboot_command.c_str()) != 0) {
++        if (target->MatchHash(current.hashes()[0])) {
++          LOG_INFO << "Update applied, hashes haven't changed";
++          client.storage->savePrimaryInstalledVersion(*target, InstalledVersionUpdateMode::kCurrent);
++          current = *target;
++        } else if (std::system(client.config.bootloader.reboot_command.c_str()) != 0) {
+           LOG_ERROR << "Unable to reboot system";
+           return 1;
+         }
+-- 
+2.23.0
+

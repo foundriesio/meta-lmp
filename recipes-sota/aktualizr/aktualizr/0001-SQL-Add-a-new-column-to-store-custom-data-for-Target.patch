@@ -1,7 +1,7 @@
-From 570d235632c786da6f2bd6836d8589276b9f7cb9 Mon Sep 17 00:00:00 2001
+From fc9a673455f4f6cefe25d33a7900110b8f1e3022 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Tue, 17 Sep 2019 10:05:39 -0500
-Subject: [PATCH 01/12] SQL: Add a new column to store "custom" data for Target
+Subject: [PATCH 01/18] SQL: Add a new column to store "custom" data for Target
 
 As more people take advantage of the custom dictionary value for
 a Target, we'll need to keep track of this so things like package

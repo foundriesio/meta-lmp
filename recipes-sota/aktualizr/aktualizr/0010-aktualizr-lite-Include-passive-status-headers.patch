@@ -1,23 +1,23 @@
-From c9ceb3373946418a41cca46aec83c50b53227106 Mon Sep 17 00:00:00 2001
+From 2e84681883addc5a88d8d0f45ca52802be2abe0d Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Fri, 21 Jun 2019 15:50:47 -0500
-Subject: [PATCH 08/12] aktualizr-lite: Include passive status headers
+Subject: [PATCH 10/18] aktualizr-lite: Include passive status headers
 
 This allows the OTA server to passively understand what levels of
 code are being run.
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- src/aktualizr_lite/main.cc | 62 ++++++++++++++++++++++++++++++++------
+ src/aktualizr_lite/helpers.cc | 62 +++++++++++++++++++++++++++++------
  1 file changed, 52 insertions(+), 10 deletions(-)
 
-diff --git a/src/aktualizr_lite/main.cc b/src/aktualizr_lite/main.cc
-index 4751a7ca..27a22463 100644
---- a/src/aktualizr_lite/main.cc
-+++ b/src/aktualizr_lite/main.cc
-@@ -15,24 +15,51 @@
+diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
+index 6a81530a..ed8ea61d 100644
+--- a/src/aktualizr_lite/helpers.cc
++++ b/src/aktualizr_lite/helpers.cc
+@@ -5,24 +5,51 @@
  
- namespace bpo = boost::program_options;
+ #include "package_manager/ostreemanager.h"
  
 -static void finalizeIfNeeded(INvStorage &storage, PackageConfig &config) {
 +#ifdef BUILD_DOCKERAPP
@@ -74,8 +74,8 @@ index 4751a7ca..27a22463 100644
 +  return Uptane::Target::Unknown();
  }
  
- static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_ptr<INvStorage> storage) {
-@@ -58,7 +85,23 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
+ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
+@@ -46,7 +73,23 @@ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
      storage->storeEcuSerials(ecu_serials);
    }
  
@@ -100,14 +100,14 @@ index 4751a7ca..27a22463 100644
    auto bootloader = std::make_shared<Bootloader>(config.bootloader, *storage);
    auto report_queue = std::make_shared<ReportQueue>(config, http_client);
  
-@@ -66,7 +109,6 @@ static std::shared_ptr<SotaUptaneClient> liteClient(Config &config, std::shared_
+@@ -54,7 +97,6 @@ LiteClient::LiteClient(Config &config_in) : config(std::move(config_in)) {
    keys.copyCertsToCurl(*http_client);
  
-   auto client = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
+   primary = std::make_shared<SotaUptaneClient>(config, storage, http_client, bootloader, report_queue);
 -  finalizeIfNeeded(*storage, config.pacman);
-   return client;
  }
  
+ bool target_has_tags(const Uptane::Target &t, const std::vector<std::string> &config_tags) {
 -- 
 2.23.0
 

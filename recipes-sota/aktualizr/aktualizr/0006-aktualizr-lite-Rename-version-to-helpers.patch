@@ -1,7 +1,7 @@
-From 323c6a4113e668b0d0bd7fc225f35da082199e64 Mon Sep 17 00:00:00 2001
+From 84233bc1a7025b3180e77bd692085c370f35e450 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Wed, 10 Jul 2019 18:38:46 -0500
-Subject: [PATCH 06/12] [FIO toup] aktualizr-lite: Rename version* to helpers*
+Subject: [PATCH 06/18] aktualizr-lite: Rename version* to helpers*
 
 More stuff can be moved into a helpers file which will also allow
 a bit more unit test coverage.
@@ -9,19 +9,21 @@ a bit more unit test coverage.
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
  src/aktualizr_lite/CMakeLists.txt                       | 9 ++++++---
- src/aktualizr_lite/{version.h => helpers.h}             | 0
+ src/aktualizr_lite/helpers.cc                           | 1 +
+ src/aktualizr_lite/{version.h => helpers.h}             | 5 +++++
  src/aktualizr_lite/{version_test.cc => helpers_test.cc} | 2 +-
  src/aktualizr_lite/main.cc                              | 2 +-
- 4 files changed, 8 insertions(+), 5 deletions(-)
- rename src/aktualizr_lite/{version.h => helpers.h} (100%)
+ 5 files changed, 14 insertions(+), 5 deletions(-)
+ create mode 100644 src/aktualizr_lite/helpers.cc
+ rename src/aktualizr_lite/{version.h => helpers.h} (72%)
  rename src/aktualizr_lite/{version_test.cc => helpers_test.cc} (97%)
 
 diff --git a/src/aktualizr_lite/CMakeLists.txt b/src/aktualizr_lite/CMakeLists.txt
-index 2d82d7b2..f6f42375 100644
+index 2d82d7b2..7fb93a26 100644
 --- a/src/aktualizr_lite/CMakeLists.txt
 +++ b/src/aktualizr_lite/CMakeLists.txt
 @@ -1,5 +1,8 @@
-+set(AKTUALIZR_LITE_SRC main.cc)
++set(AKTUALIZR_LITE_SRC main.cc helpers.cc)
 +set(AKTUALIZR_LITE_HEADERS helpers.h)
 +
  if(BUILD_OSTREE)
@@ -35,15 +37,38 @@ index 2d82d7b2..f6f42375 100644
  endif(BUILD_OSTREE)
  
 -add_aktualizr_test(NAME lite-version SOURCES version_test.cc)
-+add_aktualizr_test(NAME lite-helpers SOURCES helpers_test.cc)
++add_aktualizr_test(NAME lite-helpers SOURCES helpers.cc helpers_test.cc)
  
 -aktualizr_source_file_checks(main.cc version.h version_test.cc ostree_mock.cc)
 +aktualizr_source_file_checks(main.cc ${AKTUALIZR_LITE_SRC} ${AKTUALIZR_LITE_HEADERS} helpers_test.cc ostree_mock.cc)
  # vim: set tabstop=4 shiftwidth=4 expandtab:
+diff --git a/src/aktualizr_lite/helpers.cc b/src/aktualizr_lite/helpers.cc
+new file mode 100644
+index 00000000..3e6ab73e
+--- /dev/null
++++ b/src/aktualizr_lite/helpers.cc
+@@ -0,0 +1 @@
++#include "helpers.h"
 diff --git a/src/aktualizr_lite/version.h b/src/aktualizr_lite/helpers.h
-similarity index 100%
+similarity index 72%
 rename from src/aktualizr_lite/version.h
 rename to src/aktualizr_lite/helpers.h
+index 6c643e8a..c66ea05f 100644
+--- a/src/aktualizr_lite/version.h
++++ b/src/aktualizr_lite/helpers.h
+@@ -1,3 +1,6 @@
++#ifndef AKTUALIZR_LITE_HELPERS
++#define AKTUALIZR_LITE_HELPERS
++
+ #include <string>
+ 
+ #include <string.h>
+@@ -8,3 +11,5 @@ struct Version {
+ 
+   bool operator<(const Version& other) { return strverscmp(raw_ver.c_str(), other.raw_ver.c_str()) < 0; }
+ };
++
++#endif  // AKTUALIZR_LITE_HELPERS
 diff --git a/src/aktualizr_lite/version_test.cc b/src/aktualizr_lite/helpers_test.cc
 similarity index 97%
 rename from src/aktualizr_lite/version_test.cc

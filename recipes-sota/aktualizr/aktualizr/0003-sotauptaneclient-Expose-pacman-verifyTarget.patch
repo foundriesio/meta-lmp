@@ -1,7 +1,7 @@
-From b702e8ded7392ced58cfd824668fccfbeaf2d541 Mon Sep 17 00:00:00 2001
+From 984c8cc0f5e4084975ac731fd446a44118b57821 Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
 Date: Thu, 12 Sep 2019 17:01:06 -0500
-Subject: [PATCH 03/12] sotauptaneclient: Expose pacman::verifyTarget
+Subject: [PATCH 03/18] sotauptaneclient: Expose pacman::verifyTarget
 
 This is needed for aktualizr-lite.
 

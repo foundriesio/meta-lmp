@@ -59,6 +59,7 @@ cat << EOF > u-boot.its
 			arch = "${UBOOT_ARCH}";
 			compression = "none";
 			load = <${ubootloadaddr}>;
+			entry = <${ubootloadaddr}>;
 			hash-1 {
 				algo = "${FIT_HASH_ALG}";
 			};

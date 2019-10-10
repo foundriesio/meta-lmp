@@ -1,6 +1,8 @@
 # U-Boot fitImage support for verified boot, validated by SPL and including
 # support for booting OP-TEE and U-Boot as a normal world payload
 
+inherit kernel-arch
+
 # Share same key as used by U-Boot by default
 UBOOT_SPL_SIGN_ENABLE ?= "${UBOOT_SIGN_ENABLE}"
 UBOOT_SPL_SIGN_KEYNAME ?= "${UBOOT_SIGN_KEYNAME}"

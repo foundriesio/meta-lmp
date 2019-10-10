@@ -102,15 +102,6 @@ OSTREE_KERNEL_colibri-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-
 UBOOT_DTB_LOADADDRESS_colibri-imx7 = "0x82000000"
 UBOOT_RD_LOADADDRESS_colibri-imx7 = "0x82100000"
 
-# cl-som-imx7 (IOT-GATE-iMX7)
-IMAGE_BOOT_FILES_append_cl-som-imx7 = " boot.scr uEnv.txt"
-KERNEL_IMAGETYPE_cl-som-imx7 = "fitImage"
-KERNEL_CLASSES_cl-som-imx7 = " kernel-fitimage "
-OSTREE_KERNEL_cl-som-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
-UBOOT_DTB_LOADADDRESS_cl-som-imx7 = "0x82000000"
-UBOOT_RD_LOADADDRESS_cl-som-imx7 = "0x82100000"
-WKS_FILE_sota_cl-som-imx7 = "sdimage-imx7-spl-sota.wks"
-
 # Toradex Apalis iMX6
 EXTRA_IMAGEDEPENDS_append_apalis-imx6 = " u-boot-script-toradex"
 IMAGE_BOOT_FILES_apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.imx-spl ${MACHINE_ARCH}/flash_blk.img;flash_blk.img"

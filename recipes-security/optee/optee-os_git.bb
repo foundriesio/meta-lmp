@@ -41,6 +41,7 @@ EXTRA_OEMAKE = "PLATFORM=${OPTEEMACHINE} O=out/arm \
                 CROSS_COMPILE_core=${HOST_PREFIX} \
                 DEBUG=0 LDFLAGS= \
                 LIBGCC_LOCATE_CFLAGS=--sysroot=${STAGING_DIR_HOST} \
+                CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_TA_LOG_LEVEL=2 \
 "
 EXTRA_OEMAKE += "${@oe.utils.ifelse('${OPTEE_TA_SIGN_KEY}' != '', 'TA_SIGN_KEY=${OPTEE_TA_SIGN_KEY}', '')}"
 

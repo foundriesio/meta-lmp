@@ -16,7 +16,7 @@ IMAGE_FSTYPES_remove_rpi = "ext3"
 IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 ## Rollback is not yet supported on rpi
 SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
-KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
+KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo overlays/rpi-ft5406.dtbo"
 KERNEL_DEVICETREE_raspberrypi3_sota ?= "bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi3-64_sota ?= "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb broadcom/bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi-cm3_sota ?= "bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
@@ -32,13 +32,12 @@ OSTREE_KERNEL_ARGS_raspberrypi4_sota ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_
 ## U-Boot entrypoints for rpi
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
-## RPI4: Force rpi upstream kernel for now until it is in a better shape
-PREFERRED_PROVIDER_virtual/kernel_raspberrypi4 = "linux-lmp-dev"
-LINUX_VERSION_raspberrypi4 = "4.19.y"
-KERNEL_REPO_raspberrypi4 = "git://github.com/raspberrypi/linux.git"
-KERNEL_BRANCH_raspberrypi4 = "rpi-4.19.y"
-KERNEL_META_BRANCH_raspberrypi4 = "linux-v4.19.y"
-KERNEL_DEVICETREE_COMMON_RPI_raspberrypi4 = "overlays/vc4-fkms-v3d.dtbo"
+## RPI: Use rpi upstream kernel
+PREFERRED_PROVIDER_virtual/kernel_rpi = "linux-lmp-dev"
+LINUX_VERSION_rpi = "4.19.y"
+KERNEL_REPO_rpi = "git://github.com/raspberrypi/linux.git"
+KERNEL_BRANCH_rpi = "rpi-4.19.y"
+KERNEL_META_BRANCH_rpi = "linux-v4.19.y"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets

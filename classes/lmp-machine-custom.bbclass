@@ -36,13 +36,14 @@ OSTREE_KERNEL_ARGS_raspberrypi4 ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_mem.m
 UBOOT_ENTRYPOINT_rpi = "0x00008000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
-## RPI4: Force rpi upstream kernel for now until it is in a better shape
-PREFERRED_PROVIDER_virtual/kernel_raspberrypi4 = "linux-lmp-dev"
-LINUX_VERSION_raspberrypi4 = "4.19.y"
-KERNEL_REPO_raspberrypi4 = "git://github.com/raspberrypi/linux.git"
-KERNEL_BRANCH_raspberrypi4 = "rpi-4.19.y"
-KERNEL_META_BRANCH_raspberrypi4 = "linux-v4.19.y"
-KERNEL_DEVICETREE_COMMON_RPI_raspberrypi4 = "overlays/vc4-fkms-v3d.dtbo"
+## RPI: Use official raspberrypi downstream kernel
+PREFERRED_PROVIDER_virtual/kernel_rpi = "linux-lmp-dev"
+LINUX_VERSION_rpi = "4.19.y"
+KERNEL_REPO_rpi = "git://github.com/raspberrypi/linux.git"
+KERNEL_BRANCH_rpi = "rpi-4.19.y"
+KERNEL_COMMIT_rpi = "3492a1b003494535eb1b17aa7f258469036b1de7"
+KERNEL_META_BRANCH_rpi = "linux-v4.19.y"
+KERNEL_META_COMMIT_rpi = "983f90db9292313b10345a9cd47e7e502b9e4c0a"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets

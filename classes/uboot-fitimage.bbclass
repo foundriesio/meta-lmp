@@ -14,6 +14,9 @@ UBOOT_SPL_DTB_SYMLINK ?= "${SPL_BINARY}-${MACHINE}.dtb"
 UBOOT_ITB_IMAGE ?= "u-boot-${MACHINE}-${PV}-${PR}.itb"
 UBOOT_ITB_BINARY ?= "u-boot.itb"
 UBOOT_ITB_SYMLINK ?= "u-boot-${MACHINE}.itb"
+UBOOT_ITS_IMAGE ?= "u-boot-${MACHINE}-${PV}-${PR}.its"
+UBOOT_ITS_BINARY ?= "u-boot.its"
+UBOOT_ITS_SYMLINK ?= "u-boot-${MACHINE}.its"
 
 # fitImage Hash Algo
 FIT_HASH_ALG ?= "sha256"
@@ -120,33 +123,48 @@ uboot_fitimage_sign() {
 	cat spl/u-boot-spl-nodtb.bin spl/u-boot-spl.dtb > ${SPL_BINARY}
 }
 
-deploy_itb_helper() {
-        if [ -f spl/u-boot-spl.dtb ]; then
-                install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_IMAGE}
-                ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
-                ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
-        fi
-        if [ -f "${UBOOT_ITB_BINARY}" ]; then
-                install -m 644 ${UBOOT_ITB_BINARY} ${DEPLOYDIR}/${UBOOT_ITB_IMAGE}
-                ln -sf ${UBOOT_ITB_IMAGE} ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}
-                ln -sf ${UBOOT_ITB_IMAGE} ${DEPLOYDIR}/${UBOOT_ITB_BINARY}
-        fi
-}
-
 # Needs to happen after concat_dtb, which is a do_deploy prefuncs
 do_deploy_prepend() {
 	OPTEE_LOAD_ADDR=`cat ${DEPLOY_DIR_IMAGE}/optee/tee-init_load_addr.txt`
 
 	if [ -n "${UBOOT_CONFIG}" ]; then
 		for config in ${UBOOT_MACHINE}; do
-			cd ${B}/${config}
-			UBOOT_LOAD_ADDR=`grep CONFIG_SYS_TEXT_BASE u-boot.cfg | cut -d' ' -f 3`
-			uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
-			uboot_fitimage_sign ${UBOOT_ITB_BINARY}
-			# Make SPL to generate a board-compatible binary via mkimage
-			oe_runmake -C ${S} O=${B}/${config} SPL
-			deploy_itb_helper
+			i=$(expr $i + 1);
+			for type in ${UBOOT_CONFIG}; do
+				j=$(expr $j + 1);
+				if [ $j -eq $i ]; then
+					cd ${B}/${config}
+					UBOOT_LOAD_ADDR=`grep CONFIG_SYS_TEXT_BASE u-boot.cfg | cut -d' ' -f 3`
+					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
+					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
+					# Make SPL to generate a board-compatible binary via mkimage
+					oe_runmake -C ${S} O=${B}/${config} SPL
+					if [ -f spl/u-boot-spl.dtb ]; then
+						install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb
+						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}-${type}
+						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
+						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}-${type}
+						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
+
+					fi
+					if [ -f "${UBOOT_ITB_BINARY}" ]; then
+						install -m 644 ${UBOOT_ITB_BINARY} ${DEPLOYDIR}/u-boot-${MACHINE}-${type}-${PV}-${PR}.itb
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_BINARY}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_BINARY}
+
+						install -m 644 ${UBOOT_ITS_BINARY} ${DEPLOYDIR}/u-boot-${MACHINE}-${type}-${PV}-${PR}.its
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_BINARY}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_BINARY}
+					fi
+				fi
+			done
+			unset j
 		done
+		unset i
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep CONFIG_SYS_TEXT_BASE u-boot.cfg | cut -d' ' -f 3`
@@ -154,6 +172,19 @@ do_deploy_prepend() {
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
 		oe_runmake -C ${S} O=${B} SPL
-		deploy_itb_helper
+		if [ -f spl/u-boot-spl.dtb ]; then
+			install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_IMAGE}
+			ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
+			ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
+		fi
+		if [ -f "${UBOOT_ITB_BINARY}" ]; then
+			install -m 644 ${UBOOT_ITB_BINARY} ${DEPLOYDIR}/${UBOOT_ITB_IMAGE}
+			ln -sf ${UBOOT_ITB_IMAGE} ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}
+			ln -sf ${UBOOT_ITB_IMAGE} ${DEPLOYDIR}/${UBOOT_ITB_BINARY}
+
+			install -m 644 ${UBOOT_ITS_BINARY} ${DEPLOYDIR}/${UBOOT_ITS_IMAGE}
+			ln -sf ${UBOOT_ITS_IMAGE} ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}
+			ln -sf ${UBOOT_ITS_IMAGE} ${DEPLOYDIR}/${UBOOT_ITS_BINARY}
+		fi
 	fi
 }

@@ -1,0 +1,74 @@
+/* Device Tree overlay for RaspberryPi 7" Touchscreen panel */
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
+
+	fragment@0 {
+		target = <&dsi1>;
+		__overlay__ {
+			status = "okay";
+			port {
+				dsi_out_port: endpoint {
+					remote-endpoint = <&panel_dsi_port>;
+				};
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c_dsi>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+			lcdpi: lcd@45 {
+				compatible = "raspberrypi,7inch-touchscreen-panel";
+				reg = <0x45>;
+				lcd-rotate = <0>;
+				port {
+					panel_dsi_port: endpoint {
+						remote-endpoint = <&dsi_out_port>;
+					};
+				};
+			};
+		};
+	};
+
+	fragment@2 {
+		target-path = "/";
+		__overlay__ {
+			rpi_backlight: rpi_backlight {
+				compatible = "raspberrypi,rpi-backlight";
+				firmware = <&firmware>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@3 {
+		target-path = "/";
+		__overlay__ {
+			rpi_ft5406: rpi_ft5406 {
+				compatible = "rpi,rpi-ft5406";
+				firmware = <&firmware>;
+				status = "okay";
+				touchscreen-size-x = <800>;
+				touchscreen-size-y = <480>;
+				touchscreen-inverted-x = <0>;
+				touchscreen-inverted-y = <0>;
+				touchscreen-swapped-x-y = <0>;
+			};
+		};
+	};
+
+	__overrides__ {
+		lcd-rotate = <&lcdpi>,"lcd-rotate:0";
+		touchscreen-size-x = <&rpi_ft5406>,"touchscreen-size-x:0";
+		touchscreen-size-y = <&rpi_ft5406>,"touchscreen-size-y:0";
+		touchscreen-inverted-x = <&rpi_ft5406>,"touchscreen-inverted-x:0";
+		touchscreen-inverted-y = <&rpi_ft5406>,"touchscreen-inverted-y:0";
+		touchscreen-swapped-x-y = <&rpi_ft5406>,"touchscreen-swapped-x-y:0";
+	};
+};

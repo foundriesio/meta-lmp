@@ -11,6 +11,7 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
+PREFERRED_PROVIDER_virtual/dtb_rpi ?= "lmp-device-tree"
 IMAGE_INSTALL_remove_rpi = "fit-conf"
 IMAGE_FSTYPES_remove_rpi = "ext3"
 IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
@@ -19,7 +20,7 @@ KERNEL_CLASSES_rpi = " kernel-lmp-fitimage "
 KERNEL_CLASSES_remove_rpi = " kernel-fitimage "
 ## Rollback is not yet supported on rpi
 SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
-KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo overlays/rpi-ft5406.dtbo overlays/rpi-7inch.dtbo overlays/rpi-7inch-flip.dtbo"
+KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo overlays/rpi-ft5406.dtbo"
 KERNEL_DEVICETREE_raspberrypi3_sota ?= "bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi3-64_sota ?= "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb broadcom/bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi-cm3_sota ?= "bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"

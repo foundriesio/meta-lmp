@@ -11,29 +11,29 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
+RPI_USE_U_BOOT_rpi = "1"
 PREFERRED_PROVIDER_virtual/dtb_rpi ?= "lmp-device-tree"
-IMAGE_INSTALL_remove_rpi = "fit-conf"
-IMAGE_FSTYPES_remove_rpi = "ext3"
-IMAGE_BOOT_FILES_append_rpi = " ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+IMAGE_FSTYPES_remove_rpi = "ext3 rpi-sdimg"
+IMAGE_BOOT_FILES_rpi = "bcm2835-bootfiles/* u-boot.bin;${SDIMG_KERNELIMAGE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 KERNEL_CLASSES_rpi = " kernel-lmp-fitimage "
-## Added as append via sota_raspberrypi
-KERNEL_CLASSES_remove_rpi = " kernel-fitimage "
-## Rollback is not yet supported on rpi
-SOTA_CLIENT_FEATURES_remove_rpi = "ubootenv"
+OSTREE_KERNEL_rpi = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+KERNEL_IMAGETYPE_rpi = "fitImage"
 KERNEL_DEVICETREE_COMMON_RPI ?= "overlays/vc4-kms-v3d.dtbo overlays/vc4-fkms-v3d.dtbo overlays/rpi-ft5406.dtbo"
-KERNEL_DEVICETREE_raspberrypi3_sota ?= "bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
-KERNEL_DEVICETREE_raspberrypi3-64_sota ?= "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb broadcom/bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
-KERNEL_DEVICETREE_raspberrypi-cm3_sota ?= "bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
-KERNEL_DEVICETREE_raspberrypi4_sota ?= "bcm2711-rpi-4-b.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
-KERNEL_DEVICETREE_raspberrypi4-64_sota ?= "broadcom/bcm2711-rpi-4-b.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
+KERNEL_DEVICETREE_raspberrypi3 ?= "bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
+KERNEL_DEVICETREE_raspberrypi3-64 ?= "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2710-rpi-3-b-plus.dtb broadcom/bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
+KERNEL_DEVICETREE_raspberrypi-cm3 ?= "bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
+KERNEL_DEVICETREE_raspberrypi4 ?= "bcm2711-rpi-4-b.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
+KERNEL_DEVICETREE_raspberrypi4-64 ?= "broadcom/bcm2711-rpi-4-b.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
+PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot"
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL_rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 KERNEL_SERIAL_raspberrypi-cm3 ?= "console=ttyAMA0,115200"
 OSTREE_KERNEL_ARGS_COMMON_RPI ?= "coherent_pool=1M 8250.nr_uarts=1 dwc_otg.lpm_enable=0 console=tty1 ${KERNEL_SERIAL} ${OSTREE_KERNEL_ARGS_COMMON}"
-OSTREE_KERNEL_ARGS_raspberrypi3_sota ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
-OSTREE_KERNEL_ARGS_raspberrypi-cm3_sota ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
-OSTREE_KERNEL_ARGS_raspberrypi4_sota ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
+OSTREE_KERNEL_ARGS_raspberrypi3 ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
+OSTREE_KERNEL_ARGS_raspberrypi-cm3 ?= "cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
+OSTREE_KERNEL_ARGS_raspberrypi4 ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 ## U-Boot entrypoints for rpi
+UBOOT_ENTRYPOINT_rpi = "0x00008000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
 ## RPI4: Force rpi upstream kernel for now until it is in a better shape
@@ -63,8 +63,11 @@ QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"
 QB_OPT_APPEND_append_qemuriscv64 = " -bios ${DEPLOY_DIR_IMAGE}/fw_payload.elf"
 
 ## Freedom U540
+PREFERRED_PROVIDER_virtual/bootloader_freedom-u540 ?= "u-boot"
 IMAGE_BOOT_FILES_freedom-u540 = "fw_payload.bin boot.scr uEnv.txt"
-OSTREE_KERNEL_ARGS_freedom-u540_sota ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL_ARGS_COMMON}"
+OSTREE_KERNEL_freedom-u540 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_freedom-u540 ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL_ARGS_COMMON}"
+WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot"
@@ -85,10 +88,12 @@ QB_DRIVE_TYPE_qemuarm64 = "/dev/vd"
 QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config enable,target=native"
 
 # Intel
-IMAGE_INSTALL_remove_intel-corei7-64 = " minnowboard-efi-startup"
+OSTREE_BOOTLOADER_intel-corei7-64 ?= "grub"
 OSTREE_KERNEL_ARGS_intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 EFI_PROVIDER_intel-corei7-64 = "grub-efi"
-WKS_FILE_append_intel-corei7-64 = " efidisk-sota.wks"
+WKS_FILE_intel-corei7-64_sota = "efidisk-sota.wks"
+IMAGE_BOOT_FILES_intel-corei7-64 = ""
+IMAGE_FSTYPES_remove_intel-corei7-64 = "live hddimg"
 
 # Common for iMX targets
 OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

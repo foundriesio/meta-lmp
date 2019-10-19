@@ -3,7 +3,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 ALTERNATIVE_PRIORITY[resolv-conf] = "300"
 
 SRC_URI_append = " \
-	file://tmpfiles.d-var.conf-also-create-var-lib-misc.patch \
 	file://systemd-networkd-wait-online.service.in-use-any-by-d.patch \
 	file://systemd-timesyncd-update.service \
 "

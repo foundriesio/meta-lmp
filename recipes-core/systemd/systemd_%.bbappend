@@ -11,6 +11,9 @@ do_install_append() {
 	echo 'L+ /var/tmp - - - - /var/volatile/tmp' >> ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf
 	if [ ${@ oe.types.boolean('${VOLATILE_LOG_DIR}') } = True ]; then
 		echo 'L+ /var/log - - - - /var/volatile/log' >> ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf
+	else
+		# Make sure /var/log is not a link to volatile (e.g. after system updates)
+		sed -i '/\[Service\]/aExecStartPre=-/bin/rm -f /var/log' ${D}${systemd_system_unitdir}/systemd-journal-flush.service
 	fi
 
 	# Workaround for https://github.com/systemd/systemd/issues/11329

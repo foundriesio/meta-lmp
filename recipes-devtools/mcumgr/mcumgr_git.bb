@@ -13,5 +13,14 @@ PV = "v0.0.1+git"
 
 inherit go goarch godep
 
+# OE build default do_compile recipe is creating oddly broken binary
+# To fix this, let's use the same as manual build steps
+# NOTE: The binary is much larger than default recipe
+do_compile() {
+	cd ${S}/src/${GO_IMPORT}/mcumgr
+	mkdir -p ${B}/${GO_BUILD_BINDIR}
+	${GO} build -o ${B}/${GO_BUILD_BINDIR}/mcumgr mcumgr.go
+}
+
 RDEPENDS_${PN}-dev += "bash"
 RDEPENDS_${PN}-staticdev += "bash"

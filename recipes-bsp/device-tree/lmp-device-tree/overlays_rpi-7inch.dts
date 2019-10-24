@@ -1,3 +1,6 @@
+#include <dt-bindings/clock/bcm2835.h>
+#include <dt-bindings/power/raspberrypi-power.h>
+
 /* Device Tree overlay for RaspberryPi 7" Touchscreen panel */
 /dts-v1/;
 /plugin/;
@@ -6,30 +9,52 @@
 	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
 
 	fragment@0 {
-		target = <&dsi1>;
+		target = <&soc>;
 		__overlay__ {
-			status = "okay";
-			port {
-				dsi_out_port: endpoint {
-					remote-endpoint = <&panel_dsi_port>;
+			dsi@7e700000 {
+				compatible = "brcm,bcm2835-dsi1";
+				reg = <0x7e700000 0x8c>;
+				interrupts = <2 12>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				#clock-cells = <1>;
+				clocks = <&clocks BCM2835_PLLD_DSI1>,
+					 <&clocks BCM2835_CLOCK_DSI1E>,
+					 <&clocks BCM2835_CLOCK_DSI1P>;
+				clock-output-names = "dsi1_byte", "dsi1_ddr2", "dsi1_ddr";
+				clock-names = "phy", "escape", "pixel";
+
+				status = "okay";
+				port {
+					dsi_out_port: endpoint {
+						remote-endpoint = <&panel_dsi_port>;
+					};
 				};
 			};
 		};
 	};
 
 	fragment@1 {
-		target = <&i2c_dsi>;
+		target = <&soc>;
 		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			status = "okay";
-			lcdpi: lcd@45 {
-				compatible = "raspberrypi,7inch-touchscreen-panel";
-				reg = <0x45>;
-				lcd-rotate = <0>;
-				port {
-					panel_dsi_port: endpoint {
-						remote-endpoint = <&dsi_out_port>;
+			i2cdsi {
+				/* We have to use i2c-gpio because the firmware is also polling another device
+				 * using the only hardware I2C bus that could connect to these pins.
+				 */
+				compatible = "i2c-gpio";
+				#address-cells = <1>;
+				#size-cells = <0>;
+				status = "okay";
+				gpios = <&gpio 44 0
+					 &gpio 45 0>;
+				lcdpi: lcd@45 {
+					compatible = "raspberrypi,7inch-touchscreen-panel";
+					reg = <0x45>;
+					port {
+						panel_dsi_port: endpoint {
+							remote-endpoint = <&dsi_out_port>;
+						};
 					};
 				};
 			};
@@ -64,7 +89,6 @@
 	};
 
 	__overrides__ {
-		lcd-rotate = <&lcdpi>,"lcd-rotate:0";
 		touchscreen-size-x = <&rpi_ft5406>,"touchscreen-size-x:0";
 		touchscreen-size-y = <&rpi_ft5406>,"touchscreen-size-y:0";
 		touchscreen-inverted-x = <&rpi_ft5406>,"touchscreen-inverted-x:0";

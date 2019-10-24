@@ -18,7 +18,6 @@ PREFERRED_PROVIDER_iasl-native = "acpica-native"
 PREFERRED_PROVIDER_zlib ?= "zlib"
 PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
-PREFERRED_RPROVIDER_virtual/network-configuration ?= "networkmanager"
 
 # No need for x11 even for native
 DISTRO_FEATURES_NATIVE_remove = "x11"

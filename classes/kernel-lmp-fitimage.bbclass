@@ -2,6 +2,9 @@
 
 inherit kernel-fitimage
 
+# Default value for deployment filenames
+FPGA_BINARY ?= "fpga.bin"
+
 #
 # Emit the fitImage ITS configuration section
 #
@@ -9,8 +12,9 @@ inherit kernel-fitimage
 # $2 ... Linux kernel ID
 # $3 ... DTB image name
 # $4 ... ramdisk ID
-# $5 ... config ID
-# $6 ... default flag
+# $5 ... setup ID
+# $6 ... fpga ID
+# $7 ... default flag
 fitimage_emit_section_config() {
 
 	conf_csum="${FIT_HASH_ALG}"
@@ -25,6 +29,7 @@ fitimage_emit_section_config() {
 	fdt_line=""
 	ramdisk_line=""
 	setup_line=""
+	fpga_line=""
 	default_line=""
 
 	if [ -n "${2}" ]; then
@@ -50,18 +55,24 @@ fitimage_emit_section_config() {
 		setup_line="setup = \"setup@${5}\";"
 	fi
 
-	if [ "${6}" = "1" ]; then
+	if [ -n "${6}" ]; then
+		conf_desc="${conf_desc}${sep}fpga"
+		fpga_line="fpga = \"fpga@${6}\";"
+	fi
+
+	if [ "${7}" = "1" ]; then
 		default_line="default = \"conf@${3}\";"
 	fi
 
 	cat << EOF >> ${1}
                 ${default_line}
                 conf@${3} {
-                        description = "${6} ${conf_desc}";
+                        description = "${7} ${conf_desc}";
                         ${kernel_line}
                         ${fdt_line}
                         ${ramdisk_line}
                         ${setup_line}
+                        ${fpga_line}
                         hash@1 {
                                 algo = "${conf_csum}";
                         };
@@ -108,6 +119,36 @@ EOF
 }
 
 #
+# Emit the fitImage ITS fpga section
+#
+# $1 ... .its filename
+# $2 ... Image counter
+# $3 ... Path to fpga image
+fitimage_emit_section_fpga() {
+
+	fpga_csum="${FIT_HASH_ALG}"
+	fpga_loadline=""
+
+	if [ -n "${FPGA_LOADADDRESS}" ]; then
+		fpga_loadline="load = <${FPGA_LOADADDRESS}>;"
+	fi
+
+	cat << EOF >> ${1}
+                fpga@${2} {
+                        description = "FPGA binary";
+                        data = /incbin/("${3}");
+                        type = "fpga";
+                        arch = "${UBOOT_ARCH}";
+                        compression = "none";
+                        ${fpga_loadline}
+                        hash@1 {
+                                algo = "${fpga_csum}";
+                        };
+                };
+EOF
+}
+
+#
 # Assemble fitImage
 #
 # $1 ... .its filename
@@ -119,6 +160,7 @@ fitimage_assemble() {
 	DTBS=""
 	ramdiskcount=${3}
 	setupcount=""
+	fpgacount=""
 	rm -f ${1} arch/${ARCH}/boot/${2}
 
 	fitimage_emit_fit_header ${1}
@@ -172,7 +214,15 @@ fitimage_assemble() {
 	fi
 
 	#
-	# Step 4: Prepare a ramdisk section.
+	# Step 4: Prepare a fpga section.
+	#
+	if [ -e ${DEPLOY_DIR_IMAGE}/${FPGA_BINARY} ]; then
+		fpgacount=1
+		fitimage_emit_section_fpga ${1} "${fpgacount}" ${DEPLOY_DIR_IMAGE}/${FPGA_BINARY}
+	fi
+
+	#
+	# Step 5: Prepare a ramdisk section.
 	#
 	if [ "x${ramdiskcount}" = "x1" ] ; then
 		# Find and use the first initramfs image archive type we find
@@ -195,7 +245,7 @@ fitimage_assemble() {
 	fi
 
 	#
-	# Step 5: Prepare a configurations section
+	# Step 6: Prepare a configurations section
 	#
 	fitimage_emit_section_maint ${1} confstart
 
@@ -204,9 +254,9 @@ fitimage_assemble() {
 		for DTB in ${DTBS}; do
 			dtb_ext=${DTB##*.}
 			if [ "${dtb_ext}" = "dtbo" ]; then
-				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "`expr ${i} = ${dtbcount}`"
 			else
-				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${setupcount}" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "`expr ${i} = ${dtbcount}`"
 			fi
 			i=`expr ${i} + 1`
 		done
@@ -217,7 +267,7 @@ fitimage_assemble() {
 	fitimage_emit_section_maint ${1} fitend
 
 	#
-	# Step 6: Assemble the image
+	# Step 7: Assemble the image
 	#
 	uboot-mkimage \
 		${@'-D "${UBOOT_MKIMAGE_DTCOPTS}"' if len('${UBOOT_MKIMAGE_DTCOPTS}') else ''} \
@@ -225,7 +275,7 @@ fitimage_assemble() {
 		arch/${ARCH}/boot/${2}
 
 	#
-	# Step 7: Sign the image and add public key to U-Boot dtb
+	# Step 8: Sign the image and add public key to U-Boot dtb
 	#
 	if [ "x${UBOOT_SIGN_ENABLE}" = "x1" ] ; then
 		add_key_to_u_boot=""

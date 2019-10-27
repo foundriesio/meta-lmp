@@ -8,6 +8,7 @@ DEPENDS = "python-pycrypto-native python3-pyelftools-native"
 SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-allow-setting-sysroot-for-libgcc-lookup.patch \
     file://0001-generic_boot-init-new-dtb-if-CFG_DT_ADDR-defined.patch \
+    file://0001-support-overlay-at-fix-address-and-extend-D.patch \
 "
 
 SRC_URI_append_qemuarm64 = " \

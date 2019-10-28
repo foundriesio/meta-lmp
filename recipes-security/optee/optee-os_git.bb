@@ -27,6 +27,8 @@ S = "${WORKDIR}/git"
 
 inherit deploy pythonnative python3native
 
+PROVIDES = "virtual/optee-os"
+
 OPTEEMACHINE ?= "${MACHINE}"
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"

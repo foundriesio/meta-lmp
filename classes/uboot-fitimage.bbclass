@@ -22,7 +22,7 @@ UBOOT_ITS_SYMLINK ?= "u-boot-${MACHINE}.its"
 FIT_HASH_ALG ?= "sha256"
 OPTEE_BINARY ?= "tee-pager.bin"
 
-do_compile[depends] += " optee-os:do_deploy"
+do_compile[depends] += " virtual/optee-os:do_deploy"
 
 # Assemble U-Boot fitImage
 #

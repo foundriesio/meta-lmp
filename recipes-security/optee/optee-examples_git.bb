@@ -3,7 +3,7 @@ HOMEPAGE = "https://github.com/linaro-swg/optee_examples"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=cd95ab417e23b94f381dafc453d70c30"
 
-DEPENDS = "optee-client optee-os python-pycrypto-native"
+DEPENDS = "optee-client virtual/optee-os python-pycrypto-native"
 
 inherit pythonnative
 

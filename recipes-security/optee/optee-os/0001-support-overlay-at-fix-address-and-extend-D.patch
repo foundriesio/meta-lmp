@@ -1,4 +1,4 @@
-From 4c9838a2028cd77acf4cedefa6fa07b5720f7de9 Mon Sep 17 00:00:00 2001
+From 1203dfa70878780719c9989049f094b356bbec50 Mon Sep 17 00:00:00 2001
 From: Jorge Ramirez-Ortiz <jorge@foundries.io>
 Date: Sun, 27 Oct 2019 16:40:45 +0100
 Subject: [PATCH] [FIO toup] Support overlay at fix address and extend DTS
@@ -17,7 +17,7 @@ Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
  2 files changed, 54 insertions(+), 3 deletions(-)
 
 diff --git a/core/arch/arm/kernel/generic_boot.c b/core/arch/arm/kernel/generic_boot.c
-index 2bed4937..a41da047 100644
+index 57c38357..f1a5874a 100644
 --- a/core/arch/arm/kernel/generic_boot.c
 +++ b/core/arch/arm/kernel/generic_boot.c
 @@ -78,6 +78,9 @@ KEEP_PAGER(sem_cpu_sync);
@@ -57,10 +57,10 @@ index 2bed4937..a41da047 100644
 +	return fdt_create_empty_tree(dt->blob, dt_size);
 +#endif
 +
- #ifndef CFG_DT_ADDR
  	ret = fdt_check_header(dt->blob);
  	if (!ret) {
-@@ -592,6 +603,7 @@ static int init_dt_overlay(struct dt_descriptor *dt, int __maybe_unused dt_size)
+ 		fdt_for_each_subnode(fragment, dt->blob, 0)
+@@ -590,6 +601,7 @@ static int init_dt_overlay(struct dt_descriptor *dt, int __maybe_unused dt_size)
  #endif
  }
  #else
@@ -68,7 +68,7 @@ index 2bed4937..a41da047 100644
  static int add_dt_overlay_fragment(struct dt_descriptor *dt __unused, int offs)
  {
  	return offs;
-@@ -602,7 +614,7 @@ static int init_dt_overlay(struct dt_descriptor *dt __unused,
+@@ -600,7 +612,7 @@ static int init_dt_overlay(struct dt_descriptor *dt __unused,
  {
  	return 0;
  }
@@ -77,7 +77,7 @@ index 2bed4937..a41da047 100644
  
  static int add_dt_path_subnode(struct dt_descriptor *dt, const char *path,
  			       const char *subnode)
-@@ -947,6 +959,9 @@ static void init_external_dt(unsigned long phys_dt)
+@@ -945,6 +957,9 @@ static void init_external_dt(unsigned long phys_dt)
  
  	dt->blob = fdt;
  
@@ -87,7 +87,7 @@ index 2bed4937..a41da047 100644
  	ret = init_dt_overlay(dt, CFG_DTB_MAX_SIZE);
  	if (ret < 0) {
  		EMSG("Device Tree Overlay init fail @ 0x%" PRIxPA ": error %d",
-@@ -954,6 +969,9 @@ static void init_external_dt(unsigned long phys_dt)
+@@ -952,6 +967,9 @@ static void init_external_dt(unsigned long phys_dt)
  		panic();
  	}
  
@@ -97,7 +97,7 @@ index 2bed4937..a41da047 100644
  	ret = fdt_open_into(fdt, fdt, CFG_DTB_MAX_SIZE);
  	if (ret < 0) {
  		EMSG("Invalid Device Tree at 0x%" PRIxPA ": error %d",
-@@ -1073,6 +1091,9 @@ void init_tee_runtime(void)
+@@ -1071,6 +1089,9 @@ void init_tee_runtime(void)
  static void init_primary_helper(unsigned long pageable_part,
  				unsigned long nsec_entry, unsigned long fdt)
  {
@@ -107,7 +107,7 @@ index 2bed4937..a41da047 100644
  	/*
  	 * Mask asynchronous exceptions before switch to the thread vector
  	 * as the thread handler requires those to be masked while
-@@ -1091,11 +1112,13 @@ static void init_primary_helper(unsigned long pageable_part,
+@@ -1089,11 +1110,13 @@ static void init_primary_helper(unsigned long pageable_part,
  	thread_init_primary(generic_boot_get_handlers());
  	thread_init_per_cpu();
  	init_sec_mon(nsec_entry);
@@ -122,7 +122,7 @@ index 2bed4937..a41da047 100644
  	IMSG("OP-TEE version: %s", core_v_str);
  
  	main_init_gic();
-@@ -1104,6 +1127,14 @@ static void init_primary_helper(unsigned long pageable_part,
+@@ -1102,6 +1125,14 @@ static void init_primary_helper(unsigned long pageable_part,
  	init_tee_runtime();
  #endif
  	release_external_dt();

@@ -14,6 +14,7 @@ require conf/distro/include/arm-defaults.inc
 require conf/distro/include/security_flags.inc
 
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
+PREFERRED_PROVIDER_virtual/optee-os ?= "optee-os"
 PREFERRED_PROVIDER_iasl-native = "acpica-native"
 PREFERRED_PROVIDER_zlib ?= "zlib"
 PREFERRED_PROVIDER_zlib-native ?= "zlib-native"

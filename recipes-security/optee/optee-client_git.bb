@@ -4,7 +4,9 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=69663ab153298557a59c67a60a743e5b"
 
 SRC_URI = "git://github.com/OP-TEE/optee_client.git \
-           file://tee-supplicant.service"
+    file://0001-FIO-extras-Disable-RPMB_EMU-by-default.patch \
+    file://tee-supplicant.service \
+"
 
 PV = "3.6.0+git"
 SRCREV = "bc0ec8ce1e4dc5ae23f4737ef659338b7cd408fe"

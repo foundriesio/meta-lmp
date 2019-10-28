@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31
 
 inherit pythonnative
 
-DEPENDS = "python-pycrypto-native optee-os optee-client"
+DEPENDS = "python-pycrypto-native virtual/optee-os optee-client"
 
 SRC_URI = "git://github.com/foundriesio/optee-sks.git"
 SRCREV = "${AUTOREV}"

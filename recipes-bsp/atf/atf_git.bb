@@ -3,7 +3,7 @@ LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://license.rst;md5=90153916317c204fade8b8df15739cde"
 
 DEPENDS = "u-boot openssl-native zip-native"
-DEPENDS += " ${@bb.utils.contains("MACHINE_FEATURES", "optee", "optee-os", "", d)}"
+DEPENDS += " ${@bb.utils.contains("MACHINE_FEATURES", "optee", "virtual/optee-os", "", d)}"
 
 SRC_URI = "git://github.com/ARM-software/arm-trusted-firmware.git"
 
@@ -14,7 +14,7 @@ S = "${WORKDIR}/git"
 
 inherit deploy
 
-do_compile[depends] += "u-boot:do_deploy optee-os:do_deploy"
+do_compile[depends] += "u-boot:do_deploy virtual/optee-os:do_deploy"
 
 COMPATIBLE_MACHINE = "(qemuarm64)"
 

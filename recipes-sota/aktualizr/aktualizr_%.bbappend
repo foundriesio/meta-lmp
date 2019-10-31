@@ -27,4 +27,4 @@ do_install_append() {
     install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
 }
 
-RDEPENDS_${PN}-lite = "aktualizr-configs lshw"
+RDEPENDS_${PN}-lite = "aktualizr-configs aktualizr-hwid lshw"

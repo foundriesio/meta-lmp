@@ -16,8 +16,8 @@ SRC_URI_append_libc-musl = " \
     file://utils.c-disable-tilde-as-it-is-not-supported-by-musl.patch \
 "
 
-PACKAGECONFIG[dockerapp] = "-DBUILD_DOCKERAPP=ON,-DBUILD_DOCKERAPP=OFF,"
-PACKAGECONFIG += "dockerapp"
+PACKAGECONFIG[dockerapp] = "-DBUILD_DOCKERAPP=ON,-DBUILD_DOCKERAPP=OFF,,docker-app"
+PACKAGECONFIG_append_class-target = " dockerapp"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service"

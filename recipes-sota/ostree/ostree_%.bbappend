@@ -4,7 +4,7 @@ SRC_URI += " \
     file://update-default-grub-cfg-header.patch \
 "
 
-PACKAGECONFIG_append = " curl libarchive"
+PACKAGECONFIG_append = " curl libarchive static"
 PACKAGECONFIG_class-native_append = " curl"
 PACKAGECONFIG_remove = "soup"
 PACKAGECONFIG_class-native_remove = "soup"

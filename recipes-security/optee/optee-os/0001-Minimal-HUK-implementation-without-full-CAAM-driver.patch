@@ -1,4 +1,4 @@
-From e9da3c4c825443bde8844d7ec02a7609f39c5234 Mon Sep 17 00:00:00 2001
+From 33f1991160fe3e1083add6f619324dfcedf5773f Mon Sep 17 00:00:00 2001
 From: Rouven Czerwinski <r.czerwinski@pengutronix.de>
 Date: Thu, 1 Aug 2019 14:56:48 +0200
 Subject: [PATCH] Minimal HUK implementation without full CAAM driver
@@ -37,15 +37,15 @@ bytes long.
 Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- core/arch/arm/plat-imx/drivers/imx_caam.c | 140 ++++++++++++++++++++++
+ core/arch/arm/plat-imx/drivers/imx_caam.c | 141 ++++++++++++++++++++++
  core/arch/arm/plat-imx/drivers/imx_caam.h |  84 ++++++++++++-
- 2 files changed, 223 insertions(+), 1 deletion(-)
+ 2 files changed, 224 insertions(+), 1 deletion(-)
 
 diff --git a/core/arch/arm/plat-imx/drivers/imx_caam.c b/core/arch/arm/plat-imx/drivers/imx_caam.c
-index 8d427f3c..44a59ea2 100644
+index 8d427f3c..322da060 100644
 --- a/core/arch/arm/plat-imx/drivers/imx_caam.c
 +++ b/core/arch/arm/plat-imx/drivers/imx_caam.c
-@@ -9,9 +9,148 @@
+@@ -9,9 +9,149 @@
  #include <initcall.h>
  #include <io.h>
  #include <mm/core_memprot.h>
@@ -166,9 +166,10 @@ index 8d427f3c..44a59ea2 100644
 +	cache_operation(TEE_CACHEINVALIDATE, &mkvb.outbuf, MKVB_SIZE);
 +	DHEXDUMP(&mkvb.outbuf, MKVB_SIZE);
 +
-+	if (mkvb.jr.outring[0].status != 0)
++	if (mkvb.jr.outring[0].status != 0) {
 +		ret = TEE_ERROR_SECURITY;
 +		goto out;
++	}
 +
 +	memcpy(dest, &mkvb.outbuf, MKVB_SIZE);
 +	ret = TEE_SUCCESS;
@@ -194,7 +195,7 @@ index 8d427f3c..44a59ea2 100644
  register_phys_mem_pgdir(MEM_AREA_IO_SEC, CAAM_BASE, CORE_MMU_PGDIR_SIZE);
  
  static TEE_Result init_caam(void)
-@@ -25,6 +164,7 @@ static TEE_Result init_caam(void)
+@@ -25,6 +165,7 @@ static TEE_Result init_caam(void)
  	if (!caam)
  		return TEE_ERROR_GENERIC;
  

@@ -18,6 +18,7 @@ SRC_URI_append_libc-musl = " \
 
 PACKAGECONFIG[dockerapp] = "-DBUILD_DOCKERAPP=ON,-DBUILD_DOCKERAPP=OFF,,docker-app"
 PACKAGECONFIG_append_class-target = " dockerapp"
+PACKAGECONFIG_remove_class-target_riscv64 = "dockerapp"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service"

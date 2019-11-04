@@ -6,6 +6,8 @@ SRC_URI += " \
 
 PACKAGECONFIG_append = " curl libarchive"
 PACKAGECONFIG_class-native_append = " curl"
+PACKAGECONFIG_remove = "soup"
+PACKAGECONFIG_class-native_remove = "soup"
 
 EXTRA_OECONF += " \
     --with-builtin-grub2-mkconfig \

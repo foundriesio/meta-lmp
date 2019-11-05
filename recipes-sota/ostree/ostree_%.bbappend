@@ -13,6 +13,10 @@ EXTRA_OECONF += " \
     --with-builtin-grub2-mkconfig \
 "
 
+do_install_append() {
+    create_wrapper ${D}${bindir}/ostree OSTREE_GRUB2_EXEC="${STAGING_LIBDIR_NATIVE}/ostree/ostree-grub-generator"
+}
+
 FILES_${PN} += " \
     ${libdir}/ostree/ostree-grub-generator \
 "

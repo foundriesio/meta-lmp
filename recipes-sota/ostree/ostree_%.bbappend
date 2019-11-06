@@ -2,6 +2,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
     file://update-default-grub-cfg-header.patch \
+    file://0001-Makefile-declare-ostree_boot_SCRIPTS-and-append-valu.patch \
 "
 
 PACKAGECONFIG_append = " curl libarchive static"

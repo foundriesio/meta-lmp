@@ -45,7 +45,7 @@ diff --git a/core/arch/arm/plat-imx/drivers/imx_caam.c b/core/arch/arm/plat-imx/
 index 8d427f3c..322da060 100644
 --- a/core/arch/arm/plat-imx/drivers/imx_caam.c
 +++ b/core/arch/arm/plat-imx/drivers/imx_caam.c
-@@ -9,9 +9,149 @@
+@@ -9,9 +9,151 @@
  #include <initcall.h>
  #include <io.h>
  #include <mm/core_memprot.h>
@@ -158,8 +158,10 @@ index 8d427f3c..322da060 100644
 +	/* Busy loop until job is completed */
 +	while (io_read32((vaddr_t)&mkvb.ctrl->jrcfg[MKVB_JR].orsfr) != 1) {
 +		counter++;
-+		if (counter > 10000)
++		if (counter > 10000) {
++			ret = TEE_ERROR_SECURITY;
 +			goto out;
++		}
 +	}
 +
 +	cache_operation(TEE_CACHEINVALIDATE, &mkvb.jr, sizeof(mkvb.jr));

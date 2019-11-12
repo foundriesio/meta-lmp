@@ -1,0 +1,459 @@
+From 6cd9d47cfeda0dafb9f91bb18d9127461bba6b01 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Tue, 12 Nov 2019 09:54:04 +0100
+Subject: [PATCH] Foundries.IO Verified Boot Trusted Application
+
+This code is a clone of AVB for further development and customization
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ ta/fiovb/Makefile                 |  18 ++
+ ta/fiovb/entry.c                  | 308 ++++++++++++++++++++++++++++++
+ ta/fiovb/include/ta_fiovb.h       |  50 +++++
+ ta/fiovb/sub.mk                   |   3 +
+ ta/fiovb/user_ta.mk               |   1 +
+ ta/fiovb/user_ta_header_defines.h |  17 ++
+ 6 files changed, 397 insertions(+)
+ create mode 100644 ta/fiovb/Makefile
+ create mode 100644 ta/fiovb/entry.c
+ create mode 100644 ta/fiovb/include/ta_fiovb.h
+ create mode 100644 ta/fiovb/sub.mk
+ create mode 100644 ta/fiovb/user_ta.mk
+ create mode 100644 ta/fiovb/user_ta_header_defines.h
+
+diff --git a/ta/fiovb/Makefile b/ta/fiovb/Makefile
+new file mode 100644
+index 00000000..cdc86806
+--- /dev/null
++++ b/ta/fiovb/Makefile
+@@ -0,0 +1,18 @@
++# The UUID for the Trusted Application
++BINARY=22250a54-0bf1-48fe-8002-7b20f1c9c9b1
++
++ifdef TA_CROSS_COMPILE
++CROSS_COMPILE ?= $(TA_CROSS_COMPILE)
++endif
++export CROSS_COMPILE
++
++CFG_TEE_TA_LOG_LEVEL ?= 2
++CPPFLAGS += -DCFG_TEE_TA_LOG_LEVEL=$(CFG_TEE_TA_LOG_LEVEL)
++
++-include $(TA_DEV_KIT_DIR)/mk/ta_dev_kit.mk
++
++ifeq ($(wildcard $(TA_DEV_KIT_DIR)/mk/ta_dev_kit.mk), )
++clean:
++	@echo 'Note: $$(TA_DEV_KIT_DIR)/mk/ta_dev_kit.mk not found, cannot clean TA'
++	@echo 'Note: TA_DEV_KIT_DIR=$(TA_DEV_KIT_DIR)'
++endif
+diff --git a/ta/fiovb/entry.c b/ta/fiovb/entry.c
+new file mode 100644
+index 00000000..ae54b662
+--- /dev/null
++++ b/ta/fiovb/entry.c
+@@ -0,0 +1,308 @@
++// SPDX-License-Identifier: BSD-2-Clause
++/* Copyright (c) 2018, Linaro Limited */
++/* Copyright (c) 2019, Foundries.IO */
++
++#include <ta_fiovb.h>
++#include <tee_internal_api.h>
++#include <tee_internal_api_extensions.h>
++
++#include <string.h>
++#include <util.h>
++
++#define DEFAULT_LOCK_STATE	0
++
++static const uint32_t storageid = TEE_STORAGE_PRIVATE_RPMB;
++static const char rb_obj_name[] = "rb_state";
++static const char *named_value_prefix = "named_value_";
++
++static TEE_Result get_slot_offset(size_t slot, size_t *offset)
++{
++	if (slot >= TA_FIOVB_MAX_ROLLBACK_LOCATIONS)
++		return TEE_ERROR_BAD_PARAMETERS;
++
++	*offset = sizeof(uint32_t) /* lock_state */ + slot * sizeof(uint64_t);
++	return TEE_SUCCESS;
++}
++
++static TEE_Result create_rb_state(uint32_t lock_state, TEE_ObjectHandle *h)
++{
++	const uint32_t flags = TEE_DATA_FLAG_ACCESS_READ |
++			       TEE_DATA_FLAG_ACCESS_WRITE |
++			       TEE_DATA_FLAG_OVERWRITE;
++
++	return TEE_CreatePersistentObject(storageid, rb_obj_name,
++					  sizeof(rb_obj_name), flags, NULL,
++					  &lock_state, sizeof(lock_state), h);
++}
++
++static TEE_Result open_rb_state(uint32_t default_lock_state,
++				TEE_ObjectHandle *h)
++{
++	uint32_t flags = TEE_DATA_FLAG_ACCESS_READ |
++			 TEE_DATA_FLAG_ACCESS_WRITE;
++	TEE_Result res;
++
++	res = TEE_OpenPersistentObject(storageid, rb_obj_name,
++				       sizeof(rb_obj_name), flags, h);
++	if (!res)
++		return TEE_SUCCESS;
++
++	return create_rb_state(default_lock_state, h);
++}
++
++static TEE_Result get_named_object_name(char *name_orig,
++					uint32_t name_orig_size,
++					char *name, uint32_t *name_size)
++{
++	size_t pref_len = strlen(named_value_prefix);
++
++	if (name_orig_size + pref_len >
++	    TEE_OBJECT_ID_MAX_LEN)
++		return TEE_ERROR_BAD_PARAMETERS;
++
++	/* Start with prefix */
++	TEE_MemMove(name, named_value_prefix, pref_len);
++
++	/* Concatenate provided object name */
++	TEE_MemMove(name + pref_len, name_orig, name_orig_size);
++
++	*name_size = name_orig_size + pref_len;
++
++	return TEE_SUCCESS;
++}
++
++static TEE_Result read_rb_idx(uint32_t pt, TEE_Param params[TEE_NUM_PARAMS])
++{
++	const uint32_t exp_pt = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INPUT,
++						TEE_PARAM_TYPE_VALUE_OUTPUT,
++						TEE_PARAM_TYPE_NONE,
++						TEE_PARAM_TYPE_NONE);
++	size_t slot_offset;
++	uint64_t idx;
++	uint32_t count;
++	TEE_Result res;
++	TEE_ObjectHandle h;
++
++	if (pt != exp_pt)
++		return TEE_ERROR_BAD_PARAMETERS;
++
++	res = get_slot_offset(params[0].value.a, &slot_offset);
++	if (res)
++		return res;
++
++	res = open_rb_state(DEFAULT_LOCK_STATE, &h);
++	if (res)
++		return res;
++
++	res = TEE_SeekObjectData(h, slot_offset, TEE_DATA_SEEK_SET);
++	if (res)
++		goto out;
++
++	res =  TEE_ReadObjectData(h, &idx, sizeof(idx), &count);
++	if (res)
++		goto out;
++	if (count != sizeof(idx)) {
++		idx = 0; /* Not yet written slots are reported as 0 */
++
++		if (count) {
++			/*
++			 * Somehow the file didn't even hold a complete
++			 * slot index entry.  Write it as 0.
++			 */
++			res = TEE_SeekObjectData(h, slot_offset,
++						 TEE_DATA_SEEK_SET);
++			if (res)
++				goto out;
++			res = TEE_WriteObjectData(h, &idx, sizeof(idx));
++			if (res)
++				goto out;
++		}
++	}
++
++	params[1].value.a = idx >> 32;
++	params[1].value.b = idx;
++out:
++	TEE_CloseObject(h);
++	return res;
++}
++
++static TEE_Result write_rb_idx(uint32_t pt, TEE_Param params[TEE_NUM_PARAMS])
++{
++	const uint32_t exp_pt = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INPUT,
++						TEE_PARAM_TYPE_VALUE_INPUT,
++						TEE_PARAM_TYPE_NONE,
++						TEE_PARAM_TYPE_NONE);
++	size_t slot_offset;
++	uint64_t widx;
++	uint64_t idx;
++	uint32_t count;
++	TEE_Result res;
++	TEE_ObjectHandle h;
++
++	if (pt != exp_pt)
++		return TEE_ERROR_BAD_PARAMETERS;
++
++	res = get_slot_offset(params[0].value.a, &slot_offset);
++	if (res)
++		return res;
++	widx = ((uint64_t)params[1].value.a << 32) | params[1].value.b;
++
++	res = open_rb_state(DEFAULT_LOCK_STATE, &h);
++	if (res)
++		return res;
++
++	res = TEE_SeekObjectData(h, slot_offset, TEE_DATA_SEEK_SET);
++	if (res)
++		goto out;
++
++	res =  TEE_ReadObjectData(h, &idx, sizeof(idx), &count);
++	if (res)
++		goto out;
++	if (count != sizeof(idx))
++		idx = 0; /* Not yet written slots are reported as 0 */
++
++	if (widx < idx) {
++		res = TEE_ERROR_SECURITY;
++		goto out;
++	}
++
++	res = TEE_SeekObjectData(h, slot_offset, TEE_DATA_SEEK_SET);
++	if (res)
++		goto out;
++
++	res = TEE_WriteObjectData(h, &widx, sizeof(widx));
++out:
++	TEE_CloseObject(h);
++	return res;
++}
++
++static TEE_Result write_persist_value(uint32_t pt,
++				      TEE_Param params[TEE_NUM_PARAMS])
++{
++	const uint32_t exp_pt = TEE_PARAM_TYPES(TEE_PARAM_TYPE_MEMREF_INPUT,
++						TEE_PARAM_TYPE_MEMREF_INPUT,
++						TEE_PARAM_TYPE_NONE,
++						TEE_PARAM_TYPE_NONE);
++	const uint32_t flags = TEE_DATA_FLAG_ACCESS_READ |
++			       TEE_DATA_FLAG_ACCESS_WRITE |
++			       TEE_DATA_FLAG_OVERWRITE;
++	TEE_Result res;
++	TEE_ObjectHandle h;
++
++	char name_full[TEE_OBJECT_ID_MAX_LEN];
++	uint32_t name_full_sz;
++
++	if (pt != exp_pt)
++		return TEE_ERROR_BAD_PARAMETERS;
++
++	char *name_buf = params[0].memref.buffer;
++	uint32_t name_buf_sz = params[0].memref.size;
++
++	char *value = params[1].memref.buffer;
++	uint32_t value_sz = params[1].memref.size;
++
++	res = get_named_object_name(name_buf, name_buf_sz,
++				    name_full, &name_full_sz);
++	if (res)
++		return res;
++
++	res = TEE_CreatePersistentObject(storageid, name_full,
++					 name_full_sz,
++					 flags, NULL, value,
++					 value_sz, &h);
++	if (res)
++		EMSG("Can't create named object value, res = 0x%x", res);
++
++	TEE_CloseObject(h);
++
++	return res;
++}
++
++static TEE_Result read_persist_value(uint32_t pt,
++				      TEE_Param params[TEE_NUM_PARAMS])
++{
++	const uint32_t exp_pt = TEE_PARAM_TYPES(TEE_PARAM_TYPE_MEMREF_INPUT,
++						TEE_PARAM_TYPE_MEMREF_INOUT,
++						TEE_PARAM_TYPE_NONE,
++						TEE_PARAM_TYPE_NONE);
++	uint32_t flags = TEE_DATA_FLAG_ACCESS_READ |
++			 TEE_DATA_FLAG_ACCESS_WRITE;
++	TEE_Result res;
++	TEE_ObjectHandle h;
++
++	char name_full[TEE_OBJECT_ID_MAX_LEN];
++	uint32_t name_full_sz;
++	uint32_t count;
++
++	if (pt != exp_pt)
++		return TEE_ERROR_BAD_PARAMETERS;
++
++	char *name_buf = params[0].memref.buffer;
++	uint32_t name_buf_sz = params[0].memref.size;
++
++	char *value = params[1].memref.buffer;
++	uint32_t value_sz = params[1].memref.size;
++
++	res = get_named_object_name(name_buf, name_buf_sz,
++				    name_full, &name_full_sz);
++	if (res)
++		return res;
++
++	res = TEE_OpenPersistentObject(storageid, name_full,
++				       name_full_sz, flags, &h);
++	if (res) {
++		EMSG("Can't open named object value, res = 0x%x", res);
++		return res;
++	}
++
++	res =  TEE_ReadObjectData(h, value, value_sz, &count);
++	if (res) {
++		EMSG("Can't read named object value, res = 0x%x", res);
++		goto out;
++	}
++
++	params[1].memref.size = count;
++out:
++	TEE_CloseObject(h);
++
++	return res;
++}
++
++TEE_Result TA_CreateEntryPoint(void)
++{
++	return TEE_SUCCESS;
++}
++
++void TA_DestroyEntryPoint(void)
++{
++}
++
++TEE_Result TA_OpenSessionEntryPoint(uint32_t pt __unused,
++				    TEE_Param params[4] __unused,
++				    void **session __unused)
++{
++	return TEE_SUCCESS;
++}
++
++void TA_CloseSessionEntryPoint(void *sess __unused)
++{
++}
++
++TEE_Result TA_InvokeCommandEntryPoint(void *sess __unused, uint32_t cmd,
++				      uint32_t pt,
++				      TEE_Param params[TEE_NUM_PARAMS])
++{
++	switch (cmd) {
++	case TA_FIOVB_CMD_READ_ROLLBACK_INDEX:
++		return read_rb_idx(pt, params);
++	case TA_FIOVB_CMD_WRITE_ROLLBACK_INDEX:
++		return write_rb_idx(pt, params);
++	case TA_FIOVB_CMD_READ_PERSIST_VALUE:
++		return read_persist_value(pt, params);
++	case TA_FIOVB_CMD_WRITE_PERSIST_VALUE:
++		return write_persist_value(pt, params);
++	default:
++		EMSG("Command ID 0x%x is not supported", cmd);
++		return TEE_ERROR_NOT_SUPPORTED;
++	}
++}
+diff --git a/ta/fiovb/include/ta_fiovb.h b/ta/fiovb/include/ta_fiovb.h
+new file mode 100644
+index 00000000..72105e3a
+--- /dev/null
++++ b/ta/fiovb/include/ta_fiovb.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/* Copyright (c) 2018, Linaro Limited */
++/* Copyright (c) 2019, Foundries.IO */
++
++#ifndef __TA_FIOVB_H
++#define __TA_FIOVB_H
++
++#define TA_FIOVB_UUID {0x22250a54, 0x0bf1, 0x48fe, \
++		      { 0x80, 0x02, 0x7b, 0x20, 0xf1, 0xc9, 0xc9, 0xb1 } }
++
++
++#define TA_FIOVB_MAX_ROLLBACK_LOCATIONS	256
++
++/*
++ * Gets the rollback index corresponding to the given rollback index slot.
++ *
++ * in	params[0].value.a:	rollback index slot
++ * out	params[1].value.a:	upper 32 bits of rollback index
++ * out	params[1].value.b:	lower 32 bits of rollback index
++ */
++#define TA_FIOVB_CMD_READ_ROLLBACK_INDEX	0
++
++/*
++ * Updates the rollback index corresponding to the given rollback index slot.
++ *
++ * Will refuse to update a slot with a lower value.
++ *
++ * in	params[0].value.a:	rollback index slot
++ * in	params[1].value.a:	upper 32 bits of rollback index
++ * in	params[1].value.b:	lower 32 bits of rollback index
++ */
++#define TA_FIOVB_CMD_WRITE_ROLLBACK_INDEX	1
++
++/*
++ * Reads a persistent value corresponding to the given name.
++ *
++ * in	params[0].memref:	persistent value name
++ * out	params[1].memref:	read persistent value buffer
++ */
++#define TA_FIOVB_CMD_READ_PERSIST_VALUE		2
++
++/*
++ * Writes a persistent value corresponding to the given name.
++ *
++ * in	params[0].memref:	persistent value name
++ * in	params[1].memref:	persistent value buffer to write
++ */
++#define TA_FIOVB_CMD_WRITE_PERSIST_VALUE	3
++
++#endif /*__TA_FIOVB_H*/
+diff --git a/ta/fiovb/sub.mk b/ta/fiovb/sub.mk
+new file mode 100644
+index 00000000..f1b35c03
+--- /dev/null
++++ b/ta/fiovb/sub.mk
+@@ -0,0 +1,3 @@
++global-incdirs-y += include
++global-incdirs-y += .
++srcs-y += entry.c
+diff --git a/ta/fiovb/user_ta.mk b/ta/fiovb/user_ta.mk
+new file mode 100644
+index 00000000..a8856582
+--- /dev/null
++++ b/ta/fiovb/user_ta.mk
+@@ -0,0 +1 @@
++user-ta-uuid := 22250a54-0bf1-48fe-8002-7b20f1c9c9b1
+diff --git a/ta/fiovb/user_ta_header_defines.h b/ta/fiovb/user_ta_header_defines.h
+new file mode 100644
+index 00000000..9da77228
+--- /dev/null
++++ b/ta/fiovb/user_ta_header_defines.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/* Copyright (c) 2019, Foundries.IO */
++
++#ifndef __USER_TA_HEADER_DEFINES_H
++#define __USER_TA_HEADER_DEFINES_H
++
++#include <ta_fiovb.h>
++
++#define TA_UUID				TA_FIOVB_UUID
++
++#define TA_FLAGS			(TA_FLAG_SINGLE_INSTANCE | \
++					 TA_FLAG_MULTI_SESSION)
++
++#define TA_STACK_SIZE			(16 * 1024)
++#define TA_DATA_SIZE			(16 * 1024)
++
++#endif /*__USER_TA_HEADER_DEFINES_H*/
+-- 
+2.23.0
+

@@ -6,7 +6,7 @@ DEPENDS += "flex-native bison-native bc-native dtc-native"
 
 require recipes-bsp/u-boot/u-boot.inc
 
-SRCREV = "e47d650f53262acff0c5d73981fb84c2731006ca"
+SRCREV = "fe1cffb9155cabc2b3741f3accff91ae61fb3bbb"
 SRCBRANCH = "2019.10+fio"
 
 SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH}"

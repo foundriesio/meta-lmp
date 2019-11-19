@@ -11,7 +11,8 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
-RPI_USE_U_BOOT_rpi = "1"
+PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot-fio"
+WKS_FILE_DEPENDS_BOOTLOADERS_rpi = "virtual/bootloader"
 PREFERRED_PROVIDER_virtual/dtb_rpi ?= "lmp-device-tree"
 IMAGE_FSTYPES_remove_rpi = "ext3 rpi-sdimg"
 IMAGE_BOOT_FILES_rpi = "bcm2835-bootfiles/* u-boot.bin;${SDIMG_KERNELIMAGE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
@@ -24,7 +25,6 @@ KERNEL_DEVICETREE_raspberrypi3-64 ?= "broadcom/bcm2710-rpi-3-b.dtb broadcom/bcm2
 KERNEL_DEVICETREE_raspberrypi-cm3 ?= "bcm2710-rpi-cm3.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi4 ?= "bcm2711-rpi-4-b.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
 KERNEL_DEVICETREE_raspberrypi4-64 ?= "broadcom/bcm2711-rpi-4-b.dtb ${KERNEL_DEVICETREE_COMMON_RPI}"
-PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot"
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL_rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 KERNEL_SERIAL_raspberrypi-cm3 ?= "console=ttyAMA0,115200"

@@ -6,10 +6,13 @@ DEPENDS += "flex-native bison-native bc-native dtc-native"
 
 require recipes-bsp/u-boot/u-boot.inc
 
-SRCREV = "fe1cffb9155cabc2b3741f3accff91ae61fb3bbb"
+SRCREV = "150c908068989b15998cfe7701c4b6dc851d645b"
 SRCBRANCH = "2019.10+fio"
 
 SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH}"
+
+# Board specific configuration
+SRC_URI_append = " file://lmp.cfg"
 
 PV = "v2019.10+git${SRCPV}"
 

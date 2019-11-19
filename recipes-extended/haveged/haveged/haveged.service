@@ -1,21 +1,21 @@
 [Unit]
-Description=Entropy daemon using the HAVEGE algorithm
+Description=Entropy Daemon based on the HAVEGE algorithm
 Documentation=man:haveged(8) http://www.issihosts.com/haveged/
 DefaultDependencies=no
-After=systemd-random-seed.service systemd-tmpfiles-setup.service
+After=systemd-tmpfiles-setup-dev.service
 Before=sysinit.target shutdown.target
 
 [Service]
 ExecStart=/usr/sbin/haveged --Foreground --verbose=1 -w 1024
-SuccessExitStatus=143
+Restart=always
+SuccessExitStatus=137 143
 SecureBits=noroot-locked
-NoNewPrivileges=yes
 CapabilityBoundingSet=CAP_SYS_ADMIN
-PrivateTmp=yes
-PrivateDevices=yes
-PrivateNetwork=yes
+PrivateTmp=true
+PrivateDevices=true
+PrivateNetwork=true
 ProtectSystem=full
-ProtectHome=yes
+ProtectHome=true
 
 [Install]
-WantedBy=default.target
+WantedBy=sysinit.target

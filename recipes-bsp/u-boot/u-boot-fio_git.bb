@@ -1,22 +1,10 @@
-HOMEPAGE = "http://www.denx.de/wiki/U-Boot/WebHome"
-SECTION = "bootloaders"
-LICENSE = "GPLv2+"
-LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
-DEPENDS += "flex-native bison-native bc-native dtc-native"
-
+require u-boot-fio-common.inc
 require recipes-bsp/u-boot/u-boot.inc
 
-SRCREV = "150c908068989b15998cfe7701c4b6dc851d645b"
-SRCBRANCH = "2019.10+fio"
-
-SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH}"
+DEPENDS += "bc-native dtc-native"
 
 # Board specific configuration
 SRC_URI_append = " file://lmp.cfg"
-
-PV = "v2019.10+git${SRCPV}"
-
-S = "${WORKDIR}/git"
 
 # Support additional u-boot classes such as u-boot-fitimage
 UBOOT_CLASSES ?= ""

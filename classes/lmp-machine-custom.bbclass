@@ -12,6 +12,8 @@ IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
 PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils_rpi = "u-boot-fio-fw-utils"
+PREFERRED_RPROVIDER_u-boot-fw-utils_rpi = "u-boot-fio-fw-utils"
 WKS_FILE_DEPENDS_BOOTLOADERS_rpi = "virtual/bootloader"
 PREFERRED_PROVIDER_virtual/dtb_rpi ?= "lmp-device-tree"
 IMAGE_FSTYPES_remove_rpi = "ext3 rpi-sdimg"

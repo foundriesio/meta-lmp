@@ -134,7 +134,7 @@ do_deploy_prepend() {
 				j=$(expr $j + 1);
 				if [ $j -eq $i ]; then
 					cd ${B}/${config}
-					UBOOT_LOAD_ADDR=`grep CONFIG_SYS_TEXT_BASE u-boot.cfg | cut -d' ' -f 3`
+					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
 					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
@@ -167,7 +167,7 @@ do_deploy_prepend() {
 		unset i
 	else
 		cd ${B}
-		UBOOT_LOAD_ADDR=`grep CONFIG_SYS_TEXT_BASE u-boot.cfg | cut -d' ' -f 3`
+		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
 		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage

@@ -125,6 +125,8 @@ KERNEL_CLASSES_apalis-imx6 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_apalis-imx6 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 PREFERRED_PROVIDER_virtual/bootloader_apalis-imx6 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_apalis-imx6 = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils_apalis-imx6 = "u-boot-fio-fw-utils"
+PREFERRED_RPROVIDER_u-boot-fw-utils_apalis-imx6 = "u-boot-fio-fw-utils"
 UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"
 UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x13000000"
 

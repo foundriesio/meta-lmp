@@ -78,7 +78,9 @@ OSTREE_KERNEL_ARGS_freedom-u540 ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL
 WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
 # QEMU ARM
-PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot"
+PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils_qemuarm64 = "u-boot-fio-fw-utils"
+PREFERRED_RPROVIDER_u-boot-fw-utils_qemuarm64 = "u-boot-fio-fw-utils"
 UBOOT_MACHINE_qemuarm64 = "qemu_arm64_defconfig"
 IMAGE_BOOT_FILES_qemuarm64 = "boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_qemuarm64 = "fitImage"

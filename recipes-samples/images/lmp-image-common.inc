@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 # Always create vmdk and vdi images for the compatible targets
 IMAGE_FSTYPES_append_intel-corei7-64 = " wic.vmdk wic.vdi"
 
-inherit core-image distro_features_check extrausers
+inherit core-image features_check extrausers
 
 SRC_URI = "\
     file://sudoers \

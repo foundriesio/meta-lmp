@@ -26,5 +26,7 @@ EXTRA_OEMAKE = "OPTEE_CLIENT_EXPORT=${OPTEE_CLIENT_EXPORT} \
 
 do_install () {
     install -d ${D}${bindir}
-    install -m 0755 ${S}/out/ca/fiovb ${D}${bindir}
+    install -m 0755 ${S}/out/ca/fiovb ${D}${bindir}/fiovb
+    ln -sf fiovb ${D}${bindir}/fiovb_printenv
+    ln -sf fiovb ${D}${bindir}/fiovb_setenv
 }

@@ -1,19 +1,22 @@
-From 6cd9d47cfeda0dafb9f91bb18d9127461bba6b01 Mon Sep 17 00:00:00 2001
+From 37d9cdd4cb127563962df9f28124fb54c57f807f Mon Sep 17 00:00:00 2001
 From: Jorge Ramirez-Ortiz <jorge@foundries.io>
-Date: Tue, 12 Nov 2019 09:54:04 +0100
+Date: Mon, 2 Dec 2019 23:51:15 +0100
 Subject: [PATCH] Foundries.IO Verified Boot Trusted Application
 
-This code is a clone of AVB for further development and customization
+This code implements RPMB access to securely read/write a set of
+values.
+
+Currently the supported values are bootcount, m4hash and rollback.
 
 Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
 ---
- ta/fiovb/Makefile                 |  18 ++
- ta/fiovb/entry.c                  | 308 ++++++++++++++++++++++++++++++
- ta/fiovb/include/ta_fiovb.h       |  50 +++++
+ ta/fiovb/Makefile                 |  18 +++
+ ta/fiovb/entry.c                  | 187 ++++++++++++++++++++++++++++++
+ ta/fiovb/include/ta_fiovb.h       |  29 +++++
  ta/fiovb/sub.mk                   |   3 +
  ta/fiovb/user_ta.mk               |   1 +
- ta/fiovb/user_ta_header_defines.h |  17 ++
- 6 files changed, 397 insertions(+)
+ ta/fiovb/user_ta_header_defines.h |  17 +++
+ 6 files changed, 255 insertions(+)
  create mode 100644 ta/fiovb/Makefile
  create mode 100644 ta/fiovb/entry.c
  create mode 100644 ta/fiovb/include/ta_fiovb.h
@@ -47,10 +50,10 @@ index 00000000..cdc86806
 +endif
 diff --git a/ta/fiovb/entry.c b/ta/fiovb/entry.c
 new file mode 100644
-index 00000000..ae54b662
+index 00000000..92263fe2
 --- /dev/null
 +++ b/ta/fiovb/entry.c
-@@ -0,0 +1,308 @@
+@@ -0,0 +1,187 @@
 +// SPDX-License-Identifier: BSD-2-Clause
 +/* Copyright (c) 2018, Linaro Limited */
 +/* Copyright (c) 2019, Foundries.IO */
@@ -65,43 +68,7 @@ index 00000000..ae54b662
 +#define DEFAULT_LOCK_STATE	0
 +
 +static const uint32_t storageid = TEE_STORAGE_PRIVATE_RPMB;
-+static const char rb_obj_name[] = "rb_state";
 +static const char *named_value_prefix = "named_value_";
-+
-+static TEE_Result get_slot_offset(size_t slot, size_t *offset)
-+{
-+	if (slot >= TA_FIOVB_MAX_ROLLBACK_LOCATIONS)
-+		return TEE_ERROR_BAD_PARAMETERS;
-+
-+	*offset = sizeof(uint32_t) /* lock_state */ + slot * sizeof(uint64_t);
-+	return TEE_SUCCESS;
-+}
-+
-+static TEE_Result create_rb_state(uint32_t lock_state, TEE_ObjectHandle *h)
-+{
-+	const uint32_t flags = TEE_DATA_FLAG_ACCESS_READ |
-+			       TEE_DATA_FLAG_ACCESS_WRITE |
-+			       TEE_DATA_FLAG_OVERWRITE;
-+
-+	return TEE_CreatePersistentObject(storageid, rb_obj_name,
-+					  sizeof(rb_obj_name), flags, NULL,
-+					  &lock_state, sizeof(lock_state), h);
-+}
-+
-+static TEE_Result open_rb_state(uint32_t default_lock_state,
-+				TEE_ObjectHandle *h)
-+{
-+	uint32_t flags = TEE_DATA_FLAG_ACCESS_READ |
-+			 TEE_DATA_FLAG_ACCESS_WRITE;
-+	TEE_Result res;
-+
-+	res = TEE_OpenPersistentObject(storageid, rb_obj_name,
-+				       sizeof(rb_obj_name), flags, h);
-+	if (!res)
-+		return TEE_SUCCESS;
-+
-+	return create_rb_state(default_lock_state, h);
-+}
 +
 +static TEE_Result get_named_object_name(char *name_orig,
 +					uint32_t name_orig_size,
@@ -124,109 +91,17 @@ index 00000000..ae54b662
 +	return TEE_SUCCESS;
 +}
 +
-+static TEE_Result read_rb_idx(uint32_t pt, TEE_Param params[TEE_NUM_PARAMS])
++static TEE_Result check_valid_value(char *val)
 +{
-+	const uint32_t exp_pt = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INPUT,
-+						TEE_PARAM_TYPE_VALUE_OUTPUT,
-+						TEE_PARAM_TYPE_NONE,
-+						TEE_PARAM_TYPE_NONE);
-+	size_t slot_offset;
-+	uint64_t idx;
-+	uint32_t count;
-+	TEE_Result res;
-+	TEE_ObjectHandle h;
++	const char *valid_values[] = PERSIST_VALUE_LIST;
++	unsigned int i;
 +
-+	if (pt != exp_pt)
-+		return TEE_ERROR_BAD_PARAMETERS;
-+
-+	res = get_slot_offset(params[0].value.a, &slot_offset);
-+	if (res)
-+		return res;
-+
-+	res = open_rb_state(DEFAULT_LOCK_STATE, &h);
-+	if (res)
-+		return res;
-+
-+	res = TEE_SeekObjectData(h, slot_offset, TEE_DATA_SEEK_SET);
-+	if (res)
-+		goto out;
-+
-+	res =  TEE_ReadObjectData(h, &idx, sizeof(idx), &count);
-+	if (res)
-+		goto out;
-+	if (count != sizeof(idx)) {
-+		idx = 0; /* Not yet written slots are reported as 0 */
-+
-+		if (count) {
-+			/*
-+			 * Somehow the file didn't even hold a complete
-+			 * slot index entry.  Write it as 0.
-+			 */
-+			res = TEE_SeekObjectData(h, slot_offset,
-+						 TEE_DATA_SEEK_SET);
-+			if (res)
-+				goto out;
-+			res = TEE_WriteObjectData(h, &idx, sizeof(idx));
-+			if (res)
-+				goto out;
-+		}
++	for (i = 0; i < ARRAY_SIZE(valid_values); i++) {
++		if (strcmp(val, valid_values[i]) == 0)
++			return TEE_SUCCESS;
 +	}
 +
-+	params[1].value.a = idx >> 32;
-+	params[1].value.b = idx;
-+out:
-+	TEE_CloseObject(h);
-+	return res;
-+}
-+
-+static TEE_Result write_rb_idx(uint32_t pt, TEE_Param params[TEE_NUM_PARAMS])
-+{
-+	const uint32_t exp_pt = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INPUT,
-+						TEE_PARAM_TYPE_VALUE_INPUT,
-+						TEE_PARAM_TYPE_NONE,
-+						TEE_PARAM_TYPE_NONE);
-+	size_t slot_offset;
-+	uint64_t widx;
-+	uint64_t idx;
-+	uint32_t count;
-+	TEE_Result res;
-+	TEE_ObjectHandle h;
-+
-+	if (pt != exp_pt)
-+		return TEE_ERROR_BAD_PARAMETERS;
-+
-+	res = get_slot_offset(params[0].value.a, &slot_offset);
-+	if (res)
-+		return res;
-+	widx = ((uint64_t)params[1].value.a << 32) | params[1].value.b;
-+
-+	res = open_rb_state(DEFAULT_LOCK_STATE, &h);
-+	if (res)
-+		return res;
-+
-+	res = TEE_SeekObjectData(h, slot_offset, TEE_DATA_SEEK_SET);
-+	if (res)
-+		goto out;
-+
-+	res =  TEE_ReadObjectData(h, &idx, sizeof(idx), &count);
-+	if (res)
-+		goto out;
-+	if (count != sizeof(idx))
-+		idx = 0; /* Not yet written slots are reported as 0 */
-+
-+	if (widx < idx) {
-+		res = TEE_ERROR_SECURITY;
-+		goto out;
-+	}
-+
-+	res = TEE_SeekObjectData(h, slot_offset, TEE_DATA_SEEK_SET);
-+	if (res)
-+		goto out;
-+
-+	res = TEE_WriteObjectData(h, &widx, sizeof(widx));
-+out:
-+	TEE_CloseObject(h);
-+	return res;
++	return TEE_ERROR_ITEM_NOT_FOUND;
 +}
 +
 +static TEE_Result write_persist_value(uint32_t pt,
@@ -250,6 +125,11 @@ index 00000000..ae54b662
 +
 +	char *name_buf = params[0].memref.buffer;
 +	uint32_t name_buf_sz = params[0].memref.size;
++
++	if (check_valid_value(name_buf) != TEE_SUCCESS) {
++		EMSG("Not found %s", name_buf);
++		return TEE_ERROR_BAD_PARAMETERS;
++	}
 +
 +	char *value = params[1].memref.buffer;
 +	uint32_t value_sz = params[1].memref.size;
@@ -291,6 +171,12 @@ index 00000000..ae54b662
 +		return TEE_ERROR_BAD_PARAMETERS;
 +
 +	char *name_buf = params[0].memref.buffer;
++
++	if (check_valid_value(name_buf) != TEE_SUCCESS) {
++		EMSG("Not found %s", name_buf);
++		return TEE_ERROR_BAD_PARAMETERS;
++	}
++
 +	uint32_t name_buf_sz = params[0].memref.size;
 +
 +	char *value = params[1].memref.buffer;
@@ -346,10 +232,6 @@ index 00000000..ae54b662
 +				      TEE_Param params[TEE_NUM_PARAMS])
 +{
 +	switch (cmd) {
-+	case TA_FIOVB_CMD_READ_ROLLBACK_INDEX:
-+		return read_rb_idx(pt, params);
-+	case TA_FIOVB_CMD_WRITE_ROLLBACK_INDEX:
-+		return write_rb_idx(pt, params);
 +	case TA_FIOVB_CMD_READ_PERSIST_VALUE:
 +		return read_persist_value(pt, params);
 +	case TA_FIOVB_CMD_WRITE_PERSIST_VALUE:
@@ -361,10 +243,10 @@ index 00000000..ae54b662
 +}
 diff --git a/ta/fiovb/include/ta_fiovb.h b/ta/fiovb/include/ta_fiovb.h
 new file mode 100644
-index 00000000..72105e3a
+index 00000000..f401ce0e
 --- /dev/null
 +++ b/ta/fiovb/include/ta_fiovb.h
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,29 @@
 +/* SPDX-License-Identifier: BSD-2-Clause */
 +/* Copyright (c) 2018, Linaro Limited */
 +/* Copyright (c) 2019, Foundries.IO */
@@ -375,28 +257,7 @@ index 00000000..72105e3a
 +#define TA_FIOVB_UUID {0x22250a54, 0x0bf1, 0x48fe, \
 +		      { 0x80, 0x02, 0x7b, 0x20, 0xf1, 0xc9, 0xc9, 0xb1 } }
 +
-+
-+#define TA_FIOVB_MAX_ROLLBACK_LOCATIONS	256
-+
-+/*
-+ * Gets the rollback index corresponding to the given rollback index slot.
-+ *
-+ * in	params[0].value.a:	rollback index slot
-+ * out	params[1].value.a:	upper 32 bits of rollback index
-+ * out	params[1].value.b:	lower 32 bits of rollback index
-+ */
-+#define TA_FIOVB_CMD_READ_ROLLBACK_INDEX	0
-+
-+/*
-+ * Updates the rollback index corresponding to the given rollback index slot.
-+ *
-+ * Will refuse to update a slot with a lower value.
-+ *
-+ * in	params[0].value.a:	rollback index slot
-+ * in	params[1].value.a:	upper 32 bits of rollback index
-+ * in	params[1].value.b:	lower 32 bits of rollback index
-+ */
-+#define TA_FIOVB_CMD_WRITE_ROLLBACK_INDEX	1
++#define PERSIST_VALUE_LIST {"bootcount", "rollback", "m4hash"}
 +
 +/*
 + * Reads a persistent value corresponding to the given name.
@@ -404,7 +265,7 @@ index 00000000..72105e3a
 + * in	params[0].memref:	persistent value name
 + * out	params[1].memref:	read persistent value buffer
 + */
-+#define TA_FIOVB_CMD_READ_PERSIST_VALUE		2
++#define TA_FIOVB_CMD_READ_PERSIST_VALUE		0
 +
 +/*
 + * Writes a persistent value corresponding to the given name.
@@ -412,7 +273,7 @@ index 00000000..72105e3a
 + * in	params[0].memref:	persistent value name
 + * in	params[1].memref:	persistent value buffer to write
 + */
-+#define TA_FIOVB_CMD_WRITE_PERSIST_VALUE	3
++#define TA_FIOVB_CMD_WRITE_PERSIST_VALUE	1
 +
 +#endif /*__TA_FIOVB_H*/
 diff --git a/ta/fiovb/sub.mk b/ta/fiovb/sub.mk
@@ -455,5 +316,5 @@ index 00000000..9da77228
 +
 +#endif /*__USER_TA_HEADER_DEFINES_H*/
 -- 
-2.23.0
+2.17.1
 

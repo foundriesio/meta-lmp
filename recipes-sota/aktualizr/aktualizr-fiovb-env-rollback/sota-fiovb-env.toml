@@ -1,0 +1,2 @@
+[bootloader]
+rollback_mode = "fiovb"

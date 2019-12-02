@@ -16,6 +16,8 @@ SRC_URI_append_libc-musl = " \
     file://utils.c-disable-tilde-as-it-is-not-supported-by-musl.patch \
 "
 
+PACKAGECONFIG += "${@bb.utils.filter('SOTA_CLIENT_FEATURES', 'fiovb', d)}"
+PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[dockerapp] = "-DBUILD_DOCKERAPP=ON,-DBUILD_DOCKERAPP=OFF,,docker-app"
 PACKAGECONFIG_append_class-target = " dockerapp"
 PACKAGECONFIG_remove_class-target_riscv64 = "dockerapp"

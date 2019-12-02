@@ -10,7 +10,7 @@ inherit pythonnative
 SRC_URI = "git://github.com/foundriesio/optee-fiovb.git"
 
 PV = "0.1"
-SRCREV = "0e5f755a396b774459174943bcfb2d631f4db007"
+SRCREV = "4829b67603dd9cf47484119be69256f4607a710d"
 
 S = "${WORKDIR}/git"
 

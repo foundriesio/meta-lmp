@@ -100,6 +100,11 @@ EOF
 
 		if [ -n "${5}" ]; then
 			sign_line="${sign_line}${sep}\"setup\""
+			sep=", "
+		fi
+
+		if [ -n "${6}" ]; then
+			sign_line="${sign_line}${sep}\"fpga\""
 		fi
 
 		sign_line="${sign_line};"

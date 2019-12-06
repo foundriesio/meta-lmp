@@ -1,0 +1,52 @@
+From 29fe1792700218bdb22acff46c385bc3ffddd2de Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Fri, 6 Dec 2019 12:38:53 +0100
+Subject: [PATCH] imx: imx7ulp: watchdog: set into ready state prior reset
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ core/drivers/imx_wdog.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/core/drivers/imx_wdog.c b/core/drivers/imx_wdog.c
+index 83f461c2..72c8841b 100644
+--- a/core/drivers/imx_wdog.c
++++ b/core/drivers/imx_wdog.c
+@@ -44,6 +44,24 @@
+ static bool ext_reset;
+ static vaddr_t wdog_base;
+ 
++#ifdef CFG_MX7ULP
++static void imx_wdt_reinit(void)
++{
++	uint32_t val;
++
++	/* unlock the wdog for reconfiguration */
++	io_write32(wdog_base + WDOG_CNT, UNLOCK_SEQ0);
++	io_write32(wdog_base + WDOG_CNT, UNLOCK_SEQ1);
++
++	/* set an initial timeout value in TOVAL */
++	io_write32(wdog_base + WDOG_TOVAL, 1000);
++
++	/* enable 32bit command sequence and reconfigure */
++	val = (1 << 13) | (1 << 8) | (1 << 5);
++	io_write32(wdog_base + WDOG_CS, val);
++}
++#endif
++
+ void imx_wdog_restart(void)
+ {
+ 	uint32_t val;
+@@ -54,6 +72,9 @@ void imx_wdog_restart(void)
+ 	}
+ 
+ #ifdef CFG_MX7ULP
++	/* make sure the wdt is in the ready state */
++	imx_wdt_reinit();
++
+ 	val = io_read32(wdog_base + WDOG_CS);
+ 
+ 	io_write32(wdog_base + WDOG_CNT, UNLOCK);
+-- 
+2.17.1
+

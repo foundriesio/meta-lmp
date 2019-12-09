@@ -9,9 +9,7 @@ inherit devicetree
 
 PROVIDES = "virtual/dtb"
 
-# device tree overlays
-SRC_URI_append_rpi = " \
-	file://overlays_rpi-7inch.dts \
-	file://overlays_rpi-7inch-flip.dts \
-"
-COMPATIBLE_MACHINE_rpi = ".*"
+# Device tree and overlays to be provided by the BSP layer
+# E.g.:
+# SRC_URI_append_board = "file://overlays_board.dts"
+# COMPATIBLE_MACHINE_board = ".*"

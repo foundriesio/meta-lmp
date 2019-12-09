@@ -16,4 +16,4 @@ SRC_URI = "git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}linux.git;protocol=h
 KMETA = "kernel-meta"
 
 require linux-lmp.inc
-require linux-lmp-machine-custom.inc
+include recipes-kernel/linux/linux-lmp-machine-custom.inc

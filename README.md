@@ -1,4 +1,4 @@
 Meta-LMP
 ================================
 
-Linux microPlatform OpenEmbedded/Yocto Project development layer.
+Collection of layers used by the Linux microPlatform project.

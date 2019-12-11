@@ -132,6 +132,31 @@ PREFERRED_RPROVIDER_u-boot-fw-utils_apalis-imx6 = "u-boot-fio-fw-utils"
 UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"
 UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x13000000"
 
+# iMX8MM
+UBOOT_ENTRYPOINT_mx8mm = "0x40480000"
+UBOOT_DTB_LOADADDRESS_mx8mm = "0x43000000"
+IMAGE_BOOT_FILES_mx8mm = "boot.scr uEnv.txt imx-boot"
+KERNEL_IMAGETYPE_mx8mm = "fitImage"
+KERNEL_CLASSES_mx8mm = " kernel-lmp-fitimage "
+KERNEL_DEVICETREE_mx8mm ?= "freescale/fsl-imx8mm-evk.dtb"
+OSTREE_KERNEL_mx8mm = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_mx8mm ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk1p2 rootfstype=ext4"
+## iMX8: Use latest NXP BSP downstream kernel
+PREFERRED_PROVIDER_virtual/kernel_mx8mm ?= "linux-lmp-dev"
+LINUX_VERSION_mx8mm ?= "4.19.y"
+KERNEL_REPO_mx8mm ?= "git://source.codeaurora.org/external/imx/linux-imx"
+KERNEL_BRANCH_mx8mm ?= "imx_4.19.35_1.1.0"
+KERNEL_COMMIT_mx8mm ?= "0f9917c56d5995e1dc3bde5658e2d7bc865464de"
+KERNEL_META_BRANCH_mx8mm ?= "linux-v4.19.y"
+KERNEL_META_COMMIT_mx8mm ?= "45e0627e7e7f5692e9311aa3608d965f59a44f61"
+MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
+WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
+## iMX8MM EVK
+PREFERRED_VERSION_optee-os_imx8mmevk = "3.6.0+git"
+PREFERRED_VERSION_optee-client_imx8mmevk = "3.6.0+git"
+PREFERRED_VERSION_optee-test_imx8mmevk = "3.6.0"
+MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
+
 # Cross machines / BSPs
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"

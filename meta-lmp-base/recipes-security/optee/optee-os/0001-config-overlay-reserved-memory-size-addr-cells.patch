@@ -1,0 +1,78 @@
+From e8db54b7b38f16ca1e9058136926dfe6c33535dd Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Thu, 12 Dec 2019 22:45:14 +0100
+Subject: [PATCH] config: overlay reserved memory size/addr cells
+
+When generating a new overlay, instead of defaulting to 2 for the
+reserved memory size and address cell properties, make these values
+configurable at build time.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ core/arch/arm/kernel/generic_boot.c | 25 +++++++++++++++++++------
+ mk/config.mk                        |  6 ++++++
+ 2 files changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/core/arch/arm/kernel/generic_boot.c b/core/arch/arm/kernel/generic_boot.c
+index f1a5874a..14ab6225 100644
+--- a/core/arch/arm/kernel/generic_boot.c
++++ b/core/arch/arm/kernel/generic_boot.c
+@@ -780,6 +780,8 @@ static int add_res_mem_dt_node(struct dt_descriptor *dt, const char *name,
+ 	int len_size = -1;
+ 	bool found = true;
+ 	char subnode_name[80] = { 0 };
++	const fdt32_t *c;
++	int len;
+ 
+ 	offs = fdt_path_offset(dt->blob, "/reserved-memory");
+ 
+@@ -788,12 +790,23 @@ static int add_res_mem_dt_node(struct dt_descriptor *dt, const char *name,
+ 		offs = 0;
+ 	}
+ 
+-	len_size = fdt_size_cells(dt->blob, offs);
+-	if (len_size < 0)
+-		return -1;
+-	addr_size = fdt_address_cells(dt->blob, offs);
+-	if (addr_size < 0)
+-		return -1;
++	c = fdt_getprop(dt->blob, offs, "#size-cells", &len);
++	if (!c) {
++		len_size = CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS;
++	} else {
++		len_size = fdt_size_cells(dt->blob, offs);
++		if (len_size < 0)
++			return -1;
++	}
++
++	c = fdt_getprop(dt->blob, offs, "#address-cells", &len);
++	if (!c) {
++		addr_size = CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS;
++	} else {
++		addr_size = fdt_address_cells(dt->blob, offs);
++		if (addr_size < 0)
++			return -1;
++	}
+ 
+ 	if (!found) {
+ 		offs = add_dt_path_subnode(dt, "/", "reserved-memory");
+diff --git a/mk/config.mk b/mk/config.mk
+index db8ae9f9..83b1f692 100644
+--- a/mk/config.mk
++++ b/mk/config.mk
+@@ -348,6 +348,12 @@ endif
+ endif
+ endif
+ 
++# Default reserved memory address and size cell values: when OP-TEE generates a
++# new overlay without some reference to a reserved-memory node, the user can
++# configure the required address/size cell property values
++CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS ?= 2
++CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS ?= 2
++
+ # Enable core self tests and related pseudo TAs
+ CFG_TEE_CORE_EMBED_INTERNAL_TESTS ?= y
+ 
+-- 
+2.17.1
+

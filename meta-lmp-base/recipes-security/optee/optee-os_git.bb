@@ -9,6 +9,7 @@ SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-allow-setting-sysroot-for-libgcc-lookup.patch \
     file://0001-support-overlay-at-fix-address-and-extend-D.patch \
     file://0001-Foundries.IO-Verified-Boot-Trusted-Application.patch \
+    file://0001-config-overlay-reserved-memory-size-addr-cells.patch \
 "
 
 SRC_URI_append_qemuarm64 = " \

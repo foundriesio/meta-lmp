@@ -90,6 +90,8 @@ do_deploy() {
     for f in ${B}/out/arm/core/*.bin; do
         install -m 644 $f ${DEPLOYDIR}/optee/
     done
+    # Link tee.bin so it can be consumed by recipes such as imx-boot
+    ln -sf optee/tee-pager.bin ${DEPLOYDIR}/tee.bin
     install -m 644 ${B}/out/arm/core/tee-init_load_addr.txt ${DEPLOYDIR}/optee/
 }
 

@@ -1,3 +1,6 @@
+# Provided by meta-lmp-bsp or any other compatible BSP layer
+include conf/machine/include/lmp-machine-custom.inc
+
 # Done as a rootfs post process hook in order to be part of the ostree image
 sota_fstab_update() {
 	if [ -n "${EFI_PROVIDER}" ]; then

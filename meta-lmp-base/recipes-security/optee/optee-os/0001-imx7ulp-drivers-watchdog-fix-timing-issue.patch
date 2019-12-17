@@ -67,7 +67,7 @@ index 83f461c2..d060ff29 100644
 +	dmb();
 +	__raw_writel(wdog_base + WDOG_TOVAL, 0x400);
 +	__raw_writeb(wdog_base + WDOG_WIN, 0);
-+	__raw_writeb(wdog_base + WDOG_CS + 1, BIT(6) | BIT(0));
++	__raw_writeb(wdog_base + WDOG_CS + 1, BIT(5) | BIT(0));
 +	__raw_writeb(wdog_base + WDOG_CS,     BIT(7) | BIT(5));
 +	dmb();
 +

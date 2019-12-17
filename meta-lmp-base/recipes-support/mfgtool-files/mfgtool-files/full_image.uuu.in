@@ -1,0 +1,28 @@
+uuu_version 1.0.1
+
+#SDP: boot -f SPL-@@MACHINE@@
+
+#SDPU: delay 1000
+#SDPU: write -f u-boot-@@MACHINE@@.itb
+#SDPU: jump
+
+#FB: ucmd setenv fastboot_buffer ${initrd_addr}
+#FB: download -f fitImage-@@MACHINE@@-mfgtool
+#FB: acmd run mfgtool_args
+#FB: acmd bootm ${initrd_addr}#conf@${fdt_file}
+
+# Wait for eMMC
+#FBK: ucmd while [ ! -e /dev/mmcblk*boot0 ]; do sleep 1; echo "wait for /dev/mmcblk*boot* appear"; done;
+
+# Get eMMC device
+#FBK: ucmd dev=`ls /dev/mmcblk*boot*`; dev=($dev); dev=${dev[0]}; dev=${dev#/dev/mmcblk}; dev=${dev%boot*}; echo $dev > /tmp/mmcdev;
+
+# Bootloaders
+## Requires machine specific FBK commands (e.g. bootloader offset)
+
+# Rootfs
+#FBK: acmd mmc=`cat /tmp/mmcdev`; gunzip -c | dd of=/dev/mmcblk${mmc} bs=4M iflag=fullblock oflag=direct status=progress
+#FBK: ucp  ../lmp-gateway-image-@@MACHINE@@.img.gz t:-
+#FBK: Sync
+
+#FBK: DONE

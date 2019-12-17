@@ -10,6 +10,7 @@ SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-support-overlay-at-fix-address-and-extend-D.patch \
     file://0001-Foundries.IO-Verified-Boot-Trusted-Application.patch \
     file://0001-config-overlay-reserved-memory-size-addr-cells.patch \
+    file://0001-core_mmc-fix-build-warning-when-CFG_CORE_DYN_SHM-n.patch \
 "
 
 SRC_URI_append_qemuarm64 = " \

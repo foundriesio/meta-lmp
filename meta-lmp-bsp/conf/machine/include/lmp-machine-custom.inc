@@ -140,7 +140,7 @@ KERNEL_IMAGETYPE_mx8mm = "fitImage"
 KERNEL_CLASSES_mx8mm = " kernel-lmp-fitimage "
 KERNEL_DEVICETREE_mx8mm ?= "freescale/fsl-imx8mm-evk.dtb"
 OSTREE_KERNEL_mx8mm = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
-OSTREE_KERNEL_ARGS_mx8mm ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk1p2 rootfstype=ext4"
+OSTREE_KERNEL_ARGS_mx8mm ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel_mx8mm ?= "linux-lmp-dev"
 LINUX_VERSION_mx8mm ?= "4.19.y"

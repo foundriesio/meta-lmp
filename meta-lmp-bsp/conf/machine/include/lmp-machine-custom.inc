@@ -133,6 +133,8 @@ UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"
 UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x13000000"
 
 # iMX8MM
+PREFERRED_PROVIDER_u-boot-fw-utils_mx8mm = "u-boot-imx-fw-utils"
+PREFERRED_RPROVIDER_u-boot-fw-utils_mx8mm = "u-boot-imx-fw-utils"
 UBOOT_ENTRYPOINT_mx8mm = "0x40480000"
 UBOOT_DTB_LOADADDRESS_mx8mm = "0x43000000"
 IMAGE_BOOT_FILES_mx8mm = "boot.scr uEnv.txt imx-boot"

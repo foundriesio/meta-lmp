@@ -5,4 +5,4 @@ tmpfs                /run                 tmpfs      mode=0755,nodev,nosuid,stri
 tmpfs                /var/volatile        tmpfs      defaults              0  0
 
 # boot partition
-/dev/mmcblk1p1       /mnt/boot            vfat       noatime,sync          0  0
+/dev/mmcblk2p1       /mnt/boot            vfat       noatime,sync          0  0

@@ -141,7 +141,7 @@ UBOOT_DTB_LOADADDRESS_mx8mm = "0x43000000"
 IMAGE_BOOT_FILES_mx8mm = "boot.scr uEnv.txt imx-boot"
 KERNEL_IMAGETYPE_mx8mm = "fitImage"
 KERNEL_CLASSES_mx8mm = " kernel-lmp-fitimage "
-KERNEL_DEVICETREE_mx8mm ?= "freescale/fsl-imx8mm-evk.dtb"
+KERNEL_DEVICETREE_mx8mm ?= "freescale/fsl-imx8mm-evk.dtb freescale/fsl-imx8mm-ddr4-evk.dtb"
 OSTREE_KERNEL_mx8mm = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 OSTREE_KERNEL_ARGS_mx8mm ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
 ## iMX8: Use latest NXP BSP downstream kernel

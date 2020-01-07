@@ -1,2 +1,0 @@
-SRCBRANCH_lmp = "imx_4.19.35_1.1.0"
-SRCREV_lmp = "70fa7bcc1a2035ab8402550911b3ae29eff55371"

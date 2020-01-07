@@ -56,7 +56,6 @@ MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 # RISC-V targets
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"
 KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
-UBOOT_MACHINE_qemuriscv64 = "qemu-riscv64_smode_defconfig"
 IMAGE_BOOT_FILES_qemuriscv64 = "boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_qemuriscv64 = "fitImage"
 KERNEL_IMAGETYPES_remove_qemuriscv64 = "uImage"

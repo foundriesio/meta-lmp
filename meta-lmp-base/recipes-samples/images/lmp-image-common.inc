@@ -20,7 +20,6 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
-    haveged \
     networkmanager \
     resize-helper \
     sudo \

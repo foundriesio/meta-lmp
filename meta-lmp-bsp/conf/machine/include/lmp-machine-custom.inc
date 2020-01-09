@@ -52,6 +52,7 @@ KERNEL_COMMIT_rpi ?= "c0669696e796b3dad4a121104e2f6dfa1d2114d2"
 KERNEL_META_BRANCH_rpi ?= "linux-v4.19.y"
 KERNEL_META_COMMIT_rpi ?= "ae5e5aacf49a1a9ef5102253e92fb07b640b635d"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
+KBUILD_DEFCONFIG_raspberrypi-cm3 = ""
 
 # RISC-V targets
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"

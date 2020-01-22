@@ -50,7 +50,7 @@ KERNEL_REPO_rpi ?= "git://github.com/raspberrypi/linux.git"
 KERNEL_BRANCH_rpi ?= "rpi-4.19.y"
 KERNEL_COMMIT_rpi ?= "988cc7beacc150756c3fbe40646afcf8438b741b"
 KERNEL_META_BRANCH_rpi ?= "linux-v4.19.y"
-KERNEL_META_COMMIT_rpi ?= "ae5e5aacf49a1a9ef5102253e92fb07b640b635d"
+KERNEL_META_COMMIT_rpi ?= "2e38f45a09730a7816e1c0ec3b01bc5fa434dab9"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets

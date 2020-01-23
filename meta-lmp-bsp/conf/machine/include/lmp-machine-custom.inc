@@ -91,6 +91,14 @@ OSTREE_KERNEL_ARGS_qemuarm64 ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT_qemuarm64 = "0x40080000"
 MACHINE_FEATURES_append_qemuarm64 = " optee"
 EXTRA_IMAGEDEPENDS_append_qemuarm64 = " atf"
+## ARM Trusted Firmware options
+TF-A_PLATFORM_qemuarm64 = "qemu"
+TF-A_DEPENDS_qemuarm64 = "u-boot"
+TF-A_BL33_qemuarm64 = "${DEPLOY_DIR_IMAGE}/u-boot.bin"
+TF-A_EXTRA_OPTIONS_qemuarm64 = " BL32=${DEPLOY_DIR_IMAGE}/optee/tee-header_v2.bin \
+  BL32_EXTRA1=${DEPLOY_DIR_IMAGE}/optee/tee-pager_v2.bin \
+  BL32_EXTRA2=${DEPLOY_DIR_IMAGE}/optee/tee-pageable_v2.bin \
+  ARM_TSP_RAM_LOCATION=tdram BL32_RAM_LOCATION=tdram"
 QB_MACHINE_qemuarm64 = "-machine virt,secure=on"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM_qemuarm64 = "-m 1057"

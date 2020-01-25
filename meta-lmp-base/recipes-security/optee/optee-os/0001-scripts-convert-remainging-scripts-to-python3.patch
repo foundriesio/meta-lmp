@@ -1,0 +1,227 @@
+From bbaeed4dc6258006e846543197b8aff95d80abbf Mon Sep 17 00:00:00 2001
+From: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Date: Wed, 7 Aug 2019 20:07:00 +0200
+Subject: [PATCH] scripts: convert remainging scripts to python3
+
+Convert the remaining scripts to python3. Mostly done with 2to3 and
+manual adjustements to the code afterwards.
+
+Upstream-Status: Backport
+
+Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+Acked-by: Jerome Forissier <jerome@forissier.org>
+Tested-by: Jerome Forissier <jerome@forissier.org> (QEMU, QEMUv8)
+---
+ scripts/arm32_sysreg.py   |  4 ++--
+ scripts/gen_hashed_bin.py | 10 +++++-----
+ scripts/gen_ld_sects.py   |  2 +-
+ scripts/pem_to_pub_c.py   |  2 +-
+ scripts/sign.py           |  2 +-
+ scripts/symbolize.py      | 18 ++++++++++--------
+ scripts/tee_bin_parser.py | 20 ++++++++++----------
+ 7 files changed, 30 insertions(+), 28 deletions(-)
+
+diff --git a/scripts/arm32_sysreg.py b/scripts/arm32_sysreg.py
+index 51e51cc..bcdd942 100755
+--- a/scripts/arm32_sysreg.py
++++ b/scripts/arm32_sysreg.py
+@@ -1,9 +1,9 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # SPDX-License-Identifier: BSD-2-Clause
+ #
+ # Copyright (c) 2018, Linaro Limited
+ #
+-from __future__ import print_function
++
+ 
+ import argparse
+ import sys
+diff --git a/scripts/gen_hashed_bin.py b/scripts/gen_hashed_bin.py
+index 67b2b04..a76a62c 100755
+--- a/scripts/gen_hashed_bin.py
++++ b/scripts/gen_hashed_bin.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # SPDX-License-Identifier: BSD-2-Clause
+ #
+ # Copyright (c) 2014-2017, Linaro Limited
+@@ -75,7 +75,7 @@ def append_hashes(outf, in_fname):
+         elif len(page) == 0:
+             break
+         else:
+-            print("Error: short read, got " + repr(len(page)))
++            print("Error: short read, got {}".format(len(page)))
+             sys.exit(1)
+ 
+     inf.close()
+@@ -88,7 +88,7 @@ def int_parse(str):
+ def get_args():
+     parser = argparse.ArgumentParser()
+     parser.add_argument('--arch', required=True,
+-                        choices=arch_id.keys(),
++                        choices=list(arch_id.keys()),
+                         help='Architecture')
+ 
+     parser.add_argument('--flags',
+@@ -149,8 +149,8 @@ def main():
+         hashlib.sha256().digest_size
+ 
+     if paged_input_size % (4 * 1024) != 0:
+-        print("Error: pageable size not a multiple of 4K:" +
+-              repr(paged_input_size))
++        print("Error: pageable size not a multiple of 4K: {}".format(
++            paged_input_size))
+         sys.exit(1)
+ 
+     init_size = pager_input_size + \
+diff --git a/scripts/gen_ld_sects.py b/scripts/gen_ld_sects.py
+index 43e812b..bc82dd8 100755
+--- a/scripts/gen_ld_sects.py
++++ b/scripts/gen_ld_sects.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # SPDX-License-Identifier: BSD-2-Clause
+ #
+ # Copyright (c) 2017, Linaro Limited
+diff --git a/scripts/pem_to_pub_c.py b/scripts/pem_to_pub_c.py
+index 8cd1044..3a896a3 100755
+--- a/scripts/pem_to_pub_c.py
++++ b/scripts/pem_to_pub_c.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # SPDX-License-Identifier: BSD-2-Clause
+ #
+ # Copyright (c) 2015, Linaro Limited
+diff --git a/scripts/sign.py b/scripts/sign.py
+index 57df657..2939c59 100755
+--- a/scripts/sign.py
++++ b/scripts/sign.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ #
+ # Copyright (c) 2015, 2017, Linaro Limited
+ #
+diff --git a/scripts/symbolize.py b/scripts/symbolize.py
+index 2238b08..48ba1c0 100755
+--- a/scripts/symbolize.py
++++ b/scripts/symbolize.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # SPDX-License-Identifier: BSD-2-Clause
+ #
+ # Copyright (c) 2017, Linaro Limited
+@@ -6,6 +6,7 @@
+ 
+ 
+ import argparse
++import errno
+ import glob
+ import os
+ import re
+@@ -103,11 +104,12 @@ class Symbolizer(object):
+     def my_Popen(self, cmd):
+         try:
+             return subprocess.Popen(cmd, stdin=subprocess.PIPE,
+-                                    stdout=subprocess.PIPE)
++                                    stdout=subprocess.PIPE, text=True,
++                                    bufsize=1)
+         except OSError as e:
+-            if e.errno == os.errno.ENOENT:
+-                print >> sys.stderr, "*** Error:", cmd[0] + \
+-                    ": command not found"
++            if e.errno == errno.ENOENT:
++                print("*** Error:{}: command not found".format(cmd[0]),
++                      file=sys.stderr)
+                 sys.exit(1)
+ 
+     def get_elf(self, elf_or_uuid):
+@@ -133,9 +135,9 @@ class Symbolizer(object):
+                              stdout=subprocess.PIPE)
+         output = p.stdout.readlines()
+         p.terminate()
+-        if 'ARM aarch64,' in output[0]:
++        if b'ARM aarch64,' in output[0]:
+             self._arch = 'aarch64-linux-gnu-'
+-        elif 'ARM,' in output[0]:
++        elif b'ARM,' in output[0]:
+             self._arch = 'arm-linux-gnueabihf-'
+ 
+     def arch_prefix(self, cmd):
+@@ -205,7 +207,7 @@ class Symbolizer(object):
+         if not reladdr or not self._addr2line:
+             return '???'
+         try:
+-            print >> self._addr2line.stdin, reladdr
++            print(reladdr, file=self._addr2line.stdin)
+             ret = self._addr2line.stdout.readline().rstrip('\n')
+         except IOError:
+             ret = '!!!'
+diff --git a/scripts/tee_bin_parser.py b/scripts/tee_bin_parser.py
+index 8356ad5..73dac8e 100755
+--- a/scripts/tee_bin_parser.py
++++ b/scripts/tee_bin_parser.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # SPDX-License-Identifier: BSD-2-Clause
+ #
+ # Copyright (c) 2016, Linaro Limited
+@@ -9,39 +9,39 @@ def main():
+     with open("../out/arm/core/tee.bin", "rb") as f:
+         data = f.read(4)
+         magic = struct.unpack('<I', data)
+-        print("Magic: \t\t0x%08x" % magic)
++        print("Magic: \t\t0x{:08x}".format(magic))
+ 
+         data = f.read(1)
+         version = struct.unpack('<B', data)
+-        print("Version: \t0x%02x" % version)
++        print("Version: \t0x{:02x}".format(version))
+ 
+         data = f.read(1)
+         arch_id = struct.unpack('<B', data)
+-        print("ArchID: \t0x%02x" % arch_id)
++        print("ArchID: \t0x{:02x}".format(arch_id))
+ 
+         data = f.read(2)
+         flags = struct.unpack('<H', data)
+-        print("Arch Flags: \t0x%04x" % arch_id)
++        print("Arch Flags: \t0x{:04x}".format(arch_id))
+ 
+         data = f.read(4)
+         init_size = struct.unpack('<I', data)
+-        print("Init size: \t0x%04x" % init_size)
++        print("Init size: \t0x{:04x}".format(init_size))
+ 
+         data = f.read(4)
+         laddr_h = struct.unpack('<I', data)
+-        print("Load addr high:\t0x%04x" % laddr_h)
++        print("Load addr high:\t0x{:04x}".format(laddr_h))
+ 
+         data = f.read(4)
+         laddr_l = struct.unpack('<I', data)
+-        print("Load addr low: \t0x%04x" % laddr_l)
++        print("Load addr low: \t0x{:04x}".format(laddr_l))
+ 
+         data = f.read(4)
+         mem_usage = struct.unpack('<I', data)
+-        print("Mem usage: \t0x%04x" % mem_usage)
++        print("Mem usage: \t0x{:04x}".format(mem_usage))
+ 
+         data = f.read(4)
+         pgd_size = struct.unpack('<I', data)
+-        print("Pages size: \t0x%04x" % pgd_size)
++        print("Pages size: \t0x{:04x}".format(pgd_size))
+ 
+ 
+ if __name__ == "__main__":
+-- 
+2.7.4
+

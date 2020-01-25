@@ -3,7 +3,7 @@ DESCRIPTION = "OPTEE OS"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=c1f21c4f72f372ef38a5a4aee55ec173"
 
-DEPENDS = "python-pycrypto-native python3-pyelftools-native"
+DEPENDS = "python3-pycrypto-native python3-pyelftools-native"
 
 SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-allow-setting-sysroot-for-libgcc-lookup.patch \
@@ -11,6 +11,7 @@ SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-Foundries.IO-Verified-Boot-Trusted-Application.patch \
     file://0001-config-overlay-reserved-memory-size-addr-cells.patch \
     file://0001-core_mmc-fix-build-warning-when-CFG_CORE_DYN_SHM-n.patch \
+    file://0001-scripts-convert-remainging-scripts-to-python3.patch \
 "
 
 SRC_URI_append_qemuarm64 = " \
@@ -29,7 +30,7 @@ SRCREV = "cfc0f0743ad9d68bbdd31ec0e50e4643f3a51dc7"
 
 S = "${WORKDIR}/git"
 
-inherit deploy pythonnative python3native
+inherit deploy python3native
 
 PROVIDES = "virtual/optee-os"
 

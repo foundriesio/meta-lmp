@@ -3,9 +3,9 @@ HOMEPAGE = "https://github.com/foundriesio/optee-fiovb"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=92d506fc36dda404ceb608cdc34b7a99"
 
-DEPENDS = "optee-client virtual/optee-os python-pycrypto-native"
+inherit python3native
 
-inherit pythonnative
+DEPENDS = "optee-client virtual/optee-os python3-pycrypto-native"
 
 SRC_URI = "git://github.com/foundriesio/optee-fiovb.git"
 

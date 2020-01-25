@@ -13,7 +13,7 @@ SRCREV = "bc0ec8ce1e4dc5ae23f4737ef659338b7cd408fe"
 
 S = "${WORKDIR}/git"
 
-inherit pythonnative systemd
+inherit systemd
 
 SYSTEMD_SERVICE_${PN} = "tee-supplicant.service"
 

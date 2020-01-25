@@ -3,9 +3,9 @@ HOMEPAGE = "https://github.com/foundriesio/optee-sks"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31daea161b1bc15da69f"
 
-inherit pythonnative
+inherit python3native
 
-DEPENDS = "python-pycrypto-native virtual/optee-os optee-client"
+DEPENDS = "python3-pycrypto-native virtual/optee-os optee-client"
 
 SRC_URI = "git://github.com/foundriesio/optee-sks.git"
 SRCREV = "${AUTOREV}"

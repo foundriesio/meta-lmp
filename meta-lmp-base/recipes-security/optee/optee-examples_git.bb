@@ -3,9 +3,9 @@ HOMEPAGE = "https://github.com/linaro-swg/optee_examples"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=cd95ab417e23b94f381dafc453d70c30"
 
-DEPENDS = "optee-client virtual/optee-os python-pycrypto-native"
+inherit python3native
 
-inherit pythonnative
+DEPENDS = "optee-client virtual/optee-os python3-pycrypto-native"
 
 SRC_URI = "git://github.com/linaro-swg/optee_examples.git \
     file://respect-ldflags-host-build.patch \

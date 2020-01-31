@@ -74,6 +74,7 @@ WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
+SOTA_CLIENT_FEATURES_append_qemuarm64 = " ubootenv"
 UBOOT_MACHINE_qemuarm64 = "qemu_arm64_defconfig"
 IMAGE_BOOT_FILES_qemuarm64 = "boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_qemuarm64 = "fitImage"

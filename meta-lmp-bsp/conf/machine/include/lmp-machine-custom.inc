@@ -2,8 +2,6 @@
 
 # Beaglebone
 PREFERRED_PROVIDER_virtual/bootloader_beaglebone-yocto = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_beaglebone-yocto = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_beaglebone-yocto = "libubootenv"
 SOTA_CLIENT_FEATURES_append_beaglebone-yocto = " ubootenv"
 OSTREE_KERNEL_ARGS_beaglebone-yocto ?= "console=ttyS0,115200n8 ${OSTREE_KERNEL_ARGS_COMMON}"
 KERNEL_DEVICETREE_append_beaglebone-yocto = " am335x-boneblack-wireless.dtb"
@@ -16,8 +14,6 @@ IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
 PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_rpi = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_rpi = "libubootenv"
 SOTA_CLIENT_FEATURES_append_rpi = " ubootenv"
 WKS_FILE_DEPENDS_BOOTLOADERS_rpi = "virtual/bootloader"
 PREFERRED_PROVIDER_virtual/dtb_rpi ?= "lmp-device-tree"
@@ -78,8 +74,6 @@ WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_qemuarm64 = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_qemuarm64 = "libubootenv"
 UBOOT_MACHINE_qemuarm64 = "qemu_arm64_defconfig"
 IMAGE_BOOT_FILES_qemuarm64 = "boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_qemuarm64 = "fitImage"
@@ -134,8 +128,6 @@ KERNEL_CLASSES_apalis-imx6 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_apalis-imx6 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 PREFERRED_PROVIDER_virtual/bootloader_apalis-imx6 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_apalis-imx6 = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_apalis-imx6 = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_apalis-imx6 = "libubootenv"
 UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"
 UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x13000000"
 

@@ -100,7 +100,7 @@ TF-A_EXTRA_OPTIONS_qemuarm64 = " BL32=${DEPLOY_DIR_IMAGE}/optee/tee-header_v2.bi
 QB_MACHINE_qemuarm64 = "-machine virt,secure=on"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM_qemuarm64 = "-m 1057"
-QB_DRIVE_TYPE_qemuarm64 = "/dev/vd"
+QB_DRIVE_TYPE_qemuarm64 = "/dev/vdb"
 ## Bios/bl1.bin is ATF, which requires semihosting for the remaining boot artifacts
 QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config enable,target=native"
 

@@ -74,9 +74,10 @@ WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_qemuarm64 = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES_append_qemuarm64 = " ubootenv"
 UBOOT_MACHINE_qemuarm64 = "qemu_arm64_defconfig"
-IMAGE_BOOT_FILES_qemuarm64 = "boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_qemuarm64 = "boot.itb"
 KERNEL_IMAGETYPE_qemuarm64 = "fitImage"
 KERNEL_CLASSES_qemuarm64 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_qemuarm64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"

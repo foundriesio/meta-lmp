@@ -62,7 +62,7 @@ UBOOT_ENTRYPOINT_qemuriscv64 = "0x80400000"
 UBOOT_RD_LOADADDRESS_qemuriscv64 = "0x81000000"
 RISCV_SBI_PAYLOAD_qemuriscv64 = "u-boot.bin"
 QB_DEFAULT_BIOS_qemuriscv64 = "fw_payload.elf"
-QB_DRIVE_TYPE_qemuriscv64 = "/dev/vd"
+QB_DRIVE_TYPE_qemuriscv64 = "/dev/vdb"
 QB_OPT_APPEND_append_qemuriscv64 = " -bios ${DEPLOY_DIR_IMAGE}/fw_payload.elf"
 
 ## Freedom U540

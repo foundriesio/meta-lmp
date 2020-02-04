@@ -78,7 +78,7 @@ WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_qemuarm64 = "u-boot-fio"
-MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_qemuarm64 = "u-boot-ostree-scr-fit"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_qemuarm64 = "u-boot-ostree-scr-fit atf"
 SOTA_CLIENT_FEATURES_append_qemuarm64 = " ubootenv"
 UBOOT_MACHINE_qemuarm64 = "qemu_arm64_defconfig"
 IMAGE_BOOT_FILES_qemuarm64 = "boot.itb"
@@ -88,7 +88,6 @@ OSTREE_KERNEL_qemuarm64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${M
 OSTREE_KERNEL_ARGS_qemuarm64 ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT_qemuarm64 = "0x40080000"
 MACHINE_FEATURES_append_qemuarm64 = " optee"
-EXTRA_IMAGEDEPENDS_append_qemuarm64 = " atf"
 ## ARM Trusted Firmware options
 TF-A_PLATFORM_qemuarm64 = "qemu"
 TF-A_DEPENDS_qemuarm64 = "u-boot"

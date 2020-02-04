@@ -2,10 +2,11 @@
 
 # Beaglebone
 PREFERRED_PROVIDER_virtual/bootloader_beaglebone-yocto = "u-boot-fio"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_beaglebone-yocto = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES_append_beaglebone-yocto = " ubootenv"
 OSTREE_KERNEL_ARGS_beaglebone-yocto ?= "console=ttyS0,115200n8 ${OSTREE_KERNEL_ARGS_COMMON}"
 KERNEL_DEVICETREE_append_beaglebone-yocto = " am335x-boneblack-wireless.dtb"
-IMAGE_BOOT_FILES_beaglebone-yocto = "u-boot.img MLO boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_beaglebone-yocto = "u-boot.img MLO boot.itb"
 KERNEL_IMAGETYPE_beaglebone-yocto = "fitImage"
 KERNEL_CLASSES_beaglebone-yocto = " kernel-lmp-fitimage "
 OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"

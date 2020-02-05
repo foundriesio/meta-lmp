@@ -1,29 +1,16 @@
 SUMMARY = "OP-TEE Trusted OS"
+HOMEPAGE = "https://github.com/foundriesio/optee_os.git"
 DESCRIPTION = "OPTEE OS"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=c1f21c4f72f372ef38a5a4aee55ec173"
 
 DEPENDS = "python3-pycrypto-native python3-pyelftools-native"
 
-SRC_URI = "git://github.com/OP-TEE/optee_os.git \
-    file://0001-allow-setting-sysroot-for-libgcc-lookup.patch \
-    file://0001-support-overlay-at-fix-address-and-extend-D.patch \
-    file://0001-Foundries.IO-Verified-Boot-Trusted-Application.patch \
-    file://0001-config-overlay-reserved-memory-size-addr-cells.patch \
-    file://0001-core_mmc-fix-build-warning-when-CFG_CORE_DYN_SHM-n.patch \
-    file://0001-scripts-convert-remainging-scripts-to-python3.patch \
-"
-
-SRC_URI_append_imx = " \
-    file://0001-Minimal-HUK-implementation-without-full-CAAM-driver.patch \
-    file://0001-imx-huk-imx7-and-imx7ulp-caam-clock-support.patch \
-    file://0001-plat-imx-configure-the-SHMEM-section.patch \
-    file://0001-imx-caam-check-if-otpmk-can-be-used-when-producing-h.patch \
-    file://0001-imx7ulp-drivers-watchdog-fix-timing-issue.patch \
-"
+SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
 
 PV = "3.6.0+git"
-SRCREV = "cfc0f0743ad9d68bbdd31ec0e50e4643f3a51dc7"
+SRCREV = "fc73a9961ec47b0107e1b06b0f9e37780c46eee5"
+SRCBRANCH = "3.6.0+fio"
 
 S = "${WORKDIR}/git"
 
@@ -68,6 +55,9 @@ EXTRA_OEMAKE_append_apalis-imx6 = " \
                 CFG_NS_ENTRY_ADDR= CFG_IMX_WDOG_EXT_RESET=y \
                 CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x18200000 \
                 CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
+"
+EXTRA_OEMAKE_append_imx = " \
+                CFG_CAAM_DBG=0x001 \
 "
 
 do_install() {

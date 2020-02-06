@@ -123,6 +123,7 @@ OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL
 UBOOT_MAKE_TARGET_colibri-imx7 = "u-boot.imx"
 UBOOT_BINARY_colibri-imx7 = "u-boot.imx"
 UBOOT_MACHINE_colibri-imx7 = "colibri_imx7_emmc_defconfig"
+KERNEL_DEVICETREE_append_colibri-imx7 = " imx7d-colibri-emmc-eval-v3.dtb imx7d-colibri-emmc-aster.dtb"
 EXTRA_IMAGEDEPENDS_append_colibri-imx7 = " u-boot-script-toradex"
 PREFERRED_PROVIDER_virtual/bootloader_colibri-imx7 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_colibri-imx7 = "u-boot-fio"

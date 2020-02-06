@@ -116,9 +116,16 @@ OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_A
 OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
-# Toradex Colibri iMX7 (support both NAND and eMMC targets with one single image)
+# Toradex Colibri iMX7 eMMC
+UBOOT_MAKE_TARGET_colibri-imx7 = "u-boot.imx"
+UBOOT_BINARY_colibri-imx7 = "u-boot.imx"
+UBOOT_MACHINE_colibri-imx7 = "colibri_imx7_emmc_defconfig"
 EXTRA_IMAGEDEPENDS_append_colibri-imx7 = " u-boot-script-toradex"
-IMAGE_BOOT_FILES_colibri-imx7 = "boot.scr uEnv.txt u-boot-colibri-imx7.imx;u-boot-nand.imx u-boot-colibri-imx7.imx-sd;u-boot-emmc.imx ${MACHINE_ARCH}/*;${MACHINE_ARCH}"
+PREFERRED_PROVIDER_virtual/bootloader_colibri-imx7 = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_colibri-imx7 = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils_colibri-imx7 = "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils_colibri-imx7 = "libubootenv"
+IMAGE_BOOT_FILES_colibri-imx7 = "boot.scr uEnv.txt u-boot-colibri-imx7.imx;u-boot-emmc.imx ${MACHINE_ARCH}/*;${MACHINE_ARCH}"
 KERNEL_IMAGETYPE_colibri-imx7 = "fitImage"
 KERNEL_CLASSES_colibri-imx7 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_colibri-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"

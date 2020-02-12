@@ -39,7 +39,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     git \
     less \
     packagegroup-core-full-cmdline-utils \
-    packagegroup-core-full-cmdline-extended \
     packagegroup-core-full-cmdline-multiuser \
     pciutils \
 "

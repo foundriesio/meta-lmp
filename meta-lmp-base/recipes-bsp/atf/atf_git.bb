@@ -1,6 +1,6 @@
 DESCRIPTION = "ARM Trusted Firmware"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://license.rst;md5=90153916317c204fade8b8df15739cde"
+LIC_FILES_CHKSUM = "file://license.rst;md5=1dd070c98a281d18d9eefd938729b031"
 
 TF-A_DEPENDS ?= ""
 
@@ -10,8 +10,8 @@ DEPENDS += " ${@bb.utils.contains("MACHINE_FEATURES", "optee", "virtual/optee-os
 
 SRC_URI = "git://github.com/ARM-software/arm-trusted-firmware.git"
 
-PV = "2.1+git${SRCPV}"
-SRCREV = "ed01e0c407a1794faf8ff8173183a50419bbd2ae"
+PV = "2.2+git${SRCPV}"
+SRCREV = "5d3ee0764b03567bf3501edf47d67d72daff0cb3"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

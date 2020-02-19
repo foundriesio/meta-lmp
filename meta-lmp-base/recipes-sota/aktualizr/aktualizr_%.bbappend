@@ -6,6 +6,7 @@ SRCREV_lmp = "fd631e6a0925f4c71669a62cf5e86d0da42bd387"
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
     file://aktualizr-lite.service \
+    file://aktualizr-lite.path \
     file://aktualizr-secondary.service \
     file://aktualizr-serialcan.service \
     file://10-resource-control.conf \
@@ -23,11 +24,12 @@ PACKAGECONFIG_append_class-target = " dockerapp"
 PACKAGECONFIG_remove_class-target_riscv64 = "dockerapp"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
-SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service"
+SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"
 
 do_install_append() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${WORKDIR}/aktualizr-lite.path ${D}${systemd_system_unitdir}/
 }
 
 # Force same RDEPENDS, packageconfig rdepends common to both

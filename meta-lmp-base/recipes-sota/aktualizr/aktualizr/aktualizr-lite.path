@@ -1,6 +1,5 @@
 [Unit]
 Description=Aktualizr Lite SOTA Client path monitor
-After=network.target
 ConditionPathExists=!/usr/bin/mbedCloudClient
 
 [Path]

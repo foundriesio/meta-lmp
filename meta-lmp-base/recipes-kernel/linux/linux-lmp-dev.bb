@@ -29,7 +29,7 @@ SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM ?= "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-SRC_URI = "${KERNEL_REPO};protocol=https;branch=${KERNEL_BRANCH};name=machine; \
+SRC_URI = "${KERNEL_REPO};branch=${KERNEL_BRANCH};name=machine; \
            ${KERNEL_META_REPO};protocol=https;type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA}"
 
 KMETA = "kernel-meta"

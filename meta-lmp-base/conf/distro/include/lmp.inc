@@ -62,6 +62,12 @@ MIRRORS =+ "\
      https://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
 "
 
+# Compatibility with other layers
+BBMASK += " \
+    /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
+    /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
+"
+
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \

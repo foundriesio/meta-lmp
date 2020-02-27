@@ -32,7 +32,8 @@ DISTRO_FEATURES_remove = "3g alsa pcmcia nfc pulseaudio sysvinit"
 VIRTUAL-RUNTIME_init_manager = "systemd"
 PACKAGECONFIG_append_pn-systemd = " journal-upload resolved networkd serial-getty-generator"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"
-PACKAGECONFIG_remove_pn-networkmanager = "dnsmasq"
+PACKAGECONFIG_append_pn-networkmanager = " gnutls"
+PACKAGECONFIG_remove_pn-networkmanager = "nss dnsmasq"
 
 # Default image formats
 IMAGE_FSTYPES = "tar.xz ext4.gz wic wic.gz wic.bmap"

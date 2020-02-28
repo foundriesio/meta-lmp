@@ -1,4 +1,4 @@
-From e669ca14d5afcaceb90fc2a00384daa1771a1ea4 Mon Sep 17 00:00:00 2001
+From b53b4ad0c09f8693a4372f74fbe4a59a9b32500a Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Mon, 28 Oct 2019 18:29:56 -0300
 Subject: [PATCH] [FIO extras] Disable RPMB_EMU by default
@@ -12,7 +12,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tee-supplicant/CMakeLists.txt b/tee-supplicant/CMakeLists.txt
-index 6f35d84..e4c13cd 100644
+index e41ba8a..d26f407 100644
 --- a/tee-supplicant/CMakeLists.txt
 +++ b/tee-supplicant/CMakeLists.txt
 @@ -4,7 +4,7 @@ project (tee-supplicant C)
@@ -22,10 +22,10 @@ index 6f35d84..e4c13cd 100644
 -option (RPMB_EMU "Enable tee-supplicant to emulate RPMB" ON)
 +option (RPMB_EMU "Enable tee-supplicant to emulate RPMB" OFF)
  option (CFG_TA_GPROF_SUPPORT "Enable tee-supplicant support for TAs instrumented with gprof" ON)
- option (CFG_TA_FTRACE_SUPPORT "Enable tee-supplicant support for TAs instrumented with ftrace" ON)
+ option (CFG_FTRACE_SUPPORT "Enable tee-supplicant support for TAs instrumented with ftrace" ON)
  
 diff --git a/tee-supplicant/Makefile b/tee-supplicant/Makefile
-index d206b68..cbc4c4b 100644
+index b7cf39a..93d4322 100644
 --- a/tee-supplicant/Makefile
 +++ b/tee-supplicant/Makefile
 @@ -4,7 +4,7 @@ include ../config.mk

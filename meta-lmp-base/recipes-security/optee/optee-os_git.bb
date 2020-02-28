@@ -1,32 +1,16 @@
 SUMMARY = "OP-TEE Trusted OS"
+HOMEPAGE = "https://github.com/foundries.io/optee_os.git" 
 DESCRIPTION = "OPTEE OS"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=c1f21c4f72f372ef38a5a4aee55ec173"
 
-DEPENDS = "python3-pycrypto-native python3-pyelftools-native"
+DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyelftools-native"
 
-SRC_URI = "git://github.com/OP-TEE/optee_os.git \
-    file://0001-allow-setting-sysroot-for-libgcc-lookup.patch \
-    file://0001-support-overlay-at-fix-address-and-extend-D.patch \
-    file://0001-Foundries.IO-Verified-Boot-Trusted-Application.patch \
-    file://0001-config-overlay-reserved-memory-size-addr-cells.patch \
-    file://0001-core_mmc-fix-build-warning-when-CFG_CORE_DYN_SHM-n.patch \
-    file://0001-scripts-convert-remainging-scripts-to-python3.patch \
-"
+SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
 
-SRC_URI_append_qemuarm64 = " \
-    file://0001-Revert-generic_boot-reserve-optee_tzdram-memory.patch \
-"
-SRC_URI_append_imx = " \
-    file://0001-Minimal-HUK-implementation-without-full-CAAM-driver.patch \
-    file://0001-imx-huk-imx7-and-imx7ulp-caam-clock-support.patch \
-    file://0001-plat-imx-configure-the-SHMEM-section.patch \
-    file://0001-imx-caam-check-if-otpmk-can-be-used-when-producing-h.patch \
-    file://0001-imx7ulp-drivers-watchdog-fix-timing-issue.patch \
-"
-
-PV = "3.6.0+git"
-SRCREV = "cfc0f0743ad9d68bbdd31ec0e50e4643f3a51dc7"
+PV = "3.8.0+git"
+SRCREV = "3e020757a723c7720e33381a63412914b537e1be"
+SRCBRANCH = "3.8.0+fio"
 
 S = "${WORKDIR}/git"
 
@@ -50,7 +34,7 @@ EXTRA_OEMAKE = "PLATFORM=${OPTEEMACHINE} O=out/arm \
                 CROSS_COMPILE_core=${HOST_PREFIX} \
                 CFG_WERROR=y DEBUG=0 LDFLAGS= \
                 LIBGCC_LOCATE_CFLAGS=--sysroot=${STAGING_DIR_HOST} \
-                CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_TA_LOG_LEVEL=2 \
+                CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_TA_LOG_LEVEL=2 CFG_CAAM_DBG=0x001 \
 "
 EXTRA_OEMAKE += "${@oe.utils.ifelse('${OPTEE_TA_SIGN_KEY}' != '', 'TA_SIGN_KEY=${OPTEE_TA_SIGN_KEY}', '')}"
 
@@ -95,8 +79,10 @@ do_deploy() {
         install -m 644 $f ${DEPLOYDIR}/optee/
     done
     # Link tee.bin so it can be consumed by recipes such as imx-boot
-    ln -sf optee/tee-pager.bin ${DEPLOYDIR}/tee.bin
-    install -m 644 ${B}/out/arm/core/tee-init_load_addr.txt ${DEPLOYDIR}/optee/
+    ln -sf optee/tee-pager_v2.bin ${DEPLOYDIR}/tee.bin
+    # create tee-init_load_addr.txt which is needed by u-boot fitimage recipe
+    ${NM} ${B}/out/arm/core/tee.elf | grep ' _start' | awk '{print "0x" $1}' > ${B}/tee-init_load_addr.txt
+    install -m 644 ${B}/tee-init_load_addr.txt ${DEPLOYDIR}/optee/
 }
 
 addtask deploy before do_build after do_install

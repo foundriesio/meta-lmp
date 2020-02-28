@@ -3,17 +3,16 @@ HOMEPAGE = "https://github.com/OP-TEE/optee_test"
 LICENSE = "BSD & GPLv2"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE.md;md5=daa2bcccc666345ab8940aab1315a4fa"
 
-DEPENDS = "optee-client virtual/optee-os python3-pycrypto-native openssl"
+DEPENDS = "optee-client virtual/optee-os python3-pycryptodome-native python3-pycryptodomex-native openssl"
 
 inherit python3native
 
 SRC_URI = "git://github.com/OP-TEE/optee_test.git \
     file://allow-custom-bin-lib-dir.patch \
-    file://use-python3-instead-of-python.patch \
 "
 
-PV = "3.6.0"
-SRCREV = "40aacb6dc33bbf6ee329f40274bfe7bb438bbf53"
+PV = "3.8.0"
+SRCREV = "30481e381cb4285706e7516853495a7699c93b2c"
 
 S = "${WORKDIR}/git"
 

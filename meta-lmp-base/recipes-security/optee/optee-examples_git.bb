@@ -5,14 +5,14 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=cd95ab417e23b94f381dafc453d70c30"
 
 inherit python3native
 
-DEPENDS = "optee-client virtual/optee-os python3-pycrypto-native"
+DEPENDS = "optee-client virtual/optee-os python3-pycryptodomex-native"
 
 SRC_URI = "git://github.com/linaro-swg/optee_examples.git \
     file://respect-ldflags-host-build.patch \
 "
 
-PV = "3.6.0"
-SRCREV = "292da2fd8db0176e0e96989268c63ef9ab910a6c"
+PV = "3.8.0"
+SRCREV = "559b2141c16bf0f57ccd72f60e4deb84fc2a05b0"
 
 S = "${WORKDIR}/git"
 

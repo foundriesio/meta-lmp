@@ -78,3 +78,6 @@ ERROR_QA_remove = "version-going-backwards"
 
 LMP_USER ?= "fio"
 LMP_PASSWORD ?= "fio"
+
+# Set optee binary for uboot fitimage
+OPTEE_BINARY ?= "tee-pager_v2.bin"

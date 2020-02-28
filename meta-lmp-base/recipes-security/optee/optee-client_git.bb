@@ -8,8 +8,8 @@ SRC_URI = "git://github.com/OP-TEE/optee_client.git \
     file://tee-supplicant.service \
 "
 
-PV = "3.6.0+git"
-SRCREV = "bc0ec8ce1e4dc5ae23f4737ef659338b7cd408fe"
+PV = "3.8.0+git"
+SRCREV = "be4fa2e36f717f03ca46e574aa66f697a897d090"
 
 S = "${WORKDIR}/git"
 

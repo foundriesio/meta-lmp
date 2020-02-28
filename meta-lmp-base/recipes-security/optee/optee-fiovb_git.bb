@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=92d506fc36dda404ceb608cdc34b7a99"
 
 inherit python3native
 
-DEPENDS = "optee-client virtual/optee-os python3-pycrypto-native"
+DEPENDS = "optee-client virtual/optee-os python3-pycryptodomex-native"
 
 SRC_URI = "git://github.com/foundriesio/optee-fiovb.git"
 

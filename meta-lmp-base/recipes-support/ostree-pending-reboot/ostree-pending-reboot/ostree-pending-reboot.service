@@ -4,4 +4,4 @@ ConditionPathExists=/var/run/aktualizr-session/need_reboot
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/systemctl --force reboot
+ExecStart=/usr/sbin/reboot

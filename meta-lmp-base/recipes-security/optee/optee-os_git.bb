@@ -14,9 +14,6 @@ SRC_URI = "git://github.com/OP-TEE/optee_os.git \
     file://0001-scripts-convert-remainging-scripts-to-python3.patch \
 "
 
-SRC_URI_append_qemuarm64 = " \
-    file://0001-Revert-generic_boot-reserve-optee_tzdram-memory.patch \
-"
 SRC_URI_append_imx = " \
     file://0001-Minimal-HUK-implementation-without-full-CAAM-driver.patch \
     file://0001-imx-huk-imx7-and-imx7ulp-caam-clock-support.patch \

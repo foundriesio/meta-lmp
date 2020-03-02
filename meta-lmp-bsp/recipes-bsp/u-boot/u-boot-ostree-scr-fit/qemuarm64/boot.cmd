@@ -18,6 +18,10 @@ setenv bootargs
 setenv kernel_image2
 setenv bootargs2
 
+# Remove optee core reserved memory entry as secure-memory is already defined by QEMU
+fdt addr ${fdt_addr}
+fdt rm /reserved-memory/optee_core@0xe100000
+
 ext4load ${devtype} ${devnum}:2 ${scriptaddr} /boot/loader/uEnv.txt
 env import -t ${scriptaddr} ${filesize}
 

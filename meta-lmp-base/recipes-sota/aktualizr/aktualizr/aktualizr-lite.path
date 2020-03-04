@@ -4,7 +4,6 @@ ConditionPathExists=!/usr/bin/mbedCloudClient
 
 [Path]
 PathExists=/var/sota/sota.toml
-PathExists=/usr/lib/sota/conf.d/10-lite-public-stream.toml
 
 [Install]
 WantedBy=multi-user.target

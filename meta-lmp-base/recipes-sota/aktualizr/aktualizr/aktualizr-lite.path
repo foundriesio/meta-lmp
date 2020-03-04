@@ -1,5 +1,6 @@
 [Unit]
 Description=Aktualizr Lite SOTA Client path monitor
+ConditionPathExists=/etc/systemd/system/multi-user.target.wants/aktualizr-lite.service
 ConditionPathExists=!/usr/bin/mbedCloudClient
 
 [Path]

@@ -25,12 +25,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     sudo \
 "
 
-# OTA+ extras (e.g. device provisioning)
-CORE_IMAGE_BASE_INSTALL += " \
-    opensc \
-    softhsm \
-"
-
 # Machine family specifics
 CORE_IMAGE_BASE_INSTALL_append_imx = " \
     crucible \

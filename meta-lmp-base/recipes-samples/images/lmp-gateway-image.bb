@@ -9,6 +9,7 @@ require lmp-feature-wifi.inc
 require lmp-feature-nat64.inc
 require lmp-feature-jobserv.inc
 require lmp-feature-debug.inc
+require lmp-feature-softhsm.inc
 require lmp-feature-sbin-path-helper.inc
 require lmp-feature-sysctl-hang-crash-helper.inc
 require lmp-feature-sysctl-net-queue-pfifo-fast.inc

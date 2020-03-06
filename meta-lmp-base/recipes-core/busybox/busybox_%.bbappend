@@ -1,3 +1,9 @@
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
+SRC_URI_append_lmp = " \
+    file://shell.cfg \
+"
+
 # Remove syslog as it is not required with systemd
 SRC_URI_remove = "file://syslog.cfg"
 

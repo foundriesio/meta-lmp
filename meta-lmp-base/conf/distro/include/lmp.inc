@@ -39,6 +39,9 @@ PACKAGECONFIG_remove_pn-networkmanager = "nss dnsmasq"
 IMAGE_FSTYPES = "tar.xz ext4.gz wic wic.gz wic.bmap"
 IMAGE_FSTYPES_remove = "tar.gz tar.bz2"
 
+# No Ostree tarball by default (prefer ota instead)
+BUILD_OSTREE_TARBALL ?= "0"
+
 # LMP default classes and overwrites
 INHERIT += "lmp"
 

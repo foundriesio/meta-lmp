@@ -36,7 +36,7 @@ PACKAGECONFIG_append_pn-networkmanager = " gnutls"
 PACKAGECONFIG_remove_pn-networkmanager = "nss dnsmasq"
 
 # Default image formats
-IMAGE_FSTYPES = "tar.xz ext4.gz wic wic.gz wic.bmap"
+IMAGE_FSTYPES = "wic wic.gz wic.bmap"
 IMAGE_FSTYPES_remove = "tar.gz tar.bz2"
 
 # No Ostree tarball by default (prefer ota instead)

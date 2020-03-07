@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append_lmp = " \
+    file://less.cfg \
     file://shell.cfg \
 "
 

@@ -72,6 +72,20 @@ BBMASK += " \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
 "
 
+# Mask Toradex specific recipes that containates other socs
+BBMASK += " \
+    /meta-toradex-bsp-common/recipes-core/systemd/systemd_%.bbappend \
+    /meta-toradex-bsp-common/recipes-core/udev/udev-extraconf_%.bbappend \
+    /meta-toradex-bsp-common/recipes-devtools/e2fsprogs/e2fsprogs_%.bbappend \
+    /meta-toradex-bsp-common/recipes-devtools/python/python3-docutils_%.bbappend \
+    /meta-toradex-bsp-common/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
+    /meta-toradex-bsp-common/recipes-support/libsoc/libsoc_0.8.2.bbappend \
+    /meta-toradex-nxp/recipes-bsp/alsa-state/alsa-state.bbappend \
+    /meta-toradex-nxp/recipes-bsp/u-boot/u-boot.inc \
+    /meta-toradex-nxp/recipes-graphics/xorg-xserver/xserver-xf86-config_0.1.bbappend \
+    /meta-toradex-nxp/recipes-bsp/imx-atf/imx-atf_%.bbappend \
+"
+
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \

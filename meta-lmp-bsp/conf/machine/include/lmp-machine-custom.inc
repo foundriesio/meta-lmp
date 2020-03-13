@@ -144,6 +144,22 @@ PREFERRED_PROVIDER_u-boot_apalis-imx6 = "u-boot-fio"
 UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"
 UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x13000000"
 
+# Toradex Apalis iMX8QM
+UBOOT_DTB_LOADADDRESS_apalis-imx8 = "0x84000000"
+UBOOT_RD_LOADADDRESS_apalis-imx8 = ""
+IMAGE_BOOT_FILES_append_apalis-imx8 = " uEnv-lmp.txt imx-boot"
+KERNEL_IMAGETYPE_apalis-imx8 = "fitImage"
+KERNEL_CLASSES_apalis-imx8 = " kernel-lmp-fitimage "
+OSTREE_KERNEL_mx8qm = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_apalis-imx8 ?= "console=tty1 console=ttyLP1,115200 earlycon=lpuart32,0x5a070000,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
+## iMX8: Use latest Toradex BSP downstream kernel
+PREFERRED_PROVIDER_virtual/kernel_apalis-imx8 ?= "linux-lmp-dev"
+WKS_FILE_apalis-imx8_sota = "sdimage-imx8-sota.wks.in"
+WKS_FILE_DEPENDS_remove_apalis-imx8 = "u-boot-distro-boot"
+WKS_FILE_DEPENDS_append_apalis-imx8 = " u-boot-ostree-scr"
+IMAGE_CLASSES_remove_apalis-imx8 = "image_type_tezi"
+IMAGE_FSTYPES_remove_apalis-imx8 = "teziimg"
+
 # iMX8MM
 PREFERRED_PROVIDER_u-boot-fw-utils_mx8mm = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils_mx8mm = "libubootenv"

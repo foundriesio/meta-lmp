@@ -1,9 +1,9 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-BRANCH_lmp = "2020.2+fio"
-SRCREV_lmp = "ad38f17f4da7269bca39ac2ec54c1d19099bbdaf"
+BRANCH_lmp = "2020.4"
+SRCREV_lmp = "38251e646e5196ada6069bdb30a4e740d2da5c4f"
 
-SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr;branch=${BRANCH};name=aktualizr \
+SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
     file://aktualizr-lite.service \
     file://aktualizr-lite.path \
@@ -25,6 +25,19 @@ PACKAGECONFIG_remove_class-target_riscv64 = "dockerapp"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"
+
+# Workaround as aktualizr is a submodule of aktualizr-lite
+do_configure_prepend_lmp() {
+    cd ${S}
+    git log -1 --format=%h | tr -d '\n' > VERSION
+}
+
+do_install_prepend_lmp() {
+    # link the path to config so aktualizr's do_install_append will find config files
+    [ -e ${S}/config ] || ln -s ${S}/aktualizr/config ${S}/config
+    # link so native build will find sota_tools
+    [ -e ${B}/src ] || ln -s ${B}/aktualizr/src ${B}/src
+}
 
 do_install_append() {
     install -d ${D}${systemd_system_unitdir}

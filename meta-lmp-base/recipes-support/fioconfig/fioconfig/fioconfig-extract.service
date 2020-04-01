@@ -1,0 +1,12 @@
+[Unit]
+Description=Foundries.io configuration management script to extract secrets at boot
+After=var.mount
+ConditionPathExists=/var/sota/config.encrypted
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/fioconfig extract
+
+[Install]
+WantedBy=multi-user.target

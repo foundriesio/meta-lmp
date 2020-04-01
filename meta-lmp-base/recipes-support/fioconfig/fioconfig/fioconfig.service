@@ -1,0 +1,12 @@
+[Unit]
+Description=Foundries.io configuration management daemon
+After=network.target
+ConditionPathExists=/var/sota/sota.toml
+
+[Service]
+RestartSec=10
+Restart=always
+ExecStart=/usr/bin/fioconfig daemon
+
+[Install]
+WantedBy=multi-user.target

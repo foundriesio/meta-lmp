@@ -20,6 +20,7 @@ do_compile() {
 	cd ${S}/src/${GO_IMPORT}/mcumgr
 	mkdir -p ${B}/${GO_BUILD_BINDIR}
 	${GO} build -o ${B}/${GO_BUILD_BINDIR}/mcumgr mcumgr.go
+	chmod u+w -R ${B}
 }
 
 RDEPENDS_${PN}-dev += "bash"

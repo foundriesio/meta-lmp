@@ -8,15 +8,15 @@ recommended anyway.
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- src/libaktualizr/utilities/utils.cc | 5 +++++
+ aktualizr/src/libaktualizr/utilities/utils.cc | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/src/libaktualizr/utilities/utils.cc b/src/libaktualizr/utilities/utils.cc
+diff --git a/aktualizr/src/libaktualizr/utilities/utils.cc b/aktualizr/src/libaktualizr/utilities/utils.cc
 index fbd0e485..7fa5f020 100644
---- a/src/libaktualizr/utilities/utils.cc
-+++ b/src/libaktualizr/utilities/utils.cc
+--- a/aktualizr/src/libaktualizr/utilities/utils.cc
++++ b/aktualizr/src/libaktualizr/utilities/utils.cc
 @@ -31,6 +31,11 @@
- 
+ #include "aktualizr_version.h"
  #include "logging/logging.h"
  
 +/* disable glob tilde as it is not supported by musl */
@@ -24,7 +24,7 @@ index fbd0e485..7fa5f020 100644
 +#define GLOB_TILDE 0
 +#endif
 +
- const char *adverbs[] = {
+ static const std::array<const char *, 132> adverbs = {
      "adorable", "acidic",     "ample",        "aromatic",   "artistic", "attractive", "basic",    "beautiful",
      "best",     "blissful",   "bubbly",       "celebrated", "cheap",    "chilly",     "cloudy",   "colorful",
 -- 

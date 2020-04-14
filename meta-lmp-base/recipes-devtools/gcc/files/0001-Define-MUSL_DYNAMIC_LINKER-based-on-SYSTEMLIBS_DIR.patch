@@ -1,0 +1,70 @@
+From 51b6aeb9dcd0d6823d0c8d9f85f5c952cf154703 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 14 Apr 2020 16:40:57 -0300
+Subject: [PATCH] Define MUSL_DYNAMIC_LINKER based on SYSTEMLIBS_DIR
+
+Required by OE usrmerge + musl.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ gcc/config/arm/linux-eabi.h | 2 +-
+ gcc/config/i386/linux.h     | 2 +-
+ gcc/config/i386/linux64.h   | 6 +++---
+ gcc/config/riscv/linux.h    | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/gcc/config/arm/linux-eabi.h b/gcc/config/arm/linux-eabi.h
+index 108863f..948f1b5 100644
+--- a/gcc/config/arm/linux-eabi.h
++++ b/gcc/config/arm/linux-eabi.h
+@@ -89,7 +89,7 @@
+ #define MUSL_DYNAMIC_LINKER_E "%{mbig-endian:eb}"
+ #endif
+ #define MUSL_DYNAMIC_LINKER \
+-  "/lib/ld-musl-arm" MUSL_DYNAMIC_LINKER_E "%{mfloat-abi=hard:hf}.so.1"
++  SYSTEMLIBS_DIR "ld-musl-arm" MUSL_DYNAMIC_LINKER_E "%{mfloat-abi=hard:hf}.so.1"
+ 
+ /* For armv4 we pass --fix-v4bx to linker to support EABI */
+ #undef TARGET_FIX_V4BX_SPEC
+diff --git a/gcc/config/i386/linux.h b/gcc/config/i386/linux.h
+index 31efbb7..ec66360 100644
+--- a/gcc/config/i386/linux.h
++++ b/gcc/config/i386/linux.h
+@@ -23,4 +23,4 @@ along with GCC; see the file COPYING3.  If not see
+ #define GLIBC_DYNAMIC_LINKER SYSTEMLIBS_DIR "ld-linux.so.2"
+ 
+ #undef MUSL_DYNAMIC_LINKER
+-#define MUSL_DYNAMIC_LINKER "/lib/ld-musl-i386.so.1"
++#define MUSL_DYNAMIC_LINKER SYSTEMLIBS_DIR "ld-musl-i386.so.1"
+diff --git a/gcc/config/i386/linux64.h b/gcc/config/i386/linux64.h
+index dbb474d..edbfc27 100644
+--- a/gcc/config/i386/linux64.h
++++ b/gcc/config/i386/linux64.h
+@@ -32,8 +32,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ #define GLIBC_DYNAMIC_LINKERX32 SYSTEMLIBS_DIR "ld-linux-x32.so.2"
+ 
+ #undef MUSL_DYNAMIC_LINKER32
+-#define MUSL_DYNAMIC_LINKER32 "/lib/ld-musl-i386.so.1"
++#define MUSL_DYNAMIC_LINKER32 SYSTEMLIBS_DIR "ld-musl-i386.so.1"
+ #undef MUSL_DYNAMIC_LINKER64
+-#define MUSL_DYNAMIC_LINKER64 "/lib/ld-musl-x86_64.so.1"
++#define MUSL_DYNAMIC_LINKER64 SYSTEMLIBS_DIR "ld-musl-x86_64.so.1"
+ #undef MUSL_DYNAMIC_LINKERX32
+-#define MUSL_DYNAMIC_LINKERX32 "/lib/ld-musl-x32.so.1"
++#define MUSL_DYNAMIC_LINKERX32 SYSTEMLIBS_DIR "ld-musl-x32.so.1"
+diff --git a/gcc/config/riscv/linux.h b/gcc/config/riscv/linux.h
+index 112ba9c..1a6e888 100644
+--- a/gcc/config/riscv/linux.h
++++ b/gcc/config/riscv/linux.h
+@@ -33,7 +33,7 @@ along with GCC; see the file COPYING3.  If not see
+   "%{mabi=lp64d:}"
+ 
+ #undef MUSL_DYNAMIC_LINKER
+-#define MUSL_DYNAMIC_LINKER "/lib/ld-musl-riscv" XLEN_SPEC MUSL_ABI_SUFFIX ".so.1"
++#define MUSL_DYNAMIC_LINKER SYSTEMLIBS_DIR "ld-musl-riscv" XLEN_SPEC MUSL_ABI_SUFFIX ".so.1"
+ 
+ /* Because RISC-V only has word-sized atomics, it requries libatomic where
+    others do not.  So link libatomic by default, as needed.  */
+-- 
+2.26.0
+

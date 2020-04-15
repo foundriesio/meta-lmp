@@ -1,0 +1,29 @@
+From ffaa9da2ed2b38c1b91046c5e891866dc2614765 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 14 Apr 2020 21:46:37 -0300
+Subject: [PATCH] Include netinet/if_ether.h
+
+Avoid redefinition of struct ethhdr error.
+
+Upstream-Status: Inappropriate [musl specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/basic/socket-util.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/basic/socket-util.h b/src/basic/socket-util.h
+index 48a22415df..b2d8de293d 100644
+--- a/src/basic/socket-util.h
++++ b/src/basic/socket-util.h
+@@ -3,6 +3,7 @@
+ 
+ #include <inttypes.h>
+ #include <linux/netlink.h>
++#include <netinet/if_ether.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_infiniband.h>
+ #include <linux/if_packet.h>
+-- 
+2.26.0
+

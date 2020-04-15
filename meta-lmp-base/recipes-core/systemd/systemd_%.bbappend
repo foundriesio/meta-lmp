@@ -12,7 +12,7 @@ SRC_URI_MUSL_append = " \
 "
 
 PACKAGECONFIG_append_libc-musl = " resolved-musl"
-PACKAGECONFIG[resolved-musl] = "-Dresolve=true,-Dresolve=false"
+PACKAGECONFIG[resolved-musl] = "-Dresolve=true,"
 USERADD_PARAM_${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'resolved-musl', '--system -d / -M --shell /bin/nologin systemd-resolve;', '', d)}"
 ALTERNATIVE_${PN} += " ${@bb.utils.contains('PACKAGECONFIG', 'resolved-musl', 'resolv-conf', '', d)}"
 

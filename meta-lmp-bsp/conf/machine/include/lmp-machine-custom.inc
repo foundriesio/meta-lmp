@@ -133,6 +133,22 @@ OSTREE_KERNEL_colibri-imx7 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-
 UBOOT_DTB_LOADADDRESS_colibri-imx7 = "0x82000000"
 UBOOT_RD_LOADADDRESS_colibri-imx7 = "0x82100000"
 
+# iMX6ULL EVK
+PREFERRED_PROVIDER_virtual/kernel_imx6ullevk ?= "linux-lmp"
+PREFERRED_PROVIDER_virtual/bootloader_imx6ullevk = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_imx6ullevk = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils_imx6ullevk = "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils_imx6ullevk = "libubootenv"
+UBOOT_CONFIG_imx6ullevk = ""
+UBOOT_MACHINE_imx6ullevk = "mx6ull_14x14_evk_config"
+UBOOT_ENTRYPOINT_imx6ullevk  = "0x82000000"
+IMAGE_BOOT_FILES_imx6ullevk = "boot.scr uEnv.txt"
+KERNEL_DEVICETREE_imx6ullevk = "imx6ull-14x14-evk.dtb"
+KERNEL_IMAGETYPE_imx6ullevk = "fitImage"
+KERNEL_CLASSES_imx6ullevk = " kernel-lmp-fitimage "
+OSTREE_KERNEL_imx6ullevk = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_imx6ullevk ?= "console=tty1 console=ttymxc0,115200 root=/dev/mmcblk1p2 rootfstype=ext4"
+
 # Toradex Apalis iMX6
 EXTRA_IMAGEDEPENDS_append_apalis-imx6 = " u-boot-script-toradex"
 IMAGE_BOOT_FILES_apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.imx-spl ${MACHINE_ARCH}/flash_blk.img;flash_blk.img"

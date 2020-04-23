@@ -148,6 +148,7 @@ KERNEL_IMAGETYPE_imx6ullevk = "fitImage"
 KERNEL_CLASSES_imx6ullevk = " kernel-lmp-fitimage "
 OSTREE_KERNEL_imx6ullevk = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 OSTREE_KERNEL_ARGS_imx6ullevk ?= "console=tty1 console=ttymxc0,115200 root=/dev/mmcblk1p2 rootfstype=ext4"
+WKS_FILE_imx6ullevk_sota = "sdimage-imx-sota.wks"
 
 # Toradex Apalis iMX6
 EXTRA_IMAGEDEPENDS_append_apalis-imx6 = " u-boot-script-toradex"

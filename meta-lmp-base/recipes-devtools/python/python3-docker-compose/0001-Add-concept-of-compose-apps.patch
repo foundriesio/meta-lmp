@@ -1,0 +1,175 @@
+From bbee930d311b3e657c84722bbd23c8c54eb063af Mon Sep 17 00:00:00 2001
+From: Andy Doan <andy@foundries.io>
+Date: Mon, 23 Mar 2020 15:16:52 -0500
+Subject: [PATCH] Add concept of "compose apps"
+
+Signed-off-by: Andy Doan <andy@foundries.io>
+---
+ compose/cli/main.py | 16 ++++++++-
+ compose/project.py  | 81 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 96 insertions(+), 1 deletion(-)
+
+diff --git a/compose/cli/main.py b/compose/cli/main.py
+index f0fbe643..7a34fa31 100644
+--- a/compose/cli/main.py
++++ b/compose/cli/main.py
+@@ -32,6 +32,7 @@ from ..const import COMPOSEFILE_V2_2 as V2_2
+ from ..const import IS_WINDOWS_PLATFORM
+ from ..errors import StreamParseError
+ from ..progress_stream import StreamOutputError
++from ..project import download_compose_app
+ from ..project import get_image_digests
+ from ..project import MissingDigests
+ from ..project import NoSuchService
+@@ -45,6 +46,7 @@ from ..service import NeedsBuildError
+ from ..service import OperationFailedError
+ from .command import get_config_from_options
+ from .command import project_from_options
++from .command import get_client
+ from .docopt_command import DocoptDispatcher
+ from .docopt_command import get_handler
+ from .docopt_command import NoSuchCommand
+@@ -117,7 +119,7 @@ def perform_command(options, handler, command_options):
+         handler(command_options)
+         return
+ 
+-    if options['COMMAND'] == 'config':
++    if options['COMMAND'] in ('config', 'download'):
+         command = TopLevelCommand(None, options=options)
+         handler(command, command_options)
+         return
+@@ -216,6 +218,7 @@ class TopLevelCommand(object):
+       config             Validate and view the Compose file
+       create             Create services
+       down               Stop and remove containers, networks, images, and volumes
++      download           Download a docker-compose app
+       events             Receive real time events from containers
+       exec               Execute a command in a running container
+       help               Get help on a command
+@@ -422,6 +425,17 @@ class TopLevelCommand(object):
+             timeout=timeout,
+             ignore_orphans=ignore_orphans)
+ 
++    def download(self, options):
++        """
++        Downloads a docker-compose app.
++
++        Usage: download [options] APP
++        """
++        project_dir = self.toplevel_options.get('--project-directory') or './'
++        app = options['APP']
++        environment = Environment.from_env_file(project_dir)
++        download_compose_app(get_client(environment), project_dir, app)
++
+     def events(self, options):
+         """
+         Receive real time events from containers.
+diff --git a/compose/project.py b/compose/project.py
+index 696c8b04..2113e9a6 100644
+--- a/compose/project.py
++++ b/compose/project.py
+@@ -5,16 +5,22 @@ import datetime
+ import logging
+ import operator
+ import re
++import tarfile
++from base64 import b64encode
++from io import BytesIO
+ from functools import reduce
+ from os import path
+ 
+ import enum
+ import six
++from docker import auth
+ from docker.errors import APIError
+ from docker.errors import ImageNotFound
+ from docker.errors import NotFound
+ from docker.utils import version_lt
+ 
++import requests
++
+ from . import parallel
+ from .cli.errors import UserError
+ from .config import ConfigurationError
+@@ -946,3 +952,78 @@ class NoSuchService(Exception):
+ class ProjectError(Exception):
+     def __init__(self, msg):
+         self.msg = msg
++
++
++def _reg_get(url, auth_config, accept_content_type=None, **kwargs):
++    headers = {}
++    if accept_content_type:
++        headers['Accept'] = accept_content_type
++    r = requests.get(url, **kwargs)
++    if r.status_code == 401 and auth_config:
++        scope = r.json()['errors'][0]['detail'][0]
++        params = {
++            'service': 'registry',
++            'scope': '%s:%s:%s' % (
++                scope['Type'], scope['Name'], scope['Action']),
++        }
++
++        user_pass = auth_config.get('username', '')
++        if user_pass:
++            user_pass = user_pass + ':'
++        user_pass += auth_config.get('password', '')
++
++        headers = {
++            'Authorization': 'Basic ' + b64encode(user_pass.encode()).decode(),
++        }
++        r = requests.get(
++            'https://' + auth_config['serveraddress'] + '/token-auth/',
++            headers=headers,
++            params=params)
++        if r.status_code == 200:
++            headers = {
++                'Authorization': 'bearer ' + r.json()['token']
++            }
++            if accept_content_type:
++                headers['Accept'] = accept_content_type
++            r = requests.get(url, headers=headers, **kwargs)
++    if r.status_code != 200:
++        raise ProjectError('Unable to get %s: HTTP_%d\n' % (
++            r.url, r.status_code, r.text))
++    return r
++
++
++def download_compose_app(client, project_dir, compose_app):
++    digest = client.inspect_distribution(
++        compose_app)['Descriptor']['digest']
++
++    registry, repo = auth.resolve_repository_name(compose_app)
++    if '@sha256' in repo:
++        repo, _ = repo.split('@sha256')
++    elif ':' in repo:
++        repo, _ = repo.split(':')
++
++    auth_config = auth.load_config()
++    data = auth_config.resolve_authconfig(registry)
++    # Cred helpers and CamelCase keys and config files aren't.
++    # Convert to lower case to make consistent:
++    data = {k.lower(): v for k, v in data.items()}
++
++    r = _reg_get(
++        'https://' + registry + '/v2/' + repo + '/manifests/' + digest,
++        data,
++        'application/vnd.oci.image.manifest.v1+json'
++    )
++    manifest = r.json()
++    annotation = (manifest.get('annotations') or {}).get('compose-app')
++    if not annotation:
++        raise ProjectError('Invalid app - Manifest missing required property "annotations.compose-app"')
++    if annotation != 'v1':
++        raise ProjectError('Invalid app - "annotations.compose-app={}" not supported'.format(annotation))
++    digest = manifest['layers'][0]['digest']
++    r = _reg_get(
++        'https://' + registry + '/v2/' + repo + '/blobs/' + digest,
++        data,
++        stream=True
++    )
++    tf = tarfile.open(mode='r:gz', fileobj=BytesIO(r.content))
++    tf.extractall(project_dir)
+-- 
+2.26.2
+

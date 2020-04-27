@@ -116,12 +116,16 @@ OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_A
 OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
-# cubox-i (hummingboard)
+# cubox-i (hummingboard2)
 KERNEL_DEVICETREE_append_cubox-i = " \
     imx6dl-hummingboard2-som-v15.dtb imx6q-hummingboard2-som-v15.dtb \
     imx6dl-hummingboard2-emmc-som-v15.dtb imx6q-hummingboard2-emmc-som-v15.dtb \
     imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb \
 "
+PREFERRED_PROVIDER_virtual/bootloader_cubox-i = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_cubox-i = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils_cubox-i = "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils_cubox-i = "libubootenv"
 IMAGE_BOOT_FILES_append_cubox-i = " boot.scr uEnv.txt"
 KERNEL_IMAGETYPE_cubox-i = "fitImage"
 KERNEL_CLASSES_cubox-i = " kernel-fitimage "

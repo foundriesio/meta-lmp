@@ -116,6 +116,21 @@ OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_A
 OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
+# cubox-i (hummingboard)
+KERNEL_DEVICETREE_append_cubox-i = " \
+    imx6dl-hummingboard2-som-v15.dtb imx6q-hummingboard2-som-v15.dtb \
+    imx6dl-hummingboard2-emmc-som-v15.dtb imx6q-hummingboard2-emmc-som-v15.dtb \
+    imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb \
+"
+IMAGE_BOOT_FILES_append_cubox-i = " boot.scr uEnv.txt"
+KERNEL_IMAGETYPE_cubox-i = "fitImage"
+KERNEL_CLASSES_cubox-i = " kernel-fitimage "
+OSTREE_KERNEL_cubox-i = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+UBOOT_DTB_LOADADDRESS_cubox-i = "0x18000000"
+UBOOT_RD_LOADADDRESS_cubox-i = "0x13000000"
+WKS_FILES_sota_cubox-i = "sdimage-imx6-spl-sota.wks"
+UBOOT_EXTLINUX_cubox-i = ""
+
 # Toradex Colibri iMX7 eMMC
 UBOOT_MAKE_TARGET_colibri-imx7 = "u-boot.imx"
 UBOOT_BINARY_colibri-imx7 = "u-boot.imx"

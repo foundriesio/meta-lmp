@@ -7,6 +7,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d2
 GO_IMPORT = "github.com/foundriesio/fioconfig"
 SRC_URI = "git://${GO_IMPORT} \
 	file://fioconfig.service \
+	file://fioconfig.path \
 	file://fioconfig-extract.service \
 "
 SRCREV = "1db6a4fdee49a69a64c4c0ac6f92bc2aa84c874f"
@@ -25,12 +26,13 @@ do_compile() {
 }
 
 SYSTEMD_PACKAGES += "${PN}"
-SYSTEMD_SERVICE_${PN} = "fioconfig.service fioconfig-extract.service"
+SYSTEMD_SERVICE_${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"
 
 
 do_install_append() {
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/fioconfig.service ${D}${systemd_system_unitdir}/
+	install -m 0644 ${WORKDIR}/fioconfig.path ${D}${systemd_system_unitdir}/
 	install -m 0644 ${WORKDIR}/fioconfig-extract.service ${D}${systemd_system_unitdir}/
 	install -d ${D}${datadir}/fioconfig/handlers
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/aktualizr-toml-update ${D}${datadir}/fioconfig/handlers
@@ -41,6 +43,7 @@ RDEPENDS_${PN} = "${SOTA_CLIENT}"
 
 FILES_${PN} += " \
 	${systemd_unitdir}/system/fioconfig.service \
+	${systemd_unitdir}/system/fioconfig.path \
 	${systemd_unitdir}/system/fioconfig-extract.service \
 	${datadir}/fioconfig/handlers \
 "

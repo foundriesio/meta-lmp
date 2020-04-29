@@ -9,7 +9,7 @@ SRC_URI = "git://${GO_IMPORT} \
 	file://fioconfig.service \
 	file://fioconfig-extract.service \
 "
-SRCREV = "6d9f25f1c402eaa23bb98c0ce04355cd96e25647"
+SRCREV = "1db6a4fdee49a69a64c4c0ac6f92bc2aa84c874f"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
@@ -27,10 +27,13 @@ do_compile() {
 SYSTEMD_PACKAGES += "${PN}"
 SYSTEMD_SERVICE_${PN} = "fioconfig.service fioconfig-extract.service"
 
+
 do_install_append() {
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/fioconfig.service ${D}${systemd_system_unitdir}/
 	install -m 0644 ${WORKDIR}/fioconfig-extract.service ${D}${systemd_system_unitdir}/
+	install -d ${D}${datadir}/fioconfig/handlers
+	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/aktualizr-toml-update ${D}${datadir}/fioconfig/handlers
 }
 
 # We need aktualizr because we uses its device gateway connectivity and keys
@@ -39,4 +42,5 @@ RDEPENDS_${PN} = "${SOTA_CLIENT}"
 FILES_${PN} += " \
 	${systemd_unitdir}/system/fioconfig.service \
 	${systemd_unitdir}/system/fioconfig-extract.service \
+	${datadir}/fioconfig/handlers \
 "

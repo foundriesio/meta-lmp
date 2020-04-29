@@ -17,16 +17,21 @@ MODE=${MODE}
 # Set Default network device to eth0 if not provided
 [ -n "$NETDEVICE" ] || NETDEVICE="eth0"
 
-# Extract data from device-tree if available
+# Extract data from device-tree or via dmi, if available
 if [ -d /proc/device-tree ]; then
-	if [ -f /proc/device-tree/model ]; then
-		# Lowercase and no spaces (can generate bad values with special chars)
-		MODEL=$(sed -e 's/.*/\L&/' -e 's/ /-/g' -e 's/+/plus/g' /proc/device-tree/model | tr -d '\0')
-	fi
-	if [ -f /proc/device-tree/serial-number ]; then
-		# Remove leading zeros
-		SERIAL=$(sed -e 's/^0*//' /proc/device-tree/serial-number | tr -d '\0')
-	fi
+	MODEL_SOURCE="/proc/device-tree/model"
+	SERIAL_SOURCE="/proc/device-tree/serial-number"
+else
+	MODEL_SOURCE="/sys/class/dmi/id/product_name"
+	SERIAL_SOURCE="/sys/class/dmi/id/product_serial"
+fi
+if [ -f ${MODEL_SOURCE} ]; then
+	# Lowercase and no spaces (can generate bad values with special chars)
+	MODEL=$(sed -e 's/.*/\L&/' -e 's/ /-/g' -e 's/+/plus/g' ${MODEL_SOURCE} | tr -d '\0')
+fi
+if [ -f ${SERIAL_SOURCE} ]; then
+	# Remove leading zeros
+	SERIAL=$(sed -e 's/^0*//' ${SERIAL_SOURCE} | tr -d '\0')
 fi
 # Network device mac address
 if [ -f /sys/class/net/${NETDEVICE}/address ]; then

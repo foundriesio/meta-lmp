@@ -4,12 +4,15 @@ LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
 DEPENDS = "boost curl ostree glib-2.0"
 
-SRCREV = "8510f6b4a45f9ac1162b1254c0dcac4108b01244"
+SRCREV = "13f65a2756331b157e3aecdedcc734e60b80311c"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
 
+# Default to master tag
+LMP_DEVICE_REGISTER_TAG ?= "master"
+
 PACKAGECONFIG ?= "aklitetags dockerapp"
-PACKAGECONFIG[aklitetags] = "-DAKLITE_TAGS=ON,-DAKLITE_TAGS=OFF,"
+PACKAGECONFIG[aklitetags] = "-DAKLITE_TAGS=ON -DDEFAULT_TAG=${LMP_DEVICE_REGISTER_TAG},-DAKLITE_TAGS=OFF,"
 PACKAGECONFIG[dockerapp] = "-DDOCKER_APPS=ON,-DDOCKER_APPS=OFF,"
 
 S = "${WORKDIR}/git"

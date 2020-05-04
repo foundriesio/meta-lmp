@@ -22,14 +22,13 @@ PREFERRED_PROVIDER_zlib ?= "zlib"
 PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 
-# No need for x11 even for native
-DISTRO_FEATURES_NATIVE_remove = "x11"
-DISTRO_FEATURES_NATIVESDK_remove = "x11"
-
-# TODO: review default distro features
+# Default distro features for LMP (can be extended by the user if needed)
+DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"
+DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio sysvinit"
 DISTRO_FEATURES_append = " pam systemd usrmerge virtualization"
-DISTRO_FEATURES_remove = "3g alsa pcmcia nfs nfc pulseaudio sysvinit"
 VIRTUAL-RUNTIME_init_manager = "systemd"
+
+# Extended packageconfig options for LMP
 PACKAGECONFIG_append_pn-docker-ce = " seccomp"
 PACKAGECONFIG_append_pn-runc-docker = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008

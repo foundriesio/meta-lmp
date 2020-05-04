@@ -22,6 +22,7 @@ PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[dockerapp] = "-DBUILD_DOCKERAPP=ON,-DBUILD_DOCKERAPP=OFF,,docker-app"
 PACKAGECONFIG_append_class-target = " dockerapp"
 PACKAGECONFIG_remove_class-target_riscv64 = "dockerapp"
+PACKAGECONFIG[ubootenv] = ",,,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"

@@ -80,7 +80,6 @@ BBMASK += " \
     /meta-toradex-bsp-common/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
     /meta-toradex-bsp-common/recipes-support/libsoc/libsoc_0.8.2.bbappend \
     /meta-toradex-nxp/recipes-bsp/alsa-state/alsa-state.bbappend \
-    /meta-toradex-nxp/recipes-bsp/u-boot/u-boot.inc \
     /meta-toradex-nxp/recipes-graphics/xorg-xserver/xserver-xf86-config_0.1.bbappend \
     /meta-toradex-nxp/recipes-bsp/imx-atf/imx-atf_%.bbappend \
 "

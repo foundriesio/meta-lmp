@@ -28,6 +28,4 @@ require recipes-bsp/u-boot/u-boot.inc
 UBOOT_CLASSES ?= ""
 inherit ${UBOOT_CLASSES}
 
-RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
-
 PROVIDES += "u-boot"

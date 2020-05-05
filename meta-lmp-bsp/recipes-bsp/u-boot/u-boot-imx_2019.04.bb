@@ -24,8 +24,6 @@ DEPENDS += "flex-native bison-native bc-native dtc-native"
 # LMP config extensions
 SRC_URI_append_imx8mmevk = " file://0001-imx8mm_evk-lmp-compatibility.patch"
 
-RDEPENDS_${PN}_append_sota = " u-boot-ostree-scr"
-
 PROVIDES += "u-boot"
 
 inherit fsl-u-boot-localversion

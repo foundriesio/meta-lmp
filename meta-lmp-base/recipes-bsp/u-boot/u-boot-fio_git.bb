@@ -12,6 +12,7 @@ SRCREV = "c3dc488020e6be81490b14955c09038814637ae0"
 SRCBRANCH = "2019.10+fio"
 
 SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH} \
+    file://fw_env.config \
     file://lmp.cfg \
 "
 

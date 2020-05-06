@@ -2,9 +2,9 @@ SUMMARY = "Linux microPlatform OSF OTA+ device registration tool"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
-DEPENDS = "boost curl ostree glib-2.0"
+DEPENDS = "boost curl glib-2.0"
 
-SRCREV = "13f65a2756331b157e3aecdedcc734e60b80311c"
+SRCREV = "5acb69ec648ba99978d985ddda326b31823c421a"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
 

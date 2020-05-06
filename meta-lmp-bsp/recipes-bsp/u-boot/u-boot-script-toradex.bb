@@ -7,7 +7,7 @@ LICENSE = "GPLv3+"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-3.0;md5=c79ff39f19dfec6d293b95dea7b07891"
 DEPENDS = "u-boot-mkimage-native"
 
-COMPATIBLE_MACHINE = "(apalis-imx6|colibri-imx7)"
+COMPATIBLE_MACHINE = "(apalis-imx6)"
 
 SRC_URI = " \
     file://flash_blk.scr \

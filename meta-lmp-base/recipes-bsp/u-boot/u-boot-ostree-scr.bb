@@ -24,7 +24,9 @@ do_compile() {
 
 do_deploy() {
     install -d ${DEPLOYDIR}
-    install -m 0644 boot.scr ${DEPLOYDIR}
+    install -m 0644 boot.scr ${DEPLOYDIR}/boot.scr-${MACHINE}-${PV}-${PR}
+    ln -sf boot.scr-${MACHINE}-${PV}-${PR} ${DEPLOYDIR}/boot.scr-${MACHINE}
+    ln -sf boot.scr-${MACHINE}-${PV}-${PR} ${DEPLOYDIR}/boot.scr
     install -m 0644 uEnv.txt ${DEPLOYDIR}
 }
 

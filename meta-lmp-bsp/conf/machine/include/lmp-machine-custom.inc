@@ -121,6 +121,8 @@ IMAGE_BOOT_FILES_intel-corei7-64 = ""
 IMAGE_FSTYPES_remove_intel-corei7-64 = "live hddimg"
 
 # Common for iMX targets
+## Prefer IMX_DEFAULT_BSP=nxp as mainline removes every common machine override
+IMX_DEFAULT_BSP = "nxp"
 OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

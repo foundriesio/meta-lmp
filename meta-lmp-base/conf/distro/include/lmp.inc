@@ -83,6 +83,8 @@ BBMASK += " \
     /meta-toradex-nxp/recipes-bsp/alsa-state/alsa-state.bbappend \
     /meta-toradex-nxp/recipes-graphics/xorg-xserver/xserver-xf86-config_0.1.bbappend \
     /meta-toradex-nxp/recipes-bsp/imx-atf/imx-atf_%.bbappend \
+    /meta-toradex-nxp/recipes-bsp/u-boot/u-boot-toradex_2019.07.bb \
+    /meta-toradex-nxp/recipes-bsp/u-boot/u-boot-toradex-fw-utils_2019.07.bb \
 "
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults

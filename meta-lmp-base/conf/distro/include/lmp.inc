@@ -23,7 +23,7 @@ PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 
 # Default distro features for LMP (can be extended by the user if needed)
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"
-DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio sysvinit"
+DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio sysvinit ldconfig"
 DISTRO_FEATURES_append = " pam systemd usrmerge virtualization"
 VIRTUAL-RUNTIME_init_manager = "systemd"
 

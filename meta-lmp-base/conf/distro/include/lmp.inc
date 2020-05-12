@@ -62,6 +62,11 @@ MIRRORS =+ "\
      https://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
 "
 
+# Compatibility with other layers
+BBMASK += " \
+     /meta-riscv/recipes-connectivity/openssl/openssl_1.1.1d.bbappend \
+"
+
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \

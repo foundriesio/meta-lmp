@@ -30,6 +30,7 @@ SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"
 do_configure_prepend_lmp() {
     cd ${S}
     git log -1 --format=%h | tr -d '\n' > VERSION
+    cp VERSION aktualizr/
 }
 
 do_install_prepend_lmp() {

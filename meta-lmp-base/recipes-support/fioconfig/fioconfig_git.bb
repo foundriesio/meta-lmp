@@ -6,6 +6,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d2
 
 GO_IMPORT = "github.com/foundriesio/fioconfig"
 SRC_URI = "git://${GO_IMPORT} \
+	file://go-1.13-compat.patch \
 	file://fioconfig.service \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \
@@ -14,7 +15,13 @@ SRCREV = "1db6a4fdee49a69a64c4c0ac6f92bc2aa84c874f"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
+RDEPENDS_${PN}-staticdev = "perl"
+
 inherit go goarch systemd
+
+do_configure() {
+	:
+}
 
 do_compile() {
 	cd ${S}/src/${GO_IMPORT}

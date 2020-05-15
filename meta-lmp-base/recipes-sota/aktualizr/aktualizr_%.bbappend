@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BRANCH_lmp = "master"
-SRCREV_lmp = "35bb1f4e80ea7c635dd27434717d8a6a58f212d8"
+SRCREV_lmp = "5e72380b1a3c124c1028a0021ded5d4aff50bac3"
 
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
@@ -10,7 +10,7 @@ SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};na
     file://aktualizr-secondary.service \
     file://aktualizr-serialcan.service \
     file://10-resource-control.conf \
-    ${@ d.expand("https://ats-tuf-cli-releases.s3-eu-central-1.amazonaws.com/cli-${GARAGE_SIGN_PV}.tgz;unpack=0;name=garagesign") if d.getVar('GARAGE_SIGN_AUTOVERSION') != '1' else ''} \
+    ${@ d.expand("https://tuf-cli-releases.ota.here.com/cli-${GARAGE_SIGN_PV}.tgz;unpack=0;name=garagesign") if d.getVar('GARAGE_SIGN_AUTOVERSION') != '1' else ''} \
 "
 
 SRC_URI_append_libc-musl = " \

@@ -112,6 +112,24 @@ QB_DRIVE_TYPE_qemuarm64 = "/dev/vdb"
 ## Bios/bl1.bin is ATF, which requires semihosting for the remaining boot artifacts
 QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config enable,target=native"
 
+# QEMU ARM
+PREFERRED_PROVIDER_virtual/bootloader_qemuarm = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_qemuarm = "u-boot-fio"
+WKS_FILE_DEPENDS_append_qemuarm = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script_qemuarm = "u-boot-ostree-scr-fit"
+SOTA_CLIENT_FEATURES_append_qemuarm = " ubootenv"
+UBOOT_MACHINE_qemuarm = "qemu_arm_defconfig"
+IMAGE_BOOT_FILES_qemuarm = "boot.itb"
+KERNEL_IMAGETYPE_qemuarm = "fitImage"
+KERNEL_CLASSES_qemuarm = " kernel-lmp-fitimage "
+OSTREE_KERNEL_qemuarm = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_qemuarm ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
+UBOOT_ENTRYPOINT_qemuarm = "0x40080000"
+QB_DRIVE_TYPE_qemuarm = "/dev/vdb"
+## Currently support u-boot -> Linux boot
+## will add more security later
+QB_OPT_APPEND_qemuarm = "-no-acpi -bios u-boot.bin -d unimp"
+
 # Intel
 OSTREE_BOOTLOADER_intel-corei7-64 ?= "grub"
 OSTREE_KERNEL_ARGS_intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

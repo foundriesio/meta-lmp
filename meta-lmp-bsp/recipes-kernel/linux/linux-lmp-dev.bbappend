@@ -5,6 +5,11 @@ SRC_URI_append_rpi = " \
     file://0001-FIO-extras-drm-panel-rpi-add-lcd-rotate-property.patch \
 "
 
+# OP-TEE generic, but for now only applied on mx8mm
+SRC_URI_append_mx8mm = " \
+    file://0001-FIO-fromlist-drivers-optee-allow-op-tee-to-access-de.patch \
+"
+
 # Apalis iMX8
 LINUX_VERSION_apalis-imx8 ?= "4.14.y"
 KERNEL_REPO_apalis-imx8 ?= "git://git.toradex.com/linux-toradex.git"

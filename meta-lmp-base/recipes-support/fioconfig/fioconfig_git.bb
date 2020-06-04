@@ -21,7 +21,7 @@ do_compile() {
 	BUILD_COMMIT=`git rev-parse --short HEAD`
 	FIOCONFIG_LDFLAGS="-X ${GO_IMPORT}/internal.Commit=${BUILD_COMMIT}"
 	mkdir -p ${B}/${GO_BUILD_BINDIR}
-	${GO} build -ldflags="${FIOCONFIG_LDFLAGS}" -o ${B}/${GO_BUILD_BINDIR}/fioconfig main.go
+	${GO} build -tags vpn -ldflags="${FIOCONFIG_LDFLAGS}" -o ${B}/${GO_BUILD_BINDIR}/fioconfig main.go
 	chmod u+w -R ${B}
 }
 
@@ -36,6 +36,7 @@ do_install_append() {
 	install -m 0644 ${WORKDIR}/fioconfig-extract.service ${D}${systemd_system_unitdir}/
 	install -d ${D}${datadir}/fioconfig/handlers
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/aktualizr-toml-update ${D}${datadir}/fioconfig/handlers
+	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/factory-config-vpn ${D}${datadir}/fioconfig/handlers
 }
 
 # We need aktualizr because we uses its device gateway connectivity and keys

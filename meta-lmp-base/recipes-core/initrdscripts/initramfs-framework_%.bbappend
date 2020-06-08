@@ -2,9 +2,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
 	file://ostree \
-"
-
-SRC_URI_append_sota += " \
 	file://run-tmpfs.patch \
 "
 

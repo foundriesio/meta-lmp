@@ -136,7 +136,6 @@ OSTREE_KERNEL_ARGS_intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS
 EFI_PROVIDER_intel-corei7-64 = "grub-efi"
 WKS_FILE_intel-corei7-64_sota = "efidisk-sota.wks"
 IMAGE_BOOT_FILES_intel-corei7-64 = ""
-IMAGE_FSTYPES_remove_intel-corei7-64 = "live hddimg"
 
 # Common for iMX targets
 ## Prefer IMX_DEFAULT_BSP=nxp as mainline removes every common machine override

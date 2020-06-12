@@ -10,7 +10,7 @@ SRC_URI = "git://${GO_IMPORT} \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \
 "
-SRCREV = "f12c870e90900c1eb06ef7619a6ce1b7663ce4a0"
+SRCREV = "e2f99adce7c50e400e6898544b538cd98b2398f7"
 
 UPSTREAM_CHECK_COMMITS = "1"
 

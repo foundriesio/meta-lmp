@@ -11,7 +11,7 @@ sota_fstab_update() {
 	fi
 }
 
-ROOTFS_POSTPROCESS_COMMAND += "sota_fstab_update; "
+ROOTFS_POSTPROCESS_COMMAND_append_sota = " sota_fstab_update; "
 
 # Support initial customized target via GARAGE_CUSTOMIZE_TARGET
 # This is set by our CI scripts and allows the initial target to populated by

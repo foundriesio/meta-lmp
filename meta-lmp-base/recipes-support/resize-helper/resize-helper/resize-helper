@@ -56,6 +56,7 @@ if [ "$PART_TABLE_TYPE" = "gpt" ]; then
 fi
 
 # 'Yes' is required when partition is already mounted
-echo -e 'Yes\n100%' | ${PARTED} ---pretend-input-tty ${DEVICE} resizepart ${PART_ENTRY_NUMBER}
+echo -e 'Yes\n100%' | ${PARTED} ---pretend-input-tty ${DEVICE} resizepart ${PART_ENTRY_NUMBER} ||
+	echo -e '100%' | ${PARTED} ---pretend-input-tty ${DEVICE} resizepart ${PART_ENTRY_NUMBER}
 ${PARTPROBE}
 ${RESIZE2FS} "${ROOT_DEVICE}"

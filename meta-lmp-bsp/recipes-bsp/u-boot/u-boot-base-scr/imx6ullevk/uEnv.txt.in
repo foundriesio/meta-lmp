@@ -1,0 +1,2 @@
+bootcmd_run=bootz ${loadaddr} - ${fdt_addr}
+bootcmd=run loadfdt; run mmcargs; run loadimage; run bootcmd_run

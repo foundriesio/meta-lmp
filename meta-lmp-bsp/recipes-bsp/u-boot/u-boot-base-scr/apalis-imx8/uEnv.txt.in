@@ -1,0 +1,4 @@
+bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr_r} ${fdt_file}
+bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${loadaddr} ${image}
+bootcmd_run=booti ${loadaddr} - ${fdt_addr}
+bootcmd=run bootcmd_dtb; run mmcargs; run bootcmd_load_k; run bootcmd_run

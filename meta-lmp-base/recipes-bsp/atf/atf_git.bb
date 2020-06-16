@@ -34,8 +34,13 @@ AS[unexport] = "1"
 LD[unexport] = "1"
 
 do_compile() {
+    # These changes are needed to have the fiptool compiling and executing properly
+    cd ${S}
+    sed -i '/^LDLIBS/ s,$, \$\{BUILD_LDFLAGS},' ${S}/tools/fiptool/Makefile
+    sed -i '/^INCLUDE_PATHS/ s,$, \$\{BUILD_CFLAGS},' ${S}/tools/fiptool/Makefile
+
     mkdir -p ${B}
-    oe_runmake -C ${S} CROSS_COMPILE=${TARGET_PREFIX} BUILD_BASE=${B} \
+    oe_runmake CROSS_COMPILE=${TARGET_PREFIX} BUILD_BASE=${B} \
         BUILD_PLAT=${B}/${TF-A_PLATFORM} PLAT=${TF-A_PLATFORM} \
         DEBUG=${TF-A_DEBUG} BL33=${TF-A_BL33} \
         ${@bb.utils.contains("MACHINE_FEATURES", "optee", "SPD=opteed", "", d)} \

@@ -6,6 +6,21 @@ rootfs_enabled() {
 	return 0
 }
 
+e2fsck_check() {
+	if [ -n "`which e2fsck`" ]; then
+		fsckout=`e2fsck -p -v ${1}`
+		fsckret=$?
+		# Avoid empty newline after summary
+		echo "e2fsck: ${fsckout}" >/dev/kmsg
+		# Return code >= 4 means uncorrected / operational error
+		## TODO: force boot into a recovery mode or similar, as there is really not
+		## much we can do in case the fs is corrupted in a bad way
+		if [ "${fsckret}" -ge "4" ]; then
+			echo "e2fsck: WARNING: file system errors left uncorrected: ret ${fsckret}" >/dev/kmsg
+		fi
+	fi
+}
+
 rootfs_run() {
         if [ -z "$ROOTFS_DIR" ]; then
 		return
@@ -47,6 +62,7 @@ rootfs_run() {
 			fi
 
 			if [ -e "$bootparam_root" ]; then
+				e2fsck_check ${bootparam_root}
 				flags=""
 				if [ -n "$bootparam_ro" ] && ! echo "$bootparam_rootflags" | grep -w -q "ro"; then
 					if [  -n "$bootparam_rootflags" ]; then

@@ -8,6 +8,7 @@ ConditionPathExists=!/usr/bin/mbedCloudClient
 [Service]
 RestartSec=180
 Restart=always
+Environment="COMPOSE_HTTP_TIMEOUT=@@COMPOSE_HTTP_TIMEOUT@@"
 ExecStart=/usr/bin/aktualizr-lite --update-lockfile /run/lock/aktualizr-lite-update daemon
 
 [Install]

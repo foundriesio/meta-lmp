@@ -5,7 +5,7 @@ SRCREV_lmp = "41ebc462578014467297187782b04619e482118f"
 
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
-    file://aktualizr-lite.service \
+    file://aktualizr-lite.service.in \
     file://aktualizr-lite.path \
     file://aktualizr-secondary.service \
     file://aktualizr-serialcan.service \
@@ -27,10 +27,16 @@ PACKAGECONFIG[ubootenv] = ",,,u-boot-fw-utils u-boot-default-env aktualizr-uboot
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"
 
+COMPOSE_HTTP_TIMEOUT ?= "60"
+
 # Workaround as aktualizr is a submodule of aktualizr-lite
 do_configure_prepend_lmp() {
     cd ${S}
     git log -1 --format=%h | tr -d '\n' > VERSION
+}
+
+do_compile_append_lmp() {
+    sed -e 's/@@COMPOSE_HTTP_TIMEOUT@@/${COMPOSE_HTTP_TIMEOUT}/' ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
 }
 
 do_install_prepend_lmp() {

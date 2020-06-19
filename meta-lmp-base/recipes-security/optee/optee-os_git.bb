@@ -9,7 +9,7 @@ DEPENDS = "python3-pycrypto-native python3-pyelftools-native"
 SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
 
 PV = "3.6.0+git"
-SRCREV = "300a9d787a6b14242f4588a238ec7c256bd1bca3"
+SRCREV = "6822534262b11135ad085936fb88fb8468f45897"
 SRCBRANCH = "3.6.0+fio"
 
 S = "${WORKDIR}/git"

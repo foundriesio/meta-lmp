@@ -13,8 +13,13 @@ SRC_URI = "\
     file://sudoers \
 "
 
-# Enough free space for a full image update
-IMAGE_OVERHEAD_FACTOR = "2.3"
+# In most cases the rootfs will be expanded to fit available storage
+# However, for QEMU targets we need to pre-allocate enough free space
+# for a full image update
+IMAGE_OVERHEAD_FACTOR_qemuriscv64 ?= "2.3"
+IMAGE_OVERHEAD_FACTOR_qemuarm64 ?= "2.3"
+IMAGE_OVERHEAD_FACTOR_qemuarm ?= "2.3"
+IMAGE_OVERHEAD_FACTOR_intel-corei7-64 ?= "2.3"
 
 # let's make sure we have a good image..
 REQUIRED_DISTRO_FEATURES = "pam systemd"

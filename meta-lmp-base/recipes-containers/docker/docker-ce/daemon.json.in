@@ -1,0 +1,4 @@
+{
+  "log-driver": "journald",
+  "max-concurrent-downloads": @@MAX_CONCURRENT_DOWNLOADS@@
+}

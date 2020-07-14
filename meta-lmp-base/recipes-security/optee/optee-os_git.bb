@@ -6,7 +6,9 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=c1f21c4f72f372ef38a5a4aee55ec173"
 
 DEPENDS = "python3-pycrypto-native python3-pyelftools-native"
 
-SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
+SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH} \
+	file://0001-arm64-Disable-outline-atomics-when-compiling.patch \
+"
 
 PV = "3.6.0+git"
 SRCREV = "02ffafff35992429cc505342a7e86f837339916f"

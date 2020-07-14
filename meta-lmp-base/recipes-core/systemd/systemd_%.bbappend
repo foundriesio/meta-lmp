@@ -2,6 +2,11 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 ALTERNATIVE_PRIORITY[resolv-conf] = "300"
 
+DEF_FALLBACK_NTP_SERVERS ?= "time1.google.com time2.google.com time3.google.com time4.google.com time.cloudflare.com"
+EXTRA_OEMESON += ' \
+	-Dntp-servers="${DEF_FALLBACK_NTP_SERVERS}" \
+'
+
 SRC_URI_append = " \
 	file://systemd-networkd-wait-online.service.in-use-any-by-d.patch \
 	file://systemd-timesyncd-update.service \

@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 
 SRC_URI = "git://github.com/foundriesio/pkcs11test.git;protocol=https;branch=dev"
-SRCREV = "d36c4278b631c275971121f6829e9fe5e2a3051b"
+SRCREV = "57e1652b1995566e3f33bfa955856d7d0797cc83"
 
 S = "${WORKDIR}/git"
 

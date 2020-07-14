@@ -52,7 +52,7 @@ KERNEL_REPO_rpi ?= "git://github.com/raspberrypi/linux.git"
 KERNEL_BRANCH_rpi ?= "rpi-4.19.y"
 KERNEL_COMMIT_rpi ?= "f6b3ac28f0a9137d4c24c0b8832e693bbd16f5b7"
 KERNEL_META_BRANCH_rpi ?= "linux-v4.19.y"
-KERNEL_META_COMMIT_rpi ?= "297d9d5f366feefe9e507bd1be11d2deb2324396"
+KERNEL_META_COMMIT_rpi ?= "1e97ab775c4c499b995e7013ffc221d71844ba87"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets
@@ -260,7 +260,7 @@ KERNEL_REPO_mx8mm ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_BRANCH_mx8mm ?= "5.4-1.0.0-imx"
 KERNEL_COMMIT_mx8mm ?= "cc606300584ba11819b9ad31e53c05c22a033158"
 KERNEL_META_BRANCH_mx8mm ?= "linux-v5.4.y"
-KERNEL_META_COMMIT_mx8mm ?= "744af6796be04b479b8746ae65aa5465b0ff35cf"
+KERNEL_META_COMMIT_mx8mm ?= "c348b70767ef1abb7f139ae87874ffa36d6064d7"
 MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
 ## iMX8MM EVK

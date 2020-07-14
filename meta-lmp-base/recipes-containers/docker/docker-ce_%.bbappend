@@ -7,6 +7,7 @@ SRC_URI_append = " \
     file://cli-config-support-default-system-config.patch \
     file://dockerd-daemon-configurable-max-download-attempts.patch \
     file://daemon.json.in \
+    file://docker.service \
 "
 
 DOCKER_MAX_CONCURRENT_DOWNLOADS ?= "3"
@@ -21,6 +22,11 @@ do_install_prepend() {
 do_install_append() {
     install -d ${D}${libdir}/docker
     install -m 0644 ${WORKDIR}/daemon.json ${D}${libdir}/docker/
+
+    # Replace default docker.service with the one provided by this recipe
+    if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
+        install -m 644 ${WORKDIR}/docker.service ${D}/${systemd_unitdir}/system
+    fi
 }
 
 FILES_${PN} += "${libdir}/docker"

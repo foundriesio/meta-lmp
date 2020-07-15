@@ -74,9 +74,11 @@ BBMASK += " \
 # Mask Toradex specific recipes that containates other socs
 BBMASK += " \
     /meta-toradex-bsp-common/recipes-core/systemd/systemd_%.bbappend \
+    /meta-toradex-bsp-common/recipes-core/systemd/systemd-conf_%.bbappend \
     /meta-toradex-bsp-common/recipes-core/udev/udev-extraconf_%.bbappend \
     /meta-toradex-bsp-common/recipes-devtools/e2fsprogs/e2fsprogs_%.bbappend \
     /meta-toradex-bsp-common/recipes-devtools/python/python3-docutils_%.bbappend \
+    /meta-toradex-bsp-common/recipes-kernel/kmod/depmodwrapper-cross_%.bbappend \
     /meta-toradex-bsp-common/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
     /meta-toradex-bsp-common/recipes-support/libsoc/libsoc_0.8.2.bbappend \
     /meta-toradex-nxp/recipes-bsp/alsa-state/alsa-state.bbappend \

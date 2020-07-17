@@ -1,0 +1,25 @@
+From ae6f4a1e685394fb7b9539f134b66ca84ddc91c2 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Tue, 30 Jun 2020 22:19:56 -0400
+Subject: [PATCH] cli: use go cross compiler
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ git/cli/scripts/build/dynbinary | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git git/src/import/components/cli/scripts/build/dynbinary git/src/import/components/cli/scripts/build/dynbinary
+index 4feb7e71d8..f990d0e040 100755
+--- git/src/import/components/cli/scripts/build/dynbinary
++++ git/src/import/components/cli/scripts/build/dynbinary
+@@ -9,6 +9,6 @@ source ./scripts/build/.variables
+ 
+ echo "Building dynamically linked $TARGET"
+ export CGO_ENABLED=1
+-go build -o "${TARGET}" -tags pkcs11 --ldflags "${LDFLAGS}" -buildmode=pie "${SOURCE}"
++${GO}  build -o "${TARGET}" -tags pkcs11 --ldflags "${LDFLAGS}" -buildmode=pie "${SOURCE}"
+ 
+ ln -sf "$(basename "${TARGET}")" build/docker
+-- 
+2.19.1
+

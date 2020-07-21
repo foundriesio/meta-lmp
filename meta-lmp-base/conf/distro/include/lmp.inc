@@ -83,6 +83,9 @@ BBMASK += " \
     /meta-toradex-bsp-common/recipes-support/libsoc/libsoc_0.8.2.bbappend \
     \
     /meta-toradex-nxp/recipes-kernel/kernel-modules/kernel-module-imx-gpu-viv_6.4.0.p2.0.bbappend \
+    /meta-toradex-nxp/recipes-bsp/firmware-imx/firmware-imx_8.4.1.bb \
+    /meta-toradex-nxp/recipes-bsp/firmware-imx/firmware-imx-8_8.4.1.bb \
+    /meta-toradex-nxp/recipes-bsp/firmware-imx/firmware-imx-8m_8.4.1.bb \
     /meta-toradex-nxp/recipes-bsp/imx-atf/imx-atf_%.bbappend \
     /meta-toradex-nxp/recipes-bsp/imx-mkimage/imx-boot_%.bbappend \
     /meta-toradex-nxp/recipes-bsp/imx-mkimage/imx-mkimage_git.bbappend \

@@ -36,7 +36,3 @@ KMETA = "kernel-meta"
 
 require linux-lmp.inc
 include recipes-kernel/linux/linux-lmp-machine-custom.inc
-
-# Workaround for e684532 (kernel/yocto: ensure that defconfigs are processed first)
-## See: https://www.mail-archive.com/openembedded-core@lists.openembedded.org/msg139118.html
-KERNEL_FEATURES_append = " features/debug/printk.scc"

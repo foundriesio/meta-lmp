@@ -100,6 +100,8 @@ BBMASK += " \
     /meta-toradex-nxp/recipes-graphics/imx-gpu-viv/imx-gpu-viv_%.bbappend \
     /meta-toradex-nxp/recipes-bsp/u-boot/u-boot-toradex_2019.07.bb \
     /meta-toradex-nxp/recipes-bsp/u-boot/u-boot-toradex-fw-utils_2019.07.bb \
+    \
+    /meta-raspberrypi/recipes-bsp/u-boot/libubootenv_%.bbappend \
 "
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults

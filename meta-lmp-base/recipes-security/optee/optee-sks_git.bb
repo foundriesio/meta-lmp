@@ -8,7 +8,7 @@ inherit python3native
 DEPENDS = "python3-pycrypto-native virtual/optee-os optee-client"
 
 SRC_URI = "git://github.com/foundriesio/optee-sks.git"
-SRCREV = "d3186cb264fd4050114b8582fdb13a9e94d3e8c5"
+SRCREV = "e098eeb7ca803e1a745a912769c4801e4c5eaece"
 
 S = "${WORKDIR}/git"
 

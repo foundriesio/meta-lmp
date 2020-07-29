@@ -4,6 +4,7 @@ inherit kernel-fitimage
 
 # Default value for deployment filenames
 FPGA_BINARY ?= "fpga.bin"
+FIT_LOADABLES ?= ""
 
 #
 # Emit the fitImage ITS configuration section
@@ -14,7 +15,8 @@ FPGA_BINARY ?= "fpga.bin"
 # $4 ... ramdisk ID
 # $5 ... setup ID
 # $6 ... fpga ID
-# $7 ... default flag
+# $7 ... loadable ID
+# $8 ... default flag
 fitimage_emit_section_config() {
 
 	conf_csum="${FIT_HASH_ALG}"
@@ -31,6 +33,7 @@ fitimage_emit_section_config() {
 	ramdisk_line=""
 	setup_line=""
 	fpga_line=""
+	loadable_line=""
 	default_line=""
 
 	if [ -n "${2}" ]; then
@@ -61,19 +64,33 @@ fitimage_emit_section_config() {
 		fpga_line="fpga = \"fpga@${6}\";"
 	fi
 
-	if [ "${7}" = "1" ]; then
+	if [ -n "${7}" ]; then
+		i=0
+		for LOADABLE in ${7}; do
+			if [ -e ${DEPLOY_DIR_IMAGE}/${LOADABLE} ]; then
+				i=`expr ${i} + 1`
+				if [ -n "${loadable_line}" ]; then
+					conf_desc="${conf_desc}${sep}loadables"
+				fi
+				loadable_line="${loadable_line}loadable_${i} = \"loadable@${LOADABLE}\"; "
+			fi
+		done
+	fi
+
+	if [ "${8}" = "1" ]; then
 		default_line="default = \"conf@${3}\";"
 	fi
 
 	cat << EOF >> ${1}
                 ${default_line}
                 conf@${3} {
-                        description = "${7} ${conf_desc}";
+                        description = "${8} ${conf_desc}";
                         ${kernel_line}
                         ${fdt_line}
                         ${ramdisk_line}
                         ${setup_line}
                         ${fpga_line}
+                        ${loadable_line}
                         hash@1 {
                                 algo = "${conf_csum}";
                         };
@@ -106,6 +123,16 @@ EOF
 
 		if [ -n "${6}" ]; then
 			sign_line="${sign_line}${sep}\"fpga\""
+		fi
+
+		if [ -n "${7}" ]; then
+			i=0
+			for LOADABLE in ${7}; do
+				if [ -e ${DEPLOY_DIR_IMAGE}/${LOADABLE} ]; then
+					i=`expr ${i} + 1`
+					sign_line="${sign_line}${sep}\"loadable_${i}\""
+				fi
+			done
 		fi
 
 		sign_line="${sign_line};"
@@ -149,6 +176,30 @@ fitimage_emit_section_fpga() {
                         ${fpga_loadline}
                         hash@1 {
                                 algo = "${fpga_csum}";
+                        };
+                };
+EOF
+}
+
+#
+# Emit the fitImage ITS loadables section
+#
+# $1 ... .its filename
+# $2 ... Image name
+# $3 ... Path to loadable image
+fitimage_emit_section_loadable() {
+
+	loadable_csum="${FIT_HASH_ALG}"
+
+	cat << EOF >> ${1}
+                loadable@${2} {
+                        description = "Loadable";
+                        data = /incbin/("${3}");
+                        type = "loadable";
+                        arch = "${UBOOT_ARCH}";
+                        compression = "none";
+                        hash@1 {
+                                algo = "${loadable_csum=}";
                         };
                 };
 EOF
@@ -227,6 +278,17 @@ fitimage_assemble() {
 	fi
 
 	#
+	# Step 4a: Prepare a loadable sections.
+	#
+	if [ -n "${FIT_LOADABLES}" ]; then
+		for LOADABLE in ${FIT_LOADABLES}; do
+			if [ -e ${DEPLOY_DIR_IMAGE}/${LOADABLE} ]; then
+				fitimage_emit_section_loadable ${1} "${LOADABLE}" ${DEPLOY_DIR_IMAGE}/${LOADABLE}
+			fi
+		done
+	fi
+
+	#
 	# Step 5: Prepare a ramdisk section.
 	#
 	if [ "x${ramdiskcount}" = "x1" ] ; then
@@ -259,14 +321,14 @@ fitimage_assemble() {
 		for DTB in ${DTBS}; do
 			dtb_ext=${DTB##*.}
 			if [ "${dtb_ext}" = "dtbo" ]; then
-				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "${FIT_LOADABLES}" "`expr ${i} = ${dtbcount}`"
 			else
-				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "`expr ${i} = ${dtbcount}`"
 			fi
 			i=`expr ${i} + 1`
 		done
 	else
-		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${setupcount}" "${fpgacount}" ""
+		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" ""
 	fi
 
 	fitimage_emit_section_maint ${1} sectend

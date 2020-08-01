@@ -14,3 +14,10 @@ do_deploy_prepend_mx8() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool
 }
+
+do_deploy_prepend_mx6() {
+    install -d ${DEPLOYDIR}/${PN}
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/SPL ${DEPLOYDIR}/${PN}/SPL-mfgtool
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-fsl-image-mfgtool-initramfs-imx6ullevk-imx6ullevk ${DEPLOYDIR}/${PN}/fitImage-mfgtool
+}

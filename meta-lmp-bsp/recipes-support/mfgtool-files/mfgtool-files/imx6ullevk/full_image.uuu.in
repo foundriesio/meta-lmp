@@ -1,0 +1,23 @@
+uuu_version 1.2.39
+
+SDP: dcd -f SPL-mfgtool
+SDP: write -f SPL-mfgtool -ivt 0
+SDP: write -f u-boot-mfgtool.itb -addr 0x82000000
+SDP: jump -f SPL-mfgtool -ivt
+
+SDPU: delay 1000
+SDPU: write -f u-boot-mfgtool.itb -addr 0x82000000
+SDPU: jump
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb -skipspl
+SDPV: jump
+
+FB: ucmd if mmc dev 0; then setenv flash_dev 0; setenv emmc_partconf "mmc partconf ${flash_dev} ${emmc_ack} 1 0"; else setenv flash_dev 1; setenv emmc_partconf "true"; fi;
+FB: ucmd setenv fastboot_dev mmc
+FB: ucmd mmc dev ${flash_dev}
+FB: flash -raw2sparse all ../lmp-factory-image-@@MACHINE@@.wic
+FB: flash bootloader ../SPL
+FB: flash bootloader2 ../u-boot.itb
+FB: ucmd if env exist emmc_partconf; then run emmc_partconf; fi;
+FB: done

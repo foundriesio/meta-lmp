@@ -1,0 +1,17 @@
+[Unit]
+Description=Docker container images preloading
+After=local-fs.target
+Before=docker.service
+ConditionPathExists=/etc/systemd/system/multi-user.target.wants/aktualizr-lite.service
+ConditionPathExists=/var/sota/import/installed_versions
+ConditionPathExistsGlob=/var/sota/import/*.tar
+
+[Service]
+Type=oneshot
+ExecStartPre=mkdir -p /var/lib/docker
+# pre-load container images into the docker data root directory (only works for overlay2 graph driver)
+ExecStart=/bin/sh -c 'for f in `find /var/sota/import -name "*.tar"`; do echo "Compose App: preloading $f" && tar -xf $f -C /var/lib/docker/ --warning=no-timestamp && rm $f; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=docker.service

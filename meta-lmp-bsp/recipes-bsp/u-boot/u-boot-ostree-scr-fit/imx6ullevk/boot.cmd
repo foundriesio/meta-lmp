@@ -18,6 +18,8 @@ setenv bootcmd_set_rollback 'if test ! "${rollback}" = "1"; then setenv rollback
 setenv bootostree 'run bootcmd_load_f; run bootcmd_tee_ovy; run bootcmd_run'
 setenv altbootcmd 'run bootcmd_set_rollback; if test -n "${kernel_image2}"; then run bootcmd_rollbackenv; fi; run bootostree; reset'
 
+if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; fi
+
 # Reset ostree related vars (for rollback)
 setenv kernel_image
 setenv bootargs

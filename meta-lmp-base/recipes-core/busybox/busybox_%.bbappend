@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI_append_lmp = " \
     file://less.cfg \
     file://shell.cfg \
+    file://utils.cfg \
 "
 
 # Remove syslog as it is not required with systemd

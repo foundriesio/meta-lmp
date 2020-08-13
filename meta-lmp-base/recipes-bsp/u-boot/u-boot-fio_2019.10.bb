@@ -16,8 +16,6 @@ SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH} \
     file://lmp.cfg \
 "
 
-PV = "v2019.10+git${SRCPV}"
-
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 do_configure[cleandirs] = "${B}"

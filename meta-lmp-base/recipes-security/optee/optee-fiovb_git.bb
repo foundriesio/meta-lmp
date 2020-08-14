@@ -21,6 +21,7 @@ TEEC_EXPORT         = "${STAGING_DIR_HOST}${prefix}"
 
 EXTRA_OEMAKE = "OPTEE_CLIENT_EXPORT=${OPTEE_CLIENT_EXPORT} \
                 TEEC_EXPORT=${TEEC_EXPORT} \
+                LIBGCC_LOCATE_CFLAGS=--sysroot=${STAGING_DIR_HOST} \
                 HOST_CROSS_COMPILE=${TARGET_PREFIX} \
 "
 

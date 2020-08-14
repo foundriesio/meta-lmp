@@ -3,7 +3,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     optee-client \
     optee-examples \
     optee-fiovb \
-    optee-os-ta \
+    optee-os-fio-ta \
     optee-sks \
     optee-test \
     pkcs11test \

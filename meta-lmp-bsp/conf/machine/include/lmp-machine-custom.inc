@@ -274,3 +274,5 @@ MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
 # Cross machines / BSPs
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"
+## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS
+OPTEE_WKS_FILE_DEPENDS_imx = ""

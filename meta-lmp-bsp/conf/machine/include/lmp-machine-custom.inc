@@ -226,6 +226,7 @@ OSTREE_KERNEL_apalis-imx6 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-$
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx6 ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/bootloader_apalis-imx6 ?= "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_apalis-imx6 ?= "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_apalis-imx6 ?= "2020.04"
 PREFERRED_PROVIDER_u-boot-fw-utils_apalis-imx6 = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils_apalis-imx6 = "libubootenv"
 UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x12f00000"

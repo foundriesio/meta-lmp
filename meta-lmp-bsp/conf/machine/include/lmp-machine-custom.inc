@@ -215,6 +215,7 @@ UBOOT_MACHINE_imx6ullevk = "mx6ull_14x14_evk_defconfig"
 KERNEL_DEVICETREE_imx6ullevk = "imx6ull-14x14-evk.dtb"
 
 # Toradex Apalis iMX6
+UBOOT_SIGN_ENABLE_apalis-imx6 = "1"
 PREFERRED_PROVIDER_u-boot-default-script_apalis-imx6 = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx6 = "u-boot-ostree-scr-fit"
 IMAGE_BOOT_FILES_apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.imx-spl"

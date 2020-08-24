@@ -85,6 +85,7 @@ WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_qemuarm64 = "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_qemuarm64 ?= "2020.04"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_qemuarm64 = "atf"
 WKS_FILE_DEPENDS_append_qemuarm64 = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_qemuarm64 = "u-boot-ostree-scr-fit"
@@ -115,6 +116,7 @@ QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config e
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_qemuarm = "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_qemuarm ?= "2020.04"
 WKS_FILE_DEPENDS_append_qemuarm = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_qemuarm = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES_append_qemuarm = " ubootenv"

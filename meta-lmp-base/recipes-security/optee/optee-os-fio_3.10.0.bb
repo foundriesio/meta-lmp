@@ -8,9 +8,9 @@ DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyel
 
 SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
 
-PV = "3.9.0+git"
-SRCREV = "840300793a9f0b12f0b5379bbcbf6495b90f1038"
-SRCBRANCH = "tracking+fio"
+PV = "3.10.0+git"
+SRCREV = "d58e95c92f07eef91b86e4aea4c7b9376a85abc0"
+SRCBRANCH = "3.10+fio"
 
 # To be removed once it can fully replace the 3.6.0 based version
 DEFAULT_PREFERENCE = "-1"
@@ -82,9 +82,10 @@ do_deploy() {
 
 addtask deploy before do_build after do_install
 
-PACKAGES += "${PN}-ta"
+PACKAGES += "${PN}-ta-pkcs11 ${PN}-ta"
 FILES_${PN} += "${nonarch_base_libdir}/firmware"
 FILES_${PN}-ta = "${nonarch_base_libdir}/optee_armtz"
+FILES_${PN}-ta-pkcs11 = "${nonarch_base_libdir}/optee_armtz/fd02c9da-306c-48c7-a49c-bbd827ae86ee.ta"
 FILES_${PN}-dev = "${includedir}/optee"
 INSANE_SKIP_${PN}-dev = "staticdev"
 INHIBIT_PACKAGE_STRIP = "1"

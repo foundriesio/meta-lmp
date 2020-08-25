@@ -1,10 +1,17 @@
 # iMX6ULL
 PREFERRED_PROVIDER_virtual/kernel_mx6ull = "linux-lmp-dev-mfgtool"
+KERNEL_REPO_mx6ull ?= "git://github.com/Freescale/linux-fslc.git"
+LINUX_VERSION_mx6ull ?= "5.4.y"
+KERNEL_BRANCH_mx6ull ?= "5.4-1.0.0-imx"
+PREFERRED_VERSION_u-boot-fio-mfgtool_mx6ull ?= "2020.04"
 PREFERRED_PROVIDER_virtual/bootloader_mx6ull = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot_mx6ull = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_mx6ull = "u-boot-ostree-scr-fit"
+UBOOT_CLASSES_mx6ull = "uboot-fitimage"
 IMAGE_BOOT_FILES_remove_mx6ull = "boot.scr uEnv.txt zImage"
 IMAGE_BOOT_FILES_append_mx6ull = " boot.itb SPL u-boot.itb"
+KERNEL_IMAGETYPE_mx6ull = "fitImage"
+KERNEL_CLASSES_mx6ull = " kernel-lmp-fitimage "
 
 # Apalis-iMX6
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx6 = "linux-lmp-dev-mfgtool"

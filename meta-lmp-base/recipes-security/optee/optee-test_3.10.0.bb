@@ -9,10 +9,11 @@ inherit python3native
 
 SRC_URI = "git://github.com/OP-TEE/optee_test.git \
     file://allow-custom-bin-lib-dir-3.9.0.patch \
+    file://0001-os_test-disable-c-tests.patch \
 "
 
-PV = "3.9.0+git"
-SRCREV = "075667160b4514f856f759ad468f0601a6587da1"
+PV = "3.10.0"
+SRCREV = "30efcbeaf8864d0f2a5c4be593a5411001fab31b"
 
 DEFAULT_PREFERENCE = "-1"
 

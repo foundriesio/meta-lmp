@@ -1,0 +1,64 @@
+From 18c8824f2834aef0dbacb85f35878e33a1725373 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 25 Aug 2020 20:01:26 -0300
+Subject: [PATCH] os_test: disable c++ tests
+
+Fails to build with our current OE/Yocto setup and not really useful at
+this stage, so just disable them for now.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ ta/os_test/sub.mk     |  2 +-
+ ta/os_test/ta_entry.c | 17 -----------------
+ 2 files changed, 1 insertion(+), 18 deletions(-)
+
+diff --git a/ta/os_test/sub.mk b/ta/os_test/sub.mk
+index ba6853a..74b60db 100644
+--- a/ta/os_test/sub.mk
++++ b/ta/os_test/sub.mk
+@@ -9,7 +9,7 @@ srcs-y += os_test.c
+ srcs-y += ta_entry.c
+ srcs-$(CFG_TA_FLOAT_SUPPORT) += test_float_subj.c
+ # C++ tests don't work with Clang, and for Aarch64 they require GCC >= 8
+-c++-supported := $(shell env echo -e '\#if !defined(__clang__) && (!defined(__aarch64__) || __GNUC__ >= 8)\ny\n\#endif' | $(CC$(sm)) -E -P -)
++c++-supported := n
+ ifeq ($(c++-supported),y)
+ # Profiling (-pg) is disabled for C++ tests because in case it is used for
+ # function tracing (CFG_FTRACE_SUPPORT=y) then the exception handling code in
+diff --git a/ta/os_test/ta_entry.c b/ta/os_test/ta_entry.c
+index 9e3d277..09f93bb 100644
+--- a/ta/os_test/ta_entry.c
++++ b/ta/os_test/ta_entry.c
+@@ -121,29 +121,12 @@ TEE_Result TA_InvokeCommandEntryPoint(void *pSessionContext,
+ 	case TA_OS_TEST_CMD_DL_PHDR_DL:
+ 		return ta_entry_dl_phdr_dl();
+ 
+-#if defined(__clang__) || (defined(__aarch64__) && __GNUC__ < 8)
+ 	case TA_OS_TEST_CMD_CXX_CTOR_MAIN:
+ 	case TA_OS_TEST_CMD_CXX_CTOR_SHLIB:
+ 	case TA_OS_TEST_CMD_CXX_CTOR_SHLIB_DL:
+ 	case TA_OS_TEST_CMD_CXX_EXC_MAIN:
+ 	case TA_OS_TEST_CMD_CXX_EXC_MIXED:
+ 		return TEE_ERROR_NOT_SUPPORTED;
+-#else
+-	case TA_OS_TEST_CMD_CXX_CTOR_MAIN:
+-		return ta_entry_cxx_ctor_main();
+-
+-	case TA_OS_TEST_CMD_CXX_CTOR_SHLIB:
+-		return ta_entry_cxx_ctor_shlib();
+-
+-	case TA_OS_TEST_CMD_CXX_CTOR_SHLIB_DL:
+-		return ta_entry_cxx_ctor_shlib_dl();
+-
+-	case TA_OS_TEST_CMD_CXX_EXC_MAIN:
+-		return ta_entry_cxx_exc_main();
+-
+-	case TA_OS_TEST_CMD_CXX_EXC_MIXED:
+-		return ta_entry_cxx_exc_mixed();
+-#endif
+ 
+ 	default:
+ 		return TEE_ERROR_BAD_PARAMETERS;
+-- 
+2.28.0
+

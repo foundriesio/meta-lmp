@@ -187,9 +187,11 @@ UBOOT_DTB_LOADADDRESS_colibri-imx7-emmc = "0x82000000"
 UBOOT_RD_LOADADDRESS_colibri-imx7-emmc = "0x82100000"
 
 # iMX6ULL
+UBOOT_SIGN_ENABLE_mx6ull = "1"
 PREFERRED_PROVIDER_virtual/kernel_mx6ull ?= "linux-lmp-fslc-imx"
 PREFERRED_PROVIDER_virtual/bootloader_mx6ull ?= "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_mx6ull ?= "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_mx6ull ?= "2020.04"
 PREFERRED_PROVIDER_u-boot-fw-utils_mx6ull = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils_mx6ull = "libubootenv"
 SOTA_CLIENT_FEATURES_append_mx6ull = " ubootenv"

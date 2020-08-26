@@ -155,6 +155,7 @@ KERNEL_DEVICETREE_append_cubox-i = " \
 "
 PREFERRED_PROVIDER_virtual/bootloader_cubox-i = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_cubox-i = "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_cubox-i ?= "2020.04"
 PREFERRED_PROVIDER_u-boot-fw-utils_cubox-i = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils_cubox-i = "libubootenv"
 WKS_FILE_DEPENDS_append_cubox-i = " u-boot-default-script"

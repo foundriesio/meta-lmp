@@ -1,8 +1,8 @@
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
-OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
 
 EXTRA_OEMAKE_append_imx = " \
     CFG_CAAM_DBG=0x001 \
+    CFG_NXP_WORKAROUND_CAAM_LOCKED_BY_HAB=y \
 "
 EXTRA_OEMAKE_append_apalis-imx6 = " \
     CFG_NXP_CAAM=y CFG_IMX_CAAM=n \

@@ -245,6 +245,11 @@ UBOOT_DTB_LOADADDRESS_apalis-imx6 = "0x15800000"
 UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x14000000"
 WKS_FILES_sota_apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
 MACHINE_FEATURES_append_apalis-imx6 = " optee"
+PREFERRED_VERSION_optee-os-fio_apalis-imx6 = "3.10.0+git"
+PREFERRED_VERSION_optee-client_apalis-imx6 = "3.10.0"
+PREFERRED_VERSION_optee-examples_apalis-imx6 = "3.10.0"
+PREFERRED_VERSION_optee-test_apalis-imx6 = "3.10.0"
+OPTEE_BINARY_apalis-imx6 = "tee-pager_v2.bin"
 
 # Toradex Apalis iMX8QM
 UBOOT_DTB_LOADADDRESS_apalis-imx8 = "0x84000000"

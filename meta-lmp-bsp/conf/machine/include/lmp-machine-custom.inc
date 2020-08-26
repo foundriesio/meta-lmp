@@ -19,6 +19,7 @@ IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 # Raspberry Pi
 PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_rpi = "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_rpi ?= "2020.04"
 SOTA_CLIENT_FEATURES_append_rpi = " ubootenv"
 WKS_FILE_DEPENDS_BOOTLOADERS_rpi = "virtual/bootloader"
 WKS_FILE_DEPENDS_append_rpi = " u-boot-default-script"

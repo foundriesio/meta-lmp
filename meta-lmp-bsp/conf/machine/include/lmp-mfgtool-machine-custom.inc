@@ -14,6 +14,13 @@ IMAGE_BOOT_FILES_append_mx6ull = " boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE_mx6ull = "fitImage"
 KERNEL_CLASSES_mx6ull = " kernel-lmp-fitimage "
 
+# iMX8MM
+PREFERRED_VERSION_optee-os-fio-mfgtool_mx8mm = "3.10.0+git"
+PREFERRED_VERSION_u-boot-fio-mfgtool_mx8mm ?= "2020.04"
+PREFERRED_PROVIDER_virtual/bootloader_mx8mm = "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot_mx8mm = "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot-default-script_mx8mm = "u-boot-ostree-scr"
+
 # Apalis-iMX6
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx6 = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_apalis-imx6 ?= "git://github.com/foundriesio/linux.git"

@@ -12,17 +12,10 @@ DEPENDS = "gettext-native pciutils usbutils"
 COMPATIBLE_HOST = "(i.86|x86_64|arm|aarch64|riscv64).*-linux"
 
 SRC_URI = "git://github.com/lyonel/lshw.git \
-    file://cross-compile.patch \
-    file://ldflags.patch \
     file://docbook2man.patch \
 "
 
-SRC_URI_append_libc-musl = " \
-    file://0001-sysfs-Fix-basename-build-with-musl.patch \
-    file://0002-Fix-use-of-LONG_BIT.patch \
-"
-
-SRCREV = "20cda77239e8604e798b87a0441e694edb0214d1"
+SRCREV = "e6a0a1628e394bbd56f44a9c3962453e5d7589c1"
 
 S = "${WORKDIR}/git"
 

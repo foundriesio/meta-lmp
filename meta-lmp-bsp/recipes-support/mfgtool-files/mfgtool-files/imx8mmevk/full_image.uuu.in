@@ -17,7 +17,7 @@ SDPV: jump
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev ${emmc_dev}
 FB: ucmd mmc dev ${emmc_dev}
-FB: flash -raw2sparse all ../lmp-image-imx8mmevk.wic
+FB: flash -raw2sparse all ../lmp-factory-image-@@MACHINE@@.wic
 FB: flash bootloader ../imx-boot
 FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
 FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0

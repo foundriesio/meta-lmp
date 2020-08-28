@@ -256,9 +256,12 @@ PREFERRED_VERSION_optee-test_apalis-imx6 = "3.10.0"
 OPTEE_BINARY_apalis-imx6 = "tee-pager_v2.bin"
 
 # Toradex Apalis iMX8QM
-UBOOT_DTB_LOADADDRESS_apalis-imx8 = "0x84000000"
-UBOOT_RD_LOADADDRESS_apalis-imx8 = ""
-IMAGE_BOOT_FILES_append_apalis-imx8 = " uEnv-lmp.txt imx-boot"
+PREFERRED_PROVIDER_virtual/bootloader_apalis-imx8 ?= "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_apalis-imx8 ?= "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_apalis-imx8 ?= "2020.04"
+SOTA_CLIENT_FEATURES_append_apalis-imx8 = " ubootenv"
+IMAGE_BOOT_FILES_apalis-imx8 = "imx-boot boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_sota_apalis-imx8 = "imx-boot boot.itb"
 KERNEL_IMAGETYPE_sota_apalis-imx8 = "fitImage"
 KERNEL_CLASSES_sota_apalis-imx8 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_mx8qm = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
@@ -267,9 +270,7 @@ OSTREE_KERNEL_ARGS_apalis-imx8 ?= "console=tty1 console=ttyLP1,115200 earlycon=l
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx8 ?= "linux-lmp-dev"
 WKS_FILE_apalis-imx8_sota = "sdimage-imx8-sota.wks.in"
 PREFERRED_PROVIDER_u-boot-default-script_apalis-imx8 = "u-boot-base-scr"
-PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx8 = "u-boot-ostree-scr"
-IMAGE_CLASSES_remove_apalis-imx8 = "image_type_tezi"
-IMAGE_FSTYPES_remove_apalis-imx8 = "teziimg"
+PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx8 = "u-boot-ostree-scr-fit"
 
 # iMX8MM
 UBOOT_SIGN_ENABLE_mx8mm = "1"

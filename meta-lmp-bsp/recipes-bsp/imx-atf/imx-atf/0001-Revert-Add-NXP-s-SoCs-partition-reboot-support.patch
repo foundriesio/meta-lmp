@@ -1,0 +1,41 @@
+From a307f33f84b76871ac6879ce93d26525af3e5bd9 Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Tue, 19 May 2020 20:32:59 +0200
+Subject: [PATCH] Revert "Add NXP's SoCs partition reboot support."
+
+This reverts commit 13a5c7ece5a13c636e52f22b45f592b72b6453d1.
+With commit 13a5c7ece5a1 the SCFW will execute a reboot of the AP
+partition as a reaction to a psci_system_reboot, e.g. because of
+a Linux reboot.
+
+This does only reset the SoC partly, i.e. only IP which will not affect
+other partitions. As a result on Apalis iMX8 USB HSIC comes up in a
+state were it does not recognize our USB3503 hub correctly.
+
+Refer to the SCFW doc file sc_fw_port.pdf for more info on the various
+sc_reboot*, sc_reset* functionalities.
+
+Upstream-Status: Inappropriate [configuration]
+
+Related-to: ELB-2702
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ plat/imx/common/imx8_psci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plat/imx/common/imx8_psci.c b/plat/imx/common/imx8_psci.c
+index bf0b2f6b1..310f81c2e 100644
+--- a/plat/imx/common/imx8_psci.c
++++ b/plat/imx/common/imx8_psci.c
+@@ -21,7 +21,7 @@ void __dead2 imx_system_off(void)
+ 
+ void __dead2 imx_system_reset(void)
+ {
+-	sc_pm_reboot(ipc_handle, SC_PM_RESET_TYPE_COLD);
++	sc_pm_reset(ipc_handle, SC_PM_RESET_TYPE_BOARD);
+ 	wfi();
+ 	ERROR("system reset failed.\n");
+ 	panic();
+-- 
+2.20.1
+

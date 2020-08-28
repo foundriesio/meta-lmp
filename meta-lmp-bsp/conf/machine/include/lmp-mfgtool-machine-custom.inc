@@ -20,6 +20,8 @@ PREFERRED_VERSION_u-boot-fio-mfgtool_mx8mm ?= "2020.04"
 PREFERRED_PROVIDER_virtual/bootloader_mx8mm = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot_mx8mm = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_mx8mm = "u-boot-ostree-scr"
+KERNEL_IMAGETYPE_mx8mm = "fitImage"
+KERNEL_CLASSES_mx8mm = " kernel-lmp-fitimage "
 
 # Apalis-iMX6
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx6 = "linux-lmp-dev-mfgtool"

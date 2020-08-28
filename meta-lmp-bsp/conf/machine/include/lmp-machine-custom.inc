@@ -272,6 +272,7 @@ IMAGE_CLASSES_remove_apalis-imx8 = "image_type_tezi"
 IMAGE_FSTYPES_remove_apalis-imx8 = "teziimg"
 
 # iMX8MM
+UBOOT_SIGN_ENABLE_mx8mm = "1"
 PREFERRED_PROVIDER_virtual/bootloader_mx8mm ?= "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_mx8mm ?= "u-boot-fio"
 PREFERRED_VERSION_u-boot-fio_mx8mm ?= "2020.04"

@@ -1,0 +1,27 @@
+From 64d71235c0986924c15365979992f93ade66c122 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Fri, 17 Jul 2020 09:09:37 +0200
+Subject: [PATCH 4/4] [FIO toup] hwrng: optee: support generic crypto
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ drivers/char/hw_random/optee-rng.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+index a99d829499818..725c6ea489d62 100644
+--- a/drivers/char/hw_random/optee-rng.c
++++ b/drivers/char/hw_random/optee-rng.c
+@@ -273,6 +273,8 @@ static int optee_rng_remove(struct device *dev)
+ static const struct tee_client_device_id optee_rng_id_table[] = {
+ 	{UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
+ 		   0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64)},
++	{UUID_INIT(0x035a4479, 0xc369, 0x47f4,
++		   0x94, 0x51, 0xc6, 0xfd, 0xff, 0x28, 0xad, 0x65)},
+ 	{}
+ };
+ 
+-- 
+2.28.0
+

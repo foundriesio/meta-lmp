@@ -1,3 +1,17 @@
+# Embedded Artists i.MX7ULP COM
+PREFERRED_PROVIDER_virtual/kernel_imx7ulpea-ucom = "linux-lmp-dev-mfgtool"
+KERNEL_REPO_imx7ulpea-ucom ?= "git://github.com/foundriesio/linux.git"
+LINUX_VERSION_imx7ulpea-ucom ?= "4.19.y"
+KERNEL_BRANCH_imx7ulpea-ucom ?= "linux-ea-v4.19.y"
+PREFERRED_VERSION_u-boot-fio-mfgtool_imx7ulpea-ucom ?= "2020.04"
+PREFERRED_PROVIDER_virtual/bootloader_imx7ulpea-ucom = "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot_imx7ulpea-ucom = "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot-default-script_imx7ulpea-ucom = "u-boot-ostree-scr-fit"
+UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
+IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.itb SPL u-boot.itb"
+KERNEL_IMAGETYPE_imx7ulpea-ucom = "fitImage"
+KERNEL_CLASSES_imx7ulpea-ucom = " kernel-lmp-fitimage "
+
 # iMX6ULL
 PREFERRED_PROVIDER_virtual/kernel_mx6ull = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_mx6ull ?= "git://github.com/Freescale/linux-fslc.git"

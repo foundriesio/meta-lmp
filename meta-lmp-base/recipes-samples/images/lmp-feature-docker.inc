@@ -5,7 +5,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     docker-credential-helper-fio \
     python3-docker \
     python3-docker-compose \
-    docker-image-preload \
 "
 
 EXTRA_USERS_PARAMS += "\

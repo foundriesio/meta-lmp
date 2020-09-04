@@ -14,9 +14,9 @@ KERNEL_CLASSES_imx7ulpea-ucom = " kernel-lmp-fitimage "
 
 # iMX6ULL
 PREFERRED_PROVIDER_virtual/kernel_mx6ull = "linux-lmp-dev-mfgtool"
-KERNEL_REPO_mx6ull ?= "git://github.com/Freescale/linux-fslc.git"
+KERNEL_REPO_mx6ull ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
 LINUX_VERSION_mx6ull ?= "5.4.y"
-KERNEL_BRANCH_mx6ull ?= "5.4-1.0.0-imx"
+KERNEL_BRANCH_mx6ull ?= "imx_5.4.24_2.1.0"
 PREFERRED_VERSION_optee-os-fio-mfgtool_mx6ull = "3.10.0+git"
 PREFERRED_VERSION_u-boot-fio-mfgtool_mx6ull ?= "2020.04"
 PREFERRED_PROVIDER_virtual/bootloader_mx6ull = "u-boot-fio-mfgtool"

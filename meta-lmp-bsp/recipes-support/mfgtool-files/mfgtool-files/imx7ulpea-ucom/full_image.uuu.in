@@ -1,0 +1,49 @@
+uuu_version 1.2.39
+
+SDP: boot -f SPL-mfgtool
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+
+FB: ucmd setenv fastboot_dev mmc
+FB: ucmd setenv emmc_dev 0
+FB: ucmd mmc dev ${emmc_dev}
+FB: ucmd setenv emmc_cmd mmc partconf ${emmc_dev} 0 1 0;
+FB: ucmd if test "${emmc_skip_fb}" != "yes"; then run emmc_cmd; fi
+FB: ucmd setenv emmc_cmd mmc bootbus ${emmc_dev} 2 2 1;
+FB: ucmd if test "${emmc_skip_fb}" != "yes"; then run emmc_cmd; fi
+
+FB: ucmd setenv fastboot_buffer ${initrd_addr}
+FB: download -f fitImage-imx7ulpea-ucom-mfgtool
+# Apply OP-TEE overlay (provided by the OP-TEE OS)
+FB: ucmd setenv optee_ovl 0x65000000
+FB: ucmd imxtract ${initrd_addr}#conf@imx7ulpea-ucom-kit_v2.dtb fdt@imx7ulpea-ucom-kit_v2.dtb ${fdt_addr}
+FB: ucmd fdt addr ${fdt_addr}
+FB: ucmd fdt resize 0x1000
+FB: ucmd fdt apply ${optee_ovl}
+FB: acmd run mfgtool_args
+FB: acmd bootm ${initrd_addr}#conf@imx7ulpea-ucom-kit_v2.dtb ${initrd_addr}:ramdisk@1 ${fdt_addr}
+
+# Wait for emmc
+FBK: ucmd while [ ! -e /dev/mmcblk*boot0 ]; do sleep 1; echo "wait for /dev/mmcblk*boot* appear"; done;
+
+# get emmc device
+FBK: ucmd dev=`ls /dev/mmcblk*boot*`; dev=($dev); dev=${dev[0]}; dev=${dev#/dev/mmcblk}; dev=${dev%boot*}; echo $dev > /tmp/mmcdev;
+
+# bootloaders
+FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/dev/zero of=/dev/mmcblk${mmc} bs=1k seek=384 conv=fsync count=129
+FBK: ucmd mmc=`cat /tmp/mmcdev`; echo 0 > /sys/block/mmcblk${mmc}boot0/force_ro
+FBK: ucp ../SPL t:/tmp
+FBK: ucp ../u-boot.itb t:/tmp
+FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/SPL of=/dev/mmcblk${mmc}boot0 bs=1k seek=1
+FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/u-boot.itb of=/dev/mmcblk${mmc}boot0 bs=1k seek=192
+FBK: ucmd mmc=`cat /tmp/mmcdev`; echo 1 > /sys/block/mmcblk${mmc}boot0/force_ro
+FBK: ucmd mmc=`cat /tmp/mmcdev`; mmc bootpart enable 1 1 /dev/mmcblk${mmc}
+
+# rootfs
+FBK: acmd mmc=`cat /tmp/mmcdev`; gunzip -c | dd of=/dev/mmcblk${mmc} bs=4M iflag=fullblock oflag=direct status=progress
+FBK: ucp  ../lmp-factory-image-@@MACHINE@@.wic.gz t:-
+FBK: Sync
+
+FBK: DONE

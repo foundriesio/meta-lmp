@@ -188,6 +188,7 @@ UBOOT_DTB_LOADADDRESS_colibri-imx7-emmc = "0x82000000"
 UBOOT_RD_LOADADDRESS_colibri-imx7-emmc = "0x82100000"
 
 # Embedded Artists i.MX7ULP COM
+UBOOT_SIGN_ENABLE_imx7ulpea-ucom = "1"
 PREFERRED_PROVIDER_u-boot-default-script_imx7ulpea-ucom = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota_imx7ulpea-ucom = "u-boot-ostree-scr-fit"
 IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.scr uEnv.txt"

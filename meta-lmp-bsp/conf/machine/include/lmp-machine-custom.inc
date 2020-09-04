@@ -187,6 +187,18 @@ UBOOT_ENTRYPOINT_colibri-imx7-emmc = "0x81000000"
 UBOOT_DTB_LOADADDRESS_colibri-imx7-emmc = "0x82000000"
 UBOOT_RD_LOADADDRESS_colibri-imx7-emmc = "0x82100000"
 
+# Embedded Artists i.MX7ULP COM
+PREFERRED_PROVIDER_u-boot-default-script_imx7ulpea-ucom = "u-boot-base-scr"
+PREFERRED_PROVIDER_u-boot-default-script_sota_imx7ulpea-ucom = "u-boot-ostree-scr-fit"
+IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_sota_imx7ulpea-ucom = "boot.itb SPL u-boot.itb"
+KERNEL_IMAGETYPE_sota_imx7ulpea-ucom = "fitImage"
+KERNEL_CLASSES_sota_imx7ulpea-ucom = " kernel-lmp-fitimage "
+OSTREE_KERNEL_imx7ulpea-ucom = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_COMMON_imx7ulpea-ucom ?= "earlycon=lpuart32,0x402D0000,115200 root=/dev/mmcblk0p2 rootfstype=ext4"
+SOTA_CLIENT_FEATURES_append_imx7ulpea-ucom = " ubootenv"
+UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
+
 # iMX6ULL
 UBOOT_SIGN_ENABLE_mx6ull = "1"
 PREFERRED_PROVIDER_virtual/kernel_mx6ull ?= "linux-lmp-fslc-imx"

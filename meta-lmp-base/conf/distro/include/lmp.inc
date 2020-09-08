@@ -71,6 +71,14 @@ BBMASK += " \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
 "
 
+# meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)
+BBMASK += " \
+    /meta-arm/meta-arm/recipes-security/optee/optee-test_git.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-client_git.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-os_git.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-examples_git.bb \
+"
+
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \

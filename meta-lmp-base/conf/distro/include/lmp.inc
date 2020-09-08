@@ -71,37 +71,6 @@ BBMASK += " \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
 "
 
-# Mask Toradex specific recipes that containates other socs
-BBMASK += " \
-    /meta-toradex-bsp-common/recipes-core/systemd/systemd_%.bbappend \
-    /meta-toradex-bsp-common/recipes-core/systemd/systemd-conf_%.bbappend \
-    /meta-toradex-bsp-common/recipes-core/udev/udev-extraconf_%.bbappend \
-    /meta-toradex-bsp-common/recipes-devtools/e2fsprogs/e2fsprogs_%.bbappend \
-    /meta-toradex-bsp-common/recipes-devtools/python/python3-docutils_%.bbappend \
-    /meta-toradex-bsp-common/recipes-kernel/kmod/depmodwrapper-cross_%.bbappend \
-    /meta-toradex-bsp-common/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
-    /meta-toradex-bsp-common/recipes-support/libsoc/libsoc_0.8.2.bbappend \
-    \
-    /meta-toradex-nxp/recipes-kernel/kernel-modules/kernel-module-imx-gpu-viv_6.4.0.p2.0.bbappend \
-    /meta-toradex-nxp/recipes-bsp/firmware-imx/firmware-imx_8.4.1.bb \
-    /meta-toradex-nxp/recipes-bsp/firmware-imx/firmware-imx-8_8.4.1.bb \
-    /meta-toradex-nxp/recipes-bsp/firmware-imx/firmware-imx-8m_8.4.1.bb \
-    /meta-toradex-nxp/recipes-bsp/imx-atf/imx-atf_%.bbappend \
-    /meta-toradex-nxp/recipes-bsp/imx-mkimage/imx-boot_%.bbappend \
-    /meta-toradex-nxp/recipes-bsp/imx-mkimage/imx-mkimage_git.bbappend \
-    /meta-toradex-nxp/recipes-bsp/alsa-state/alsa-state.bbappend \
-    /meta-toradex-nxp/recipes-multimedia/alsa/imx-alsa-plugins_1.0.26.bbappend \
-    /meta-toradex-nxp/recipes-graphics/imx-dpu-g2d/imx-dpu-g2d_1.8.3.bbappend \
-    /meta-toradex-nxp/recipes-graphics/xorg-driver/xf86-video-imx-vivante_6.4.0.p0.0.bbappend \
-    /meta-toradex-nxp/recipes-graphics/imx-gpu-g2d/imx-gpu-g2d_6.4.0.p2.0.bbappend \
-    /meta-toradex-nxp/recipes-graphics/xorg-xserver/xserver-xf86-config_0.1.bbappend \
-    /meta-toradex-nxp/recipes-graphics/wayland/weston_8.0.0.imx.bbappend \
-    /meta-toradex-nxp/recipes-graphics/wayland/weston-init.bbappend \
-    /meta-toradex-nxp/recipes-graphics/imx-gpu-viv/imx-gpu-viv_%.bbappend \
-    /meta-toradex-nxp/recipes-bsp/u-boot/u-boot-toradex_2019.07.bb \
-    /meta-toradex-nxp/recipes-bsp/u-boot/u-boot-toradex-fw-utils_2019.07.bb \
-"
-
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \

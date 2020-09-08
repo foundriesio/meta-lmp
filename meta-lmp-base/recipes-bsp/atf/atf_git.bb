@@ -10,8 +10,8 @@ DEPENDS += " ${@bb.utils.contains("MACHINE_FEATURES", "optee", "virtual/optee-os
 
 SRC_URI = "git://github.com/ARM-software/arm-trusted-firmware.git"
 
-PV = "2.2+git${SRCPV}"
-SRCREV = "5d3ee0764b03567bf3501edf47d67d72daff0cb3"
+PV = "2.3"
+SRCREV = "ecd27ad85f1eba29f6bf92c39dc002c85b07dad5"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

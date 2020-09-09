@@ -78,6 +78,10 @@ BBMASK += " \
     /meta-arm/meta-arm/recipes-security/optee/optee-os_git.bb \
     /meta-arm/meta-arm/recipes-security/optee/optee-examples_git.bb \
 "
+# meta-arm-bsp: mask recipes from meta-kernel as we have our own recipes
+BBMASK += " \
+    /meta-arm-bsp/recipes-kernel/linux/linux-stable_%.bbappend \
+"
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \

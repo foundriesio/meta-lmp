@@ -88,7 +88,7 @@ WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_qemuarm64 = "u-boot-fio"
 PREFERRED_VERSION_u-boot-fio_qemuarm64 ?= "2020.04"
-MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_qemuarm64 = "atf"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append_qemuarm64 = "trusted-firmware-a"
 WKS_FILE_DEPENDS_append_qemuarm64 = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_qemuarm64 = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES_append_qemuarm64 = " ubootenv"
@@ -103,20 +103,11 @@ PREFERRED_VERSION_optee-os-fio_qemuarm64 = "3.10.0+git"
 PREFERRED_VERSION_optee-client_qemuarm64 = "3.10.0"
 PREFERRED_VERSION_optee-examples_qemuarm64 = "3.10.0"
 PREFERRED_VERSION_optee-test_qemuarm64 = "3.10.0"
-## ARM Trusted Firmware options
-TF-A_PLATFORM_qemuarm64 = "qemu"
-TF-A_DEPENDS_qemuarm64 = "u-boot"
-TF-A_BL33_qemuarm64 = "${DEPLOY_DIR_IMAGE}/u-boot.bin"
-TF-A_EXTRA_OPTIONS_qemuarm64 = " BL32=${DEPLOY_DIR_IMAGE}/optee/tee-header_v2.bin \
-  BL32_EXTRA1=${DEPLOY_DIR_IMAGE}/optee/tee-pager_v2.bin \
-  BL32_EXTRA2=${DEPLOY_DIR_IMAGE}/optee/tee-pageable_v2.bin \
-  ARM_TSP_RAM_LOCATION=tdram BL32_RAM_LOCATION=tdram"
 QB_MACHINE_qemuarm64 = "-machine virt,secure=on"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM_qemuarm64 = "-m 1057"
 QB_DRIVE_TYPE_qemuarm64 = "/dev/vdb"
-## Bios/bl1.bin is ATF, which requires semihosting for the remaining boot artifacts
-QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios bl1.bin -d unimp -semihosting-config enable,target=native"
+QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios flash.bin"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm = "u-boot-fio"

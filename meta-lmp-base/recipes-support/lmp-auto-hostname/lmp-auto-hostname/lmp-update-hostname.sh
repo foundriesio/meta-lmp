@@ -20,7 +20,11 @@ MODE=${MODE}
 # Extract data from device-tree or via dmi, if available
 if [ -d /proc/device-tree ]; then
 	MODEL_SOURCE="/proc/device-tree/model"
-	SERIAL_SOURCE="/proc/device-tree/serial-number"
+	if [ -f /sys/devices/soc0/serial_number ]; then
+		SERIAL_SOURCE="/sys/devices/soc0/serial_number"
+	else
+		SERIAL_SOURCE="/proc/device-tree/serial-number"
+	fi
 else
 	MODEL_SOURCE="/sys/class/dmi/id/product_name"
 	SERIAL_SOURCE="/sys/class/dmi/id/product_serial"

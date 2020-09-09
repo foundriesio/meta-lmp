@@ -99,6 +99,10 @@ OSTREE_KERNEL_qemuarm64 = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${M
 OSTREE_KERNEL_ARGS_qemuarm64 ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT_qemuarm64 = "0x40080000"
 MACHINE_FEATURES_append_qemuarm64 = " optee"
+PREFERRED_VERSION_optee-os-fio_qemuarm64 = "3.10.0+git"
+PREFERRED_VERSION_optee-client_qemuarm64 = "3.10.0"
+PREFERRED_VERSION_optee-examples_qemuarm64 = "3.10.0"
+PREFERRED_VERSION_optee-test_qemuarm64 = "3.10.0"
 ## ARM Trusted Firmware options
 TF-A_PLATFORM_qemuarm64 = "qemu"
 TF-A_DEPENDS_qemuarm64 = "u-boot"

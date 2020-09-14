@@ -5,6 +5,7 @@ OPTEEMACHINE_imx8mmevk = "imx-mx8mmevk"
 
 EXTRA_OEMAKE_append_imx = " \
     CFG_CAAM_DBG=0x001 \
+    CFG_SCTLR_ALIGNMENT_CHECK=n \
 "
 EXTRA_OEMAKE_append_apalis-imx6 = " \
     CFG_NXP_CAAM=y CFG_IMX_CAAM=n \

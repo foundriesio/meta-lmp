@@ -1,9 +1,9 @@
-LINUX_VERSION ?= "5.4.64"
+LINUX_VERSION ?= "5.4.65"
 
 FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
-SRCREV_machine = "ad794f83156fc7f8cceeee293793d7428052b200"
+SRCREV_machine = "628ae75fc1b45aa97bea8b979f833612efffbd4d"
 SRCREV_meta = "9f43f9d2e5915a0d80a151af38273d6ec8db9680"
 KBRANCH_machine = "5.4-2.1.x-imx"
 KBRANCH_meta = "linux-v5.4.y"

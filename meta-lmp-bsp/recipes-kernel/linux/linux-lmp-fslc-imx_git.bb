@@ -4,7 +4,7 @@ FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
 SRCREV_machine = "628ae75fc1b45aa97bea8b979f833612efffbd4d"
-SRCREV_meta = "9f43f9d2e5915a0d80a151af38273d6ec8db9680"
+SRCREV_meta = "23a8c7c53a0a4daba0e5d7241a4bbbc4498b5bba"
 KBRANCH_machine = "5.4-2.1.x-imx"
 KBRANCH_meta = "linux-v5.4.y"
 
@@ -16,6 +16,7 @@ SRC_URI = "git://github.com/Freescale/linux-fslc.git;protocol=https;branch=${KBR
     file://0002-FIO-fromtree-hwrng-optee-handle-unlimited-data-rates.patch \
     file://0003-FIO-fromtree-hwrng-optee-fix-wait-use-case.patch \
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
+    file://0001-FIO-fromlist-drivers-optee-i2c-add-bus-retry-configu.patch \
 "
 
 KMETA = "kernel-meta"

@@ -1,0 +1,55 @@
+From 4a85e75017567e82f71d8316e1188ab2786d7014 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Wed, 16 Sep 2020 17:27:32 +0200
+Subject: [PATCH] [FIO fromlist] drivers: optee: i2c: add bus retry
+ configuration
+
+Allow OP-TEE to specify the number of retries in the adaptor.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ drivers/tee/optee/rpc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+index 64a206c562648..fe4041eb703b6 100644
+--- a/drivers/tee/optee/rpc.c
++++ b/drivers/tee/optee/rpc.c
+@@ -58,6 +58,7 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
+ 	struct tee_param *params;
+ 	size_t i;
+ 	int ret = -EOPNOTSUPP;
++	int retries = 0;
+ 	u8 attr[] = {
+ 		TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+ 		TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+@@ -102,12 +103,17 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
+ 	client.addr = params[0].u.value.c;
+ 	snprintf(client.name, I2C_NAME_SIZE, "i2c%d", client.adapter->nr);
+ 
++	/* cache the current value */
++	retries = client.adapter->retries;
++
+ 	switch (params[0].u.value.a) {
+ 	case OPTEE_MSG_RPC_CMD_I2C_TRANSFER_RD:
++		client.adapter->retries = params[1].u.value.b;
+ 		ret = i2c_master_recv(&client, params[2].u.memref.shm->kaddr,
+ 				      params[2].u.memref.size);
+ 		break;
+ 	case OPTEE_MSG_RPC_CMD_I2C_TRANSFER_WR:
++		client.adapter->retries = params[1].u.value.b;
+ 		ret = i2c_master_send(&client, params[2].u.memref.shm->kaddr,
+ 				      params[2].u.memref.size);
+ 		break;
+@@ -126,6 +132,7 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
+ 			arg->ret = TEEC_SUCCESS;
+ 	}
+ 
++	client.adapter->retries = retries;
+ 	i2c_put_adapter(client.adapter);
+ 	kfree(params);
+ 	return;
+-- 
+2.28.0
+

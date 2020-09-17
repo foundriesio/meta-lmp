@@ -6,6 +6,7 @@ SRC_URI_append = " \
     file://dockerd-daemon-use-default-system-config-when-none-i.patch \
     file://cli-config-support-default-system-config.patch \
     file://dockerd-daemon-configurable-max-download-attempts.patch \
+    file://fix-warning-systemd-docker-socket.patch \
     file://daemon.json.in \
     file://docker.service \
 "

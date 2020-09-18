@@ -9,7 +9,7 @@ DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyel
 SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
 
 PV = "3.10.0+git"
-SRCREV = "e20d5441e9f8ddb629587cf48ee73ca3cb7aefa9"
+SRCREV = "a5b677641d841c7bb3b874d9b9e64d1e526de65a"
 SRCBRANCH = "3.10+fio"
 
 # To be removed once it can fully replace the 3.6.0 based version

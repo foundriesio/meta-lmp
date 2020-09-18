@@ -39,3 +39,12 @@ IMAGE_CMD_ota_append () {
 		fi
 	fi
 }
+
+# LMP specific cleanups after the main ostree image from meta-updater
+IMAGE_CMD_ostree_append () {
+	# No need for var/local as the entire var is bind-mounted
+	rm -rf var/local
+
+	# Prefer /usr/lib/tmpfiles.d instead of /etc
+	mv usr/etc/tmpfiles.d/00ostree-tmpfiles.conf usr/lib/tmpfiles.d
+}

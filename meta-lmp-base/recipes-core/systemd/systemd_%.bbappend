@@ -13,9 +13,11 @@ SRC_URI_append = " \
 "
 
 do_install_append() {
-	echo 'L+ /var/tmp - - - - /var/volatile/tmp' >> ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf
+	# prefer nonarch_libdir instead of sysconfdir as this is a core configuration file
+	mv ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
 	if [ ${@ oe.types.boolean('${VOLATILE_LOG_DIR}') } = True ]; then
-		echo 'L+ /var/log - - - - /var/volatile/log' >> ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf
+		sed -i '/^d \/var\/log /d' ${D}${nonarch_libdir}/tmpfiles.d/var.conf
+		echo 'L+ /var/log - - - - /var/volatile/log' >> ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
 	else
 		# Make sure /var/log is not a link to volatile (e.g. after system updates)
 		sed -i '/\[Service\]/aExecStartPre=-/bin/rm -f /var/log' ${D}${systemd_system_unitdir}/systemd-journal-flush.service

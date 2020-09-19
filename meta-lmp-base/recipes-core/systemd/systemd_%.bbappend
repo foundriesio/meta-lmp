@@ -12,6 +12,9 @@ SRC_URI_append = " \
 	file://systemd-timesyncd-update.service \
 "
 
+# /var in lmp is expected to be rw, so drop volatile-binds service files
+RDEPENDS_${PN}_remove = "volatile-binds"
+
 do_install_append() {
 	# prefer nonarch_libdir instead of sysconfdir as this is a core configuration file
 	mv ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf

@@ -1,0 +1,30 @@
+From df3ad807ba64241cbcd325b05c936ee9ca6c6bb8 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Mon, 21 Sep 2020 11:37:18 -0300
+Subject: [PATCH] tmpfiles/tmp.conf: reduce cleanup-age to half
+
+Cleanup tmp at every 5 days and var/tmp at every 15 days, half of the
+default values as we don't want the tmp space to grow too much.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ tmpfiles.d/tmp.conf | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tmpfiles.d/tmp.conf b/tmpfiles.d/tmp.conf
+index fe5225d751..2b41618ea0 100644
+--- a/tmpfiles.d/tmp.conf
++++ b/tmpfiles.d/tmp.conf
+@@ -8,5 +8,5 @@
+ # See tmpfiles.d(5) for details
+ 
+ # Clear tmp directories separately, to make them easier to override
+-q /tmp 1777 root root 10d
+-q /var/tmp 1777 root root 30d
++q /tmp 1777 root root 5d
++q /var/tmp 1777 root root 15d
+-- 
+2.28.0
+

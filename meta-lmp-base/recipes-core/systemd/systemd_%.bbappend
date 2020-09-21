@@ -8,6 +8,7 @@ EXTRA_OEMESON += ' \
 '
 
 SRC_URI_append = " \
+	file://0001-tmpfiles-tmp.conf-reduce-cleanup-age-to-half.patch \
 	file://systemd-networkd-wait-online.service.in-use-any-by-d.patch \
 	file://systemd-timesyncd-update.service \
 "

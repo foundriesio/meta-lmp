@@ -1,0 +1,187 @@
+From 0f4c820cb81649d53566679a334a23a2974b3cf3 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 23 Sep 2020 15:20:44 -0300
+Subject: [PATCH] Add client build support for editline (libedit)
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ clients/cli/agent.c       |  6 ++++++
+ clients/cli/common.c      | 12 ++++++++++++
+ clients/cli/connections.c | 12 ++++++++++++
+ clients/cli/devices.c     |  4 ++++
+ clients/cli/nmcli.c       |  6 ++++++
+ m4/ax_lib_readline.m4     |  2 +-
+ 6 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/clients/cli/agent.c b/clients/cli/agent.c
+index f4057df..0504a59 100644
+--- a/clients/cli/agent.c
++++ b/clients/cli/agent.c
+@@ -9,8 +9,14 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#if defined(HAVE_READLINE_READLINE_H)
+ #include <readline/readline.h>
++#elif defined(HAVE_EDITLINE_READLINE_H)
++#include <editline/readline.h>
++#endif
++#if defined(HAVE_READLINE_HISTORY_H)
+ #include <readline/history.h>
++#endif
+ 
+ #include "common.h"
+ #include "utils.h"
+diff --git a/clients/cli/common.c b/clients/cli/common.c
+index 04ccf8d..32eb65d 100644
+--- a/clients/cli/common.c
++++ b/clients/cli/common.c
+@@ -10,8 +10,14 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/ioctl.h>
++#if defined(HAVE_READLINE_READLINE_H)
+ #include <readline/readline.h>
++#elif defined(HAVE_EDITLINE_READLINE_H)
++#include <editline/readline.h>
++#endif
++#if defined(HAVE_READLINE_HISTORY_H)
+ #include <readline/history.h>
++#endif
+ 
+ #include "nm-vpn-helpers.h"
+ #include "nm-client-utils.h"
+@@ -1003,7 +1009,9 @@ nmc_readline_echo (const NmcConfig *nmc_config,
+ 	va_list args;
+ 	gs_free char *prompt = NULL;
+ 	char *str;
++#if defined(HAVE_READLINE_HISTORY_H)
+ 	HISTORY_STATE *saved_history;
++#endif
+ 	HISTORY_STATE passwd_history = { 0, };
+ 
+ 	va_start (args, prompt_fmt);
+@@ -1014,8 +1022,10 @@ nmc_readline_echo (const NmcConfig *nmc_config,
+ 
+ 	/* Hide the actual password */
+ 	if (!echo_on) {
++#if defined(HAVE_READLINE_HISTORY_H)
+ 		saved_history = history_get_history_state ();
+ 		history_set_history_state (&passwd_history);
++#endif
+ 		rl_redisplay_function = nmc_secret_redisplay;
+ 	}
+ 
+@@ -1024,7 +1034,9 @@ nmc_readline_echo (const NmcConfig *nmc_config,
+ 	/* Restore the non-hiding behavior */
+ 	if (!echo_on) {
+ 		rl_redisplay_function = rl_redisplay;
++#if defined(HAVE_READLINE_HISTORY_H)
+ 		history_set_history_state (saved_history);
++#endif
+ 	}
+ 
+ 	return str;
+diff --git a/clients/cli/connections.c b/clients/cli/connections.c
+index e13ae9a..f78c52b 100644
+--- a/clients/cli/connections.c
++++ b/clients/cli/connections.c
+@@ -12,8 +12,14 @@
+ #include <unistd.h>
+ #include <signal.h>
+ #include <netinet/ether.h>
++#if defined(HAVE_READLINE_READLINE_H)
+ #include <readline/readline.h>
++#elif defined(HAVE_EDITLINE_READLINE_H)
++#include <editline/readline.h>
++#endif
++#if defined(HAVE_READLINE_HISTORY_H)
+ #include <readline/history.h>
++#endif
+ #include <fcntl.h>
+ 
+ #include "nm-client-utils.h"
+@@ -6103,7 +6109,9 @@ gen_property_values (const char *text, int state)
+ }
+ 
+ /* from readline */
++#if defined(HAVE_READLINE_READLINE_H)
+ extern int rl_complete_with_tilde_expansion;
++#endif
+ 
+ /*
+  * Attempt to complete on the contents of TEXT.  START and END show the
+@@ -6131,8 +6139,10 @@ nmcli_editor_tab_completion (const char *text, int start, int end)
+ 	/* Disable default filename completion */
+ 	rl_attempted_completion_over = 1;
+ 
++#if defined(HAVE_READLINE_READLINE_H)
+ 	/* Enable tilde expansion when filenames are completed */
+ 	rl_complete_with_tilde_expansion = 1;
++#endif
+ 
+ 	/* Filter out possible ANSI color escape sequences */
+ 	prompt_tmp = nmc_filter_out_colors ((const char *) rl_prompt);
+@@ -9235,7 +9245,9 @@ nmcli_con_tab_completion (const char *text, int start, int end)
+ 		generator_func = _meta_abstract_generator;
+ 	} else if (g_strcmp0 (rl_prompt, PROMPT_IMPORT_FILE) == 0) {
+ 		rl_attempted_completion_over = 0;
++#if defined(HAVE_READLINE_READLINE_H)
+ 		rl_complete_with_tilde_expansion = 1;
++#endif
+ 	} else if (g_strcmp0 (rl_prompt, PROMPT_VPN_CONNECTION) == 0) {
+ 		generator_func = gen_vpn_ids;
+ 	}
+diff --git a/clients/cli/devices.c b/clients/cli/devices.c
+index c99efd0..f414f9b 100644
+--- a/clients/cli/devices.c
++++ b/clients/cli/devices.c
+@@ -9,7 +9,11 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#if defined(HAVE_READLINE_READLINE_H)
+ #include <readline/readline.h>
++#elif defined(HAVE_EDITLINE_READLINE_H)
++#include <editline/readline.h>
++#endif
+ 
+ #include "nm-secret-agent-simple.h"
+ #include "nm-client-utils.h"
+diff --git a/clients/cli/nmcli.c b/clients/cli/nmcli.c
+index 8b8648f..3150ff3 100644
+--- a/clients/cli/nmcli.c
++++ b/clients/cli/nmcli.c
+@@ -15,8 +15,14 @@
+ #include <unistd.h>
+ #include <locale.h>
+ #include <glib-unix.h>
++#if defined(HAVE_READLINE_READLINE_H)
+ #include <readline/readline.h>
++#elif defined(HAVE_EDITLINE_READLINE_H)
++#include <editline/readline.h>
++#endif
++#if defined(HAVE_READLINE_HISTORY_H)
+ #include <readline/history.h>
++#endif
+ 
+ #include "nm-client-utils.h"
+ 
+diff --git a/m4/ax_lib_readline.m4 b/m4/ax_lib_readline.m4
+index af32fda..8b23105 100644
+--- a/m4/ax_lib_readline.m4
++++ b/m4/ax_lib_readline.m4
+@@ -92,7 +92,7 @@ AC_DEFUN([AX_LIB_READLINE], [
+ 
+   ORIG_LIBS="$LIBS"
+   LIBS="$LIBS $ax_cv_lib_readline"
+-  AC_CHECK_HEADERS(readline.h readline/readline.h)
++  AC_CHECK_HEADERS(readline.h readline/readline.h editline/readline.h)
+ 
+   # Check history
+   AC_CACHE_CHECK([whether readline supports history],
+-- 
+2.28.0
+

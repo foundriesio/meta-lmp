@@ -16,10 +16,16 @@ do_install () {
         install
 }
 
+PACKAGES += "${PN}-wg-quick"
+
 FILES_${PN} = " \
+    ${bindir}/wg \
     ${sysconfdir} \
+"
+FILES_${PN}-wg-quick = " \
+    ${bindir}/wg-quick \
     ${systemd_unitdir} \
-    ${bindir} \
 "
 
-RDEPENDS_${PN} = "bash kernel-module-wireguard"
+RDEPENDS_${PN} = "kernel-module-wireguard"
+RDEPENDS_${PN}-wg-quick = "${PN} bash"

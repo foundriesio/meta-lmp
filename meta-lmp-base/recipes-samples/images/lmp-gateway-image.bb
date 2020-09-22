@@ -32,6 +32,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     gptfdisk \
     iptables \
     kernel-modules \
+    networkmanager-nmcli \
     networkmanager-nmtui \
 "
 

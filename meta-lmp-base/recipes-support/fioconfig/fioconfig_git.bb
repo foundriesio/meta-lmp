@@ -39,8 +39,9 @@ do_install_append() {
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/factory-config-vpn ${D}${datadir}/fioconfig/handlers
 }
 
-# We need aktualizr because we uses its device gateway connectivity and keys
-RDEPENDS_${PN} = "${SOTA_CLIENT}"
+# We need aktualizr because we uses its device gateway connectivity and keys,
+# and networkmanager-nmcli for wireguard support
+RDEPENDS_${PN} = "${SOTA_CLIENT} networkmanager-nmcli"
 
 FILES_${PN} += " \
 	${systemd_unitdir}/system/fioconfig.service \

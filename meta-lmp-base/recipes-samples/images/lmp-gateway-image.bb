@@ -25,7 +25,6 @@ IMAGE_FEATURES += "ssh-server-openssh"
 
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
-    coreutils \
     cpufrequtils \
     ldd \
     gptfdisk \

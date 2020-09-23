@@ -1,6 +1,9 @@
 OPTEEMACHINE_imx8mmevk = "imx-imx8mmevk"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 
+EXTRA_OEMAKE_append_imx = " \
+    CFG_SCTLR_ALIGNMENT_CHECK=n \
+"
 EXTRA_OEMAKE_append_imx8mmevk = " \
     CFG_CORE_DYN_SHM=n CFG_DT=y CFG_OVERLAY_ADDR=0x43600000 \
 "

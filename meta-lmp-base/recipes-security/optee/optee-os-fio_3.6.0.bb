@@ -11,7 +11,7 @@ SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH} \
 "
 
 PV = "3.6.0+git"
-SRCREV = "7f17561ec280f7fc0779fac33cd7949489dbc5c4"
+SRCREV = "349d0e13fc602157d20ce4a4f9c08516a5a5c834"
 SRCBRANCH = "3.6.0+fio"
 
 S = "${WORKDIR}/git"

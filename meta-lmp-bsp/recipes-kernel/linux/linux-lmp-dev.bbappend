@@ -8,6 +8,9 @@ SRC_URI_append_rpi = " \
 # OP-TEE generic, but for now only applied on mx8mm
 SRC_URI_append_mx8mm = " \
     file://0001-FIO-fromlist-drivers-optee-allow-op-tee-to-access-de.patch \
+    file://0002-FIO-fromtree-hwrng-optee-handle-unlimited-data-rates.patch \
+    file://0003-FIO-fromtree-hwrng-optee-fix-wait-use-case.patch \
+    file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
 "
 
 # Apalis iMX8

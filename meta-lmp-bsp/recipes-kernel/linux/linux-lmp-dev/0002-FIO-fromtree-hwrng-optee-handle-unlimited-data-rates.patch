@@ -1,0 +1,33 @@
+From c023412cd251917588d631b6d2ae316e139091d0 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Thu, 6 Aug 2020 12:00:09 +0200
+Subject: [PATCH 2/4] [FIO fromtree] hwrng: optee - handle unlimited data rates
+
+Data rates of MAX_UINT32 will schedule an unnecessary one jiffy
+timeout on the call to msleep. Avoid this scenario by using 0 as the
+unlimited data rate.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ drivers/char/hw_random/optee-rng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+index 49b2e02537ddb..5bc4700c4dae1 100644
+--- a/drivers/char/hw_random/optee-rng.c
++++ b/drivers/char/hw_random/optee-rng.c
+@@ -128,7 +128,7 @@ static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
+ 		data += rng_size;
+ 		read += rng_size;
+ 
+-		if (wait) {
++		if (wait && pvt_data->data_rate) {
+ 			if (timeout-- == 0)
+ 				return read;
+ 			msleep((1000 * (max - read)) / pvt_data->data_rate);
+-- 
+2.28.0
+

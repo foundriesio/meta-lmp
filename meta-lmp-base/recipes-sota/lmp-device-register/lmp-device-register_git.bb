@@ -11,11 +11,9 @@ SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
 # Default to master tag
 LMP_DEVICE_REGISTER_TAG ?= "master"
 
-APP_TYPE ?= "${@'DOCKER_COMPOSE_APP' if d.getVar('DOCKER_COMPOSE_APP') == '1' else 'DOCKER_APPS'}"
-
-PACKAGECONFIG ?= "aklitetags dockerapp"
+PACKAGECONFIG ?= "aklitetags composeapp"
 PACKAGECONFIG[aklitetags] = "-DAKLITE_TAGS=ON -DDEFAULT_TAG=${LMP_DEVICE_REGISTER_TAG},-DAKLITE_TAGS=OFF,"
-PACKAGECONFIG[dockerapp] = "-D${APP_TYPE}=ON,-D${APP_TYPE}=OFF,"
+PACKAGECONFIG[composeapp] = "-DDOCKER_COMPOSE_APP=ON,-DDOCKER_COMPOSE_APP=OFF,"
 
 S = "${WORKDIR}/git"
 

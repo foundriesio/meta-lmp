@@ -71,6 +71,7 @@ MIRRORS =+ "\
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
+    /meta-virtualization/recipes-devtools/python/python3-texttable_0.9.1.bb \
     /meta-virtualization/recipes-devtools/python/python3-websocket-client_0.57.0.bb \
 "
 

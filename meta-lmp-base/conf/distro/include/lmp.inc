@@ -69,6 +69,7 @@ MIRRORS =+ "\
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
+    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
 "
 
 # meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)

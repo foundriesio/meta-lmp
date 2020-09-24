@@ -31,7 +31,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     iptables \
     kernel-modules \
     networkmanager-nmcli \
-    networkmanager-nmtui \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \

@@ -84,6 +84,10 @@ BBMASK += " \
 BBMASK += " \
     /meta-arm-bsp/recipes-kernel/linux/linux-stable_%.bbappend \
 "
+# meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
+BBMASK += " \
+    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
+"
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \

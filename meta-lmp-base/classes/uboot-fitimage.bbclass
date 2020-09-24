@@ -171,8 +171,9 @@ do_deploy_prepend() {
 		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
-		oe_runmake -C ${S} O=${B} SPL
+		oe_runmake -C ${S} O=${B} ${SPL_BINARY}
 		if [ -f spl/u-boot-spl.dtb ]; then
+			mkdir -p ${DEPLOYDIR}/spl
 			install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_IMAGE}
 			ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
 			ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}

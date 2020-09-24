@@ -37,6 +37,5 @@ CORE_IMAGE_BASE_INSTALL += " \
 CORE_IMAGE_BASE_INSTALL += " \
     ethtool \
     git \
-    packagegroup-core-full-cmdline-multiuser \
     pciutils \
 "

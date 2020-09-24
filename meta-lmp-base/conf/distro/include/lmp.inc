@@ -90,6 +90,9 @@ BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
 "
 
+# only zynqmp machines inherit Xilinx xsct tarball download class
+INHERIT_remove = "${@ ' xsct-tc' if d.getVar('SOC_FAMILY') != 'zynqmp' else ''}"
+
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \

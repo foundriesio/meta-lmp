@@ -8,9 +8,9 @@ UBOOT_SPL_SIGN_ENABLE ?= "${UBOOT_SIGN_ENABLE}"
 UBOOT_SPL_SIGN_KEYNAME ?= "${UBOOT_SIGN_KEYNAME}"
 
 # Default value for deployment filenames
-UBOOT_SPL_DTB_IMAGE ?= "${SPL_BINARY}-${MACHINE}-${PV}-${PR}.dtb"
-UBOOT_SPL_DTB_BINARY ?= "${SPL_BINARY}.dtb"
-UBOOT_SPL_DTB_SYMLINK ?= "${SPL_BINARY}-${MACHINE}.dtb"
+UBOOT_SPL_DTB_IMAGE ?= "${SPL_BINARYNAME}-${MACHINE}-${PV}-${PR}.dtb"
+UBOOT_SPL_DTB_BINARY ?= "${SPL_BINARYNAME}.dtb"
+UBOOT_SPL_DTB_SYMLINK ?= "${SPL_BINARYNAME}-${MACHINE}.dtb"
 UBOOT_ITB_IMAGE ?= "u-boot-${MACHINE}-${PV}-${PR}.itb"
 UBOOT_ITB_BINARY ?= "u-boot.itb"
 UBOOT_ITB_SYMLINK ?= "u-boot-${MACHINE}.itb"
@@ -138,7 +138,7 @@ do_deploy_prepend() {
 					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
-					oe_runmake -C ${S} O=${B}/${config} SPL
+					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
 					if [ -f spl/u-boot-spl.dtb ]; then
 						install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb
 						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}-${type}
@@ -171,7 +171,7 @@ do_deploy_prepend() {
 		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
-		oe_runmake -C ${S} O=${B} SPL
+		oe_runmake -C ${S} O=${B} ${SPL_BINARY}
 		if [ -f spl/u-boot-spl.dtb ]; then
 			install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_IMAGE}
 			ln -sf ${UBOOT_SPL_DTB_IMAGE} ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}

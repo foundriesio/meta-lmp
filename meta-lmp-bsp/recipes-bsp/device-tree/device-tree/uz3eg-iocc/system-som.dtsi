@@ -1,0 +1,161 @@
+/*
+ * DTS file for Avnet Ultrazed-EG SoM
+ *
+ * (C) Copyright 2017, Andreas Galauner
+ * Andreas Galauner <andreas@galauner.de>
+ *
+ * (C) Copyright 2020, Foundries io.
+ * Michael Scott <mike@foundries.io>
+ *
+ * SPDX-License-Identifier: GPL-2.0+
+ */
+
+/*
+ * slew-rate = 1    == <SLEW_RATE_SLOW>
+ * io-standard = 1  == <IO_STANDARD_LVCMOS18>
+ * gpio flag 0 == GPIO_ACTIVE_HIGH
+ */
+
+/ {
+	model = "Avnet XCZU3EG-SFVA625 SoM";
+
+	aliases {
+		gpio0 = &gpio;
+		mmc0 = &sdhci1;
+		mmc1 = &sdhci0;
+		rtc0 = &rtc;
+		serial0 = &uart0;
+		serial1 = &uart1;
+		serial2 = &dcc;
+		usb0 = &usb0;
+		spi0 = &qspi;
+	};
+
+	xlnk {
+		compatible = "xlnx,xlnk-1.0";
+	};
+};
+
+&dcc {
+    status = "okay";
+};
+
+&lpd_dma_chan1 {
+        status = "disabled";
+};
+
+&lpd_dma_chan2 {
+        status = "disabled";
+};
+
+&lpd_dma_chan3 {
+        status = "disabled";
+};
+
+&lpd_dma_chan4 {
+        status = "disabled";
+};
+
+&lpd_dma_chan5 {
+        status = "disabled";
+};
+
+&lpd_dma_chan6 {
+        status = "disabled";
+};
+
+&lpd_dma_chan7 {
+        status = "disabled";
+};
+
+&lpd_dma_chan8 {
+        status = "disabled";
+};
+
+&gpio {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_gpio_default>;
+};
+
+&qspi {
+	status = "okay";
+	is-dual = <1>; /* Set for dual-parallel QSPI config */
+	num-cs = <2>;
+	xlnx,fb-clk = <0x1>;
+	flash0: flash@0 {
+		compatible = "micron,n25q256";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0>;
+		spi-tx-bus-width = <1>;
+		spi-rx-bus-width = <4>; /* FIXME also DUAL configuration possible */
+		spi-max-frequency = <108000000>; /* Based on DC1 spec */
+
+		partition@0 { /* for testing purpose */
+			label = "qspi-boot";
+			reg = <0x0 0x100000>;
+		};
+		partition@100000 { /* for testing purpose */
+			label = "qspi-otaroot";
+			reg = <0x100000 0x3800000>;
+		};
+	};
+};
+
+&sdhci0 {
+	status = "okay";
+	bus-width = <8>;
+	max-frequency = <50000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_sdhci0_default>;
+};
+
+&xilinx_ams {
+    status = "okay";
+};
+
+&ams_ps {
+    status = "okay";
+};
+
+&lpd_watchdog {
+	status = "disabled";
+};
+
+&pinctrl0 {
+	status = "okay";
+
+	pinctrl_gpio_default: gpio-default {
+		mux-led {
+			function = "gpio0";
+			groups = "gpio0_31_grp";
+		};
+
+	        conf-led {
+			groups = "gpio0_31_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+	        };
+
+		conf-pull-none {
+			/* PS User LED */
+			pins = "MIO31";
+			bias-disable;
+		};
+	};
+
+	pinctrl_sdhci0_default: sdhci0-default {
+		mux {
+			groups = "sdio0_0_grp";
+			function = "sdio0";
+		};
+
+		conf {
+			groups = "sdio0_0_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+			bias-disable;
+		};
+	};
+};

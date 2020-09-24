@@ -1,0 +1,338 @@
+/*
+ * DTS file for Avnet IOCC Carrier Board
+ *
+ * (C) Copyright 2017, Andreas Galauner
+ * Andreas Galauner <andreas@galauner.de>
+ *
+ * (C) Copyright 2020, Foundries io.
+ * Michael Scott <mike@foundries.io>
+ *
+ * SPDX-License-Identifier: GPL-2.0+
+ */
+
+/*
+ * slew-rate = 1   == <SLEW_RATE_SLOW>
+ * io-standard = 1 == <IO_STANDARD_LVCMOS18>
+ * gpio flag 0 == GPIO_ACTIVE_HIGH
+ */
+
+/ {
+	aliases {
+                i2c1 = &i2c1;
+		ethernet0 = &gem3;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		heartbeat_led {
+			label = "heartbeat";
+			gpios = <&gpio 31 0>;
+			linux,default-trigger = "heartbeat";
+		};
+	};
+};
+
+/* Ethernet0 with hard-coded MAC */
+&gem3 {
+	status = "okay";
+	phy-handle = <&phy0>;
+	phy-mode = "rgmii-id";
+	local-mac-address = [00 0a 35 00 02 90];
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gem3_default>;
+	phy0: ethernet-phy@9 {
+		reg = <0x9>;
+		ti,rx-internal-delay = <0x5>;
+		ti,tx-internal-delay = <0x5>;
+		ti,fifo-depth = <0x1>;
+	};
+};
+
+/* I2C1: GPIO Expander */
+&i2c1 {
+        status = "okay";
+        clock-frequency = <400000>;
+        pinctrl-names = "default", "gpio";
+        pinctrl-0 = <&pinctrl_i2c1_default>;
+        pinctrl-1 = <&pinctrl_i2c1_gpio>;
+        scl-gpios = <&gpio 24 0>;
+        sda-gpios = <&gpio 25 0>;
+
+	i2cswitch@70 {
+		compatible = "nxp,pca9543";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x70>;
+
+		i2c@0 { /* i2c mw 70 0 1 */
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+			/* IIC_EEPROM */
+			eeprom@51 { /* U5 on UZ3EG IOCC and U7 on the UZ7EV EVCC*/
+				compatible = "atmel,24c08";
+				reg = <0x51>;
+				#address-cells = <0x01>;
+				#size-cells = <0x01>;
+
+				board-sn@0 {
+					reg = <0x00 0x14>;
+				};
+
+				eth-mac@20 {
+					reg = <0x20 0x06>;
+				};
+
+				board-name@d0 {
+					reg = <0xd0 0x06>;
+				};
+
+				board-revision@e0 {
+					reg = <0xe0 0x03>;
+				};
+			};
+		};
+
+		i2c@1 {
+			#address-cells = <0x1>;
+			#size-cells = <0x0>;
+			reg = <0x1>;
+
+			irps5401@43 {
+				compatible = "infineon,irps5401";
+				reg = <0x43>;
+			};
+
+			irps5401@44 {
+				compatible = "infineon,irps5401";
+				reg = <0x44>;
+			};
+
+			irps5401@45 {
+				compatible = "infineon,irps5401";
+				reg = <0x45>;
+			};
+		};
+	};
+};
+
+/* SD1 with level shifter */
+&sdhci1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_sdhci1_default>;
+	/*
+	 * 1.0 revision has level shifter and this property should be
+	 * removed for supporting UHS mode
+	 */
+	no-1-8-v;
+	/* max-frequency = <50000000>; */
+	disable-wp;
+};
+
+&uart0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart0_default>;
+};
+
+&uart1 {
+        status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart1_default>;
+};
+
+/* ULPI SMSC USB3320 */
+&usb0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usb0_default>;
+};
+
+&dwc3_0 {
+	status = "okay";
+	dr_mode = "host";
+	snps,usb3_lpm_capable;
+	phy-names = "usb3-phy";
+	/* 4==PHY_TYPE_USB3 */
+	phys = <&lane2 4 0 2 26000000>;
+	maximum-speed = "super-speed";
+};
+
+&pinctrl0 {
+	status = "okay";
+
+	pinctrl_gem3_default: gem3-default {
+		mux {
+			function = "ethernet3";
+			groups = "ethernet3_0_grp";
+		};
+
+		conf {
+			groups = "ethernet3_0_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+
+		conf-rx {
+			pins = "MIO70", "MIO71", "MIO72", "MIO73", "MIO74", "MIO75";
+			bias-high-impedance;
+			low-power-disable;
+		};
+
+		conf-tx {
+			pins = "MIO64", "MIO65", "MIO66", "MIO67", "MIO68", "MIO69";
+			bias-disable;
+			low-power-enable;
+		};
+
+		mux-mdio {
+			function = "mdio3";
+			groups = "mdio3_0_grp";
+		};
+
+		conf-mdio {
+			groups = "mdio3_0_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+			bias-disable;
+		};
+	};
+
+	pinctrl_i2c1_default: i2c1-default {
+		mux {
+			groups = "i2c1_6_grp";
+			function = "i2c1";
+		};
+
+		conf {
+			groups = "i2c1_6_grp";
+			bias-pull-up;
+			slew-rate = <1>;
+			io-standard = <1>;
+                };
+        };
+
+	pinctrl_i2c1_gpio: i2c1-gpio {
+		mux {
+			groups = "gpio0_24_grp", "gpio0_25_grp";
+			function = "gpio0";
+		};
+
+		conf {
+			groups = "gpio0_24_grp", "gpio0_25_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+	};
+
+	pinctrl_sdhci1_default: sdhci1-default {
+		mux {
+			groups = "sdio1_0_grp";
+			function = "sdio1";
+		};
+
+		conf {
+			groups = "sdio1_0_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+			bias-disable;
+		};
+
+		mux-cd {
+			groups = "sdio1_cd_0_grp";
+			function = "sdio1_cd";
+		};
+
+		conf-cd {
+			groups = "sdio1_cd_0_grp";
+			bias-high-impedance;
+			bias-pull-up;
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+
+		mux-wp {
+			groups = "sdio1_wp_0_grp";
+			function = "sdio1_wp";
+		};
+
+		conf-wp {
+			groups = "sdio1_wp_0_grp";
+			bias-high-impedance;
+			bias-pull-up;
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+	};
+
+	pinctrl_uart0_default: uart0-default {
+		mux {
+			groups = "uart0_8_grp";
+			function = "uart0";
+		};
+
+		conf {
+			groups = "uart0_8_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+
+		conf-rx {
+			pins = "MIO34";
+			bias-high-impedance;
+		};
+
+		conf-tx {
+			pins = "MIO35";
+			bias-disable;
+		};
+	};
+
+	pinctrl_uart1_default: uart1-default {
+		mux {
+			groups = "uart1_8_grp";
+			function = "uart1";
+		};
+
+		conf {
+			groups = "uart1_8_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+
+		conf-rx {
+			pins = "MIO32";
+			bias-high-impedance;
+		};
+
+		conf-tx {
+			pins = "MIO33";
+			bias-disable;
+		};
+	};
+
+	pinctrl_usb0_default: usb0-default {
+		mux {
+			groups = "usb0_0_grp";
+			function = "usb0";
+		};
+
+		conf {
+			groups = "usb0_0_grp";
+			slew-rate = <1>;
+			io-standard = <1>;
+		};
+
+		conf-rx {
+			pins = "MIO52", "MIO53", "MIO55";
+			bias-high-impedance;
+	        };
+
+		conf-tx {
+			pins = "MIO54", "MIO56", "MIO57", "MIO58", "MIO59",
+			       "MIO60", "MIO61", "MIO62", "MIO63";
+			bias-disable;
+		};
+	};
+};

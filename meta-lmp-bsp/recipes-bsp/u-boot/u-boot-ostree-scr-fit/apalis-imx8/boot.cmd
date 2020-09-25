@@ -1,5 +1,5 @@
 # Default to ixora-v1.1, which is the carrier board we officially support
-setenv fdt_file fsl-imx8qm-apalis-ixora-v1.1.dtb
+setenv fdt_file imx8qm-apalis-ixora-v1.1.dtb
 echo "Using freescale_${fdt_file}"
 
 # Default boot type and device

@@ -3,7 +3,7 @@ polling_sec = 3600
 repo_server = "https://api.foundries.io/ota/repo/lmp/api/v1/user_repo/"
 
 [pacman]
-type = "ostree+docker-app"
-docker_apps_root = "/var/sota/docker-apps"
+type = "ostree+compose_apps"
+compose_apps_root = "/var/sota/compose-apps"
 ostree_server = "https://api.foundries.io/ota/treehub/lmp/api/v2/"
 tags = @@AKLITE_TAG@@

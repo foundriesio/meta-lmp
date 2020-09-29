@@ -86,6 +86,7 @@ BBMASK += " \
 "
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \
+    /meta-xilinx-bsp/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
     /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
 "
 

@@ -1,5 +1,5 @@
 # U-Boot fitImage support for verified boot, validated by SPL and including
-# support for booting OP-TEE and U-Boot as a normal world payload
+# support for booting ATF, OP-TEE and U-Boot as a normal world payload
 
 inherit kernel-arch
 
@@ -21,14 +21,18 @@ UBOOT_ITS_SYMLINK ?= "u-boot-${MACHINE}.its"
 # fitImage Hash Algo
 FIT_HASH_ALG ?= "sha256"
 OPTEE_BINARY ?= "tee-pager.bin"
+ATF_BINARY ?= "arm-trusted-firmware.bin"
+ATF_SUPPORT = "${@bb.utils.contains('EXTRA_IMAGEDEPENDS', 'virtual/trusted-firmware-a', 'true', 'false', d)}"
 
 do_compile[depends] += " virtual/optee-os:do_deploy"
+do_compile[depends] += " ${@'virtual/trusted-firmware-a:do_deploy' if d.getVar('ATF_SUPPORT') == 'true' else ''}"
 
 # Assemble U-Boot fitImage
 #
 # - U-Boot no-dtb binary
 # - Signed U-Boot dtb
 # - OP-TEE
+# - ATF (if enabled)
 #
 # Only one U-Boot dtb is currently supported, as it needs to provide the
 # signature for runtime check
@@ -36,15 +40,27 @@ do_compile[depends] += " virtual/optee-os:do_deploy"
 # $1 ... .itb filename
 # $2 ... U-Boot load address
 # $3 ... OP-TEE load address
+# $4 ... ATF load address
 uboot_fitimage_assemble() {
 	ubootloadaddr=${2}
 	opteeloadaddr=${3}
+	atfloadaddr=${4}
 
 	# u-boot dtb location depends on sign enable
 	if [ "${UBOOT_SIGN_ENABLE}" = "1" -a -n "${UBOOT_DTB_BINARY}" ]; then
 		uboot_dtb="${DEPLOY_DIR_IMAGE}/${UBOOT_DTB_IMAGE}"
 	else
 		uboot_dtb="u-boot.dtb"
+	fi
+
+	if ${ATF_SUPPORT}; then
+		optee_type="standalone"
+		config_firmware="atf"
+		config_loadables='"optee", "uboot"';
+	else
+		optee_type="firmware"
+		config_firmware="optee"
+		config_loadables='"uboot"';
 	fi
 
 cat << EOF > u-boot.its
@@ -76,10 +92,30 @@ cat << EOF > u-boot.its
 				algo = "${FIT_HASH_ALG}";
 			};
 		};
+EOF
+	# Add ATF block if ATF is supported by the board
+	if ${ATF_SUPPORT}; then
+		cat << EOF >> u-boot.its
+		atf {
+			description = "ARM Trusted Firmware";
+			data = /incbin/("${DEPLOY_DIR_IMAGE}/${ATF_BINARY}");
+			type = "firmware";
+			arch = "${UBOOT_ARCH}";
+			os = "arm-trusted-firmware";
+			compression = "none";
+			load = <${atfloadaddr}>;
+			entry = <${atfloadaddr}>;
+			hash-1 {
+				algo = "${FIT_HASH_ALG}";
+			};
+		};
+EOF
+	fi
+	cat << EOF >> u-boot.its
 		optee {
 			description = "OP-TEE";
 			data = /incbin/("${DEPLOY_DIR_IMAGE}/optee/${OPTEE_BINARY}");
-			type = "firmware";
+			type = "${optee_type}";
 			arch = "${UBOOT_ARCH}";
 			os = "tee";
 			compression = "none";
@@ -94,8 +130,8 @@ cat << EOF > u-boot.its
 		default = "config-1";
 		config-1 {
 			description = "OP-TEE with U-Boot in normal world";
-			firmware = "optee";
-			loadables = "uboot";
+			firmware = "${config_firmware}";
+			loadables = ${config_loadables};
 			fdt = "ubootfdt";
 			signature {
 				algo = "${FIT_HASH_ALG},rsa2048";
@@ -135,7 +171,7 @@ do_deploy_prepend() {
 				if [ $j -eq $i ]; then
 					cd ${B}/${config}
 					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
+					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_ENTRYPOINT}
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
@@ -168,7 +204,7 @@ do_deploy_prepend() {
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR}
+		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_ENTRYPOINT}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
 		oe_runmake -C ${S} O=${B} ${SPL_BINARY}

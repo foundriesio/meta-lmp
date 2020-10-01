@@ -56,7 +56,7 @@ uboot_fitimage_assemble() {
 	if ${ATF_SUPPORT}; then
 		optee_type="standalone"
 		config_firmware="atf"
-		config_loadables='"optee", "uboot"';
+		config_loadables='"uboot", "optee"';
 	else
 		optee_type="firmware"
 		config_firmware="optee"
@@ -162,6 +162,10 @@ uboot_fitimage_sign() {
 # Needs to happen after concat_dtb, which is a do_deploy prefuncs
 do_deploy_prepend() {
 	OPTEE_LOAD_ADDR=`cat ${DEPLOY_DIR_IMAGE}/optee/tee-init_load_addr.txt`
+	if ${ATF_SUPPORT}; then
+		ATF_ELF="${DEPLOY_DIR_IMAGE}/$(basename -s .bin ${ATF_BINARY}).elf"
+		ATF_LOAD_ADDR=$(${READELF} -h ${ATF_ELF} | egrep -m 1 -i "entry point.*?0x" | sed -r 's/.*?(0x.*?)/\1/g')
+	fi
 
 	if [ -n "${UBOOT_CONFIG}" ]; then
 		for config in ${UBOOT_MACHINE}; do
@@ -171,7 +175,7 @@ do_deploy_prepend() {
 				if [ $j -eq $i ]; then
 					cd ${B}/${config}
 					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_ENTRYPOINT}
+					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR}
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
@@ -204,7 +208,7 @@ do_deploy_prepend() {
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_ENTRYPOINT}
+		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
 		oe_runmake -C ${S} O=${B} ${SPL_BINARY}

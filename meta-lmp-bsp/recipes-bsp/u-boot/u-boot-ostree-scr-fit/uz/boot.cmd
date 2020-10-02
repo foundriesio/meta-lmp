@@ -12,7 +12,8 @@ setenv fdt_addr 0x1f000000
 setenv optee_ovl_addr 0x22000000
 
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${loadaddr} "/boot"${kernel_image}'
-setenv bootcmd_tee_ovy 'imxtract ${loadaddr}#conf@${fdtfile} fdt@${fdt_file} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}'
+setenv bootcmd_tee_ovy 'imxtract ${loadaddr}#conf@${fdtfile} fdt@${fdt_file} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000;'
+#setenv bootcmd_tee_ovy 'imxtract ${loadaddr}#conf@${fdtfile} fdt@${fdt_file} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}'
 setenv bootcmd_run 'bootm ${loadaddr}#conf@${fdt_file} ${loadaddr}#conf@${fdt_file} ${fdt_addr}'
 setenv bootcmd_rollbackenv 'setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}'
 setenv bootcmd_set_rollback 'if test ! "${rollback}" = "1"; then setenv rollback 1; setenv upgrade_available 0; saveenv; fi'

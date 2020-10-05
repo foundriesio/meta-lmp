@@ -3,8 +3,8 @@ LINUX_VERSION ?= "5.4.47"
 FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
-SRCREV_machine = "4a17940e35ceb1802f62cae3bbf1e8212c46d188"
-SRCREV_meta = "a53196f49c7120a9505c7ebe45d663e5d581e1dc"
+SRCREV_machine = "9e7307657fc1b86fc652abd32676b516fc28fe23"
+SRCREV_meta = "b507bc406a8f825e7219a24cf1539ee97f8c1993"
 KBRANCH_machine = "toradex_5.4-2.1.x-imx"
 KBRANCH_meta = "linux-v5.4.y"
 

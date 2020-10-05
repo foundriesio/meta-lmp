@@ -25,7 +25,7 @@ IMAGE_CLASSES_remove = "image_repo_manifest"
 # avoid circular dependencies
 EXTRA_IMAGEDEPENDS = ""
 
-inherit core-image
+inherit core-image nopackages
 
 IMAGE_ROOTFS_SIZE = "8192"
 

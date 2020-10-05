@@ -12,7 +12,7 @@ python __anonymous() {
 FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
-LINUX_VERSION ?= "4.19-rc"
+LINUX_VERSION ?= "5.9-rc"
 LINUX_VERSION_EXTENSION ?= "-lmpdev-${LINUX_KERNEL_TYPE}"
 PV = "${LINUX_VERSION}+git${SRCPV}"
 
@@ -27,7 +27,7 @@ KERNEL_VERSION_SANITY_SKIP = "1"
 SRCREV_machine = "${KERNEL_COMMIT}"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
-LIC_FILES_CHKSUM ?= "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
+LIC_FILES_CHKSUM ?= "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 SRC_URI = "${KERNEL_REPO};branch=${KERNEL_BRANCH};name=machine; \
            ${KERNEL_META_REPO};protocol=https;type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA}"

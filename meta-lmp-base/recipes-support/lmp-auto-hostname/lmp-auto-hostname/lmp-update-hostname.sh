@@ -31,11 +31,11 @@ else
 fi
 if [ -f ${MODEL_SOURCE} ]; then
 	# Lowercase and no spaces (can generate bad values with special chars)
-	MODEL=$(sed -e 's/.*/\L&/' -e 's/ /-/g' -e 's/+/plus/g' ${MODEL_SOURCE} | tr -d '\0')
+	MODEL=$(sed -e 's/ /-/g' -e 's/+/plus/g' ${MODEL_SOURCE} | tr '[:upper:]' '[:lower:]' | tr -d '\0')
 fi
 if [ -f ${SERIAL_SOURCE} ]; then
 	# Lowercase and no leading zeros
-	SERIAL=$(sed -e 's/.*/\L&/' -e 's/^0*//' ${SERIAL_SOURCE} | tr -d '\0')
+	SERIAL=$(sed -e 's/^0*//' ${SERIAL_SOURCE} | tr '[:upper:]' '[:lower:]' | tr -d '\0')
 fi
 # Network device mac address
 if [ -f /sys/class/net/${NETDEVICE}/address ]; then

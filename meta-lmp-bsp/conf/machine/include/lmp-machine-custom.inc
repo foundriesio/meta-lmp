@@ -17,6 +17,7 @@ OSTREE_KERNEL_beaglebone-yocto = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHI
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
+PREFERRED_PROVIDER_virtual/kernel_rpi ?= "linux-lmp-rpi"
 PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_rpi = "u-boot-fio"
 PREFERRED_VERSION_u-boot-fio_rpi ?= "2020.04"
@@ -47,14 +48,6 @@ OSTREE_KERNEL_ARGS_raspberrypi4 ?= "video=HDMI-A-1:1280x720@60 cma=256M vc_mem.m
 UBOOT_ENTRYPOINT_rpi = "0x00008000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
-## RPI: Use official raspberrypi downstream kernel
-PREFERRED_PROVIDER_virtual/kernel_rpi ?= "linux-lmp-dev"
-LINUX_VERSION_rpi ?= "4.19.y"
-KERNEL_REPO_rpi ?= "git://github.com/raspberrypi/linux.git"
-KERNEL_BRANCH_rpi ?= "rpi-4.19.y"
-KERNEL_COMMIT_rpi ?= "f6b3ac28f0a9137d4c24c0b8832e693bbd16f5b7"
-KERNEL_META_BRANCH_rpi ?= "linux-v4.19.y"
-KERNEL_META_COMMIT_rpi ?= "1e97ab775c4c499b995e7013ffc221d71844ba87"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets

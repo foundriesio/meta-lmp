@@ -40,7 +40,6 @@ SERIAL_CONSOLES ?= "115200;ttyPS0"
 
 KERNEL_IMAGETYPE_sota = "fitImage"
 KERNEL_CLASSES_sota = " kernel-lmp-fitimage "
-OSTREE_KERNEL = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 OSTREE_KERNEL_ARGS ?= "console=ttyPS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 PREFERRED_PROVIDER_virtual/dtb ?= "device-tree"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a ?= "arm-trusted-firmware"

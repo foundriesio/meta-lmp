@@ -69,6 +69,7 @@ MIRRORS =+ "\
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
+    /meta-updater/recipes-connectivity/nfs-utils/nfs-utils_%.bbappend \
 "
 
 # meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)

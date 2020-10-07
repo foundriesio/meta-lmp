@@ -47,4 +47,7 @@ IMAGE_CMD_ostree_append () {
 
 	# Prefer /usr/lib/tmpfiles.d instead of /etc
 	mv usr/etc/tmpfiles.d/00ostree-tmpfiles.conf usr/lib/tmpfiles.d
+
+	# Update default home path
+	sed -i -e 's,:/home,:/var/rootdirs/home,g' usr/etc/passwd
 }

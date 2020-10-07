@@ -95,7 +95,7 @@ QB_MACHINE_qemuarm64 = "-machine virt,secure=on"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM_qemuarm64 = "-m 1057"
 QB_DRIVE_TYPE_qemuarm64 = "/dev/vdb"
-QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios flash.bin"
+QB_OPT_APPEND_qemuarm64 = "-no-acpi -bios ${DEPLOY_DIR_IMAGE}/flash.bin"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm = "u-boot-fio"
@@ -112,7 +112,7 @@ UBOOT_ENTRYPOINT_qemuarm = "0x40080000"
 QB_DRIVE_TYPE_qemuarm = "/dev/vdb"
 ## Currently support u-boot -> Linux boot
 ## will add more security later
-QB_OPT_APPEND_qemuarm = "-no-acpi -bios u-boot.bin -d unimp"
+QB_OPT_APPEND_qemuarm = "-no-acpi -bios ${DEPLOY_DIR_IMAGE}/u-boot.bin -d unimp"
 
 # Intel
 OSTREE_BOOTLOADER_intel-corei7-64 ?= "grub"

@@ -17,6 +17,9 @@ SRC_URI = "git://github.com/Freescale/linux-fslc.git;protocol=https;branch=${KBR
     file://0003-FIO-fromtree-hwrng-optee-fix-wait-use-case.patch \
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
     file://0001-FIO-fromlist-drivers-optee-i2c-add-bus-retry-configu.patch \
+    file://0001-FIO-fromtree-tee-add-support-for-session-s-client-UU.patch \
+    file://0002-FIO-fromtree-tee-optee-Add-support-for-session-login.patch \
+    file://0001-driver-tee-Handle-NULL-pointer-indication-from-clien.patch \
 "
 
 KMETA = "kernel-meta"

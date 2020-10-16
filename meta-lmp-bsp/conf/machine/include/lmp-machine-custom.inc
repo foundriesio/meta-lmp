@@ -29,6 +29,8 @@ IMAGE_FSTYPES_remove_rpi = "ext3 rpi-sdimg"
 IMAGE_BOOT_FILES_rpi = "${BOOTFILES_DIR_NAME}/* u-boot.bin;${SDIMG_KERNELIMAGE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 KERNEL_CLASSES_rpi = " kernel-lmp-fitimage "
 KERNEL_IMAGETYPE_rpi = "fitImage"
+## Workaround for https://github.com/raspberrypi/firmware/issues/1483
+ENABLE_UART_rpi = "1"
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL_rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 KERNEL_SERIAL_raspberrypi-cm3 ?= "console=ttyAMA0,115200"

@@ -291,6 +291,25 @@ PREFERRED_VERSION_optee-examples_imx8mmevk = "3.10.0"
 PREFERRED_VERSION_optee-test_imx8mmevk = "3.10.0"
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
 
+# STM32MP1
+PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"
+KERNEL_IMAGETYPE_stm32mp1common = "fitImage"
+KERNEL_CLASSES_stm32mp1common = " kernel-fitimage "
+OSTREE_KERNEL_stm32mp1common = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_COMMON_stm32mp1common = "console=ttySTM0,115200 root=LABEL=otaroot rootfstype=ext4"
+SERIAL_CONSOLES_stm32mp1common = "115200;ttySTM0"
+IMAGE_FSTYPES_remove_stm32mp1common = "wic wic.gz wic.bmap"
+PREFERRED_VERSION_gcc-arm-none-eabi-native_stm32mp1common = "7"
+IMAGE_CLASSES_remove_stm32mp1common = "st-partitions-image"
+IMAGE_CLASSES_remove_stm32mp1common = "image_types-stubi"
+ENABLE_FLASHLAYOUT_CONFIG_stm32mp1common = "0"
+#STM32MP1-EVAL
+UBOOT_LOADADDRESS_stm32mp1-eval = "0xC2000000"
+UBOOT_ENTRYPOINT_stm32mp1-eval = "0xC2000000"
+UBOOT_DTB_LOADADDRESS_stm32mp1-eval = "0xC4000000"
+UBOOT_RD_LOADADDRESS_stm32mp1-eval = "0xC4400000"
+UBOOT_RD_ENTRYPOINT_stm32mp1-eval = "0xC4400000"
+
 # Cross machines / BSPs
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"

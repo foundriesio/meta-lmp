@@ -45,6 +45,9 @@ UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
 MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets
+PREFERRED_PROVIDER_virtual/bootloader_qemuriscv64 = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_qemuriscv64 = "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_qemuriscv64 ?= "2020.10"
 INITRAMFS_IMAGE_BUNDLE_qemuriscv64 = "1"
 KERNEL_INITRAMFS_qemuriscv64 = '-initramfs'
 IMAGE_BOOT_FILES_qemuriscv64 = "boot.scr uEnv.txt"

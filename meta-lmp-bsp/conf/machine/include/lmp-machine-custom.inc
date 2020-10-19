@@ -42,7 +42,6 @@ OSTREE_KERNEL_ARGS_raspberrypi4 ?= "video=HDMI-A-1:1280x720@60 vc_mem.mem_base=0
 UBOOT_ENTRYPOINT_rpi = "0x00008000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
-MACHINE_FEATURES_append_raspberrypi4 = " armstub"
 
 # RISC-V targets
 PREFERRED_PROVIDER_virtual/bootloader_qemuriscv64 = "u-boot-fio"

@@ -451,15 +451,15 @@ fitimage_assemble() {
 	fitimage_emit_section_maint ${1} confstart
 
 	if [ -n "${DTBS}" ]; then
-		i=1
+		n=1
 		for DTB in ${DTBS}; do
 			dtb_ext=${DTB##*.}
 			if [ "${dtb_ext}" = "dtbo" ]; then
-				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "${FIT_LOADABLES}" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "${FIT_LOADABLES}" "`expr ${n} = ${dtbcount}`"
 			else
-				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "`expr ${n} = ${dtbcount}`"
 			fi
-			i=`expr ${i} + 1`
+			n=`expr ${n} + 1`
 		done
 	else
 		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" ""

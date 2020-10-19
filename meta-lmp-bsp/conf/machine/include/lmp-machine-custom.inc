@@ -62,7 +62,9 @@ QB_DRIVE_TYPE_qemuriscv64 = "/dev/vdb"
 QB_OPT_APPEND_append_qemuriscv64 = " -bios ${DEPLOY_DIR_IMAGE}/fw_payload.elf"
 
 ## Freedom U540
-PREFERRED_PROVIDER_virtual/bootloader_freedom-u540 ?= "u-boot"
+PREFERRED_PROVIDER_virtual/bootloader_freedom-u540 = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_freedom-u540 = "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_freedom-u540 ?= "2020.10"
 IMAGE_BOOT_FILES_freedom-u540 = "fw_payload.bin boot.scr uEnv.txt"
 WKS_FILE_DEPENDS_append_freedom-u540 = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_freedom-u540 = "u-boot-ostree-scr"

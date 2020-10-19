@@ -303,12 +303,14 @@ PREFERRED_VERSION_gcc-arm-none-eabi-native_stm32mp1common = "7"
 IMAGE_CLASSES_remove_stm32mp1common = "st-partitions-image"
 IMAGE_CLASSES_remove_stm32mp1common = "image_types-stubi"
 ENABLE_FLASHLAYOUT_CONFIG_stm32mp1common = "0"
+EXTRA_IMAGEDEPENDS_append_stm32mp1common = "flashlayouts-stm32mp1"
 #STM32MP1-EVAL
 UBOOT_LOADADDRESS_stm32mp1-eval = "0xC2000000"
 UBOOT_ENTRYPOINT_stm32mp1-eval = "0xC2000000"
 UBOOT_DTB_LOADADDRESS_stm32mp1-eval = "0xC4000000"
 UBOOT_RD_LOADADDRESS_stm32mp1-eval = "0xC4400000"
 UBOOT_RD_ENTRYPOINT_stm32mp1-eval = "0xC4400000"
+LMP_FLASHLAYOUT_stm32mp1-eval = "FlashLayout_emmc_stm32mp157a-ev1-trusted.tsv"
 
 # Cross machines / BSPs
 ## No need to install u-boot, already a WKS dependency

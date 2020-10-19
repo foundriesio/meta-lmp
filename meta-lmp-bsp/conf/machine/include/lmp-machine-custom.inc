@@ -3,7 +3,7 @@
 # Beaglebone
 PREFERRED_PROVIDER_virtual/bootloader_beaglebone-yocto = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_beaglebone-yocto = "u-boot-fio"
-PREFERRED_VERSION_u-boot-fio_beaglebone-yocto ?= "2020.04"
+PREFERRED_VERSION_u-boot-fio_beaglebone-yocto ?= "2020.10"
 WKS_FILE_DEPENDS_append_beaglebone-yocto = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_beaglebone-yocto = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES_append_beaglebone-yocto = " ubootenv"

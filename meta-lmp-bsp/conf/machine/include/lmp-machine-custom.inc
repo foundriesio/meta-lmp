@@ -303,6 +303,27 @@ WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
 ## iMX8MM EVK
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
 
+# STM32MP1
+PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"
+KERNEL_IMAGETYPE_stm32mp1common = "fitImage"
+KERNEL_CLASSES_stm32mp1common = " kernel-fitimage "
+OSTREE_KERNEL_stm32mp1common = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
+OSTREE_KERNEL_ARGS_COMMON_stm32mp1common = "console=ttySTM0,115200 root=LABEL=otaroot rootfstype=ext4"
+SERIAL_CONSOLES_stm32mp1common = "115200;ttySTM0"
+IMAGE_FSTYPES_remove_stm32mp1common = "wic wic.gz wic.bmap"
+PREFERRED_VERSION_gcc-arm-none-eabi-native_stm32mp1common = "7"
+IMAGE_CLASSES_remove_stm32mp1common = "st-partitions-image"
+IMAGE_CLASSES_remove_stm32mp1common = "image_types-stubi"
+ENABLE_FLASHLAYOUT_CONFIG_stm32mp1common = "0"
+EXTRA_IMAGEDEPENDS_append_stm32mp1common = "flashlayouts-stm32mp1"
+#STM32MP1-EVAL
+UBOOT_LOADADDRESS_stm32mp1-eval = "0xC2000000"
+UBOOT_ENTRYPOINT_stm32mp1-eval = "0xC2000000"
+UBOOT_DTB_LOADADDRESS_stm32mp1-eval = "0xC4000000"
+UBOOT_RD_LOADADDRESS_stm32mp1-eval = "0xC4400000"
+UBOOT_RD_ENTRYPOINT_stm32mp1-eval = "0xC4400000"
+LMP_FLASHLAYOUT_stm32mp1-eval = "FlashLayout_emmc_stm32mp157a-ev1-trusted.tsv"
+
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"

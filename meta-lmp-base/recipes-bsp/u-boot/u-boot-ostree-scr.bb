@@ -18,6 +18,7 @@ inherit deploy
 
 do_compile() {
     sed -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' \
+        -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
         "${WORKDIR}/uEnv.txt.in" > uEnv.txt
     mkimage -A arm -T script -C none -n "Ostree boot script" -d "${WORKDIR}/boot.cmd" boot.scr
 }

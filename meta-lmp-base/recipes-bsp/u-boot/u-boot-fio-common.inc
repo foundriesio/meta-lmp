@@ -12,6 +12,9 @@ SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH} \
     file://fw_env.config \
     file://lmp.cfg \
 "
+# LMP base requires a different u-boot configuration fragment
+SRC_URI_append_lmp-base = " file://lmp-base.cfg "
+SRC_URI_remove_lmp-base = "file://lmp.cfg"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

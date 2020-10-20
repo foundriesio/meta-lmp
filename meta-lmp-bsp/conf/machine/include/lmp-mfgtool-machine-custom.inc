@@ -30,6 +30,20 @@ IMAGE_BOOT_FILES_append_mx6ull = " boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE_mx6ull = "fitImage"
 KERNEL_CLASSES_mx6ull = " kernel-lmp-fitimage "
 
+# iMX8MQ
+UBOOT_SIGN_ENABLE_mx8mm = "1"
+PREFERRED_PROVIDER_virtual/kernel_mx8mq = "linux-lmp-dev-mfgtool"
+KERNEL_REPO_mx8mq ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
+LINUX_VERSION_mx8mq ?= "5.4.y"
+KERNEL_BRANCH_mx8mq ?= "imx_5.4.24_2.1.0"
+PREFERRED_VERSION_optee-os-fio-mfgtool_mx8mq = "3.10.0+git"
+PREFERRED_VERSION_u-boot-fio-mfgtool_mx8mq ?= "2020.04"
+PREFERRED_PROVIDER_virtual/bootloader_mx8mq = "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot_mx8mq = "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot-default-script_mx8mq = "u-boot-ostree-scr-fit"
+KERNEL_IMAGETYPE_mx8mq = "fitImage"
+KERNEL_CLASSES_mx8mq = " kernel-lmp-fitimage "
+
 # iMX8MM
 UBOOT_SIGN_ENABLE_mx8mm = "1"
 PREFERRED_VERSION_optee-os-fio-mfgtool_mx8mm = "3.10.0+git"

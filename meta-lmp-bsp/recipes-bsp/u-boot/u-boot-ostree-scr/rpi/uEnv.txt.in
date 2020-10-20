@@ -1,12 +1,7 @@
 bootlimit=3
 devnum=0
 devtype=mmc
-bootcmd_load_f=load ${devtype} ${devnum}:2 ${ramdisk_addr_r} "/boot"${kernel_image}
-bootcmd_run=bootm ${ramdisk_addr_r}:kernel@1 ${ramdisk_addr_r}:ramdisk@1 ${fdt_addr}
-bootcmd_create_envfile=if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; fi;
-bootcmd_resetvars=setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2
-bootcmd_rollbackenv=setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}
-bootcmd_set_rollback=if test ! "${rollback}" = "1"; then setenv rollback 1; setenv upgrade_available 0; saveenv; fi
-bootcmd_otenv=run bootcmd_resetvars; load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}
-bootcmd=if test "${rollback}" = "1"; then run altbootcmd; else run bootcmd_create_envfile; run bootcmd_otenv; run bootcmd_load_f; run bootcmd_run; if test ! "${upgrade_available}" = "1"; then setenv upgrade_available 1; saveenv; fi; reset; fi
-altbootcmd=run bootcmd_create_envfile; run bootcmd_otenv; run bootcmd_set_rollback; if test -n "${kernel_image2}"; then run bootcmd_rollbackenv; fi; run bootcmd_load_f; run bootcmd_run; reset
+bootcmd_args=setenv bootargs coherent_pool=1M 8250.nr_uarts=1 console=tty1 console=ttyS0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw
+bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${kernel_addr_r} @@KERNEL_IMAGETYPE@@
+bootcmd_run=@@KERNEL_BOOTCMD@@ ${kernel_addr_r} - ${fdt_addr}
+bootcmd=run bootcmd_args; run bootcmd_load_k; run bootcmd_run

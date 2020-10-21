@@ -5,6 +5,11 @@ After=network-online.target docker.socket firewalld.service
 Before=boot-complete.target
 Wants=network-online.target
 Requires=docker.socket
+StartLimitBurst=3
+StartLimitIntervalSec=60
+# Reboot the system in case docker daemon fails. This will trigger a rollback
+# after three consecutive failures.
+FailureAction=reboot
 
 [Service]
 Type=notify
@@ -27,12 +32,7 @@ Delegate=yes
 # kill only the docker process, not all processes in the cgroup
 KillMode=process
 # restart the docker process if it exits prematurely
-Restart=on-failure
-StartLimitBurst=3
-StartLimitInterval=60s
-# Reboot the system in case docker daemon fails. This will trigger a rollback
-# after three consecutive failures.
-FailureAction=reboot
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

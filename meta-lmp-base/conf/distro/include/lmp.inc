@@ -22,6 +22,8 @@ PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
 PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
+PREFERRED_PROVIDER_virtual/docker ?= "docker-ce"
+PREFERRED_PROVIDER_virtual/docker_riscv64 ?= "docker-moby"
 
 # Default distro features for LMP (can be extended by the user if needed)
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"

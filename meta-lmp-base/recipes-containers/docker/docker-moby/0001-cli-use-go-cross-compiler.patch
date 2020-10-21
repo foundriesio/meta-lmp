@@ -1,0 +1,22 @@
+From ae6f4a1e685394fb7b9539f134b66ca84ddc91c2 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Tue, 30 Jun 2020 22:19:56 -0400
+Subject: [PATCH] cli: use go cross compiler
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ cli/scripts/build/dynbinary | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cli/scripts/build/dynbinary b/cli/scripts/build/dynbinary
+index 67bc785dae..7cdf5e10e2 100755
+--- a/cli/scripts/build/dynbinary
++++ b/cli/scripts/build/dynbinary
+@@ -19,6 +19,6 @@ case "$(go env GOARCH)" in
+                 ;;
+ esac
+ 
+-go build -o "${TARGET}" -tags pkcs11 --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
++${GO} build -o "${TARGET}" -tags pkcs11 --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
+ 
+ ln -sf "$(basename "${TARGET}")" build/docker

@@ -1,0 +1,477 @@
+From da496ee9367e3a804aedffa58d02dc9baa06919d Mon Sep 17 00:00:00 2001
+From: Joel Sing <joel@sing.id.au>
+Date: Tue, 19 May 2020 18:54:48 +1000
+Subject: [PATCH 1/5] cmd/link: add support for external linking on
+ linux/riscv64
+
+Change-Id: I9902c36c94478f2b2e0739bb68ceccc23b53f0ec
+---
+ src/cmd/link/internal/arm/asm.go       |   2 +-
+ src/cmd/link/internal/arm64/asm.go     |   2 +-
+ src/cmd/link/internal/ld/config.go     |   4 +-
+ src/cmd/link/internal/ld/elf.go        |   3 +
+ src/cmd/link/internal/ld/elf2.go       |   2 +-
+ src/cmd/link/internal/ld/lib.go        |   2 +-
+ src/cmd/link/internal/ld/pcln.go       |   2 +-
+ src/cmd/link/internal/ld/symtab.go     |  12 ++-
+ src/cmd/link/internal/loadelf/ldelf.go |  48 +++++++--
+ src/cmd/link/internal/mips/asm.go      |   2 +-
+ src/cmd/link/internal/mips64/asm.go    |   2 +-
+ src/cmd/link/internal/ppc64/asm.go     |   2 +-
+ src/cmd/link/internal/riscv64/asm.go   | 129 ++++++++++++++++++++++++-
+ src/cmd/link/internal/s390x/asm.go     |   2 +-
+ src/cmd/link/internal/x86/asm.go       |   2 +-
+ 15 files changed, 190 insertions(+), 26 deletions(-)
+
+diff --git a/src/cmd/link/internal/arm/asm.go b/src/cmd/link/internal/arm/asm.go
+index 903e62108e..7e97c136a6 100644
+--- a/src/cmd/link/internal/arm/asm.go
++++ b/src/cmd/link/internal/arm/asm.go
+@@ -249,7 +249,7 @@ func adddynrel2(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s load
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	ctxt.Out.Write32(uint32(sectoff))
+ 
+ 	elfsym := ld.ElfSymForReloc(ctxt, r.Xsym)
+diff --git a/src/cmd/link/internal/arm64/asm.go b/src/cmd/link/internal/arm64/asm.go
+index 417e4b1f4c..aac8bec898 100644
+--- a/src/cmd/link/internal/arm64/asm.go
++++ b/src/cmd/link/internal/arm64/asm.go
+@@ -325,7 +325,7 @@ func adddynrel2(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s load
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	ctxt.Out.Write64(uint64(sectoff))
+ 
+ 	elfsym := ld.ElfSymForReloc(ctxt, r.Xsym)
+diff --git a/src/cmd/link/internal/ld/config.go b/src/cmd/link/internal/ld/config.go
+index 2373b500e3..2186bf5b81 100644
+--- a/src/cmd/link/internal/ld/config.go
++++ b/src/cmd/link/internal/ld/config.go
+@@ -186,7 +186,7 @@ func mustLinkExternal(ctxt *Link) (res bool, reason string) {
+ 	// Internally linking cgo is incomplete on some architectures.
+ 	// https://golang.org/issue/14449
+ 	// https://golang.org/issue/21961
+-	if iscgo && ctxt.Arch.InFamily(sys.MIPS64, sys.MIPS, sys.PPC64) {
++	if iscgo && ctxt.Arch.InFamily(sys.MIPS64, sys.MIPS, sys.PPC64, sys.RISCV64) {
+ 		return true, objabi.GOARCH + " does not support internal cgo"
+ 	}
+ 	if iscgo && objabi.GOOS == "android" {
+@@ -263,8 +263,6 @@ func determineLinkMode(ctxt *Link) {
+ 		}
+ 	case LinkExternal:
+ 		switch {
+-		case objabi.GOARCH == "riscv64":
+-			Exitf("external linking not supported for %s/riscv64", objabi.GOOS)
+ 		case objabi.GOARCH == "ppc64" && objabi.GOOS != "aix":
+ 			Exitf("external linking not supported for %s/ppc64", objabi.GOOS)
+ 		}
+diff --git a/src/cmd/link/internal/ld/elf.go b/src/cmd/link/internal/ld/elf.go
+index 78298beafe..5468fb8cdc 100644
+--- a/src/cmd/link/internal/ld/elf.go
++++ b/src/cmd/link/internal/ld/elf.go
+@@ -506,6 +506,9 @@ func Elfinit(ctxt *Link) {
+ 		if ctxt.Arch.Family == sys.MIPS64 {
+ 			ehdr.flags = 0x20000004 /* MIPS 3 CPIC */
+ 		}
++		if ctxt.Arch.Family == sys.RISCV64 {
++			ehdr.flags = 0x4 /* RISCV Float ABI Double */
++		}
+ 		elf64 = true
+ 
+ 		ehdr.phoff = ELF64HDRSIZE      /* Must be ELF64HDRSIZE: first PHdr must follow ELF header */
+diff --git a/src/cmd/link/internal/ld/elf2.go b/src/cmd/link/internal/ld/elf2.go
+index 07b64cfcb0..41c927c585 100644
+--- a/src/cmd/link/internal/ld/elf2.go
++++ b/src/cmd/link/internal/ld/elf2.go
+@@ -69,7 +69,7 @@ func elfrelocsect2(ctxt *Link, sect *sym.Section, syms []*sym.Symbol) {
+ 			if !r.Xsym.Attr.Reachable() {
+ 				Errorf(s, "unreachable reloc %d (%s) target %v", r.Type, sym.RelocName(ctxt.Arch, r.Type), r.Xsym.Name)
+ 			}
+-			if !thearch.Elfreloc1(ctxt, r, int64(uint64(s.Value+int64(r.Off))-sect.Vaddr)) {
++			if !thearch.Elfreloc1(ctxt, s, r, int64(uint64(s.Value+int64(r.Off))-sect.Vaddr)) {
+ 				Errorf(s, "unsupported obj reloc %d (%s)/%d to %s", r.Type, sym.RelocName(ctxt.Arch, r.Type), r.Siz, r.Sym.Name)
+ 			}
+ 		}
+diff --git a/src/cmd/link/internal/ld/lib.go b/src/cmd/link/internal/ld/lib.go
+index 0366bc7a6f..873c1e878e 100644
+--- a/src/cmd/link/internal/ld/lib.go
++++ b/src/cmd/link/internal/ld/lib.go
+@@ -271,7 +271,7 @@ type Arch struct {
+ 	Asmb  func(*Link, *loader.Loader)
+ 	Asmb2 func(*Link)
+ 
+-	Elfreloc1   func(*Link, *sym.Reloc, int64) bool
++	Elfreloc1   func(*Link, *sym.Symbol, *sym.Reloc, int64) bool
+ 	Elfreloc2   func(*Link, *loader.Loader, loader.Sym, loader.ExtRelocView, int64) bool
+ 	Elfsetupplt func(ctxt *Link, plt, gotplt *loader.SymbolBuilder, dynamic loader.Sym)
+ 	Gentext     func(*Link)
+diff --git a/src/cmd/link/internal/ld/pcln.go b/src/cmd/link/internal/ld/pcln.go
+index 5cbb7bbacc..ac9787141f 100644
+--- a/src/cmd/link/internal/ld/pcln.go
++++ b/src/cmd/link/internal/ld/pcln.go
+@@ -574,7 +574,7 @@ func expandGoroot(s string) string {
+ 
+ const (
+ 	BUCKETSIZE    = 256 * MINFUNC
+-	SUBBUCKETS    = 16
++	SUBBUCKETS    = 32
+ 	SUBBUCKETSIZE = BUCKETSIZE / SUBBUCKETS
+ 	NOIDX         = 0x7fffffff
+ )
+diff --git a/src/cmd/link/internal/ld/symtab.go b/src/cmd/link/internal/ld/symtab.go
+index 46aa33bcb1..46a39cae78 100644
+--- a/src/cmd/link/internal/ld/symtab.go
++++ b/src/cmd/link/internal/ld/symtab.go
+@@ -185,7 +185,11 @@ func putelfsym(ctxt *Link, x *sym.Symbol, s string, t SymbolType, addr int64) {
+ 		// ELF linker -Bsymbolic-functions option, but that is buggy on
+ 		// several platforms.
+ 		putelfsyment(ctxt.Out, putelfstr("local."+s), addr, size, STB_LOCAL<<4|typ&0xf, elfshnum, other)
+-		ctxt.loader.SetSymLocalElfSym(loader.Sym(x.SymIdx), int32(ctxt.numelfsym))
++		if ctxt.Target.IsRISCV64() && x.SymIdx == 0 {
++			x.SetGot(int32(ctxt.numelfsym))
++		} else {
++			ctxt.loader.SetSymLocalElfSym(loader.Sym(x.SymIdx), int32(ctxt.numelfsym))
++		}
+ 		ctxt.numelfsym++
+ 		return
+ 	} else if bind != ctxt.elfbind {
+@@ -193,7 +197,11 @@ func putelfsym(ctxt *Link, x *sym.Symbol, s string, t SymbolType, addr int64) {
+ 	}
+ 
+ 	putelfsyment(ctxt.Out, putelfstr(s), addr, size, bind<<4|typ&0xf, elfshnum, other)
+-	ctxt.loader.SetSymElfSym(loader.Sym(x.SymIdx), int32(ctxt.numelfsym))
++	if ctxt.Target.IsRISCV64() && x.SymIdx == 0 {
++		x.SetGot(int32(ctxt.numelfsym))
++	} else {
++		ctxt.loader.SetSymLocalElfSym(loader.Sym(x.SymIdx), int32(ctxt.numelfsym))
++	}
+ 	ctxt.numelfsym++
+ }
+ 
+diff --git a/src/cmd/link/internal/loadelf/ldelf.go b/src/cmd/link/internal/loadelf/ldelf.go
+index bb5b4ffc0a..1f5fd643d0 100644
+--- a/src/cmd/link/internal/loadelf/ldelf.go
++++ b/src/cmd/link/internal/loadelf/ldelf.go
+@@ -372,6 +372,11 @@ func Load(l *loader.Loader, arch *sys.Arch, localSymVersion int, f *bio.Reader,
+ 			return errorf("elf object but not ppc64")
+ 		}
+ 
++	case sys.RISCV64:
++		if mach != elf.EM_RISCV || class != elf.ELFCLASS64 {
++			return errorf("elf object but not riscv64")
++		}
++
+ 	case sys.S390X:
+ 		if mach != elf.EM_S390 || class != elf.ELFCLASS64 {
+ 			return errorf("elf object but not s390x")
+@@ -591,6 +596,11 @@ func Load(l *loader.Loader, arch *sys.Arch, localSymVersion int, f *bio.Reader,
+ 				continue
+ 			}
+ 
++			if strings.HasPrefix(sect.name, ".debug_") && elfsym.type_ == 0 {
++				// This happens with gcc on RISCV64.
++				continue
++			}
++
+ 			if strings.HasPrefix(elfsym.name, ".LASF") { // gcc on s390x does this
+ 				continue
+ 			}
+@@ -946,14 +956,15 @@ func relSize(arch *sys.Arch, pn string, elftype uint32) (uint8, error) {
+ 	// performance.
+ 
+ 	const (
+-		AMD64  = uint32(sys.AMD64)
+-		ARM    = uint32(sys.ARM)
+-		ARM64  = uint32(sys.ARM64)
+-		I386   = uint32(sys.I386)
+-		PPC64  = uint32(sys.PPC64)
+-		S390X  = uint32(sys.S390X)
+-		MIPS   = uint32(sys.MIPS)
+-		MIPS64 = uint32(sys.MIPS64)
++		AMD64   = uint32(sys.AMD64)
++		ARM     = uint32(sys.ARM)
++		ARM64   = uint32(sys.ARM64)
++		I386    = uint32(sys.I386)
++		MIPS    = uint32(sys.MIPS)
++		MIPS64  = uint32(sys.MIPS64)
++		PPC64   = uint32(sys.PPC64)
++		RISCV64 = uint32(sys.RISCV64)
++		S390X   = uint32(sys.S390X)
+ 	)
+ 
+ 	switch uint32(arch.Family) | elftype<<16 {
+@@ -1056,6 +1067,27 @@ func relSize(arch *sys.Arch, pn string, elftype uint32) (uint8, error) {
+ 		S390X | uint32(elf.R_390_GOT64)<<16,
+ 		S390X | uint32(elf.R_390_PLT64)<<16:
+ 		return 8, nil
++
++	case RISCV64 | uint32(elf.R_RISCV_RVC_BRANCH)<<16,
++		RISCV64 | uint32(elf.R_RISCV_RVC_JUMP)<<16:
++		return 2, nil
++
++	case RISCV64 | uint32(elf.R_RISCV_32)<<16,
++		RISCV64 | uint32(elf.R_RISCV_BRANCH)<<16,
++		RISCV64 | uint32(elf.R_RISCV_HI20)<<16,
++		RISCV64 | uint32(elf.R_RISCV_LO12_I)<<16,
++		RISCV64 | uint32(elf.R_RISCV_LO12_S)<<16,
++		RISCV64 | uint32(elf.R_RISCV_GOT_HI20)<<16,
++		RISCV64 | uint32(elf.R_RISCV_PCREL_HI20)<<16,
++		RISCV64 | uint32(elf.R_RISCV_PCREL_LO12_I)<<16,
++		RISCV64 | uint32(elf.R_RISCV_PCREL_LO12_S)<<16,
++		RISCV64 | uint32(elf.R_RISCV_RELAX)<<16:
++		return 4, nil
++
++	case RISCV64 | uint32(elf.R_RISCV_64)<<16,
++		RISCV64 | uint32(elf.R_RISCV_CALL)<<16,
++		RISCV64 | uint32(elf.R_RISCV_CALL_PLT)<<16:
++		return 8, nil
+ 	}
+ }
+ 
+diff --git a/src/cmd/link/internal/mips/asm.go b/src/cmd/link/internal/mips/asm.go
+index 9710b9cffa..37a7700ad7 100644
+--- a/src/cmd/link/internal/mips/asm.go
++++ b/src/cmd/link/internal/mips/asm.go
+@@ -51,7 +51,7 @@ func adddynrel(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s *sym.
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	ctxt.Out.Write32(uint32(sectoff))
+ 
+ 	elfsym := ld.ElfSymForReloc(ctxt, r.Xsym)
+diff --git a/src/cmd/link/internal/mips64/asm.go b/src/cmd/link/internal/mips64/asm.go
+index b48241b5ae..b688a8f072 100644
+--- a/src/cmd/link/internal/mips64/asm.go
++++ b/src/cmd/link/internal/mips64/asm.go
+@@ -49,7 +49,7 @@ func adddynrel(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s *sym.
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	// mips64 ELF relocation (endian neutral)
+ 	//		offset	uint64
+ 	//		sym		uint32
+diff --git a/src/cmd/link/internal/ppc64/asm.go b/src/cmd/link/internal/ppc64/asm.go
+index b1c0873d7a..1aa5051423 100644
+--- a/src/cmd/link/internal/ppc64/asm.go
++++ b/src/cmd/link/internal/ppc64/asm.go
+@@ -443,7 +443,7 @@ func xcoffreloc1(arch *sys.Arch, out *ld.OutBuf, s *sym.Symbol, r *sym.Reloc, se
+ 
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	// Beware that bit0~bit15 start from the third byte of a instruction in Big-Endian machines.
+ 	if r.Type == objabi.R_ADDR || r.Type == objabi.R_POWER_TLS || r.Type == objabi.R_CALLPOWER {
+ 	} else {
+diff --git a/src/cmd/link/internal/riscv64/asm.go b/src/cmd/link/internal/riscv64/asm.go
+index 5183de8d6b..a3f19b2a72 100644
+--- a/src/cmd/link/internal/riscv64/asm.go
++++ b/src/cmd/link/internal/riscv64/asm.go
+@@ -11,11 +11,16 @@ import (
+ 	"cmd/link/internal/ld"
+ 	"cmd/link/internal/loader"
+ 	"cmd/link/internal/sym"
++	"debug/elf"
+ 	"fmt"
+ 	"log"
++	"sort"
+ 	"sync"
+ )
+ 
++// fakeLabelName matches the RISCV_FAKE_LABEL_NAME from binutils.
++const fakeLabelName = ".L0 "
++
+ func gentext2(ctxt *ld.Link, ldr *loader.Loader) {
+ }
+ 
+@@ -28,9 +33,72 @@ func adddynrel(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s *sym.
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
+-	log.Fatalf("elfreloc1")
+-	return false
++func findHI20Symbol(ctxt *ld.Link, val int64) *sym.Symbol {
++	for idx := sort.Search(len(ctxt.Textp), func(i int) bool { return ctxt.Textp[i].Value >= val }); idx < len(ctxt.Textp); idx++ {
++		s := ctxt.Textp[idx]
++		if s.Value != val {
++			return nil
++		}
++		if s.Type == sym.STEXT && s.Name == fakeLabelName {
++			return s
++		}
++	}
++	return nil
++}
++
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
++	elfsym := ld.ElfSymForReloc(ctxt, r.Xsym)
++	switch r.Type {
++	case objabi.R_ADDR:
++		ctxt.Out.Write64(uint64(sectoff))
++		switch r.Siz {
++		case 4:
++			ctxt.Out.Write64(uint64(elf.R_RISCV_32) | uint64(elfsym)<<32)
++		case 8:
++			ctxt.Out.Write64(uint64(elf.R_RISCV_64) | uint64(elfsym)<<32)
++		default:
++			ld.Errorf(nil, "unknown size %d for %v relocation", r.Siz, r.Type)
++			return false
++		}
++		ctxt.Out.Write64(uint64(r.Xadd))
++
++	case objabi.R_CALLRISCV:
++		// Call relocations are currently handled via R_RISCV_PCREL_ITYPE.
++		// TODO(jsing): Consider generating elf.R_RISCV_CALL instead of a
++		// HI20/LO12_I pair.
++
++	case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE:
++		// Find the text symbol for the AUIPC instruction targeted
++		// by this relocation.
++		hi20Sym := findHI20Symbol(ctxt, s.Value+int64(r.Off))
++		if hi20Sym == nil || hi20Sym.Type != sym.STEXT {
++			ld.Errorf(nil, "failed to find text symbol for HI20 relocation at %d (%x)", sectoff, s.Value+int64(r.Off))
++			return false
++		}
++
++		// Emit two relocations - a R_RISCV_PCREL_HI20 relocation and a
++		// corresponding R_RISCV_PCREL_LO12_I or R_RISCV_PCREL_LO12_S relocation.
++		// Note that the LO12 relocation must refer to a text symbol that points
++		// to the instruction that has the HI20 relocation given for a symbol.
++		var hiRel, loRel elf.R_RISCV
++		switch r.Type {
++		case objabi.R_RISCV_PCREL_ITYPE:
++			hiRel, loRel = elf.R_RISCV_PCREL_HI20, elf.R_RISCV_PCREL_LO12_I
++		case objabi.R_RISCV_PCREL_STYPE:
++			hiRel, loRel = elf.R_RISCV_PCREL_HI20, elf.R_RISCV_PCREL_LO12_S
++		}
++		ctxt.Out.Write64(uint64(sectoff))
++		ctxt.Out.Write64(uint64(hiRel) | uint64(elfsym)<<32)
++		ctxt.Out.Write64(uint64(r.Xadd))
++		ctxt.Out.Write64(uint64(sectoff + 4))
++		ctxt.Out.Write64(uint64(loRel) | uint64(hi20Sym.Got())<<32)
++		ctxt.Out.Write64(uint64(0))
++
++	default:
++		return false
++	}
++
++	return true
+ }
+ 
+ func elfsetupplt(ctxt *ld.Link, plt, gotplt *loader.SymbolBuilder, dynamic loader.Sym) {
+@@ -43,6 +111,36 @@ func machoreloc1(arch *sys.Arch, out *ld.OutBuf, s *sym.Symbol, r *sym.Reloc, se
+ }
+ 
+ func archreloc(target *ld.Target, syms *ld.ArchSyms, r *sym.Reloc, s *sym.Symbol, val int64) (int64, bool) {
++	if target.IsExternal() {
++		switch r.Type {
++		case objabi.R_CALLRISCV:
++			r.Done = false
++			r.Xsym = r.Sym
++			r.Xadd = r.Add
++			return val, true
++
++		case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE:
++			r.Done = false
++
++			// Set up addend for eventual relocation via outer symbol.
++			rs := r.Sym
++			r.Xadd = r.Add
++			for rs.Outer != nil {
++				r.Xadd += ld.Symaddr(rs) - ld.Symaddr(rs.Outer)
++				rs = rs.Outer
++			}
++
++			if rs.Type != sym.SHOSTOBJ && rs.Type != sym.SDYNIMPORT && rs.Sect == nil {
++				ld.Errorf(s, "missing section for %s", rs.Name)
++			}
++			r.Xsym = rs
++
++			return val, true
++		}
++
++		return val, false
++	}
++
+ 	switch r.Type {
+ 	case objabi.R_CALLRISCV:
+ 		// Nothing to do.
+@@ -98,6 +196,29 @@ func archrelocvariant(target *ld.Target, syms *ld.ArchSyms, r *sym.Reloc, s *sym
+ 	return -1
+ }
+ 
++func genHi20TextSymbols(ctxt *ld.Link) {
++	// Generate a local text symbol for each relocation target, as the
++	// R_RISCV_PCREL_LO12_* relocations generated by elfreloc1 need it.
++	var syms []*sym.Symbol
++	for _, s := range ctxt.Textp {
++		for _, r := range s.R {
++			if r.Type != objabi.R_RISCV_PCREL_ITYPE && r.Type != objabi.R_RISCV_PCREL_STYPE {
++				continue
++			}
++			sym := &sym.Symbol{
++				Type:  sym.STEXT,
++				Name:  fakeLabelName,
++				Value: s.Value + int64(r.Off),
++				Attr:  sym.AttrDuplicateOK | sym.AttrLocal | sym.AttrVisibilityHidden,
++				Sect:  s.Sect,
++			}
++			syms = append(syms, sym)
++		}
++	}
++	ctxt.Textp = append(ctxt.Textp, syms...)
++	sort.SliceStable(ctxt.Textp, func(i, j int) bool { return ctxt.Textp[i].Value < ctxt.Textp[j].Value })
++}
++
+ func asmb(ctxt *ld.Link, _ *loader.Loader) {
+ 	if ctxt.IsELF {
+ 		ld.Asmbelfsetup()
+@@ -141,6 +262,8 @@ func asmb2(ctxt *ld.Link) {
+ 		symo = uint32(ld.Rnd(int64(symo), int64(*ld.FlagRound)))
+ 		ctxt.Out.SeekSet(int64(symo))
+ 
++		genHi20TextSymbols(ctxt)
++
+ 		ld.Asmelfsym(ctxt)
+ 		ctxt.Out.Write(ld.Elfstrdat)
+ 
+diff --git a/src/cmd/link/internal/s390x/asm.go b/src/cmd/link/internal/s390x/asm.go
+index 2115b5fc65..0069259e9f 100644
+--- a/src/cmd/link/internal/s390x/asm.go
++++ b/src/cmd/link/internal/s390x/asm.go
+@@ -221,7 +221,7 @@ func adddynrel2(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s load
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	ctxt.Out.Write64(uint64(sectoff))
+ 
+ 	elfsym := ld.ElfSymForReloc(ctxt, r.Xsym)
+diff --git a/src/cmd/link/internal/x86/asm.go b/src/cmd/link/internal/x86/asm.go
+index b218ffae83..4713f1c25e 100644
+--- a/src/cmd/link/internal/x86/asm.go
++++ b/src/cmd/link/internal/x86/asm.go
+@@ -340,7 +340,7 @@ func adddynrel2(target *ld.Target, ldr *loader.Loader, syms *ld.ArchSyms, s load
+ 	return false
+ }
+ 
+-func elfreloc1(ctxt *ld.Link, r *sym.Reloc, sectoff int64) bool {
++func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 	ctxt.Out.Write32(uint32(sectoff))
+ 
+ 	elfsym := ld.ElfSymForReloc(ctxt, r.Xsym)
+-- 
+2.28.0
+

@@ -45,9 +45,12 @@ SRC_URI = "\
 	file://0001-libnetwork-use-GO-instead-of-go.patch \
         file://0001-cli-use-go-cross-compiler.patch \
         file://0001-dynbinary-use-go-cross-compiler.patch \
+        file://dockerd-daemon-use-default-system-config-when-none-i.patch \
+        file://cli-config-support-default-system-config.patch \
 	"
 
 require recipes-containers/docker/docker.inc
+require docker-lmp.inc
 
 # Apache-2.0 for docker
 LICENSE = "Apache-2.0"

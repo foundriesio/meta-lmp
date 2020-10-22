@@ -169,7 +169,7 @@ UBOOT_DTB_LOADADDRESS_colibri-imx7-emmc = "0x82000000"
 UBOOT_RD_LOADADDRESS_colibri-imx7-emmc = "0x82100000"
 
 # Embedded Artists i.MX7ULP COM
-UBOOT_SIGN_ENABLE_imx7ulpea-ucom = "1"
+UBOOT_SIGN_ENABLE_sota_imx7ulpea-ucom = "1"
 PREFERRED_PROVIDER_u-boot-default-script_imx7ulpea-ucom = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota_imx7ulpea-ucom = "u-boot-ostree-scr-fit"
 IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.scr uEnv.txt"
@@ -181,7 +181,7 @@ SOTA_CLIENT_FEATURES_append_imx7ulpea-ucom = " ubootenv"
 UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
 
 # iMX6ULL
-UBOOT_SIGN_ENABLE_mx6ull = "1"
+UBOOT_SIGN_ENABLE_sota_mx6ull = "1"
 PREFERRED_PROVIDER_virtual/kernel_mx6ull ?= "linux-lmp-fslc-imx"
 PREFERRED_PROVIDER_virtual/bootloader_mx6ull ?= "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_mx6ull ?= "u-boot-fio"
@@ -216,7 +216,7 @@ UBOOT_MACHINE_imx6ullevk = "mx6ull_14x14_evk_defconfig"
 KERNEL_DEVICETREE_imx6ullevk = "imx6ull-14x14-evk.dtb"
 
 # Toradex Apalis iMX6
-UBOOT_SIGN_ENABLE_apalis-imx6 = "1"
+UBOOT_SIGN_ENABLE_sota_apalis-imx6 = "1"
 PREFERRED_PROVIDER_u-boot-default-script_apalis-imx6 = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx6 = "u-boot-ostree-scr-fit"
 IMAGE_BOOT_FILES_apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.imx-spl"
@@ -263,7 +263,7 @@ PREFERRED_PROVIDER_u-boot-default-script_apalis-imx8 = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx8 = "u-boot-ostree-scr-fit"
 
 # iMX8MM
-UBOOT_SIGN_ENABLE_mx8mm = "1"
+UBOOT_SIGN_ENABLE_sota_mx8mm = "1"
 PREFERRED_PROVIDER_virtual/bootloader_mx8mm ?= "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_mx8mm ?= "u-boot-fio"
 PREFERRED_VERSION_u-boot-fio_mx8mm ?= "2020.04"

@@ -9,4 +9,5 @@ SRC_URI_append = " \
     file://cli-config-support-default-system-config.patch \
     file://dockerd-daemon-configurable-max-download-attempts.patch \
     file://fix-warning-systemd-docker-socket.patch \
+    file://increase_containerd_timeouts.patch \
 "

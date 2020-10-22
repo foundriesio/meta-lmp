@@ -1,9 +1,7 @@
 devnum=2
 devtype=mmc
-fdtovaddr=0x43600000
+bootcmd_args=setenv bootargs console=tty1 console=${console} root=/dev/mmcblk2p2 rootfstype=ext4 rootwait rw
 bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr} ${fdt_file}
-bootcmd_tee_ovy=fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${fdtovaddr}
-bootcmd_args=setenv bootargs console=${console} root=/dev/mmcblk2p2 rootwait rw
 bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${loadaddr} ${image}
 bootcmd_run=booti ${loadaddr} - ${fdt_addr}
-bootcmd=run bootcmd_dtb; run bootcmd_tee_ovy; run bootcmd_args; run bootcmd_load_k; run bootcmd_run
+bootcmd=run bootcmd_args; run bootcmd_dtb; run bootcmd_load_k; run bootcmd_run

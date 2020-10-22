@@ -1,4 +1,5 @@
 # Embedded Artists i.MX7ULP COM
+UBOOT_SIGN_ENABLE_imx7ulpea-ucom = "1"
 PREFERRED_PROVIDER_virtual/kernel_imx7ulpea-ucom = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_imx7ulpea-ucom ?= "git://github.com/foundriesio/linux.git"
 LINUX_VERSION_imx7ulpea-ucom ?= "4.19.y"
@@ -13,6 +14,7 @@ KERNEL_IMAGETYPE_imx7ulpea-ucom = "fitImage"
 KERNEL_CLASSES_imx7ulpea-ucom = " kernel-lmp-fitimage "
 
 # iMX6ULL
+UBOOT_SIGN_ENABLE_mx6ull = "1"
 PREFERRED_PROVIDER_virtual/kernel_mx6ull = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_mx6ull ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
 LINUX_VERSION_mx6ull ?= "5.4.y"
@@ -29,6 +31,7 @@ KERNEL_IMAGETYPE_mx6ull = "fitImage"
 KERNEL_CLASSES_mx6ull = " kernel-lmp-fitimage "
 
 # iMX8MM
+UBOOT_SIGN_ENABLE_mx8mm = "1"
 PREFERRED_VERSION_optee-os-fio-mfgtool_mx8mm = "3.10.0+git"
 PREFERRED_VERSION_u-boot-fio-mfgtool_mx8mm ?= "2020.04"
 PREFERRED_PROVIDER_virtual/bootloader_mx8mm = "u-boot-fio-mfgtool"
@@ -38,6 +41,7 @@ KERNEL_IMAGETYPE_mx8mm = "fitImage"
 KERNEL_CLASSES_mx8mm = " kernel-lmp-fitimage "
 
 # Apalis-iMX6
+UBOOT_SIGN_ENABLE_apalis-imx6 = "1"
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx6 = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_apalis-imx6 ?= "git://github.com/foundriesio/linux.git"
 LINUX_VERSION_apalis-imx6 ?= "5.4.y"

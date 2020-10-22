@@ -47,6 +47,7 @@ SRC_URI = "\
         file://0001-dynbinary-use-go-cross-compiler.patch \
         file://dockerd-daemon-use-default-system-config-when-none-i.patch \
         file://cli-config-support-default-system-config.patch \
+        file://increase_containerd_timeouts.patch \
 	"
 
 require recipes-containers/docker/docker.inc

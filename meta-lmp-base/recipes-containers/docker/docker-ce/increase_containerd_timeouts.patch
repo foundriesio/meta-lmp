@@ -1,0 +1,21 @@
+Bump healthcheck, startup and shutdown timeout values for containerd.
+
+This is required for slower systems in order to avoid a dockerd restart.
+
+Index: git/src/import/components/engine/libcontainerd/supervisor/remote_daemon.go
+===================================================================
+--- git.orig/src/import/components/engine/libcontainerd/supervisor/remote_daemon.go
++++ git/src/import/components/engine/libcontainerd/supervisor/remote_daemon.go
+@@ -23,9 +23,9 @@ import (
+ 
+ const (
+ 	maxConnectionRetryCount = 3
+-	healthCheckTimeout      = 3 * time.Second
+-	shutdownTimeout         = 15 * time.Second
+-	startupTimeout          = 15 * time.Second
++	healthCheckTimeout      = 6 * time.Second
++	shutdownTimeout         = 30 * time.Second
++	startupTimeout          = 30 * time.Second
+ 	configFile              = "containerd.toml"
+ 	binaryName              = "containerd"
+ 	pidFile                 = "containerd.pid"

@@ -1,5 +1,5 @@
 bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr_r} ${fdt_file}
 bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${kernel_addr_r} ${boot_file}
-bootcmd_args=setenv bootargs console=${console},${baudrate}n8 root=/dev/mmcblk0p2 rootwait rw
+bootcmd_args=setenv bootargs console=${console},${baudrate}n8 root=/dev/mmcblk2p2 rootwait rw
 bootcmd_run=bootz ${kernel_addr_r} - ${fdt_addr_r}
 bootcmd=run bootcmd_dtb; run bootcmd_args; run bootcmd_load_k; run bootcmd_run

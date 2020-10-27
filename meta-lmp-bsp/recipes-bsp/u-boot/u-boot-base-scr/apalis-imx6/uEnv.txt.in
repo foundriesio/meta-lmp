@@ -1,5 +1,11 @@
-bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr_r} ${fdt_file}
+# Default to ixora-v1.1, which is the carrier board we officially support
+## Careful when changing to another dtb as the mmcblk order might differ
+fdt_file_r=imx6q-apalis-ixora-v1.1.dtb
+fdt_addr=0x15800000
+optee_ovl_addr=0x16000000
+bootcmd_tee_ovy=fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}
+bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr} ${fdt_file_r}
 bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${kernel_addr_r} ${boot_file}
 bootcmd_args=setenv bootargs console=${console},${baudrate}n8 root=/dev/mmcblk2p2 rootwait rw
-bootcmd_run=bootz ${kernel_addr_r} - ${fdt_addr_r}
-bootcmd=run bootcmd_dtb; run bootcmd_args; run bootcmd_load_k; run bootcmd_run
+bootcmd_run=bootz ${kernel_addr_r} - ${fdt_addr}
+bootcmd=run bootcmd_dtb; run bootcmd_tee_ovy; run bootcmd_args; run bootcmd_load_k; run bootcmd_run

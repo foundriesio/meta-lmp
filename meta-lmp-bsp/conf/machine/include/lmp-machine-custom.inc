@@ -74,6 +74,17 @@ PREFERRED_PROVIDER_u-boot-default-script_freedom-u540 = "u-boot-ostree-scr"
 OSTREE_KERNEL_ARGS_freedom-u540 ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL_ARGS_COMMON}"
 WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
+# ARM Development Boards
+PREFERRED_PROVIDER_virtual/kernel_corstone700 = "linux-lmp"
+PREFERRED_PROVIDER_virtual/bootloader_corstone700 = "u-boot"
+PREFERRED_PROVIDER_u-boot_corstone700 = "u-boot"
+KERNEL_IMAGETYPE_corstone700 = "xipImage"
+WKS_FILE_corstone700_sota = "corstone700-sota.wks"
+IMAGE_CLASSES_append_corstone700 = " image-types-wicnopt"
+IMAGE_FSTYPES_append_corstone700 = " wic.nopt"
+## Remove udev/e2fsck due size restrictions (max 2 mb)
+PACKAGE_INSTALL_remove_pn-initramfs-ostree-lmp-image_corstone700 = "initramfs-module-udev udev e2fsprogs-e2fsck"
+
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_qemuarm64 = "u-boot-fio"

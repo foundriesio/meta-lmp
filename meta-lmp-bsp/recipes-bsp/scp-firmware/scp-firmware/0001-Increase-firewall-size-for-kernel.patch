@@ -1,0 +1,28 @@
+From 0d27f07a07e37bde6d148fb51bfa7e131c431a16 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 15 Apr 2020 17:28:23 -0300
+Subject: [PATCH 1/2] Increase firewall size for kernel
+
+Allow kernel binaries larger than 4MB.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ module/firewall/src/mod_firewall.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/module/firewall/src/mod_firewall.c b/module/firewall/src/mod_firewall.c
+index f3bbf0d..9090aea 100755
+--- a/module/firewall/src/mod_firewall.c
++++ b/module/firewall/src/mod_firewall.c
+@@ -145,7 +145,7 @@ static int host_firewall_setup(void)
+     fc_select_region(3);
+     fc_disable_regions();
+     fc_disable_mpe(RGN_MPE0);
+-    fc_prog_rgn(RGN_SIZE_4MB, XIP_HOST_FLASH_BASE);
++    fc_prog_rgn(RGN_SIZE_8MB, XIP_HOST_FLASH_BASE);
+     fc_init_mpl(RGN_MPE0);
+ 
+     mpl_rights = (RGN_MPL_ANY_MST_MASK |
+-- 
+2.28.0
+

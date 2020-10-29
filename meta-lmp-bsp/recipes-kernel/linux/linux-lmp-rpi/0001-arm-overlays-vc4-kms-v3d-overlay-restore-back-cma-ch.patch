@@ -1,0 +1,189 @@
+From 03b27fb09be8af46106681877909e87e9636b9cd Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 28 Oct 2020 23:46:24 -0300
+Subject: [PATCH] arm: overlays: vc4-kms-v3d-overlay: restore back cma changes
+
+cma-overlay can't be properly parsed by u-boot when applying the
+overlay, so restore back to the previous scheme in order to avoid
+breaking updates from 4.19 -> 5.4.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ .../boot/dts/overlays/vc4-kms-v3d-overlay.dts | 72 ++++++++++++++-----
+ 1 file changed, 55 insertions(+), 17 deletions(-)
+
+diff --git a/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts b/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts
+index 6d34a2bff49b6..a312a1dca11f0 100644
+--- a/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts
++++ b/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts
+@@ -7,75 +7,108 @@
+ 
+ #include <dt-bindings/clock/bcm2835.h>
+ 
+-#include "cma-overlay.dts"
+-
+ / {
+ 	compatible = "brcm,bcm2835";
+ 
++	fragment@0 {
++		target-path = "/chosen";
++		__overlay__ {
++			bootargs = "cma=256M";
++		};
++	};
++
+ 	fragment@1 {
++		target-path = "/chosen";
++		__dormant__ {
++			bootargs = "cma=192M";
++		};
++	};
++
++	fragment@2 {
++		target-path = "/chosen";
++		__dormant__ {
++			bootargs = "cma=128M";
++		};
++	};
++
++	fragment@3 {
++		target-path = "/chosen";
++		__dormant__ {
++			bootargs = "cma=96M";
++		};
++	};
++
++	fragment@4 {
++		target-path = "/chosen";
++		__dormant__ {
++			bootargs = "cma=64M";
++		};
++	};
++
++	fragment@5 {
+ 		target = <&i2c2>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@2 {
++	fragment@6 {
+ 		target = <&fb>;
+ 		__overlay__  {
+ 			status = "disabled";
+ 		};
+ 	};
+ 
+-	fragment@3 {
++	fragment@7 {
+ 		target = <&pixelvalve0>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@4 {
++	fragment@8 {
+ 		target = <&pixelvalve1>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@5 {
++	fragment@9 {
+ 		target = <&pixelvalve2>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@6 {
++	fragment@10 {
+ 		target = <&hvs>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@7 {
++	fragment@11 {
+ 		target = <&hdmi>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@8 {
++	fragment@12 {
+ 		target = <&v3d>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@9 {
++	fragment@13 {
+ 		target = <&vc4>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@10 {
++	fragment@14 {
+ 		target = <&clocks>;
+ 		__overlay__  {
+ 			claim-clocks = <
+@@ -87,28 +120,28 @@
+ 		};
+ 	};
+ 
+-	fragment@11 {
++	fragment@15 {
+ 		target = <&vec>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@12 {
++	fragment@16 {
+ 		target = <&txp>;
+ 		__overlay__  {
+ 			status = "okay";
+ 		};
+ 	};
+ 
+-	fragment@13 {
++	fragment@17 {
+ 		target = <&hdmi>;
+ 		__dormant__  {
+ 			dmas;
+ 		};
+ 	};
+ 
+-	fragment@14 {
++	fragment@18 {
+ 		target = <&audio>;
+ 		__overlay__  {
+ 		    brcm,disable-hdmi;
+@@ -116,7 +149,12 @@
+ 	};
+ 
+ 	__overrides__ {
+-		audio   = <0>,"!13", <0>,"=14";
+-		noaudio = <0>,"=13", <0>,"!14";
++		cma-256 = <0>,"+0-1-2-3-4";
++		cma-192 = <0>,"-0+1-2-3-4";
++		cma-128 = <0>,"-0-1+2-3-4";
++		cma-96  = <0>,"-0-1-2+3-4";
++		cma-64  = <0>,"-0-1-2-3+4";
++		audio   = <0>,"!17", <0>,"=18";
++		noaudio = <0>,"=17", <0>,"!18";
+ 	};
+ };
+-- 
+2.28.0
+

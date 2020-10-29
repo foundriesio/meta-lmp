@@ -1,0 +1,44 @@
+From da580ccd10037bc716b215db8a3381bca918ba51 Mon Sep 17 00:00:00 2001
+From: Michael Scott <mike@foundries.io>
+Date: Wed, 21 Oct 2020 23:08:43 -0700
+Subject: [PATCH] OE: Fixup Makefile
+
+Signed-off-by: Michael Scott <mike@foundries.io>
+---
+ tools/hss-payload-generator/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/hss-payload-generator/Makefile b/tools/hss-payload-generator/Makefile
+index 957fa76..80418ca 100644
+--- a/tools/hss-payload-generator/Makefile
++++ b/tools/hss-payload-generator/Makefile
+@@ -28,7 +28,7 @@
+ #
+ 
+ SHELL=/bin/bash
+-CC = gcc
++HOSTCC ?= gcc
+ ECHO = echo
+ 
+ ifeq ($(V), 1)
+@@ -82,7 +82,7 @@ OBJS := $(patsubst %.c,$(build_dir)/%.o,$(SRCS))
+ 
+ $(build_dir)/%.o: %.c
+ 	@$(ECHO) " CC        $@";
+-	$(CMD_PREFIX)$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
++	$(CMD_PREFIX)$(HOSTCC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+ 
+ ################################################################################
+ #
+@@ -96,7 +96,7 @@ all: $(TARGET)
+ 
+ $(TARGET): $(OBJS)
+ 	@$(ECHO) " LD        $@";
+-	$(CMD_PREFIX)$(CC) $(CFLAGS) -static -o $@ $(OBJS) $(LIBS)
++	$(CMD_PREFIX)$(HOSTCC) $(CFLAGS) -static -o $@ $(OBJS) $(LIBS)
+ 
+ README.docx: README.md
+ 	pandoc -o README.docx README.md
+-- 
+2.28.0
+

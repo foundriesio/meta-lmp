@@ -1,0 +1,49 @@
+include cfg/8250.scc
+include cfg/vesafb.scc
+
+kconf hardware bsp/common-pc/common-pc-drivers.cfg
+kconf hardware bsp/common-pc/common-pc-eth.cfg
+kconf hardware bsp/common-pc/common-pc-gfx.cfg
+kconf hardware bsp/common-pc/common-pc-wifi.cfg
+
+include features/pci/pci.scc
+
+include features/drm-radeon/drm-radeon.scc
+
+include features/usb/ehci-hcd.scc
+include features/usb/uhci-hcd.scc
+include features/usb/ohci-hcd.scc
+include features/usb/xhci-hcd.scc
+
+include features/mmc/mmc-sdhci.scc
+
+# Various RF/Wireless technologies
+include features/bluetooth/bluetooth.scc
+include features/bluetooth/bluetooth-usb.scc
+include features/bluetooth/bluetooth-uart.scc
+include features/ieee802154/ieee802154.scc
+include features/mac802154/mac802154.scc
+include features/hostapd/hostapd.scc
+
+# Subsystems and interfaces
+include features/hugetlb/hugetlb.scc
+include features/i2c/i2cdev.scc
+include features/leds/leds.scc
+include features/spi/spidev.scc
+
+# Miscellaneous
+include cfg/dmaengine.scc
+include features/uio/uio.scc
+include features/hid/hid.scc
+include features/input/input.scc
+include features/input/keyboard-gpio.scc
+include features/ciphers/ciphers.scc
+include features/pci-iov/pci-iov.scc
+include features/usb/serial-all.scc
+include features/pwm/pwm.scc
+
+include cfg/usb-mass-storage.scc
+
+include arch/riscv64/riscv64.scc
+
+kconf hardware icicle-kit-es.cfg

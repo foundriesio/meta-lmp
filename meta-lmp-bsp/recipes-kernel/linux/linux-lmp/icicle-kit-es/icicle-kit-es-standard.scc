@@ -1,0 +1,7 @@
+define KMACHINE icicle-kit-es
+define KARCH riscv64
+define KTYPE standard
+
+include ktypes/standard/standard.scc
+
+include icicle-kit-es.scc

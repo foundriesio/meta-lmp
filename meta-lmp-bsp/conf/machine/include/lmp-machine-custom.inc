@@ -74,6 +74,18 @@ PREFERRED_PROVIDER_u-boot-default-script_freedom-u540 = "u-boot-ostree-scr"
 OSTREE_KERNEL_ARGS_freedom-u540 ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL_ARGS_COMMON}"
 WKS_FILE_freedom-u540_sota = "freedom-u540-opensbi-sota.wks"
 
+## Microsemi Icicle-Kit ES
+PREFERRED_PROVIDER_virtual/bootloader_icicle-kit-es ?= "u-boot-fio"
+PREFERRED_VERSION_u-boot-fio_icicle-kit-es ?= "2020.10"
+SOTA_CLIENT_FEATURES_append_icicle-kit-es = " ubootenv"
+IMAGE_BOOT_FILES_icicle-kit-es = "boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_sota_icicle-kit-es = "boot.itb"
+WKS_FILE_DEPENDS_append_icicle-kit-es = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script_icicle-kit-es = "u-boot-ostree-scr-fit"
+KERNEL_CLASSES_icicle-kit-es = " kernel-lmp-fitimage "
+OSTREE_KERNEL_ARGS_icicle-kit-es ?= "earlycon=sbi console=ttyS0,115200n8 uio_pdrv_genirq.of_id=generic-uio ${OSTREE_KERNEL_ARGS_COMMON} rootwait"
+WKS_FILE_sota_icicle-kit-es = "mpfs-icicle-kit-sota.wks"
+
 # ARM Development Boards
 PREFERRED_PROVIDER_virtual/kernel_corstone700 = "linux-lmp"
 PREFERRED_PROVIDER_virtual/bootloader_corstone700 = "u-boot"

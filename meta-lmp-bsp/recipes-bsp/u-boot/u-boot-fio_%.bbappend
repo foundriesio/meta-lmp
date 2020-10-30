@@ -2,6 +2,13 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BOOT_TOOLS_mx8 = "imx-boot-tools"
 
+SRC_URI_append_icicle-kit-es = " \
+    file://0001-include-configs-for-the-Microchip-mpfs-icicle-kit.patch \
+    file://0002-device-tree-for-the-Microchip-mpfs-icicle-kit.patch \
+    file://0003-board-specific-code-for-the-Microchip-mpfs-icicle-ki.patch \
+    file://0004-gem-driver-for-the-Microchip-mpfs-icicle-kit.patch \
+"
+
 # From u-boot-imx/meta-freescale
 do_deploy_append_mx8m() {
     # Deploy u-boot-nodtb.bin and XX.dtb for mkimage to generate boot binary

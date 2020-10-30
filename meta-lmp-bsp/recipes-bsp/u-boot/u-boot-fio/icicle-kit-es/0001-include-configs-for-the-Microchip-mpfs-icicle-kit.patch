@@ -1,0 +1,68 @@
+From fa7f254805b52f31b6106879e8406454b009a290 Mon Sep 17 00:00:00 2001
+From: Padmarao Begari <padmarao.begari@microchip.com>
+Date: Tue, 11 Aug 2020 13:45:30 +0530
+Subject: [PATCH 1/4] include configs for the Microchip mpfs-icicle kit.
+
+include configuration for icicle kit
+
+Signed-off-by: Padmarao Begari <padmarao.begari@microchip.com>
+[mike@foundries.io: rebased on 2020.10]
+Signed-off-by: Michael Scott <mike@foundries.io>
+---
+ include/configs/microchip_mpfs_icicle.h | 27 ++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/include/configs/microchip_mpfs_icicle.h b/include/configs/microchip_mpfs_icicle.h
+index 8a7470545b..e1e5d5fa24 100644
+--- a/include/configs/microchip_mpfs_icicle.h
++++ b/include/configs/microchip_mpfs_icicle.h
+@@ -34,9 +34,9 @@
+ 
+ /*
+  * Size of malloc() pool
+- * 512kB is suggested, (CONFIG_ENV_SIZE + 128 * 1024) was not enough
++ * 8M is suggested, (CONFIG_ENV_SIZE + 128 * 1024) was not enough
+  */
+-#define CONFIG_SYS_MALLOC_LEN	(512 << 10)
++#define CONFIG_SYS_MALLOC_LEN	0x800000 /* 8 MB */
+ 
+ /*
+  * Physical Memory Map
+@@ -48,7 +48,7 @@
+ /* Init Stack Pointer */
+ #define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x200000)
+ 
+-#define CONFIG_SYS_LOAD_ADDR	0x80000000 /* SDRAM */
++#define CONFIG_SYS_LOAD_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x200000) /* SDRAM */
+ 
+ /*
+  * memtest works on DRAM
+@@ -56,4 +56,25 @@
+ 
+ /* When we use RAM as ENV */
+ 
++#define CONFIG_SYS_BOOTM_LEN        0x4000000 /* 64 MB */
++#define CONFIG_STANDALONE_LOAD_ADDR 0x80200000
++
++/* GEM clock */
++#define PFSOC_GEM_CLK_FREQ 150000000
++
++#define BOOT_TARGET_DEVICES(func) \
++	func(MMC, mmc, 0)
++
++#include <config_distro_bootcmd.h>
++
++#define CONFIG_EXTRA_ENV_SETTINGS \
++	"fdt_high=0xffffffffffffffff\0" \
++	"initrd_high=0xffffffffffffffff\0" \
++	"kernel_addr_r=0x84000000\0" \
++	"fdt_addr_r=0x88000000\0" \
++	"scriptaddr=0x88100000\0" \
++	"pxefile_addr_r=0x88200000\0" \
++	"ramdisk_addr_r=0x88300000\0" \
++	BOOTENV
++
+ #endif /* __CONFIG_H */
+-- 
+2.28.0
+

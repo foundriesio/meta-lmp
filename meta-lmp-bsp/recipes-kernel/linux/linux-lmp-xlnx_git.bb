@@ -1,4 +1,4 @@
-include kmeta-linux-lmp-5.4.y.inc
+include recipes-kernel/linux/kmeta-linux-lmp-5.4.y.inc
 
 LINUX_VERSION ?= "5.4.0"
 KBRANCH = "xlnx_rebase_v5.4"

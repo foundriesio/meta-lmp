@@ -1,4 +1,4 @@
-include kmeta-linux-lmp-4.19.y.inc
+include recipes-kernel/linux/kmeta-linux-lmp-4.19.y.inc
 
 LINUX_VERSION ?= "4.19.35"
 KBRANCH = "linux-ea-v4.19.y"

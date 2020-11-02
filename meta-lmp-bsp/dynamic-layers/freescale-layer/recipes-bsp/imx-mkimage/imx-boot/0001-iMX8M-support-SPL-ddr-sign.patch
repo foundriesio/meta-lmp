@@ -1,0 +1,42 @@
+From e69abd6123a78a9939e4c9a1c437e89a6a2f5975 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Mon, 2 Nov 2020 13:30:17 +0100
+Subject: [PATCH 1/2] iMX8M: support SPL-ddr sign
+
+When there is no second boot loader, there is no need to fill the CSF
+region with zeroes. Only extend the image to the start of CSF.
+
+The image should be generated as:
+ $ mkimage_imx8 -version v1
+                -fit
+                -loader u-boot-spl-ddr.bin 0x7E1000
+                -out flash.bin
+
+Upstream-Status: Inappropriate [lmp specific]
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ iMX8M/mkimage_imx8.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/iMX8M/mkimage_imx8.c b/iMX8M/mkimage_imx8.c
+index f6c1f9e..d6e36bc 100644
+--- a/iMX8M/mkimage_imx8.c
++++ b/iMX8M/mkimage_imx8.c
+@@ -1587,7 +1587,13 @@ int main(int argc, char **argv)
+ 		copy_file(ofd, csf_img, 0, csf_off, 0);
+ 	} else {
+ 		csf_off -= ivt_offset;
+-		fill_zero(ofd, CSF_SIZE, csf_off);
++		/*
++		 * with no sld, there is no need to extend the image zeroing
++		 * the CSF region (just extend the binary to the begining of
++		 * CSF so it can be signed) */
++		fill_zero(ofd,
++			  sld_img ? CSF_SIZE : 1,
++			  sld_img ? csf_off : csf_off - 1);
+ 	}
+ 
+ 	if (sld_img) {
+-- 
+2.17.1
+

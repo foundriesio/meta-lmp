@@ -16,7 +16,7 @@ SDPV: jump -addr 0x12000000
 FB: ucmd if mmc dev 0; then setenv flash_dev 0; setenv emmc_partconf "mmc partconf ${flash_dev} 1 1 0"; else setenv flash_dev 1; setenv emmc_partconf "true"; fi;
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd mmc dev ${flash_dev}
-FB: flash -raw2sparse all ../lmp-factory-image-@@MACHINE@@.wic
+FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: flash bootloader ../SPL
 FB: flash bootloader2 ../u-boot.itb
 FB: ucmd if env exist emmc_partconf; then run emmc_partconf; fi;

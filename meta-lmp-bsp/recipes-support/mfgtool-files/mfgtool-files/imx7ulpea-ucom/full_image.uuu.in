@@ -43,7 +43,7 @@ FBK: ucmd mmc=`cat /tmp/mmcdev`; mmc bootpart enable 1 1 /dev/mmcblk${mmc}
 
 # rootfs
 FBK: acmd mmc=`cat /tmp/mmcdev`; gunzip -c | dd of=/dev/mmcblk${mmc} bs=4M iflag=fullblock oflag=direct status=progress
-FBK: ucp  ../lmp-factory-image-@@MACHINE@@.wic.gz t:-
+FBK: ucp  ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic.gz t:-
 FBK: Sync
 
 FBK: DONE

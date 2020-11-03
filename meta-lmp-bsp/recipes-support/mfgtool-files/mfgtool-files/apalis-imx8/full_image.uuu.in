@@ -10,7 +10,7 @@ CFG: FB: -vid 0x0525 -pid 0x4031
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev 0
 FB: ucmd mmc dev 0
-FB: flash -raw2sparse all ../lmp-factory-image-@@MACHINE@@.wic
+FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: flash bootloader ../imx-boot
 FB: ucmd mmc partconf 0 0 1 0
 FB: done

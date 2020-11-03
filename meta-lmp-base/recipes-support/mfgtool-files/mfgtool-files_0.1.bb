@@ -9,6 +9,7 @@ INITRAMFS_IMAGE = "fsl-image-mfgtool-initramfs"
 DEPENDS = "${INITRAMFS_IMAGE}"
 
 UUU_RELEASE = "1.3.154"
+MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
 SRC_URI = " \
     https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu;name=Linux \
@@ -28,7 +29,9 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 do_compile() {
     sed -e 's/@@MACHINE@@/${MACHINE}/' ${S}/bootloader.uuu.in > bootloader.uuu
-    sed -e 's/@@MACHINE@@/${MACHINE}/' ${S}/full_image.uuu.in > full_image.uuu
+    sed -e 's/@@MACHINE@@/${MACHINE}/' \
+        -e 's/@@MFGTOOL_FLASH_IMAGE@@/${MFGTOOL_FLASH_IMAGE}/' \
+        ${S}/full_image.uuu.in > full_image.uuu
 }
 
 # Board specific SPL/U-Boot should be deployed via bbappend

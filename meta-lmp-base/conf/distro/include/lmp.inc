@@ -72,16 +72,20 @@ MIRRORS =+ "\
 # Compatibility with other layers
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
-    /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
+    /meta-security/recipes-kernel/linux/linux-%_5.%.bbappend \
     /meta-updater/recipes-connectivity/nfs-utils/nfs-utils_%.bbappend \
 "
 
 # meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)
 BBMASK += " \
-    /meta-arm/meta-arm/recipes-security/optee/optee-test_git.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-client_git.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-os_git.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-examples_git.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-test_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-test_3.11.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-os_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-os_3.11.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.11.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-client_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-client_3.11.0.bb \
 "
 # meta-arm-bsp: mask recipes from meta-kernel as we have our own recipes
 BBMASK += " \
@@ -90,6 +94,7 @@ BBMASK += " \
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \
     /meta-xilinx-bsp/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
+    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_1.0.bb \
     /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
 "
 

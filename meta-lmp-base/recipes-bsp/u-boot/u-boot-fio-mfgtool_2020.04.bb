@@ -6,5 +6,3 @@ require recipes-bsp/u-boot/u-boot-fio_2020.04.bb
 
 # Environment config is not required for mfgtool
 SRC_URI_remove = "file://fw_env.config"
-
-DEFAULT_PREFERENCE = "-1"

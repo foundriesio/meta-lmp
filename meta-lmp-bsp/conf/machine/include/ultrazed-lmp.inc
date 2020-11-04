@@ -20,12 +20,6 @@ WKS_FILE_DEPENDS_append = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota = "u-boot-ostree-scr-fit"
 
-PREFERRED_VERSION_optee-os-fio = "3.10.0+git"
-PREFERRED_VERSION_optee-client = "3.10.0"
-PREFERRED_VERSION_optee-examples = "3.10.0"
-PREFERRED_VERSION_optee-test = "3.10.0"
-OPTEE_BINARY = "tee-pager_v2.bin"
-
 SPL_BINARY ?= "spl/boot.bin"
 UBOOT_MACHINE ?= "xilinx_zynqmp_virt_defconfig"
 UBOOT_CLASSES = "uboot-fitimage"

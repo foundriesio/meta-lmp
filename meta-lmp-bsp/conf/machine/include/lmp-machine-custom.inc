@@ -99,10 +99,6 @@ KERNEL_CLASSES_qemuarm64 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_ARGS_qemuarm64 ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT_qemuarm64 = "0x40080000"
 MACHINE_FEATURES_append_qemuarm64 = " optee"
-PREFERRED_VERSION_optee-os-fio_qemuarm64 = "3.10.0+git"
-PREFERRED_VERSION_optee-client_qemuarm64 = "3.10.0"
-PREFERRED_VERSION_optee-examples_qemuarm64 = "3.10.0"
-PREFERRED_VERSION_optee-test_qemuarm64 = "3.10.0"
 QB_MACHINE_qemuarm64 = "-machine virt,secure=on"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM_qemuarm64 = "-m 1057"
@@ -222,11 +218,6 @@ IMAGE_BOOT_FILES_mx6ull = " boot.scr uEnv.txt zImage"
 KERNEL_IMAGETYPE_sota_mx6ull = "fitImage"
 KERNEL_CLASSES_sota_mx6ull = " kernel-lmp-fitimage "
 WKS_FILE_mx6ull_sota = "sdimage-imx6-spl-fit-sota.wks"
-PREFERRED_VERSION_optee-os-fio_mx6ull = "3.10.0+git"
-PREFERRED_VERSION_optee-client_mx6ull = "3.10.0"
-PREFERRED_VERSION_optee-examples_mx6ull = "3.10.0"
-PREFERRED_VERSION_optee-test_mx6ull = "3.10.0"
-OPTEE_BINARY_mx6ull = "tee-pager_v2.bin"
 # iMX6ULL EVK
 UBOOT_MACHINE_imx6ullevk = "mx6ull_14x14_evk_defconfig"
 KERNEL_DEVICETREE_imx6ullevk = "imx6ull-14x14-evk.dtb"
@@ -257,11 +248,6 @@ UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x14000000"
 WKS_FILE_apalis-imx6 = "sdimage-imx6dq-spl-fit.wks"
 WKS_FILES_sota_apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
 MACHINE_FEATURES_append_apalis-imx6 = " optee"
-PREFERRED_VERSION_optee-os-fio_apalis-imx6 = "3.10.0+git"
-PREFERRED_VERSION_optee-client_apalis-imx6 = "3.10.0"
-PREFERRED_VERSION_optee-examples_apalis-imx6 = "3.10.0"
-PREFERRED_VERSION_optee-test_apalis-imx6 = "3.10.0"
-OPTEE_BINARY_apalis-imx6 = "tee-pager_v2.bin"
 
 # Toradex Apalis iMX8QM
 PREFERRED_PROVIDER_virtual/bootloader_apalis-imx8 ?= "u-boot-fio"
@@ -300,10 +286,6 @@ OSTREE_KERNEL_ARGS_imx8mqevk ?= "console=tty1 console=ttymxc0,115200 earlycon=ec
 PREFERRED_PROVIDER_virtual/kernel_mx8mq ?= "linux-lmp-fslc-imx"
 WKS_FILE_mx8mq_sota = "sdimage-imx8-sota.wks.in"
 ## iMX8MQ EVK
-PREFERRED_VERSION_optee-os-fio_imx8mqevk = "3.10.0+git"
-PREFERRED_VERSION_optee-client_imx8mqevk = "3.10.0"
-PREFERRED_VERSION_optee-examples_imx8mqevk = "3.10.0"
-PREFERRED_VERSION_optee-test_imx8mqevk = "3.10.0"
 MACHINE_FEATURES_remove_imx8mqevk = "qca6174"
 MACHINE_FEATURES_append_imx8mqevk = " bcm4356"
 
@@ -330,13 +312,13 @@ PREFERRED_PROVIDER_virtual/kernel_mx8mm ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
 ## iMX8MM EVK
-PREFERRED_VERSION_optee-os-fio_imx8mmevk = "3.10.0+git"
-PREFERRED_VERSION_optee-client_imx8mmevk = "3.10.0"
-PREFERRED_VERSION_optee-examples_imx8mmevk = "3.10.0"
-PREFERRED_VERSION_optee-test_imx8mmevk = "3.10.0"
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
 
 # Cross machines / BSPs
+## Prefer OP-TEE releases from our layer instead of using the .imx fork
+PREFERRED_VERSION_optee-client_mx8 = "3.10.0"
+PREFERRED_VERSION_optee-examples_mx8 = "3.10.0"
+PREFERRED_VERSION_optee-test_mx8 = "3.10.0"
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

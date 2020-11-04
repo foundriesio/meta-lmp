@@ -20,7 +20,7 @@ UBOOT_ITS_SYMLINK ?= "u-boot-${MACHINE}.its"
 
 # fitImage Hash Algo
 FIT_HASH_ALG ?= "sha256"
-OPTEE_BINARY ?= "tee-pager.bin"
+OPTEE_BINARY ?= "tee-pager_v2.bin"
 ATF_BINARY ?= "arm-trusted-firmware.bin"
 ATF_SUPPORT = "${@bb.utils.contains('EXTRA_IMAGEDEPENDS', 'virtual/trusted-firmware-a', 'true', 'false', d)}"
 

@@ -315,6 +315,8 @@ WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
 
 # Cross machines / BSPs
+## iMX targets should use the u-boot release based on the NXP BSP
+PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
 PREFERRED_VERSION_optee-client_mx8 = "3.10.0"
 PREFERRED_VERSION_optee-examples_mx8 = "3.10.0"

@@ -11,8 +11,6 @@ SRC_URI = "git://github.com/OP-TEE/optee_client.git \
 PV = "3.10.0"
 SRCREV = "e7a4706e08c8fbdd53530868a6ac4937193dd73c"
 
-DEFAULT_PREFERENCE = "-1"
-
 S = "${WORKDIR}/git"
 
 inherit systemd

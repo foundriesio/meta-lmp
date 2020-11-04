@@ -12,9 +12,6 @@ PV = "3.10.0+git"
 SRCREV = "ba1333a53696937b661c966c457bc4e4a04ebcd8"
 SRCBRANCH = "3.10+fio"
 
-# To be removed once it can fully replace the 3.6.0 based version
-DEFAULT_PREFERENCE = "-1"
-
 S = "${WORKDIR}/git"
 
 inherit deploy python3native

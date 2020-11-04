@@ -15,8 +15,6 @@ SRC_URI = "git://github.com/OP-TEE/optee_test.git \
 PV = "3.10.0"
 SRCREV = "30efcbeaf8864d0f2a5c4be593a5411001fab31b"
 
-DEFAULT_PREFERENCE = "-1"
-
 S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

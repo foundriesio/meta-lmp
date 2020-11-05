@@ -6,7 +6,6 @@ SRCREV_lmp = "c0fe5f79769637b97a40798f3cbec7d9ef8a4e56"
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
     file://aktualizr-lite.service.in \
-    file://aktualizr-lite.path \
     file://aktualizr-secondary.service \
     file://aktualizr-serialcan.service \
     file://10-resource-control.conf \
@@ -22,7 +21,7 @@ PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
-SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"
+SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service"
 
 COMPOSE_HTTP_TIMEOUT ?= "60"
 
@@ -46,7 +45,6 @@ do_install_prepend_lmp() {
 do_install_append() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
-    install -m 0644 ${WORKDIR}/aktualizr-lite.path ${D}${systemd_system_unitdir}/
 }
 
 # Force same RDEPENDS, packageconfig rdepends common to both

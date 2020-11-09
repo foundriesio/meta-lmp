@@ -1,0 +1,8 @@
+# create an EFI compatible installer disk image
+# populate content to install using IMAGE_BOOT_FILES (e.g. rootfs)
+
+part /boot --source bootimg-efi --sourceparams="loader=${EFI_PROVIDER},title=install,label=install-efi,initrd=${INITRD_IMAGE_LIVE}-${MACHINE}.${INITRAMFS_FSTYPES}" --ondisk sda --label install --active --align 1024 --use-uuid
+
+part / --source bootimg-partition --ondisk sda --fstype=ext4 --label image --use-uuid --align 1024
+
+bootloader --ptable gpt --timeout=5

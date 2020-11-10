@@ -214,6 +214,11 @@ rootfs_uuid=$(blkid -o value -s UUID ${rootfs})
 sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" \
     /tgt_root/boot/loader/grub.cfg /tgt_root/boot/loader/entries/*.conf
 
+# LMP specific customizations, if available (live media first partition, vfat)
+if [ -d /run/media/${live_dev_name}1/lmp ]; then
+    cp -a /run/media/${live_dev_name}1/lmp /tgt_root/ostree/deploy/lmp/var/
+fi
+
 umount /src_root
 
 # Handling of the target boot partition

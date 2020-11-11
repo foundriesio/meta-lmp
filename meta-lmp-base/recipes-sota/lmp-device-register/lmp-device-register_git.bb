@@ -8,8 +8,10 @@ SRCREV = "b59e76abb303fbaf85d1621426c5523536e21d20"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
 
-# Default to master tag
+# Defaults to the public factory
 LMP_DEVICE_REGISTER_TAG ?= "master"
+LMP_DEVICE_FACTORY ?= "lmp"
+LMP_DEVICE_API ?= "https://api.foundries.io/ota/devices/"
 
 PACKAGECONFIG ?= "aklitetags composeapp"
 PACKAGECONFIG[aklitetags] = "-DAKLITE_TAGS=ON -DDEFAULT_TAG=${LMP_DEVICE_REGISTER_TAG},-DAKLITE_TAGS=OFF,"
@@ -19,10 +21,11 @@ S = "${WORKDIR}/git"
 
 inherit cmake
 
-RDEPENDS_${PN} += "openssl-bin"
+RDEPENDS_${PN} += "openssl-bin aktualizr-lite"
 
 EXTRA_OECMAKE += "\
-    ${@oe.utils.conditional('SOTA_CLIENT', 'aktualizr-lite', '-DDEVICE_API=https://api.foundries.io/ota/devices/', '', d)} \
     -DGIT_COMMIT=${SRCREV} \
     -DHARDWARE_ID=${MACHINE} \
+    -DDEVICE_FACTORY=${LMP_DEVICE_FACTORY} \
+    -DDEVICE_API=${LMP_DEVICE_API} \
 "

@@ -2,6 +2,7 @@ SUMMARY = "Basic console-based gateway image"
 
 require lmp-image-common.inc
 
+require lmp-feature-factory.inc
 require lmp-feature-ota-utils.inc
 require lmp-feature-wireguard.inc
 require lmp-feature-docker.inc

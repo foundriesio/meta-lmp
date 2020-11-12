@@ -1,4 +1,4 @@
-DISTRO_VERSION = "3.1"
+DISTRO_VERSION = "3.2"
 
 # These default to 'oecore' and 'nodistro'
 SDK_NAME_PREFIX = "${DISTRO}"
@@ -20,6 +20,10 @@ PREFERRED_RPROVIDER_u-boot-fw-utils ?= "libubootenv"
 PREFERRED_PROVIDER_zlib ?= "zlib"
 PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
+PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
+PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
+PREFERRED_PROVIDER_virtual/docker ?= "docker-ce"
+PREFERRED_PROVIDER_virtual/docker_riscv64 ?= "docker-moby"
 
 # Default distro features for LMP (can be extended by the user if needed)
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"
@@ -35,8 +39,8 @@ PACKAGECONFIG_remove_pn-runc-docker = "static"
 PACKAGECONFIG_append_pn-systemd = " journal-upload resolved seccomp serial-getty-generator"
 PACKAGECONFIG_remove_pn-systemd = "networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"
-PACKAGECONFIG_append_pn-networkmanager = " gnutls"
-PACKAGECONFIG_remove_pn-networkmanager = "nss dnsmasq"
+PACKAGECONFIG_append_pn-networkmanager = " nss"
+PACKAGECONFIG_remove_pn-networkmanager = " dnsmasq"
 
 # Default image formats
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
@@ -68,20 +72,34 @@ MIRRORS =+ "\
 # Compatibility with other layers
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
-    /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
+    /meta-security/recipes-kernel/linux/linux-%_5.%.bbappend \
+    /meta-updater/recipes-connectivity/nfs-utils/nfs-utils_%.bbappend \
 "
 
 # meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)
 BBMASK += " \
-    /meta-arm/meta-arm/recipes-security/optee/optee-test_git.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-client_git.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-os_git.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-examples_git.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-test_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-test_3.11.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-os_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-os_3.11.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.11.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-client_3.8.0.bb \
+    /meta-arm/meta-arm/recipes-security/optee/optee-client_3.11.0.bb \
 "
 # meta-arm-bsp: mask recipes from meta-kernel as we have our own recipes
 BBMASK += " \
     /meta-arm-bsp/recipes-kernel/linux/linux-stable_%.bbappend \
 "
+# meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
+BBMASK += " \
+    /meta-xilinx-bsp/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
+    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_1.0.bb \
+    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
+"
+
+# only zynqmp machines inherit Xilinx xsct tarball download class
+INHERIT_remove = "${@ ' xsct-tc' if d.getVar('SOC_FAMILY') != 'zynqmp' else ''}"
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \

@@ -2,6 +2,7 @@ SUMMARY = "Basic console-based gateway image"
 
 require lmp-image-common.inc
 
+require lmp-feature-factory.inc
 require lmp-feature-ota-utils.inc
 require lmp-feature-wireguard.inc
 require lmp-feature-docker.inc
@@ -9,7 +10,6 @@ require lmp-feature-bluetooth.inc
 require lmp-feature-wifi.inc
 require lmp-feature-nat64.inc
 require lmp-feature-jobserv.inc
-require lmp-feature-debug.inc
 require lmp-feature-softhsm.inc
 require lmp-feature-sysctl-hang-crash-helper.inc
 require lmp-feature-sysctl-net-queue-pfifo-fast.inc
@@ -26,20 +26,16 @@ IMAGE_FEATURES += "ssh-server-openssh"
 
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
-    coreutils \
     cpufrequtils \
     ldd \
     gptfdisk \
     iptables \
     kernel-modules \
-    networkmanager-nmtui \
+    networkmanager-nmcli \
 "
 
 CORE_IMAGE_BASE_INSTALL += " \
     ethtool \
     git \
-    less \
-    packagegroup-core-full-cmdline-utils \
-    packagegroup-core-full-cmdline-multiuser \
     pciutils \
 "

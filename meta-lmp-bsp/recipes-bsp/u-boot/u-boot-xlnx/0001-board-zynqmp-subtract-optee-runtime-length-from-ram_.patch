@@ -1,0 +1,33 @@
+From 7470b642ade11bfe1b1416dcd870e1d9c58a2e90 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Fri, 2 Oct 2020 18:07:17 -0300
+Subject: [PATCH] board: zynqmp: subtract optee runtime length from ram_size
+
+Avoid conflict with the memory region used by optee.
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ board/xilinx/zynqmp/zynqmp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/board/xilinx/zynqmp/zynqmp.c b/board/xilinx/zynqmp/zynqmp.c
+index 8610663711..1200547068 100644
+--- a/board/xilinx/zynqmp/zynqmp.c
++++ b/board/xilinx/zynqmp/zynqmp.c
+@@ -438,6 +438,11 @@ int dram_init(void)
+ 	if (fdtdec_setup_mem_size_base() != 0)
+ 		return -EINVAL;
+ 
++	/* Subtract the defined OPTEE runtime firmware length */
++#ifdef CONFIG_OPTEE_TZDRAM_SIZE
++	gd->ram_size -= CONFIG_OPTEE_TZDRAM_SIZE;
++#endif
++
+ 	return 0;
+ }
+ #else
+-- 
+2.28.0
+

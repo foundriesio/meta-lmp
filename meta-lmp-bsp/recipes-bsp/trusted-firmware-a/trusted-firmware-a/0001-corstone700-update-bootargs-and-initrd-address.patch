@@ -1,0 +1,36 @@
+From 4b602a914ccfa4408173c9316cc201a139f4707d Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 28 Oct 2020 13:27:49 -0300
+Subject: [PATCH] corstone700: update bootargs and initrd address
+
+Boot with rootfs from usb/sda and use initrd from ram, which is loaded
+by the boot firmware.
+
+This could later also be automatically done by u-boot, once it is able
+to load the initrd from disk.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ fdts/corstone700_fpga.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fdts/corstone700_fpga.dts b/fdts/corstone700_fpga.dts
+index 1ac0d4b84..a96e0a3f5 100644
+--- a/fdts/corstone700_fpga.dts
++++ b/fdts/corstone700_fpga.dts
+@@ -11,6 +11,12 @@
+ / {
+ 	model = "corstone700-fpga";
+ 
++	chosen {
++		bootargs = "console=ttyAMA0,115200 root=/dev/sda1 rootfstype=ext4 rootwait";
++		linux,initrd-start = <0x80A00000>;
++		linux,initrd-end = <0x80C00000>;
++	};
++
+ 	ethernet: eth@40100000 {
+ 		compatible = "smsc,lan9115";
+ 		reg = <0x40100000 0x10000>;
+-- 
+2.28.0
+

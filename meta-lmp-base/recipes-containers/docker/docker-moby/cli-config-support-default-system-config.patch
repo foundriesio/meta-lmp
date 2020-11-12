@@ -1,0 +1,41 @@
+From 15e560830117514adc825c80326e7db66192e717 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 25 Sep 2019 17:08:35 -0300
+Subject: [PATCH] cli/config: support default system config
+
+Support reading configuration from system config when available. This
+allows the OS to control and update a base config.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ cli/cli/cli/config/config.go | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/cli/cli/config/config.go b/cli/cli/config/config.go
+index 703fa30f48..79c324bfb1 100644
+--- a/cli/cli/config/config.go
++++ b/cli/cli/config/config.go
+@@ -21,6 +21,7 @@ const (
+ 	configFileDir  = ".docker"
+ 	oldConfigfile  = ".dockercfg"
+ 	contextsDir    = "contexts"
++	defaultSystemConfig = "/usr/lib/docker/config.json"
+ )
+ 
+ var (
+@@ -94,6 +95,15 @@ func Load(configDir string) (*configfile.ConfigFile, error) {
+ 	filename := filepath.Join(configDir, ConfigFileName)
+ 	configFile := configfile.New(filename)
+ 
++	// LmP: Load values from system config by default
++	if _, err := os.Stat(defaultSystemConfig); err == nil {
++		file, err := os.Open(defaultSystemConfig)
++		if err == nil {
++			configFile.LoadFromReader(file)
++			file.Close()
++		}
++	}
++
+ 	// Try happy path first - latest config file
+ 	if file, err := os.Open(filename); err == nil {
+ 		defer file.Close()

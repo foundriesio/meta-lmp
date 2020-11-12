@@ -1,0 +1,81 @@
+From 79b3621f204acb229b7f9eb8f57d6031023b07be Mon Sep 17 00:00:00 2001
+From: Joel Sing <joel@sing.id.au>
+Date: Tue, 2 Jun 2020 23:34:06 +1000
+Subject: [PATCH 5/5] cmd/compile,cmd/internal/sys: enable non-exe build modes
+ on linux/riscv64
+
+Change-Id: I15a8a51b84dbbb82a5b6592aec84a7f09f0cc37f
+---
+ src/cmd/compile/internal/gc/main.go | 2 +-
+ src/cmd/go/go_test.go               | 2 +-
+ src/cmd/internal/sys/supported.go   | 8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/cmd/compile/internal/gc/main.go b/src/cmd/compile/internal/gc/main.go
+index 756cdbd3c9..34997f4754 100644
+--- a/src/cmd/compile/internal/gc/main.go
++++ b/src/cmd/compile/internal/gc/main.go
+@@ -132,7 +132,7 @@ func hidePanic() {
+ // supportsDynlink reports whether or not the code generator for the given
+ // architecture supports the -shared and -dynlink flags.
+ func supportsDynlink(arch *sys.Arch) bool {
+-	return arch.InFamily(sys.AMD64, sys.ARM, sys.ARM64, sys.I386, sys.PPC64, sys.S390X)
++	return arch.InFamily(sys.AMD64, sys.ARM, sys.ARM64, sys.I386, sys.PPC64, sys.RISCV64, sys.S390X)
+ }
+ 
+ // timing data for compiler phases
+diff --git a/src/cmd/go/go_test.go b/src/cmd/go/go_test.go
+index 021930a8a8..8093341a1a 100644
+--- a/src/cmd/go/go_test.go
++++ b/src/cmd/go/go_test.go
+@@ -2058,7 +2058,7 @@ func TestBuildmodePIE(t *testing.T) {
+ 
+ 	platform := fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH)
+ 	switch platform {
+-	case "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/ppc64le", "linux/s390x",
++	case "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/ppc64le", "linux/riscv64", "linux/s390x",
+ 		"android/amd64", "android/arm", "android/arm64", "android/386",
+ 		"freebsd/amd64",
+ 		"windows/386", "windows/amd64", "windows/arm":
+diff --git a/src/cmd/internal/sys/supported.go b/src/cmd/internal/sys/supported.go
+index c27b3b986d..527f739d41 100644
+--- a/src/cmd/internal/sys/supported.go
++++ b/src/cmd/internal/sys/supported.go
+@@ -66,7 +66,7 @@ func BuildModeSupported(compiler, buildmode, goos, goarch string) bool {
+ 
+ 	case "c-shared":
+ 		switch platform {
+-		case "linux/amd64", "linux/arm", "linux/arm64", "linux/386", "linux/ppc64le", "linux/s390x",
++		case "linux/amd64", "linux/arm", "linux/arm64", "linux/386", "linux/ppc64le", "linux/riscv64", "linux/s390x",
+ 			"android/amd64", "android/arm", "android/arm64", "android/386",
+ 			"freebsd/amd64",
+ 			"darwin/amd64",
+@@ -83,7 +83,7 @@ func BuildModeSupported(compiler, buildmode, goos, goarch string) bool {
+ 
+ 	case "pie":
+ 		switch platform {
+-		case "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/ppc64le", "linux/s390x",
++		case "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/ppc64le", "linux/riscv64", "linux/s390x",
+ 			"android/amd64", "android/arm", "android/arm64", "android/386",
+ 			"freebsd/amd64",
+ 			"darwin/amd64",
+@@ -95,14 +95,14 @@ func BuildModeSupported(compiler, buildmode, goos, goarch string) bool {
+ 
+ 	case "shared":
+ 		switch platform {
+-		case "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/ppc64le", "linux/s390x":
++		case "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/ppc64le", "linux/riscv64", "linux/s390x":
+ 			return true
+ 		}
+ 		return false
+ 
+ 	case "plugin":
+ 		switch platform {
+-		case "linux/amd64", "linux/arm", "linux/arm64", "linux/386", "linux/s390x", "linux/ppc64le",
++		case "linux/amd64", "linux/arm", "linux/arm64", "linux/386", "linux/s390x", "linux/riscv64", "linux/ppc64le",
+ 			"android/amd64", "android/arm", "android/arm64", "android/386",
+ 			"darwin/amd64",
+ 			"freebsd/amd64":
+-- 
+2.28.0
+

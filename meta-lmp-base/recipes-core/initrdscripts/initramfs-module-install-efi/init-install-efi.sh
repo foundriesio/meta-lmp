@@ -9,19 +9,8 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-# figure out how big of a boot partition we need
-boot_size=$(du -ms /run/media/$1/ | awk '{print $1}')
-# remove rootfs.img ($2) from the size if it exists, as its not installed to /boot
-if [ -e /run/media/$1/$2 ]; then
-    boot_size=$(( boot_size - $( du -ms /run/media/$1/$2 | awk '{print $1}') ))
-fi
-# remove initrd from size since its not currently installed
-if [ -e /run/media/$1/initrd ]; then
-    boot_size=$(( boot_size - $( du -ms /run/media/$1/initrd | awk '{print $1}') ))
-fi
-# add 10M to provide some extra space for users and account
-# for rounding in the above subtractions
-boot_size=$(( boot_size + 10 ))
+# minimal ESP partition size is 100mb
+boot_size=100
 
 # Get a list of hard drives
 hdnamelist=""
@@ -165,9 +154,12 @@ if [ ! "${device#/dev/mmcblk}" = "${device}" ] || \
 fi
 
 # USB devices also require rootwait
-if [ -n `readlink /dev/disk/by-id/usb* | grep $TARGET_DEVICE_NAME` ]; then
-    rootwait="rootwait"
-fi
+find /dev/disk/by-id/ -name usb* | while read usbdev; do
+    if readlink $usbdev | grep -q $TARGET_DEVICE_NAME; then
+        rootwait="rootwait"
+        break
+    fi
+done
 
 bootfs=${device}${part_prefix}1
 rootfs=${device}${part_prefix}2
@@ -224,6 +216,17 @@ fi
 rootfs_uuid=$(blkid -o value -s UUID ${rootfs})
 sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" \
     /tgt_root/boot/loader/grub.cfg /tgt_root/boot/loader/entries/*.conf
+
+# LMP preloaded containers (containers and updated installed_versions)
+if [ -d /run/media/$1/ostree/deploy/lmp/var/lib/docker ]; then
+    cp -a /run/media/$1/ostree/deploy/lmp/var/lib/docker /tgt_root/ostree/deploy/lmp/var/lib/
+    cp -a /run/media/$1/ostree/deploy/lmp/var/sota/import/installed_versions /tgt_root/ostree/deploy/lmp/var/sota/import/
+fi
+
+# LMP specific customizations, if available (live media first partition, vfat)
+if [ -d /run/media/${live_dev_name}1/lmp ]; then
+    cp -a /run/media/${live_dev_name}1/lmp /tgt_root/ostree/deploy/lmp/var/
+fi
 
 umount /src_root
 

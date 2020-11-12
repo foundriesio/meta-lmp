@@ -4,27 +4,28 @@ LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
 DEPENDS = "boost curl glib-2.0"
 
-SRCREV = "633b11b397b996f2bce2438324db203879b9ffda"
+SRCREV = "b59e76abb303fbaf85d1621426c5523536e21d20"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
 
-# Default to master tag
+# Defaults to the public factory
 LMP_DEVICE_REGISTER_TAG ?= "master"
+LMP_DEVICE_FACTORY ?= "lmp"
+LMP_DEVICE_API ?= "https://api.foundries.io/ota/devices/"
 
-APP_TYPE ?= "${@'DOCKER_COMPOSE_APP' if d.getVar('DOCKER_COMPOSE_APP') == '1' else 'DOCKER_APPS'}"
-
-PACKAGECONFIG ?= "aklitetags dockerapp"
+PACKAGECONFIG ?= "aklitetags composeapp"
 PACKAGECONFIG[aklitetags] = "-DAKLITE_TAGS=ON -DDEFAULT_TAG=${LMP_DEVICE_REGISTER_TAG},-DAKLITE_TAGS=OFF,"
-PACKAGECONFIG[dockerapp] = "-D${APP_TYPE}=ON,-D${APP_TYPE}=OFF,"
+PACKAGECONFIG[composeapp] = "-DDOCKER_COMPOSE_APP=ON,-DDOCKER_COMPOSE_APP=OFF,"
 
 S = "${WORKDIR}/git"
 
 inherit cmake
 
-RDEPENDS_${PN} += "openssl-bin"
+RDEPENDS_${PN} += "openssl-bin aktualizr-lite"
 
 EXTRA_OECMAKE += "\
-    ${@oe.utils.conditional('SOTA_CLIENT', 'aktualizr-lite', '-DDEVICE_API=https://api.foundries.io/ota/devices/', '', d)} \
     -DGIT_COMMIT=${SRCREV} \
     -DHARDWARE_ID=${MACHINE} \
+    -DDEVICE_FACTORY=${LMP_DEVICE_FACTORY} \
+    -DDEVICE_API=${LMP_DEVICE_API} \
 "

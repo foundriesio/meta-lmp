@@ -1,0 +1,206 @@
+From 9d6417966ad291a18af2f378c17296594fe5b6f9 Mon Sep 17 00:00:00 2001
+From: Joel Sing <joel@sing.id.au>
+Date: Tue, 19 May 2020 18:55:10 +1000
+Subject: [PATCH 2/5] cmd/link,cmd/internal/obj/riscv: add TLS support for
+ linux/riscv64
+
+Add support for Thread Local Storage (TLS) for linux/riscv64 with external
+linking, using the initial-exec model.
+
+Change-Id: I3106ef9a29cde73215830b00deff43dbec1c76e0
+---
+ src/cmd/internal/obj/riscv/obj.go           |  7 +++
+ src/cmd/internal/objabi/reloctype.go        |  8 +++
+ src/cmd/internal/objabi/reloctype_string.go | 67 ++++++++++++++++++++-
+ src/cmd/link/internal/riscv64/asm.go        | 15 ++++-
+ src/cmd/link/link_test.go                   |  4 ++
+ 5 files changed, 96 insertions(+), 5 deletions(-)
+
+diff --git a/src/cmd/internal/obj/riscv/obj.go b/src/cmd/internal/obj/riscv/obj.go
+index 2eb2935b31..69c9a31504 100644
+--- a/src/cmd/internal/obj/riscv/obj.go
++++ b/src/cmd/internal/obj/riscv/obj.go
+@@ -1982,6 +1982,13 @@ func assemble(ctxt *obj.Link, cursym *obj.LSym, newprog obj.ProgAlloc) {
+ 				ctxt.Diag("AUIPC needing PC-relative reloc missing symbol")
+ 				break
+ 			}
++			if addr.Sym.Type == objabi.STLSBSS {
++				if rt == objabi.R_RISCV_PCREL_ITYPE {
++					rt = objabi.R_RISCV_TLS_IE_ITYPE
++				} else if rt == objabi.R_RISCV_PCREL_STYPE {
++					rt = objabi.R_RISCV_TLS_IE_STYPE
++				}
++			}
+ 
+ 			rel := obj.Addrel(cursym)
+ 			rel.Off = int32(p.Pc)
+diff --git a/src/cmd/internal/objabi/reloctype.go b/src/cmd/internal/objabi/reloctype.go
+index f029a3c396..b84abced0f 100644
+--- a/src/cmd/internal/objabi/reloctype.go
++++ b/src/cmd/internal/objabi/reloctype.go
+@@ -212,6 +212,14 @@ const (
+ 	// AUIPC + S-type instruction pair.
+ 	R_RISCV_PCREL_STYPE
+ 
++	// R_RISCV_TLS_IE_ITYPE resolves a 32-bit TLS initial-exec TOC offset
++	// address using an AUIPC + I-type instruction pair.
++	R_RISCV_TLS_IE_ITYPE
++
++	// R_RISCV_TLS_IE_STYPE resolves a 32-bit TLS initial-exec TOC offset
++	// address using an AUIPC + S-type instruction pair.
++	R_RISCV_TLS_IE_STYPE
++
+ 	// R_PCRELDBL relocates s390x 2-byte aligned PC-relative addresses.
+ 	// TODO(mundaym): remove once variants can be serialized - see issue 14218.
+ 	R_PCRELDBL
+diff --git a/src/cmd/internal/objabi/reloctype_string.go b/src/cmd/internal/objabi/reloctype_string.go
+index 83dfe71e07..b9843fdceb 100644
+--- a/src/cmd/internal/objabi/reloctype_string.go
++++ b/src/cmd/internal/objabi/reloctype_string.go
+@@ -4,9 +4,72 @@ package objabi
+ 
+ import "strconv"
+ 
+-const _RelocType_name = "R_ADDRR_ADDRPOWERR_ADDRARM64R_ADDRMIPSR_ADDROFFR_WEAKADDROFFR_SIZER_CALLR_CALLARMR_CALLARM64R_CALLINDR_CALLPOWERR_CALLMIPSR_CALLRISCVR_CONSTR_PCRELR_TLS_LER_TLS_IER_GOTOFFR_PLT0R_PLT1R_PLT2R_USEFIELDR_USETYPER_METHODOFFR_POWER_TOCR_GOTPCRELR_JMPMIPSR_DWARFSECREFR_DWARFFILEREFR_ARM64_TLS_LER_ARM64_TLS_IER_ARM64_GOTPCRELR_ARM64_GOTR_ARM64_PCRELR_ARM64_LDST8R_ARM64_LDST32R_ARM64_LDST64R_ARM64_LDST128R_POWER_TLS_LER_POWER_TLS_IER_POWER_TLSR_ADDRPOWER_DSR_ADDRPOWER_GOTR_ADDRPOWER_PCRELR_ADDRPOWER_TOCRELR_ADDRPOWER_TOCREL_DSR_RISCV_PCREL_ITYPER_RISCV_PCREL_STYPER_PCRELDBLR_ADDRMIPSUR_ADDRMIPSTLSR_ADDRCUOFFR_WASMIMPORTR_XCOFFREF"
++func _() {
++	// An "invalid array index" compiler error signifies that the constant values have changed.
++	// Re-run the stringer command to generate them again.
++	var x [1]struct{}
++	_ = x[R_ADDR-1]
++	_ = x[R_ADDRPOWER-2]
++	_ = x[R_ADDRARM64-3]
++	_ = x[R_ADDRMIPS-4]
++	_ = x[R_ADDROFF-5]
++	_ = x[R_WEAKADDROFF-6]
++	_ = x[R_SIZE-7]
++	_ = x[R_CALL-8]
++	_ = x[R_CALLARM-9]
++	_ = x[R_CALLARM64-10]
++	_ = x[R_CALLIND-11]
++	_ = x[R_CALLPOWER-12]
++	_ = x[R_CALLMIPS-13]
++	_ = x[R_CALLRISCV-14]
++	_ = x[R_CONST-15]
++	_ = x[R_PCREL-16]
++	_ = x[R_TLS_LE-17]
++	_ = x[R_TLS_IE-18]
++	_ = x[R_GOTOFF-19]
++	_ = x[R_PLT0-20]
++	_ = x[R_PLT1-21]
++	_ = x[R_PLT2-22]
++	_ = x[R_USEFIELD-23]
++	_ = x[R_USETYPE-24]
++	_ = x[R_METHODOFF-25]
++	_ = x[R_POWER_TOC-26]
++	_ = x[R_GOTPCREL-27]
++	_ = x[R_JMPMIPS-28]
++	_ = x[R_DWARFSECREF-29]
++	_ = x[R_DWARFFILEREF-30]
++	_ = x[R_ARM64_TLS_LE-31]
++	_ = x[R_ARM64_TLS_IE-32]
++	_ = x[R_ARM64_GOTPCREL-33]
++	_ = x[R_ARM64_GOT-34]
++	_ = x[R_ARM64_PCREL-35]
++	_ = x[R_ARM64_LDST8-36]
++	_ = x[R_ARM64_LDST32-37]
++	_ = x[R_ARM64_LDST64-38]
++	_ = x[R_ARM64_LDST128-39]
++	_ = x[R_POWER_TLS_LE-40]
++	_ = x[R_POWER_TLS_IE-41]
++	_ = x[R_POWER_TLS-42]
++	_ = x[R_ADDRPOWER_DS-43]
++	_ = x[R_ADDRPOWER_GOT-44]
++	_ = x[R_ADDRPOWER_PCREL-45]
++	_ = x[R_ADDRPOWER_TOCREL-46]
++	_ = x[R_ADDRPOWER_TOCREL_DS-47]
++	_ = x[R_RISCV_PCREL_ITYPE-48]
++	_ = x[R_RISCV_PCREL_STYPE-49]
++	_ = x[R_RISCV_TLS_IE_ITYPE-50]
++	_ = x[R_RISCV_TLS_IE_STYPE-51]
++	_ = x[R_PCRELDBL-52]
++	_ = x[R_ADDRMIPSU-53]
++	_ = x[R_ADDRMIPSTLS-54]
++	_ = x[R_ADDRCUOFF-55]
++	_ = x[R_WASMIMPORT-56]
++	_ = x[R_XCOFFREF-57]
++}
++
++const _RelocType_name = "R_ADDRR_ADDRPOWERR_ADDRARM64R_ADDRMIPSR_ADDROFFR_WEAKADDROFFR_SIZER_CALLR_CALLARMR_CALLARM64R_CALLINDR_CALLPOWERR_CALLMIPSR_CALLRISCVR_CONSTR_PCRELR_TLS_LER_TLS_IER_GOTOFFR_PLT0R_PLT1R_PLT2R_USEFIELDR_USETYPER_METHODOFFR_POWER_TOCR_GOTPCRELR_JMPMIPSR_DWARFSECREFR_DWARFFILEREFR_ARM64_TLS_LER_ARM64_TLS_IER_ARM64_GOTPCRELR_ARM64_GOTR_ARM64_PCRELR_ARM64_LDST8R_ARM64_LDST32R_ARM64_LDST64R_ARM64_LDST128R_POWER_TLS_LER_POWER_TLS_IER_POWER_TLSR_ADDRPOWER_DSR_ADDRPOWER_GOTR_ADDRPOWER_PCRELR_ADDRPOWER_TOCRELR_ADDRPOWER_TOCREL_DSR_RISCV_PCREL_ITYPER_RISCV_PCREL_STYPER_RISCV_TLS_IE_ITYPER_RISCV_TLS_IE_STYPER_PCRELDBLR_ADDRMIPSUR_ADDRMIPSTLSR_ADDRCUOFFR_WASMIMPORTR_XCOFFREF"
+ 
+-var _RelocType_index = [...]uint16{0, 6, 17, 28, 38, 47, 60, 66, 72, 81, 92, 101, 112, 122, 133, 140, 147, 155, 163, 171, 177, 183, 189, 199, 208, 219, 230, 240, 249, 262, 276, 290, 304, 320, 331, 344, 357, 371, 385, 400, 414, 428, 439, 453, 468, 485, 503, 524, 543, 562, 572, 583, 596, 607, 619, 629}
++var _RelocType_index = [...]uint16{0, 6, 17, 28, 38, 47, 60, 66, 72, 81, 92, 101, 112, 122, 133, 140, 147, 155, 163, 171, 177, 183, 189, 199, 208, 219, 230, 240, 249, 262, 276, 290, 304, 320, 331, 344, 357, 371, 385, 400, 414, 428, 439, 453, 468, 485, 503, 524, 543, 562, 582, 602, 612, 623, 636, 647, 659, 669}
+ 
+ func (i RelocType) String() string {
+ 	i -= 1
+diff --git a/src/cmd/link/internal/riscv64/asm.go b/src/cmd/link/internal/riscv64/asm.go
+index a3f19b2a72..7ed45d29e1 100644
+--- a/src/cmd/link/internal/riscv64/asm.go
++++ b/src/cmd/link/internal/riscv64/asm.go
+@@ -67,7 +67,7 @@ func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 		// TODO(jsing): Consider generating elf.R_RISCV_CALL instead of a
+ 		// HI20/LO12_I pair.
+ 
+-	case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE:
++	case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE, objabi.R_RISCV_TLS_IE_ITYPE, objabi.R_RISCV_TLS_IE_STYPE:
+ 		// Find the text symbol for the AUIPC instruction targeted
+ 		// by this relocation.
+ 		hi20Sym := findHI20Symbol(ctxt, s.Value+int64(r.Off))
+@@ -86,6 +86,10 @@ func elfreloc1(ctxt *ld.Link, s *sym.Symbol, r *sym.Reloc, sectoff int64) bool {
+ 			hiRel, loRel = elf.R_RISCV_PCREL_HI20, elf.R_RISCV_PCREL_LO12_I
+ 		case objabi.R_RISCV_PCREL_STYPE:
+ 			hiRel, loRel = elf.R_RISCV_PCREL_HI20, elf.R_RISCV_PCREL_LO12_S
++		case objabi.R_RISCV_TLS_IE_ITYPE:
++			hiRel, loRel = elf.R_RISCV_TLS_GOT_HI20, elf.R_RISCV_PCREL_LO12_I
++		case objabi.R_RISCV_TLS_IE_STYPE:
++			hiRel, loRel = elf.R_RISCV_TLS_GOT_HI20, elf.R_RISCV_PCREL_LO12_S
+ 		}
+ 		ctxt.Out.Write64(uint64(sectoff))
+ 		ctxt.Out.Write64(uint64(hiRel) | uint64(elfsym)<<32)
+@@ -119,7 +123,7 @@ func archreloc(target *ld.Target, syms *ld.ArchSyms, r *sym.Reloc, s *sym.Symbol
+ 			r.Xadd = r.Add
+ 			return val, true
+ 
+-		case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE:
++		case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE, objabi.R_RISCV_TLS_IE_ITYPE, objabi.R_RISCV_TLS_IE_STYPE:
+ 			r.Done = false
+ 
+ 			// Set up addend for eventual relocation via outer symbol.
+@@ -146,6 +150,10 @@ func archreloc(target *ld.Target, syms *ld.ArchSyms, r *sym.Reloc, s *sym.Symbol
+ 		// Nothing to do.
+ 		return val, true
+ 
++	case objabi.R_RISCV_TLS_IE_ITYPE, objabi.R_RISCV_TLS_IE_STYPE:
++		// Nothing to do.
++		return val, true
++
+ 	case objabi.R_RISCV_PCREL_ITYPE, objabi.R_RISCV_PCREL_STYPE:
+ 		pc := s.Value + int64(r.Off)
+ 		off := ld.Symaddr(r.Sym) + r.Add - pc
+@@ -202,7 +210,8 @@ func genHi20TextSymbols(ctxt *ld.Link) {
+ 	var syms []*sym.Symbol
+ 	for _, s := range ctxt.Textp {
+ 		for _, r := range s.R {
+-			if r.Type != objabi.R_RISCV_PCREL_ITYPE && r.Type != objabi.R_RISCV_PCREL_STYPE {
++			if r.Type != objabi.R_RISCV_PCREL_ITYPE && r.Type != objabi.R_RISCV_PCREL_STYPE &&
++				r.Type != objabi.R_RISCV_TLS_IE_ITYPE && r.Type != objabi.R_RISCV_TLS_IE_STYPE {
+ 				continue
+ 			}
+ 			sym := &sym.Symbol{
+diff --git a/src/cmd/link/link_test.go b/src/cmd/link/link_test.go
+index 8f417ec8db..3db2c15914 100644
+--- a/src/cmd/link/link_test.go
++++ b/src/cmd/link/link_test.go
+@@ -541,6 +541,10 @@ func TestOldLink(t *testing.T) {
+ 
+ 	testenv.MustHaveGoBuild(t)
+ 
++	if runtime.GOOS == "linux" && runtime.GOARCH == "riscv64" {
++		t.Skipf("skipping because oldlink does not handle TLS on linux/riscv64")
++	}
++
+ 	// Check that the old linker exists (we don't ship it in binary releases,
+ 	// see issue 39509).
+ 	cmd := exec.Command(testenv.GoToolPath(t), "tool", "-n", "oldlink")
+-- 
+2.28.0
+

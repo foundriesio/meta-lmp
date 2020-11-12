@@ -1,16 +1,14 @@
-LINUX_VERSION ?= "5.4.64"
+include kmeta-linux-lmp-5.4.y.inc
 
-FIO_LMP_GIT_URL ?= "github.com"
-FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
-
-SRCREV_machine = "a2254c857250f72d6e76cdf24ecf97e00b84886f"
-SRCREV_meta = "9f43f9d2e5915a0d80a151af38273d6ec8db9680"
+LINUX_VERSION ?= "5.4.74"
 KBRANCH = "linux-v5.4.y"
+SRCREV_machine = "c84871b4aa1dfe75e94c3fbe88db4af5e0d71451"
+SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-SRC_URI = "git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}linux.git;protocol=https;branch=${KBRANCH};name=machine; \
-    git://${FIO_LMP_GIT_URL}/${FIO_LMP_GIT_NAMESPACE}lmp-kernel-cache.git;protocol=https;type=kmeta;name=meta;branch=${KBRANCH};destsuffix=${KMETA} \
+SRC_URI = "git://github.com/foundriesio/linux.git;protocol=https;branch=${KBRANCH};name=machine; \
+    ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \
 "
 
 KMETA = "kernel-meta"

@@ -1,0 +1,5 @@
+bootcmd_dtb=fatload mmc ${emmc_dev}:1 ${fdt_addr} ${fdt_file}
+bootcmd_args=setenv bootargs console=${console} root=/dev/mmcblk${emmc_dev}p2 rootwait rw
+bootcmd_load_k=fatload mmc ${emmc_dev}:1 ${loadaddr} ${image}
+bootcmd_run=booti ${loadaddr} - ${fdt_addr}
+bootcmd=run bootcmd_dtb; run bootcmd_args; run bootcmd_load_k; run bootcmd_run

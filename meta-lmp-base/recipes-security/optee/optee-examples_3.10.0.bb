@@ -14,8 +14,6 @@ SRC_URI = "git://github.com/linaro-swg/optee_examples.git \
 PV = "3.10.0"
 SRCREV = "c6eb00a9d83bf068a37e4806c97f582bb16e2973"
 
-DEFAULT_PREFERENCE = "-1"
-
 S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

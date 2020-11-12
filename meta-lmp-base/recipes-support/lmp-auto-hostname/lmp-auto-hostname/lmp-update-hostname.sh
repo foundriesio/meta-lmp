@@ -31,11 +31,11 @@ else
 fi
 if [ -f ${MODEL_SOURCE} ]; then
 	# Lowercase and no spaces (can generate bad values with special chars)
-	MODEL=$(sed -e 's/.*/\L&/' -e 's/ /-/g' -e 's/+/plus/g' ${MODEL_SOURCE} | tr -d '\0')
+	MODEL=$(sed -e 's/ /-/g' -e 's/+/plus/g' ${MODEL_SOURCE} | tr '[:upper:]' '[:lower:]' | tr -d '\0')
 fi
 if [ -f ${SERIAL_SOURCE} ]; then
 	# Lowercase and no leading zeros
-	SERIAL=$(sed -e 's/.*/\L&/' -e 's/^0*//' ${SERIAL_SOURCE} | tr -d '\0')
+	SERIAL=$(sed -e 's/^0*//' ${SERIAL_SOURCE} | tr '[:upper:]' '[:lower:]' | tr -d '\0')
 fi
 # Network device mac address
 if [ -f /sys/class/net/${NETDEVICE}/address ]; then
@@ -57,3 +57,6 @@ fi
 
 echo "Updating system hostname to ${NEW_HOSTNAME}"
 /usr/bin/hostnamectl --static --transient set-hostname ${NEW_HOSTNAME}
+
+echo "Updating /etc/hosts with hostname ${NEW_HOSTNAME}"
+sed -i -e "s/^127.0.1.1 .*/127.0.1.1 ${NEW_HOSTNAME}/g" /etc/hosts

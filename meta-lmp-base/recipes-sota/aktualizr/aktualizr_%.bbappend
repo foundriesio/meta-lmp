@@ -1,12 +1,11 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BRANCH_lmp = "master"
-SRCREV_lmp = "56f83579d26aa8fd89e7d85c64015fc005550bc7"
+SRCREV_lmp = "62142afe18f774fbbc0fd9d70d518c1b09afa5a1"
 
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
     file://aktualizr-lite.service.in \
-    file://aktualizr-lite.path \
     file://aktualizr-secondary.service \
     file://aktualizr-serialcan.service \
     file://10-resource-control.conf \
@@ -19,13 +18,10 @@ SRC_URI_append_libc-musl = " \
 
 PACKAGECONFIG += "${@bb.utils.filter('SOTA_EXTRA_CLIENT_FEATURES', 'fiovb', d)}"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
-PACKAGECONFIG[dockerapp] = "-DBUILD_DOCKERAPP=ON,-DBUILD_DOCKERAPP=OFF,,docker-app"
-PACKAGECONFIG_append_class-target = " dockerapp"
-PACKAGECONFIG_remove_class-target_riscv64 = "dockerapp"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
-SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service aktualizr-lite.path"
+SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service"
 
 COMPOSE_HTTP_TIMEOUT ?= "60"
 
@@ -49,7 +45,6 @@ do_install_prepend_lmp() {
 do_install_append() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
-    install -m 0644 ${WORKDIR}/aktualizr-lite.path ${D}${systemd_system_unitdir}/
 }
 
 # Force same RDEPENDS, packageconfig rdepends common to both

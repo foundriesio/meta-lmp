@@ -10,7 +10,7 @@ SRC_URI = "git://${GO_IMPORT} \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \
 "
-SRCREV = "5553f08b88195adae41d10e49e4ca92b711387c1"
+SRCREV = "326c4cdc749f01f48a9014816875ed96efc916cb"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
@@ -39,8 +39,9 @@ do_install_append() {
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/factory-config-vpn ${D}${datadir}/fioconfig/handlers
 }
 
-# We need aktualizr because we uses its device gateway connectivity and keys
-RDEPENDS_${PN} = "${SOTA_CLIENT}"
+# We need aktualizr because we uses its device gateway connectivity and keys,
+# and networkmanager-nmcli for wireguard support
+RDEPENDS_${PN} = "${SOTA_CLIENT} networkmanager-nmcli"
 
 FILES_${PN} += " \
 	${systemd_unitdir}/system/fioconfig.service \

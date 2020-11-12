@@ -1,0 +1,47 @@
+From 7a8b3b5ed613e19ae3d0c264cd5974b140b760f7 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Fri, 3 Apr 2020 16:00:50 -0300
+Subject: [PATCH 2/2] Support both gzip and xip rootfs types
+
+Support loading gzip and xip as rootfs types when booting the system.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ module/host_boot/include/mod_host_boot.h | 1 +
+ module/host_boot/src/mod_host_boot.c     | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/module/host_boot/include/mod_host_boot.h b/module/host_boot/include/mod_host_boot.h
+index d7fe0c4..e70a7ac 100644
+--- a/module/host_boot/include/mod_host_boot.h
++++ b/module/host_boot/include/mod_host_boot.h
+@@ -20,6 +20,7 @@ struct se_host_config {
+ 
+ };
+ 
++#define GZIP_MAGIC  0x8B1F
+ #define CRAMFS_XIP_MAGIC  0x3D45
+ 
+ /*!
+diff --git a/module/host_boot/src/mod_host_boot.c b/module/host_boot/src/mod_host_boot.c
+index 26becff..fc070ec 100755
+--- a/module/host_boot/src/mod_host_boot.c
++++ b/module/host_boot/src/mod_host_boot.c
+@@ -148,7 +148,13 @@ static int load_host_images(void)
+ 
+     /* check for valid rootfs image from FLASH */
+     rootfs_magic = *((uint16_t*)ROOTFS_FLASH_BASE);
+-    if (rootfs_magic != CRAMFS_XIP_MAGIC) {
++    if (rootfs_magic == GZIP_MAGIC) {
++        host_ctx.log_api->log(MOD_LOG_GROUP_INFO,
++                            "[RAM] Loading Root FS at 0x%x\n",
++                            (void *) HOST_ROOTFS_BASE);
++        memcpy((void*) HOST_ROOTFS_BASE, (void*) ROOTFS_FLASH_BASE,
++               HOST_ROOTFS_SIZE);
++    } else if (rootfs_magic != CRAMFS_XIP_MAGIC) {
+         host_ctx.log_api->log(MOD_LOG_GROUP_INFO,
+                             "[FLASH] No valid rootfs found. Abort Host BOOT!\n");
+         return FWK_E_DATA;
+-- 
+2.28.0
+

@@ -1,0 +1,13 @@
+[Unit]
+Description=Script to auto-register device into Factory
+Wants=network-online.target time-sync.target systemd-time-wait-sync.service
+After=network-online.target time-sync.target systemd-time-wait-sync.service
+ConditionPathExists=!/var/sota/sql.db
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/lmp-device-auto-register
+
+[Install]
+WantedBy=multi-user.target

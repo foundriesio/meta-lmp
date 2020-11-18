@@ -8,7 +8,7 @@ inherit deploy nopackages
 INITRAMFS_IMAGE = "fsl-image-mfgtool-initramfs"
 DEPENDS = "${INITRAMFS_IMAGE}"
 
-UUU_RELEASE = "1.3.154"
+UUU_RELEASE = "1.4.43"
 MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
 SRC_URI = " \

@@ -2,7 +2,7 @@ SUMMARY = "Base console image which includes OTA Lite, Docker, and OpenSSH suppo
 
 require lmp-image-common.inc
 
-require lmp-feature-factory.inc
+require ${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'lmp-feature-factory.inc', '', d)}
 require lmp-feature-wireguard.inc
 require lmp-feature-docker.inc
 require lmp-feature-bluetooth.inc

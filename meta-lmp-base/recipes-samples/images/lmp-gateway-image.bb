@@ -2,7 +2,7 @@ SUMMARY = "Basic console-based gateway image"
 
 require lmp-image-common.inc
 
-require lmp-feature-factory.inc
+require ${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'lmp-feature-factory.inc', '', d)}
 require lmp-feature-ota-utils.inc
 require lmp-feature-wireguard.inc
 require lmp-feature-docker.inc

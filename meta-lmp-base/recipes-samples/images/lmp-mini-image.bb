@@ -2,7 +2,7 @@ SUMMARY = "Minimal image that includes OTA+ support"
 
 require lmp-image-common.inc
 
-require lmp-feature-factory.inc
+require ${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'lmp-feature-factory.inc', '', d)}
 require lmp-feature-ota-utils.inc
 require lmp-feature-wireguard.inc
 require lmp-feature-sysctl-hang-crash-helper.inc

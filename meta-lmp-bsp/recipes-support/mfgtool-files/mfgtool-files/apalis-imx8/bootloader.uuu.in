@@ -10,6 +10,6 @@ CFG: FB: -vid 0x0525 -pid 0x4031
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev 0
 FB: ucmd mmc dev 0
-FB: flash bootloader ../imx-boot
+FB: flash bootloader ../imx-boot-apalis-imx8
 FB: ucmd mmc partconf 0 0 1 0
 FB: done

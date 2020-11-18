@@ -17,7 +17,7 @@ SDPV: jump
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev ${emmc_dev}
 FB: ucmd mmc dev ${emmc_dev}
-FB: flash bootloader ../imx-boot
+FB: flash bootloader ../imx-boot-imx8mmevk
 FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
 FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0
 FB: done

@@ -8,7 +8,7 @@ SDP: jump -f SPL-mfgtool -ivt
 FB: ucmd if mmc dev 0; then setenv flash_dev 0; setenv emmc_partconf "mmc partconf ${flash_dev} ${emmc_ack} 1 0"; else setenv flash_dev 1; setenv emmc_partconf "true"; fi;
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd mmc dev ${flash_dev}
-FB: flash bootloader ../SPL
-FB: flash bootloader2 ../u-boot.itb
+FB: flash bootloader ../SPL-imx6ullevk
+FB: flash bootloader2 ../u-boot-imx6ullevk.itb
 FB: ucmd if env exist emmc_partconf; then run emmc_partconf; fi;
 FB: done

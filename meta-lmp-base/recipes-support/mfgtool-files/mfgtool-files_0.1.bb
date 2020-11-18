@@ -42,7 +42,11 @@ do_deploy() {
     install -m 0644 ${WORKDIR}/bootloader.uuu ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/full_image.uuu ${DEPLOYDIR}/${PN}
 
-    tar -czf ${DEPLOYDIR}/${PN}.tar.gz -C ${DEPLOYDIR} ${PN}
+    tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \
+	    --transform "s,^mfgtool-files,mfgtool-files-${MACHINE}," \
+	    -C ${DEPLOYDIR} ${PN}
+
+    ln -s ${PN}-${MACHINE}.tar.gz ${DEPLOYDIR}/${PN}.tar.gz
 }
 
 # Make sure the signed fitImage and u-boot are deployed

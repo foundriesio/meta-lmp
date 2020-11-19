@@ -181,7 +181,7 @@ OSTREE_KERNEL_ARGS_COMMON_imx7ulpea-ucom ?= "earlycon=lpuart32,0x402D0000,115200
 SOTA_CLIENT_FEATURES_append_imx7ulpea-ucom = " ubootenv"
 UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
 PREFERRED_VERSION_optee-os-fio_imx7ulpea-ucom = "3.6.0+git"
-PREFERRED_VERSION_optee-client_imx7ulpea-ucom = "3.6.0"
+PREFERRED_VERSION_optee-client_imx7ulpea-ucom = "3.6.0+git"
 PREFERRED_VERSION_optee-examples_imx7ulpea-ucom = "3.6.0"
 PREFERRED_VERSION_optee-test_imx7ulpea-ucom = "3.6.0"
 OPTEE_BINARY_imx7ulpea-ucom = "tee-pager.bin"

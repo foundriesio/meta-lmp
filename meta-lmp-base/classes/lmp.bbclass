@@ -32,8 +32,7 @@ IMAGE_CMD_ota_append () {
 
 			${APP_IMAGES_PRELOADER} \
 				${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/import/installed_versions \
-				${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/lib/docker \
-				${TARGET_ARCH}
+				${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/lib/docker
 		else
 			bbwarn "Compose app preloading is turned on but an app preloader is not specified"
 		fi

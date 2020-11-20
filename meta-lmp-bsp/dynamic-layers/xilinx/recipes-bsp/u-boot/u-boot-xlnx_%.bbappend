@@ -9,6 +9,7 @@ SRC_URI_append = " \
 "
 
 SRC_URI_append_uz = " \
+    file://fw_env.config \
     file://lmp.cfg \
     file://pm_cfg_obj.c \
 "

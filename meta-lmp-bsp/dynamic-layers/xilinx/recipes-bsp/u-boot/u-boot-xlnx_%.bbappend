@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 # add pmu-firmware dependancy
-DEPENDS_append_uz = "virtual/pmu-firmware"
+do_compile[depends] += "virtual/pmu-firmware:do_deploy"
 
 SRC_URI_append = " \
     file://0001-arm-zynqmp-add-support-to-handoff-bl32-parameters.patch \

@@ -32,7 +32,7 @@ KERNEL_IMAGETYPE_mx6ull = "fitImage"
 KERNEL_CLASSES_mx6ull = " kernel-lmp-fitimage "
 
 # iMX8MQ
-UBOOT_SIGN_ENABLE_mx8mm = "1"
+UBOOT_SIGN_ENABLE_mx8mq = "1"
 PREFERRED_PROVIDER_virtual/kernel_mx8mq = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_mx8mq ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
 LINUX_VERSION_mx8mq ?= "5.4.y"

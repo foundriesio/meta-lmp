@@ -12,16 +12,16 @@ UUU_RELEASE = "1.4.43"
 MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
 SRC_URI = " \
-    https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu;name=Linux \
-    https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu.exe;name=Windows \
+    https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu;downloadfilename=uuu-${UUU_RELEASE};name=Linux \
+    https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu.exe;downloadfilename=uuu-${UUU_RELEASE}.exe;name=Windows \
     file://bootloader.uuu.in \
     file://full_image.uuu.in \
 "
 
-SRC_URI[Linux.md5sum] = "e402adfbe3b142388fcd196ae5e0a74d"
-SRC_URI[Linux.sha256sum] = "c09616f43e096683a5c4ad12a6e5684ac15a0f745758cd98a0a73d63faf071c7"
-SRC_URI[Windows.md5sum] = "c2d7ca8e5367ce5d5ef8a54bf76449f3"
-SRC_URI[Windows.sha256sum] = "958e894920a69d3fac60e09c602d4292b32f5eda5a50c1a1fa9a235bea18da51"
+SRC_URI[Linux.md5sum] = "9d1fc1d931aea19d1215c410361116ab"
+SRC_URI[Linux.sha256sum] = "fbbe69d94843c4784c637f05162302b84fd9ffe667281d9cc0c5e577aa7bc123"
+SRC_URI[Windows.md5sum] = "3b6f807439b29bcc140ee2199243cb6d"
+SRC_URI[Windows.sha256sum] = "b6f7756b7a4559dd4d3316a458e435e0043a69e4ca0d73c9369f74e79303ede4"
 
 S = "${WORKDIR}"
 
@@ -37,8 +37,8 @@ do_compile() {
 # Board specific SPL/U-Boot should be deployed via bbappend
 do_deploy() {
     install -d ${DEPLOYDIR}/${PN}
-    install -m 0755 ${WORKDIR}/uuu ${DEPLOYDIR}/${PN}
-    install -m 0644 ${WORKDIR}/uuu.exe ${DEPLOYDIR}/${PN}
+    install -m 0755 ${WORKDIR}/uuu-${UUU_RELEASE} ${DEPLOYDIR}/${PN}/uuu
+    install -m 0644 ${WORKDIR}/uuu-${UUU_RELEASE}.exe ${DEPLOYDIR}/${PN}/uuu.exe
     install -m 0644 ${WORKDIR}/bootloader.uuu ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/full_image.uuu ${DEPLOYDIR}/${PN}
 

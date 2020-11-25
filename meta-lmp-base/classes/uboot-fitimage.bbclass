@@ -129,7 +129,7 @@ EOF
 	configurations {
 		default = "config-1";
 		config-1 {
-			description = "OP-TEE with U-Boot in normal world";
+			description = "OP-TEE with U-Boot in normal world for ${MACHINE}";
 			firmware = "${config_firmware}";
 			loadables = ${config_loadables};
 			fdt = "ubootfdt";

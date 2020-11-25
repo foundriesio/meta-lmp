@@ -90,6 +90,9 @@ BBMASK += " \
 # meta-arm-bsp: mask recipes from meta-kernel as we have our own recipes
 BBMASK += " \
     /meta-arm-bsp/recipes-kernel/linux/linux-stable_%.bbappend \
+    /meta-arm-bsp/recipes-kernel/linux/linux-stable_5.3%.bbappend \
+    /meta-arm-bsp/recipes-kernel/linux/linux-stable_5.6%.bbappend \
+    /meta-arm-bsp/recipes-kernel/linux/linux-stable_5.7%.bbappend \
 "
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \

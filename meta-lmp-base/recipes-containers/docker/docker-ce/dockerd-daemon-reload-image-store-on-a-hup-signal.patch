@@ -1,0 +1,155 @@
+From edea8bb9636d5114db2813dbafbdde7cb4bae989 Mon Sep 17 00:00:00 2001
+From: Mike Sul <mike.sul@foundries.io>
+Date: Wed, 18 Nov 2020 21:23:44 +0200
+Subject: [PATCH] daemon: Reload Image Store on a HUP signal
+
+Using an ostree repo for container images storing and transferring
+implies updating of images bypassing of the docker daemon API.
+If container images are updated by bypassing the docker daemon API (e.g.
+`docker pull` or `docker load` or `docker build`) then a running docker
+daemon doesn't see such the updated images. The daemon has to be
+restarted in order to make it reload image updates since by default
+it reads images' and their layers' data from the image and layer store
+on a file system to RAM only at the daemon startup.
+The given change extends the existing configuration reloading
+functionality, that is triggered on receiving SIGHUP, with reloading
+of images' and layers' data from a filesystem.
+
+Signed-off-by: Mike Sul <mike.sul@foundries.io>
+---
+ src/import/components/engine/daemon/daemon.go         |  8 +++
+ src/import/components/engine/daemon/images/service.go | 57 ++++++++++++++++++++++
+ src/import/components/engine/daemon/reload.go         |  4 ++
+ src/import/components/engine/layer/layer_store.go     |  6 ++-
+ 4 files changed, 74 insertions(+), 1 deletion(-)
+
+diff --git a/src/import/components/engine/daemon/daemon.go b/src/import/components/engine/daemon/daemon.go
+index acc619a6af..2d4a97a53c 100644
+--- a/src/import/components/engine/daemon/daemon.go
++++ b/src/import/components/engine/daemon/daemon.go
+@@ -1504,3 +1504,11 @@ func (daemon *Daemon) BuilderBackend() builder.Backend {
+ 		*images.ImageService
+ 	}{daemon, daemon.imageService}
+ }
++
++func (daemon *Daemon) ReloadImageStore() error {
++	imageRoot := filepath.Join(daemon.root, "image", daemon.graphDrivers[runtime.GOOS])
++
++	logrus.Warn(">>>>>>>>>> RELOADING Image Store <<<<<<<<<<<<<")
++	return daemon.ImageService().ReloadImageStore(daemon.root, imageRoot, daemon.graphDrivers,
++		daemon.PluginStore, daemon.idMapping, daemon.configStore.GraphOptions, daemon.configStore.Experimental)
++}
+diff --git a/src/import/components/engine/daemon/images/service.go b/src/import/components/engine/daemon/images/service.go
+index e8df5cb649..5aeb30bfa3 100644
+--- a/src/import/components/engine/daemon/images/service.go
++++ b/src/import/components/engine/daemon/images/service.go
+@@ -3,6 +3,7 @@ package images // import "github.com/docker/docker/daemon/images"
+ import (
+ 	"context"
+ 	"os"
++	"path/filepath"
+ 	"runtime"
+ 
+ 	"github.com/docker/docker/container"
+@@ -18,6 +19,10 @@ import (
+ 	"github.com/opencontainers/go-digest"
+ 	"github.com/pkg/errors"
+ 	"github.com/sirupsen/logrus"
++	refstore "github.com/docker/docker/reference"
++	"github.com/docker/docker/plugin"
++	"github.com/docker/docker/pkg/idtools"
++
+ )
+ 
+ type containerStore interface {
+@@ -247,3 +252,55 @@ func (i *ImageService) UpdateConfig(maxDownloads, maxUploads *int) {
+ 		i.uploadManager.SetConcurrency(*maxUploads)
+ 	}
+ }
++
++func (i *ImageService) ReloadImageStore(dataRoot string, imageRoot string, graphDrivers map[string]string,
++										pluginStore *plugin.Store, idMapping *idtools.IdentityMapping,
++										graphOptions []string, experimental bool) error {
++	var err error
++	layerStores := make(map[string]layer.Store)
++
++	for operatingSystem, gd := range graphDrivers {
++		layerStores[operatingSystem], err = layer.NewStoreFromOptions(layer.StoreOptions{
++			Root:                      dataRoot,
++			MetadataStorePathTemplate: filepath.Join(dataRoot, "image", "%s", "layerdb"),
++			GraphDriver:               gd,
++			GraphDriverOptions:        graphOptions,
++			IDMapping:                 idMapping,
++			PluginGetter:              pluginStore,
++			ExperimentalEnabled:       experimental,
++			OS:                        operatingSystem,
++		})
++
++		if err != nil {
++			return err
++		}
++
++		// As layerstore initialization may set the driver
++		graphDrivers[operatingSystem] = layerStores[operatingSystem].DriverName()
++	}
++	i.layerStores = layerStores
++
++	ifs, err := image.NewFSStoreBackend(filepath.Join(imageRoot, "imagedb"))
++	if err != nil {
++		return err
++	}
++
++	lgrMap := make(map[string]image.LayerGetReleaser)
++	for los, ls := range i.layerStores {
++		lgrMap[los] = ls
++	}
++
++	imageStore, err := image.NewImageStore(ifs, lgrMap)
++	if err != nil {
++		return err
++	}
++	i.imageStore = imageStore
++
++	refStoreLocation := filepath.Join(imageRoot, `repositories.json`)
++	rs, err := refstore.NewReferenceStore(refStoreLocation)
++	if err != nil {
++		return err
++	}
++	i.referenceStore = rs
++	return nil
++}
+diff --git a/src/import/components/engine/daemon/reload.go b/src/import/components/engine/daemon/reload.go
+index a31dd0cb87..6d60ef724c 100644
+--- a/src/import/components/engine/daemon/reload.go
++++ b/src/import/components/engine/daemon/reload.go
+@@ -65,6 +65,10 @@ func (daemon *Daemon) Reload(conf *config.Config) (err error) {
+ 	if err := daemon.reloadLiveRestore(conf, attributes); err != nil {
+ 		return err
+ 	}
++	if err := daemon.ReloadImageStore(); err != nil {
++		return err
++	}
++
+ 	return daemon.reloadNetworkDiagnosticPort(conf, attributes)
+ }
+ 
+diff --git a/src/import/components/engine/layer/layer_store.go b/src/import/components/engine/layer/layer_store.go
+index 81730e9d92..01ada5bfd4 100644
+--- a/src/import/components/engine/layer/layer_store.go
++++ b/src/import/components/engine/layer/layer_store.go
+@@ -597,7 +597,11 @@ func (ls *layerStore) ReleaseRWLayer(l RWLayer) ([]Metadata, error) {
+ 	}
+ 
+ 	if err := m.deleteReference(l); err != nil {
+-		return nil, err
++		if err == ErrLayerNotRetained {
++			logrus.Warnf(">>> Mounted layer is not referenced anymore: %s", name)
++		} else {
++			return nil, err
++		}
+ 	}
+ 
+ 	if m.hasReferences() {
+-- 
+2.17.1
+

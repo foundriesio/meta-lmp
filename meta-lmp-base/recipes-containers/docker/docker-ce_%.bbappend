@@ -10,4 +10,5 @@ SRC_URI_append = " \
     file://dockerd-daemon-configurable-max-download-attempts.patch \
     file://fix-warning-systemd-docker-socket.patch \
     file://increase_containerd_timeouts.patch \
+    file://dockerd-daemon-reload-image-store-on-a-hup-signal.patch \
 "

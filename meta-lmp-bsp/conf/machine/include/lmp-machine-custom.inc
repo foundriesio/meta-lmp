@@ -324,6 +324,9 @@ UBOOT_RD_LOADADDRESS_stm32mp1-eval = "0xC4400000"
 UBOOT_RD_ENTRYPOINT_stm32mp1-eval = "0xC4400000"
 LMP_FLASHLAYOUT_stm32mp1-eval = "FlashLayout_emmc_stm32mp157a-ev1-trusted.tsv"
 
+# Xilinx
+USE_XSCT_TARBALL_zynqmp = "1"
+
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"

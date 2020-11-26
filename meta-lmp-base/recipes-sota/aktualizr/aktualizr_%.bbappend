@@ -29,6 +29,7 @@ COMPOSE_HTTP_TIMEOUT ?= "60"
 do_configure_prepend_lmp() {
     cd ${S}
     git log -1 --format=%h | tr -d '\n' > VERSION
+    cp VERSION aktualizr/VERSION
 }
 
 do_compile_append_lmp() {

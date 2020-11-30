@@ -1,0 +1,3 @@
+# Use rev from v1.4.3
+SRCREV = "269548fa27e0089a8b8278fc4fc781d7f65a939b"
+CONTAINERD_VERSION = "v1.4.3"

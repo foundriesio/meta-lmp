@@ -40,7 +40,6 @@ PACKAGECONFIG_append_pn-systemd = " journal-upload resolved seccomp serial-getty
 PACKAGECONFIG_remove_pn-systemd = "networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"
 PACKAGECONFIG_append_pn-networkmanager = " nss"
-PACKAGECONFIG_remove_pn-networkmanager = " dnsmasq"
 
 # Default image formats
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"

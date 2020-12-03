@@ -116,6 +116,15 @@ QB_DRIVE_TYPE_qemuarm = "/dev/vdb"
 ## will add more security later
 QB_OPT_APPEND_qemuarm = "-no-acpi -bios ${DEPLOY_DIR_IMAGE}/u-boot.bin -d unimp"
 
+# ARM N1SDP
+OSTREE_BOOTLOADER_n1sdp ?= "grub"
+OSTREE_KERNEL_ARGS_n1sdp ?= "earlycon=pl011,0x2A400000 console=ttyAMA0,115200 acpi=force ${OSTREE_KERNEL_ARGS_COMMON}"
+MACHINE_FEATURES_append_n1sdp = " acpi pci usbhost"
+WKS_FILE_n1sdp_sota ?= "efidisk-sota.wks"
+WKS_FILE_DEPENDS_append_n1sdp = " ${INITRD_IMAGE_LIVE}"
+## wic-based installer requires image to be available via IMAGE_BOOT_FILES
+IMAGE_BOOT_FILES_n1sdp = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
+
 # Intel
 OSTREE_BOOTLOADER_intel-corei7-64 ?= "grub"
 OSTREE_KERNEL_ARGS_intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

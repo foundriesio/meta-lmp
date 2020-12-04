@@ -1,6 +1,7 @@
 [Unit]
 Description=Foundries.io configuration management script to extract secrets at boot
-After=var.mount
+After=var.mount NetworkManager.service
+Before=fioconfig.service
 ConditionPathExists=/var/sota/config.encrypted
 
 [Service]

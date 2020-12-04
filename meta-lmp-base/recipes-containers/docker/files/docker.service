@@ -35,5 +35,4 @@ KillMode=process
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
-RequiredBy=boot-complete.target
+WantedBy=multi-user.target boot-complete.target

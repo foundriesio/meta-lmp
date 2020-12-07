@@ -122,6 +122,7 @@ OSTREE_KERNEL_ARGS_n1sdp ?= "earlycon=pl011,0x2A400000 console=ttyAMA0,115200 ac
 MACHINE_FEATURES_append_n1sdp = " acpi pci usbhost"
 WKS_FILE_n1sdp_sota ?= "efidisk-sota.wks"
 WKS_FILE_DEPENDS_append_n1sdp = " ${INITRD_IMAGE_LIVE}"
+APPEND_n1sdp_append = " console=ttyAMA0,115200 acpi=force"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
 IMAGE_BOOT_FILES_n1sdp = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 

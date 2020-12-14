@@ -14,16 +14,10 @@ SRCREV = "481fe3ee2b595d7e1c3e10b98169ab5bb7befa46"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
-inherit go goarch systemd
+inherit go-mod systemd
 
-do_compile() {
-	cd ${S}/src/${GO_IMPORT}
-	BUILD_COMMIT=`git rev-parse --short HEAD`
-	FIOCONFIG_LDFLAGS="-X ${GO_IMPORT}/internal.Commit=${BUILD_COMMIT}"
-	mkdir -p ${B}/${GO_BUILD_BINDIR}
-	${GO} build -tags vpn -ldflags="${FIOCONFIG_LDFLAGS}" -o ${B}/${GO_BUILD_BINDIR}/fioconfig main.go
-	chmod u+w -R ${B}
-}
+GOBUILDFLAGS += '-tags vpn -ldflags="-X ${GO_IMPORT}/internal.Commit=${SRCREV}"'
+GO_LINKSHARED = ""
 
 SYSTEMD_PACKAGES += "${PN}"
 SYSTEMD_SERVICE_${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"

@@ -1,8 +1,8 @@
 include kmeta-linux-lmp-5.4.y.inc
 
-LINUX_VERSION ?= "5.4.76"
+LINUX_VERSION ?= "5.4.82"
 KBRANCH = "linux-v5.4.y"
-SRCREV_machine = "77684f10f6f2c6b5184a38d794ae9c88f8f3be0a"
+SRCREV_machine = "0af84824cac437939b88f42c10804203ec75e173"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"

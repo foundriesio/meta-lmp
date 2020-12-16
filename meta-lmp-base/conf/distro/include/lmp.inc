@@ -33,6 +33,7 @@ VIRTUAL-RUNTIME_init_manager = "systemd"
 
 # Extended packageconfig options for LMP
 PACKAGECONFIG_append_pn-docker-ce = " seccomp"
+PACKAGECONFIG_append_pn-docker-moby = " seccomp"
 PACKAGECONFIG_append_pn-runc-docker = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG_remove_pn-runc-docker = "static"

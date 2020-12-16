@@ -34,20 +34,20 @@ DESCRIPTION = "Linux container runtime \
 #   - The common components of this recipe and docker-ce do need to be moved
 #     to a docker.inc recipe
 
-# commits based on 20.10.0-dev
-SRCREV_moby = "8a4671fb1f89d222bd65cb07ea6a0de1ec7a1a2b"
-SRCREV_libnetwork = "d0951081b35fa4216fc4f0064bf065beeb55a74b"
-SRCREV_cli = "46e24f515e7ebb447d09fb4bb390366d07b8d66c"
+# commits based on v20.10.1
+SRCREV_moby = "f0014860c1b3345e1fcc7ed81c491298de2633fb"
+SRCREV_libnetwork = "5c6a95bfb20c61571a00f913c6b91959ede84e8d"
+SRCREV_cli = "831ebeae967552edf2e19980b628fc7b8e92b59f"
 SRC_URI = "\
 	git://github.com/moby/moby.git;branch=master;name=moby \
-	git://github.com/docker/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork \
+	git://github.com/moby/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork \
 	git://github.com/docker/cli;branch=master;name=cli;destsuffix=git/cli \
 	file://0001-libnetwork-use-GO-instead-of-go.patch \
-        file://0001-cli-use-go-cross-compiler.patch \
-        file://0001-dynbinary-use-go-cross-compiler.patch \
-        file://dockerd-daemon-use-default-system-config-when-none-i.patch \
-        file://cli-config-support-default-system-config.patch \
-        file://increase_containerd_timeouts.patch \
+	file://0001-cli-use-go-cross-compiler.patch \
+	file://0001-dynbinary-use-go-cross-compiler.patch \
+	file://dockerd-daemon-use-default-system-config-when-none-i.patch \
+	file://cli-config-support-default-system-config.patch \
+	file://increase_containerd_timeouts.patch \
 	"
 
 require recipes-containers/docker/docker.inc
@@ -61,8 +61,8 @@ GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
-DOCKER_VERSION = "20.10.0-dev"
-PV = "${DOCKER_VERSION}+git${SRCREV_moby}"
+DOCKER_VERSION = "20.10.1"
+PV = "${DOCKER_VERSION}"
 
 PACKAGES =+ "${PN}-contrib"
 

@@ -6,5 +6,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     linux-firmware-ath10k \
     linux-firmware-qca \
     linux-firmware-wl18xx \
-    linux-firmware-bcm43430 \
+    ${@bb.utils.contains('MACHINE_EXTRA_RRECOMMENDS', 'linux-firmware-rpidistro-bcm43430', 'linux-firmware-rpidistro-bcm43430', 'linux-firmware-bcm43430', d)} \
+    ${@bb.utils.contains('MACHINE_EXTRA_RRECOMMENDS', 'linux-firmware-rpidistro-bcm43455', 'linux-firmware-rpidistro-bcm43455', 'linux-firmware-bcm43455', d)} \
 "

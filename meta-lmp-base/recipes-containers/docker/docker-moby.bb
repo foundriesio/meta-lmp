@@ -34,10 +34,10 @@ DESCRIPTION = "Linux container runtime \
 #   - The common components of this recipe and docker-ce do need to be moved
 #     to a docker.inc recipe
 
-# commits based on v20.10.1
-SRCREV_moby = "f0014860c1b3345e1fcc7ed81c491298de2633fb"
-SRCREV_libnetwork = "5c6a95bfb20c61571a00f913c6b91959ede84e8d"
-SRCREV_cli = "831ebeae967552edf2e19980b628fc7b8e92b59f"
+# commits based on v20.10.2
+SRCREV_moby = "8891c58a433a823ce0a65b57efff45f32ee9cb45"
+SRCREV_libnetwork = "fa125a3512ee0f6187721c88582bf8c4378bd4d7"
+SRCREV_cli = "2291f610ae73533e6e0749d4ef1e360149b1e46b"
 SRC_URI = "\
 	git://github.com/moby/moby.git;branch=master;name=moby \
 	git://github.com/moby/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork \
@@ -61,7 +61,7 @@ GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
-DOCKER_VERSION = "20.10.1"
+DOCKER_VERSION = "20.10.2"
 PV = "${DOCKER_VERSION}"
 
 PACKAGES =+ "${PN}-contrib"

@@ -9,7 +9,7 @@ DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyel
 SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
 
 PV = "3.10.0+git"
-SRCREV = "ebc153ed76e4c59189465dbf75fe89d0f6eac743"
+SRCREV = "fb3e7853ab71c019fd983dccb87a620d03dc0697"
 SRCBRANCH = "3.10+fio"
 
 S = "${WORKDIR}/git"

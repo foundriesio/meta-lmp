@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BRANCH_lmp = "master"
-SRCREV_lmp = "c43d5b0d75ac0929e2f197b04e6b89c9e4e9b3a7"
+SRCREV_lmp = "3c2aa5b493d83e4f82b2a4ea11ea21ab223d2e57"
 
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \

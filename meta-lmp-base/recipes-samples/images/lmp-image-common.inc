@@ -32,7 +32,7 @@ CORE_IMAGE_BASE_INSTALL += " \
 
 fakeroot do_populate_rootfs_common_src () {
     # Allow sudo group users to use sudo
-    install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/lmp
+    install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/50-lmp
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_common_src; "

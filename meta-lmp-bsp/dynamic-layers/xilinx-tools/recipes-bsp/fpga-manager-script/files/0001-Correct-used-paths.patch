@@ -1,0 +1,162 @@
+From 84394ab52b5eedc5c1220b7988a44db617b98691 Mon Sep 17 00:00:00 2001
+From: Tim Anderson <tim.anderson@foundries.io>
+Date: Fri, 22 Jan 2021 22:56:30 +0000
+Subject: [PATCH] Correct used paths
+
+This updates the utility to use paths that are correct for this
+distribution.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Tim Anderson <tim.anderson@foundries.io>
+---
+ .../fpga-manager-script/files/fpgautil.c      | 57 ++++++++++---------
+ 1 file changed, 30 insertions(+), 27 deletions(-)
+
+diff --git a/fpgautil.c b/fpgautil.c
+index ebd340d..163183f 100644
+--- a/fpgautil.c
++++ b/fpgautil.c
+@@ -50,6 +50,11 @@
+ #define READBACK     3
+ #define ENCRYPTION_USERKEY_EN		(0x20U)
+ 
++#define LIBPATH     "/var/lib/"
++#define FWBASE      "bitstream/"
++#define FWPATH      "firmware/bitstream"
++#define CONFIGPATH "/sys/kernel/config"
++
+ int fpga_getplatform()
+ {
+         char fpstr[100];
+@@ -295,19 +300,19 @@ int main(int argc, char **argv)
+ 		}
+ 	}
+ 
+-	system("mkdir -p /lib/firmware");
++	system("mkdir -p "LIBPATH FWPATH);
+ 
+ 	if (rm_overlay) {
+-		folder = "/configfs/device-tree/overlays/full";
++		folder = CONFIGPATH "/device-tree/overlays/full";
+ 		if (((stat(folder, &sb) == 0) && S_ISDIR(sb.st_mode))) {
+-			system("rmdir /configfs/device-tree/overlays/full");
++			system("rmdir " CONFIGPATH "/device-tree/overlays/full");
+ 		}
+ 		return 0;
+ 	}
+ 
+ 	if (flow == OVERLAY) {
+ 
+-		folder = "/configfs/device-tree/overlays/full";
++		folder = CONFIGPATH "/device-tree/overlays/full";
+ 		if (((stat(folder, &sb) == 0) && S_ISDIR(sb.st_mode))) {
+ 			printf("Error: Overlay already exists in the live tree\n\r");
+ 			return 1;
+@@ -319,15 +324,15 @@ int main(int argc, char **argv)
+ 			return 1;
+ 		}
+ 		
+-		folder = "/configfs/device-tree/";
++		folder = CONFIGPATH "/device-tree/";
+ 		if (((stat(folder, &sb) == 0) && S_ISDIR(sb.st_mode))) {
+ 		} else {
+-			system("mkdir /configfs");
+-			system("mount -t configfs configfs /configfs");
++			system("mkdir " CONFIGPATH);
++			system("mount -t configfs configfs " CONFIGPATH);
+ 		}
+-		snprintf(command, sizeof(command), "cp %s /lib/firmware", binfile);
++		snprintf(command, sizeof(command), "cp %s " LIBPATH FWPATH, binfile);
+ 		system(command);
+-		snprintf(command, sizeof(command), "cp %s /lib/firmware", overlay);
++		snprintf(command, sizeof(command), "cp %s "LIBPATH FWPATH, overlay);
+ 		system(command);
+ 		tmp = strdup(overlay);
+ 		while((token = strsep(&tmp, "/"))) {
+@@ -341,24 +346,24 @@ int main(int argc, char **argv)
+ 		}
+ 
+ 		if (!(flags & 1)) {
+-			system("cd /configfs/device-tree/overlays/ && mkdir full");
+-			snprintf(command, sizeof(command), "echo -n %s > /configfs/device-tree/overlays/full/path", tmp1);
++			system("cd " CONFIGPATH "/device-tree/overlays/ && mkdir full");
++			snprintf(command, sizeof(command), "echo -n %s > " CONFIGPATH "/device-tree/overlays/full/path", tmp1);
+ 			gettimeofday(&t0, NULL);
+ 			system(command);
+ 			if (partial_overlay) {
+-				snprintf(command, sizeof(command), "cp %s /lib/firmware", partial_overlay);
++				snprintf(command, sizeof(command), "cp %s " LIBPATH FWPATH, partial_overlay);
+ 				system(command);
+ 				tmp2 = strdup(partial_overlay);
+ 				while((token = strsep(&tmp2, "/"))) {
+ 					tmp3 = token;
+ 				}
+-				system("cd /configfs/device-tree/overlays/ && mkdir full1");
+-				snprintf(command, sizeof(command), "echo -n %s > /configfs/device-tree/overlays/full1/path", tmp3);
++				system("cd " CONFIGPATH "/device-tree/overlays/ && mkdir full1");
++				snprintf(command, sizeof(command), "echo -n %s > " CONFIGPATH "/device-tree/overlays/full1/path", tmp3);
+ 				system(command);
+ 			}
+ 		} else {
+-			system("cd /configfs/device-tree/overlays/ && mkdir full1");
+-			snprintf(command, sizeof(command), "echo -n %s > /configfs/device-tree/overlays/full1/path", tmp1);
++			system("cd " CONFIGPATH "/device-tree/overlays/ && mkdir full1");
++			snprintf(command, sizeof(command), "echo -n %s > " CONFIGPATH "/device-tree/overlays/full1/path", tmp1);
+ 			gettimeofday(&t0, NULL);
+ 			system(command);
+ 		}
+@@ -366,20 +371,20 @@ int main(int argc, char **argv)
+ 		time = gettime(t0, t1);
+ 
+ 		/* Delete Bin file and DTBO file*/
+-		snprintf(command, sizeof(command), "rm /lib/firmware/%s", tmp1);
++		snprintf(command, sizeof(command), "rm " LIBPATH FWPATH "/%s", tmp1);
+ 		system(command);
+ 		tmp = strdup(binfile);
+ 		while((token = strsep(&tmp, "/"))) {
+ 			tmp1 = token;
+ 		}
+-		snprintf(command, sizeof(command), "rm /lib/firmware/%s", tmp1);
++		snprintf(command, sizeof(command), "rm " LIBPATH FWPATH "/%s", tmp1);
+ 		system(command);
+ 	} else if (flow == FPGA_SYSFS) {
+ 		if (argc < 3) {
+ 			printf("%s: For more information run %s -h\n", strerror(22), basename(argv[0]));
+ 			return 1;
+ 		}
+-		snprintf(command, sizeof(command), "cp %s /lib/firmware", binfile);
++		snprintf(command, sizeof(command), "cp %s " LIBPATH FWPATH, binfile);
+ 		system(command);
+ 		snprintf(command, sizeof(command), "echo %x > /sys/class/fpga_manager/fpga0/flags", flags);
+ 		system(command);
+@@ -391,7 +396,7 @@ int main(int argc, char **argv)
+ 		while((token = strsep(&tmp, "/"))) {
+ 			tmp1 = token;
+ 		}
+-		snprintf(command, sizeof(command), "echo %s > /sys/class/fpga_manager/fpga0/firmware", tmp1);
++		snprintf(command, sizeof(command), "echo %s%s > /sys/class/fpga_manager/fpga0/firmware", FWBASE, tmp1);
+ 		gettimeofday(&t0, NULL);
+ 		system(command);
+ 		gettimeofday(&t1, NULL);
+@@ -402,7 +407,7 @@ int main(int argc, char **argv)
+ 		} else {
+ 			printf("BIN FILE loading through FPGA manager failed\n\r");
+ 		}
+-		snprintf(command, sizeof(command), "rm /lib/firmware/%s", tmp1);
++		snprintf(command, sizeof(command), "rm " LIBPATH FWPATH "/%s", tmp1);
+ 		system(command);
+ 	} else if (flow == READBACK) {
+ 		if (readback_type > 1) {
+@@ -410,9 +415,9 @@ int main(int argc, char **argv)
+ 			printf("For more information run %s -h\n", basename(argv[0]));
+ 			return -EINVAL;	
+ 		}
+-		snprintf(command, sizeof(command), "echo %x > /sys/module/zynqmp_fpga/parameters/readback_type", readback_type);
++		snprintf(command, sizeof(command), "echo %x > /sys/class/fpga/parameters/readback_type", readback_type);
+ 		system(command);
+-		snprintf(command, sizeof(command), "cat /sys/kernel/debug/fpga/fpga0/image >> %s.bin", filename);
++		snprintf(command, sizeof(command), "cat /sys/fpga/fpga0/image >> %s.bin", filename);
+ 		system(command);
+ 		printf("Readback contents are stored in the file %s.bin\n\r", filename);
+ 	}

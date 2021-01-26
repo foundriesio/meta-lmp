@@ -297,8 +297,8 @@ PREFERRED_PROVIDER_u-boot-fw-utils_mx8mm = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils_mx8mm = "libubootenv"
 SOTA_CLIENT_FEATURES_append_mx8mm = " ubootenv"
 UBOOT_DTB_LOADADDRESS_mx8mm = "0x43000000"
-IMAGE_BOOT_FILES_mx8mm = "imx-boot ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
-IMAGE_BOOT_FILES_sota_mx8mm = "imx-boot boot.itb"
+IMAGE_BOOT_FILES_mx8mm = "SPL u-boot.itb ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_sota_mx8mm = "SPL u-boot.itb boot.itb"
 WKS_FILE_DEPENDS_append_mx8mm = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_mx8mm = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota_mx8mm = "u-boot-ostree-scr-fit"
@@ -312,6 +312,7 @@ MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
 ## iMX8MM EVK
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
+IMXBOOT_TARGETS_mx8mm = "flash_spl_signed"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"

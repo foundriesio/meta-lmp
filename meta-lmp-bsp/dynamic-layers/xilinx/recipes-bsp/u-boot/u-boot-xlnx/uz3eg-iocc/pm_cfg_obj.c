@@ -195,7 +195,7 @@
 
 	NODE_DP,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
-	0U, /* IPI Mask */
+	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_1_MASK, /* IPI Mask */
 
 	NODE_GDMA,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
@@ -337,7 +337,7 @@
 
 	/* Prealloc for psu_cortexr5_0 */
 	PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK,
-	14,
+	13,
 	NODE_TCM_0_A,
 	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
@@ -349,11 +349,6 @@
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
 
 	NODE_DDR,
-	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
-	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
-	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
-
-	NODE_L2,
 	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */

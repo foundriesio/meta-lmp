@@ -1,0 +1,22 @@
+# short-description: Create SD card image with a boot partition
+# long-description:
+# Create an image that can be written onto a SD card using dd for use
+# with i.MX 8 SoC family
+# SPL binary is just renamed imx-boot (contains: u-boot-spl-nodtb.bin; dt-spl.dtb; ddr firmware binaries)
+# u-boot partition contains rawcopy of U-Boot FIT image (contains: bl31.bin; tee.bin; u-boot.bin; u-boot.dtb)
+#
+# The disk layout used is:
+#  - ---------- -------------- --------------------
+# | | SPL  | u-boot  |     boot     |    rootfs   |
+#  - ---------- -------------- --------------------
+# ^ ^      ^         ^              ^
+# | |      |         |              |
+# 0 |      384KiB    8MiB           16MiB + rootfs + IMAGE_EXTRA_SPACE (default 10MiB)
+#   ${IMX_BOOT_SEEK} 32 or 33kiB, see reference manual
+#
+part SPL --source rawcopy --sourceparams="file=SPL" --ondisk mmcblk --no-table --align ${IMX_BOOT_SEEK}
+part u-boot --source rawcopy --sourceparams="file=u-boot.itb" --ondisk mmcblk --no-table --align 384
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 8192 --size 16
+part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096
+
+bootloader --ptable msdos

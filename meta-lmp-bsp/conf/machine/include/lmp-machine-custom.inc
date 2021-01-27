@@ -308,7 +308,7 @@ PREFERRED_PROVIDER_virtual/dtb_imx8mmevk ?= "lmp-device-tree"
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel_mx8mm ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
-WKS_FILE_mx8mm_sota = "sdimage-imx8-sota.wks.in"
+WKS_FILE_mx8mm_sota = "sdimage-imx8-spl-sota.wks.in"
 ## iMX8MM EVK
 SOTA_CLIENT_FEATURES_append_imx8mmevk = " ubootenv"
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"

@@ -1,0 +1,51 @@
+From 77753956eccd615537716eb84fd4bb5c38a07b88 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Thu, 28 Jan 2021 21:08:04 -0300
+Subject: [PATCH] cli/config: drop support for .dockercfg
+
+Drop support for the old configuration file (< docker 1.7.0), which is
+not required by LMP and avoids an extra path/config check that ends up
+generating a warning when $HOME is not defined.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ cli/cli/config/config.go | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/cli/cli/config/config.go b/cli/cli/config/config.go
+index 79c324bfb1..beb2a1bcfa 100644
+--- a/cli/cli/config/config.go
++++ b/cli/cli/config/config.go
+@@ -19,7 +19,6 @@ const (
+ 	// ConfigFileName is the name of config file
+ 	ConfigFileName = "config.json"
+ 	configFileDir  = ".docker"
+-	oldConfigfile  = ".dockercfg"
+ 	contextsDir    = "contexts"
+ 	defaultSystemConfig = "/usr/lib/docker/config.json"
+ )
+@@ -117,19 +116,6 @@ func Load(configDir string) (*configfile.ConfigFile, error) {
+ 		// than it doesn't exist then stop
+ 		return configFile, errors.Wrap(err, filename)
+ 	}
+-
+-	// Can't find latest config file so check for the old one
+-	home, err := os.UserHomeDir()
+-	if err != nil {
+-		return configFile, errors.Wrap(err, oldConfigfile)
+-	}
+-	filename = filepath.Join(home, oldConfigfile)
+-	if file, err := os.Open(filename); err == nil {
+-		defer file.Close()
+-		if err := configFile.LegacyLoadFromReader(file); err != nil {
+-			return configFile, errors.Wrap(err, filename)
+-		}
+-	}
+ 	return configFile, nil
+ }
+ 
+-- 
+2.25.1
+

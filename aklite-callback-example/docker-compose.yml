@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  aklite-callback-example:
+    image: hub.foundries.io/lmp/aklite-callback-example:latest
+    restart: unless-stopped
+    volumes:
+      - ${SOTA_CONFD-/etc/sota/conf.d}:/etc/sota/conf.d
+      - ${SOTA_DIR-/var/sota}:/var/sota
+      - ${UPDATE_DIR-/var/lib/example-callbacks}:/var/lib/example-callbacks

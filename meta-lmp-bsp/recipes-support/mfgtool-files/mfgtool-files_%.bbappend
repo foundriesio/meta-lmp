@@ -10,7 +10,12 @@ def get_do_deploy_depends(d):
 
 do_deploy[depends] += "${@get_do_deploy_depends(d)}"
 
-do_deploy_prepend_mx8() {
+do_deploy_prepend_mx8mq() {
+    install -d ${DEPLOYDIR}/${PN}
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool
+}
+
+do_deploy_prepend_mx8qm() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool
 }

@@ -34,14 +34,14 @@ DESCRIPTION = "Linux container runtime \
 #   - The common components of this recipe and docker-ce do need to be moved
 #     to a docker.inc recipe
 
-# commits based on v20.10.2
-SRCREV_moby = "8891c58a433a823ce0a65b57efff45f32ee9cb45"
+# commits based on v20.10.3
+SRCREV_moby = "46229ca1d815cfd4b50eb377ac75ad8300e13a85"
 SRCREV_libnetwork = "fa125a3512ee0f6187721c88582bf8c4378bd4d7"
-SRCREV_cli = "2291f610ae73533e6e0749d4ef1e360149b1e46b"
+SRCREV_cli = "48d30b5b32e99c932b4ea3edca74353feddd83ff"
 SRC_URI = "\
-	git://github.com/moby/moby.git;branch=master;name=moby \
+	git://github.com/moby/moby.git;branch=20.10;name=moby \
 	git://github.com/moby/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork \
-	git://github.com/docker/cli;branch=master;name=cli;destsuffix=git/cli \
+	git://github.com/docker/cli;branch=20.10;name=cli;destsuffix=git/cli \
 	file://0001-libnetwork-use-GO-instead-of-go.patch \
 	file://0001-cli-use-go-cross-compiler.patch \
 	file://0001-dynbinary-use-go-cross-compiler.patch \
@@ -63,7 +63,7 @@ GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
-DOCKER_VERSION = "20.10.2"
+DOCKER_VERSION = "20.10.3"
 PV = "${DOCKER_VERSION}"
 
 PACKAGES =+ "${PN}-contrib"

@@ -1,0 +1,103 @@
+From 29ae21de41f2fbab6dbecbbf408826b28de82df1 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Tue, 1 Sep 2020 21:09:56 -0700
+Subject: [PATCH] make: Pass ldflags during link
+
+OpenEmbeeded needs to pass essential linker flags to set correct flags
+for gnu_hash among others which sets the linking straight
+using LDFLAGS varible here means, we can affect the linker flags
+from build environment
+
+Upstream-Status: Pending
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ acipher/host/Makefile        | 2 +-
+ aes/host/Makefile            | 2 +-
+ hello_world/host/Makefile    | 2 +-
+ hotp/host/Makefile           | 2 +-
+ random/host/Makefile         | 2 +-
+ secure_storage/host/Makefile | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/acipher/host/Makefile b/acipher/host/Makefile
+index 8f4bc8a..c2cabef 100644
+--- a/acipher/host/Makefile
++++ b/acipher/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_acipher
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) -o $@ $< $(LDFLAGS) $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/aes/host/Makefile b/aes/host/Makefile
+index dfeb4e8..f61c71b 100644
+--- a/aes/host/Makefile
++++ b/aes/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_aes
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) -o $@ $< $(LDFLAGS) $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/hello_world/host/Makefile b/hello_world/host/Makefile
+index c4c8239..69cf42c 100644
+--- a/hello_world/host/Makefile
++++ b/hello_world/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_hello_world
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) -o $@ $< $(LDFLAGS) $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/hotp/host/Makefile b/hotp/host/Makefile
+index cb7fd19..e7f013f 100644
+--- a/hotp/host/Makefile
++++ b/hotp/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_hotp
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) -o $@ $< $(LDFLAGS) $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/random/host/Makefile b/random/host/Makefile
+index fd407d9..9377f7a 100644
+--- a/random/host/Makefile
++++ b/random/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_random
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) -o $@ $< $(LDFLAGS) $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/secure_storage/host/Makefile b/secure_storage/host/Makefile
+index 29bfb87..b3265ae 100644
+--- a/secure_storage/host/Makefile
++++ b/secure_storage/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_secure_storage
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) -o $@ $< $(LDFLAGS) $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+-- 
+2.28.0
+

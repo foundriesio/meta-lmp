@@ -48,8 +48,11 @@ UBOOT_SIGN_ENABLE_mx8mm = "1"
 PREFERRED_PROVIDER_virtual/bootloader_mx8mm = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot_mx8mm = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_mx8mm = "u-boot-ostree-scr"
+UBOOT_CLASSES_mx8mm = "uboot-fitimage"
+IMAGE_BOOT_FILES_mx8mm  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE_mx8mm = "fitImage"
 KERNEL_CLASSES_mx8mm = " kernel-lmp-fitimage "
+IMXBOOT_TARGETS_mx8mm = "flash_evk_spl"
 
 # Apalis-iMX6
 UBOOT_SIGN_ENABLE_apalis-imx6 = "1"

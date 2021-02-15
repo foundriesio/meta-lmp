@@ -17,6 +17,7 @@ SRC_URI = "git://github.com/Freescale/linux-fslc.git;protocol=https;branch=${KBR
     file://0001-FIO-fromtree-tee-add-support-for-session-s-client-UU.patch \
     file://0002-FIO-fromtree-tee-optee-Add-support-for-session-login.patch \
     file://0001-driver-tee-Handle-NULL-pointer-indication-from-clien.patch \
+    file://0001-FIO-fromtree-ath10k-add-QCA9377-sdio-hw_param-item.patch \
 "
 
 KMETA = "kernel-meta"

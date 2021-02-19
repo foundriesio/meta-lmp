@@ -353,6 +353,19 @@ LMP_FLASHLAYOUT_stm32mp1-eval = "FlashLayout_emmc_stm32mp157a-ev1-trusted.tsv"
 # Xilinx
 USE_XSCT_TARBALL_zynqmp = "1"
 
+# TI AM64x
+PREFERRED_PROVIDER_virtual/kernel_am64xx-sk ?= "linux-lmp-ti-staging"
+PREFERRED_PROVIDER_u-boot-fw-utils_am64xx-sk = "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils_am64xx-sk = "libubootenv"
+# only need boot script for sota builds
+WKS_FILE_DEPENDS_append_sota_am64xx-sk = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script_sota_am64xx-sk = "u-boot-ostree-scr"
+KERNEL_IMAGETYPE_sota_am64xx-sk = "fitImage"
+KERNEL_CLASSES_sota_am64xx-sk = " kernel-lmp-fitimage "
+IMAGE_BOOT_FILES_am64xx-sk = "tiboot3.bin tispl.bin u-boot.img boot.scr uEnv.txt"
+UBOOT_ENTRYPOINT_am64xx-sk = "0x82000000"
+UBOOT_LOADADDRESS_am64xx-sk = "0x82000000"
+
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"

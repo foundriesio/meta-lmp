@@ -9,7 +9,7 @@ SDPS: boot -f imx-boot-mfgtool
 # if (SPL support SDPV)
 # {
 SDPV: delay 1000
-SDPV: write -f imx-boot-mfgtool -skipspl
+SDPV: write -f u-boot-mfgtool.itb
 SDPV: jump
 # }
 
@@ -17,6 +17,7 @@ FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev ${emmc_dev}
 FB: ucmd mmc dev ${mmcdev}
 FB: flash bootloader ../imx-boot-@@MACHINE@@
+FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
 FB: ucmd mmc partconf ${mmcdev} ${emmc_ack} 1 0
 FB: done

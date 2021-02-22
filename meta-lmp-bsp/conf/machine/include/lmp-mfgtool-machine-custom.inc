@@ -40,6 +40,7 @@ KERNEL_BRANCH_mx8mq ?= "imx_5.4.24_2.1.0"
 PREFERRED_PROVIDER_virtual/bootloader_mx8mq = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot_mx8mq = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_mx8mq = "u-boot-ostree-scr-fit"
+IMAGE_BOOT_FILES_mx8mq  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE_mx8mq = "fitImage"
 KERNEL_CLASSES_mx8mq = " kernel-lmp-fitimage "
 

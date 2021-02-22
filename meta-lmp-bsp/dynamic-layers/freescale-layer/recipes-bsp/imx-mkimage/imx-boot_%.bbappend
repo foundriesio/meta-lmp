@@ -4,7 +4,7 @@ DEPENDS_remove = "optee-os"
 DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os', '', d)}"
 
 
-SRC_URI_append_mx8mm = " \
+SRC_URI_append_mx8m = " \
      file://0001-iMX8M-support-SPL-ddr-sign.patch \
      file://0002-iMX8M-add-SPL-only-build.patch \
 "
@@ -16,7 +16,7 @@ do_compile[depends] = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os:do_deploy', '', d)} \
 "
 
-do_compile_prepend_mx8mm() {
+do_compile_prepend_mx8m() {
     if [ "${IMXBOOT_TARGETS}" = "flash_evk_spl" ]; then
         # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
         # spl and its dtb separate (dt-spl.dtb will contain public hash of

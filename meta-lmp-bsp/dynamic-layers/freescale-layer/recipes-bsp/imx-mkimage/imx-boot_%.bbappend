@@ -17,12 +17,14 @@ do_compile[depends] = " \
 "
 
 do_compile_prepend_mx8mm() {
-    # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
-    # spl and its dtb separate (dt-spl.dtb will contain public hash of
-    # used to check the signature of u-boot fit-image)
-    cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-spl-nodtb.bin-${MACHINE}-${UBOOT_CONFIG} \
+    if [ "${IMXBOOT_TARGETS}" = "flash_evk_spl" ]; then
+        # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
+        # spl and its dtb separate (dt-spl.dtb will contain public hash of
+        # used to check the signature of u-boot fit-image)
+        cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-spl-nodtb.bin-${MACHINE}-${UBOOT_CONFIG} \
                                                              ${BOOT_STAGING}/u-boot-spl-nodtb.bin
-    cp ${DEPLOY_DIR_IMAGE}/u-boot-spl.bin-${MACHINE}.dtb ${BOOT_STAGING}/u-boot-spl.dtb
+        cp ${DEPLOY_DIR_IMAGE}/u-boot-spl.bin-${MACHINE}.dtb ${BOOT_STAGING}/u-boot-spl.dtb
+    fi
 }
 
 do_deploy_append() {

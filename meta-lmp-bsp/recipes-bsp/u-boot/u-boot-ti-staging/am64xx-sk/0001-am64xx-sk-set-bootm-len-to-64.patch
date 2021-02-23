@@ -1,0 +1,35 @@
+From f3b4bb7c19a74543a62560a7765a99ae48dc4336 Mon Sep 17 00:00:00 2001
+From: Tim Anderson <tim.anderson@foundries.io>
+Date: Fri, 19 Feb 2021 11:54:40 -0700
+Subject: [PATCH] am64xx-sk: set bootm len to 64
+
+Allow larger bootm images (required by LmP);
+
+Fixes:
+   Uncompressing Kernel Image
+Error: inflate() returned -5
+Image too large: increase CONFIG_SYS_BOOTM_LEN
+Must RESET board to recover
+
+Signed-off-by: Tim Anderson <tim.anderson@foundries.io>
+---
+ include/configs/am64x_evm.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/configs/am64x_evm.h b/include/configs/am64x_evm.h
+index 4550259f04..e2273dc965 100644
+--- a/include/configs/am64x_evm.h
++++ b/include/configs/am64x_evm.h
+@@ -16,6 +16,9 @@
+ /* DDR Configuration */
+ #define CONFIG_SYS_SDRAM_BASE1		0x880000000
+ 
++/* bootmem size */
++#define CONFIG_SYS_BOOTM_LEN		SZ_64M
++
+ #ifdef CONFIG_SYS_K3_SPL_ATF
+ #define CONFIG_SPL_FS_LOAD_PAYLOAD_NAME	"tispl.bin"
+ #endif
+-- 
+2.17.1
+

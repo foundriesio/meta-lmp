@@ -7,6 +7,7 @@ DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os'
 SRC_URI_append_mx8m = " \
      file://0001-iMX8M-support-SPL-ddr-sign.patch \
      file://0002-iMX8M-add-SPL-only-build.patch \
+     file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \
 "
 
 do_compile[depends] = " \
@@ -24,6 +25,9 @@ do_compile_prepend_mx8m() {
         cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-spl-nodtb.bin-${MACHINE}-${UBOOT_CONFIG} \
                                                              ${BOOT_STAGING}/u-boot-spl-nodtb.bin
         cp ${DEPLOY_DIR_IMAGE}/u-boot-spl.bin-${MACHINE}.dtb ${BOOT_STAGING}/u-boot-spl.dtb
+        if [ -e "${DEPLOY_DIR_IMAGE}/signed_hdmi_imx8m.bin" ]; then
+            cp ${DEPLOY_DIR_IMAGE}/signed_hdmi_imx8m.bin ${BOOT_STAGING}/signed_hdmi_imx8m.bin
+        fi
     fi
 }
 

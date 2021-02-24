@@ -1,0 +1,30 @@
+From 7c6f69634fb6ed282891eb258ab533ba0ab3f111 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Wed, 24 Feb 2021 18:14:35 +0200
+Subject: [PATCH] iMX8M: add support for packing HDMI fw in SPL-only boot image
+
+Add support for packing HDMI firmware into SPL-only boot image.
+
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+---
+ iMX8M/soc.mak | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
+index 9e6b21e..b7eb743 100644
+--- a/iMX8M/soc.mak
++++ b/iMX8M/soc.mak
+@@ -221,8 +221,13 @@ endif
+ ###############################
+ # Generate SPL-only bootable  #
+ ###############################
++ifeq ($(HDMI),yes)
++flash_evk_spl: $(MKIMG) signed_hdmi_imx8m.bin u-boot-spl-combine u-boot-spl-ddr.bin
++	./mkimage_imx8 -version $(VERSION) -signed_hdmi signed_hdmi_imx8m.bin -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -out $(OUTIMG)
++else
+ flash_evk_spl: $(MKIMG) u-boot-spl-combine u-boot-spl-ddr.bin
+ 	./mkimage_imx8 -version $(VERSION) -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -out $(OUTIMG)
++endif
+ 
+ flash_evk_no_hdmi: $(MKIMG) u-boot-spl-ddr.bin u-boot.itb
+ 	./mkimage_imx8 -version $(VERSION) -fit -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -second_loader u-boot.itb 0x40200000 0x60000 -out $(OUTIMG)

@@ -1,15 +1,11 @@
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
-OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE_imx8mqevk = "imx-mx8mqevk"
 OPTEEMACHINE_imx8mmevk = "imx-mx8mmevk"
-OPTEEMACHINE_uz = "zynqmp-zcu102"
 
-EXTRA_OEMAKE_append_qemuarm64 = " \
-    CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
-"
 EXTRA_OEMAKE_append_imx = " \
     CFG_CAAM_DBG=0x001 \
+    CFG_NXP_WORKAROUND_CAAM_LOCKED_BY_HAB=y \
 "
 EXTRA_OEMAKE_append_apalis-imx6 = " \
     CFG_NXP_CAAM=y CFG_IMX_CAAM=n \
@@ -29,9 +25,4 @@ EXTRA_OEMAKE_append_imx8mqevk = " \
 EXTRA_OEMAKE_append_imx8mmevk = " \
     CFG_NXP_CAAM=y CFG_RNG_PTA=y \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
-"
-EXTRA_OEMAKE_append_uz = " \
-    CFG_TZDRAM_START=0x7e000000 CFG_TZDRAM_SIZE=0x1c00000 \
-    CFG_SHMEM_START=0x7fc00000 CFG_SHMEM_SIZE=0x400000 \
-    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x22000000 \
 "

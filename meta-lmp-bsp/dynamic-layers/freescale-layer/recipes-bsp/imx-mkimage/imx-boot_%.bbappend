@@ -18,6 +18,12 @@ do_compile[depends] = " \
 "
 
 do_compile_prepend_mx8m() {
+    SECONDARY_OFFSET=$(printf "%d" $(grep -e CONFIG_SECONDARY_BOOT_SECTOR_OFFSET ${DEPLOY_DIR_IMAGE}/u-boot-fio-config | sed 's/=/ /g' | awk '{print $2}'))
+    if [ "${SECONDARY_OFFSET}" != "0" ]; then
+        # Use existing sit_gen.sh script to generate Secondary Image Table
+        bbnote "Building Secondary Image Table, firstSectorNumber = ${SECONDARY_OFFSET}"
+        ${S}/scripts/gen_sit.sh ${SECONDARY_OFFSET}
+    fi
     if [ "${IMXBOOT_TARGETS}" = "flash_evk_spl" ]; then
         # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
         # spl and its dtb separate (dt-spl.dtb will contain public hash of
@@ -34,4 +40,7 @@ do_compile_prepend_mx8m() {
 do_deploy_append() {
     # Also create imx-boot link with the machine name
     ln -sf ${BOOT_CONFIG_MACHINE}-${IMAGE_IMXBOOT_TARGET} ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}
+    if [ -f ${S}/sit.bin ]; then
+        install -m 0644 ${S}/sit.bin ${DEPLOYDIR}/sit-${MACHINE}.bin
+    fi
 }

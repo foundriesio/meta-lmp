@@ -24,7 +24,7 @@ require recipes-bsp/u-boot/u-boot.inc
 
 # Support additional u-boot classes such as u-boot-fitimage
 UBOOT_CLASSES ?= ""
-inherit ${UBOOT_CLASSES}
+inherit ${UBOOT_CLASSES} fio-u-boot-localversion
 
 PROVIDES += "u-boot"
 

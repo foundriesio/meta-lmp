@@ -3,6 +3,6 @@
 python __anonymous() {
     pn = d.getVar("PN")
     pprovider = d.getVar("PREFERRED_PROVIDER_virtual/kernel")
-    if pprovider != "linux-lmp" and pprovider != "linux-lmp-rt":
+    if pprovider != "linux-lmp" and pprovider != "linux-lmp-rt" and d.getVar("KERNEL_BUILTIN_WIREGUARD") != "1":
         d.appendVar("RPROVIDES_" + pn, "kernel-module-wireguard")
 }

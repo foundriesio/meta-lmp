@@ -2,6 +2,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BOOT_TOOLS_mx8 = "imx-boot-tools"
 
+SRC_URI_prepend_sota = " \
+    file://lmp-spl.cfg \
+"
+
 # From u-boot-imx/meta-freescale
 do_deploy_append_mx8m() {
     # Deploy u-boot-nodtb.bin and XX.dtb for mkimage to generate boot binary

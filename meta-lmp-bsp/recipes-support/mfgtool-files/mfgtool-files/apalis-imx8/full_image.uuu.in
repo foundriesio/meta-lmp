@@ -11,6 +11,7 @@ FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev 0
 FB: ucmd mmc dev 0
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
+FB: ucmd mmc dev ${mmcdev} 1; mmc erase 0 0x2000
 FB: flash bootloader ../imx-boot-@@MACHINE@@
 FB: ucmd mmc partconf 0 0 1 0
 FB: done

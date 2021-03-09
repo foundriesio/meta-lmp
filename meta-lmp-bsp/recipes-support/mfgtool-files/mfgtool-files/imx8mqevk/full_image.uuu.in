@@ -17,6 +17,7 @@ FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev ${emmc_dev}
 FB: ucmd mmc dev ${mmcdev}
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
+FB: ucmd mmc dev ${mmcdev} 1; mmc erase 0 0x2000
 FB: flash bootloader ../imx-boot-@@MACHINE@@
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;

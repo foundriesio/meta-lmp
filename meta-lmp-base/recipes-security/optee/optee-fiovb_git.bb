@@ -8,7 +8,7 @@ DEPENDS = "optee-client"
 require optee.inc
 
 SRC_URI = "git://github.com/foundriesio/optee-fiovb.git"
-SRCREV = "829d30d98be554ffad943f44ecf197224abc9ec2"
+SRCREV = "2fb0daf40597074dca13da664a8e2086751d80ac"
 
 S = "${WORKDIR}/git"
 

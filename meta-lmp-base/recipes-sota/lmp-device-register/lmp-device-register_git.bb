@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
 DEPENDS = "boost curl glib-2.0"
 
-SRCREV = "b0c700e9a9c55dec6da1514004df14214770fb09"
+SRCREV = "bc56368f6921dd4050064c3547c53b853bbc34e8"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
 
@@ -16,6 +16,7 @@ LMP_DEVICE_API ?= "https://api.foundries.io/ota/devices/"
 PACKAGECONFIG ?= "aklitetags composeapp"
 PACKAGECONFIG[aklitetags] = "-DAKLITE_TAGS=ON -DDEFAULT_TAG=${LMP_DEVICE_REGISTER_TAG},-DAKLITE_TAGS=OFF,"
 PACKAGECONFIG[composeapp] = "-DDOCKER_COMPOSE_APP=ON,-DDOCKER_COMPOSE_APP=OFF,"
+PACKAGECONFIG[production] = "-DPRODUCTION=ON,-DPRODUCTION=OFF,"
 
 S = "${WORKDIR}/git"
 

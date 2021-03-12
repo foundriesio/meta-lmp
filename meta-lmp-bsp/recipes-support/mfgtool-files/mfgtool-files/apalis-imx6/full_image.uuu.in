@@ -17,7 +17,7 @@ FB: ucmd if mmc dev 0; then setenv flash_dev 0; setenv emmc_partconf "mmc partco
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd mmc dev ${flash_dev}
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
-FB: ucmd mmc dev ${flash_dev} 1; mmc erase 0 0x2000
+FB: ucmd mmc dev ${flash_dev} 1; mmc erase 0 0x1FFE
 FB: flash bootloader ../SPL-@@MACHINE@@
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: ucmd if env exist emmc_partconf; then run emmc_partconf; fi;

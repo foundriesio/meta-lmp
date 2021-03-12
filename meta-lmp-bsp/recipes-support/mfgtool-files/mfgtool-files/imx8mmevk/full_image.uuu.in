@@ -8,9 +8,8 @@ SDPV: jump
 
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev ${emmc_dev}
-FB: ucmd mmc dev ${emmc_dev}
-FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: ucmd mmc dev ${emmc_dev} 1; mmc erase 0 0x2000
+FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: flash bootloader ../imx-boot-@@MACHINE@@
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: flash bootloader_s ../imx-boot-@@MACHINE@@

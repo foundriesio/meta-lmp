@@ -24,10 +24,10 @@ PREFERRED_PROVIDER_virtual/docker ?= "docker-ce"
 PREFERRED_PROVIDER_virtual/docker_riscv64 ?= "docker-moby"
 
 # Default distro features for LMP (can be extended by the user if needed)
+INIT_MANAGER = "systemd"
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"
-DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio sysvinit ldconfig"
-DISTRO_FEATURES_append = " pam systemd usrmerge virtualization ptest"
-VIRTUAL-RUNTIME_init_manager = "systemd"
+DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
+DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
 
 # Extended packageconfig options for LMP
 PACKAGECONFIG_append_pn-docker-ce = " seccomp"

@@ -43,6 +43,8 @@ OSTREE_KERNEL_ARGS_raspberrypi4 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0
 UBOOT_ENTRYPOINT_rpi = "0x00008000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
+## Rpi 4/CM4
+MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi4 = " linux-firmware-rpidistro-bcm43456"
 
 # RISC-V targets
 PREFERRED_PROVIDER_virtual/bootloader_qemuriscv64 = "u-boot-fio"

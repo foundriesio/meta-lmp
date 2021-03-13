@@ -15,6 +15,7 @@ KERNEL_CLASSES_beaglebone-yocto = " kernel-lmp-fitimage "
 IMAGE_INSTALL_remove_beaglebone-yocto = "kernel-image-zimage"
 
 # Raspberry Pi
+KERNEL_BUILTIN_WIREGUARD_rpi = "1"
 PREFERRED_PROVIDER_virtual/kernel_rpi ?= "linux-lmp-rpi"
 PREFERRED_PROVIDER_virtual/bootloader_rpi = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_rpi = "u-boot-fio"

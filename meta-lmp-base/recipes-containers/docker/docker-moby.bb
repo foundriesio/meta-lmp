@@ -34,10 +34,10 @@ DESCRIPTION = "Linux container runtime \
 #   - The common components of this recipe and docker-ce do need to be moved
 #     to a docker.inc recipe
 
-# commits based on v20.10.3
-SRCREV_moby = "46229ca1d815cfd4b50eb377ac75ad8300e13a85"
+# commits based on v20.10.5
+SRCREV_moby = "363e9a88a11be517d9e8c65c998ff56f774eb4dc"
 SRCREV_libnetwork = "fa125a3512ee0f6187721c88582bf8c4378bd4d7"
-SRCREV_cli = "48d30b5b32e99c932b4ea3edca74353feddd83ff"
+SRCREV_cli = "55c4c88966a912ddb365e2d73a4969e700fc458f"
 SRC_URI = "\
 	git://github.com/moby/moby.git;branch=20.10;name=moby \
 	git://github.com/moby/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork \
@@ -47,7 +47,6 @@ SRC_URI = "\
 	file://0001-dynbinary-use-go-cross-compiler.patch \
 	file://dockerd-daemon-use-default-system-config-when-none-i.patch \
 	file://cli-config-support-default-system-config.patch \
-	file://0001-cli-config-drop-support-for-.dockercfg.patch \
 	file://increase_containerd_timeouts.patch \
 	file://dockerd-daemon-reload-image-store-on-a-hup-signal.patch \
 	"
@@ -63,7 +62,7 @@ GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
-DOCKER_VERSION = "20.10.3"
+DOCKER_VERSION = "20.10.5"
 PV = "${DOCKER_VERSION}"
 
 PACKAGES =+ "${PN}-contrib"

@@ -1,0 +1,114 @@
+From 1c4302022edab70fa668f688e959bcf734220792 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Wed, 10 Mar 2021 11:50:03 +0200
+Subject: [PATCH 1/2] plat: imx8m: add SiP call for SRC PERSIST_SECONDARY_BOOT
+
+This introduces SiP call for retrieving/setting SRC GPR10
+PERSIST_SECONDARY_BOOT bit.
+
+SRC GPR10 PERSIST_SECONDARY_BOOT bit identifies which image is used for
+boot: primary or secondary. As the bit is retained after _warm_ reset,
+that permits to command BootROM to boot needed image after _warm_ reset.
+
+This functionality is handy for the setups with OTA support, where
+are A/B sets of boot firmware (one for regular boot, another for
+recovery).
+
+If the PERSIST_SECONDARY_BOOT is 0, the boot ROM uses address 0x8400 for the
+primary image. If the PERSIST_SECONDARY_BOOT is 1, the boot ROM reads that
+secondary image table from address 0x8200 on the boot media and uses the
+address specified in the table for the secondary image.
+
+Secondary Image Table contains the sector of secondary bootloader image,
+exluding the offset to that image (explained below in the note).
+To generate the Secondary Image Table, use e.g.:
+$ printf '\x0\x0\x0\x0\x0\x0\x0\x0\x33\x22\x11\x00\x00\x01\x0\x0\x00\x0\x0\x0'
+  > sit.bin
+$ hexdump  -vC sit.bin
+  00000000  00 00 00 00
+  00000004  00 00 00 00
+  00000008  33 22 11 00 <--- This is the "tag"
+  0000000c  00 10 00 00 <--- This is the "firstSectorNumber"
+  00000010  00 00 00 00
+$ objcopy -I binary -O binary --pad-to 512 sit.bin
+
+You can also use NXP script from [1] for SIT generation.
+Note that the firstSectorNumber is NOT the offset of the IVT, but an
+offset of the IVT decremented by Image Vector Table offset (Table 6-25.
+Image Vector Table Offset and Initial Load Region Size for iMX8MM/MQ),
+so for secondary SPL copy at offset 0x1042 sectors,
+firstSectorNumber must be 0x1000 (0x42 sectors * 512 = 0x8400 bytes offset).
+
+In order to test redundant boot board should be closed and
+SD/MMC manufacture mode disabled, as secondary boot is not supported in
+the SD/MMC manufacture mode, which can be disabled by blowing
+DISABLE_SDMMC_MFG (example for iMX8MM):
+> fuse prog -y 2 1 0x00800000
+
+For additional details check i.MX 8M Mini Apllication Processor
+Reference Manual, 6.1.5.4.5 Redundant boot support for expansion device
+chapter.
+
+[1] https://source.codeaurora.org/external/imx/imx-mkimage/tree/scripts/gen_sit.sh?h=imx_5.4.70_2.3.0
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Change-Id: Ib1a79053323496d35e08d6edf36fd4b435e913c7
+---
+ plat/imx/common/include/imx_sip_svc.h        |  2 ++
+ plat/imx/imx8m/imx8mm/gpc.c                  | 11 +++++++++++
+ plat/imx/imx8m/imx8mm/include/platform_def.h |  2 ++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/plat/imx/common/include/imx_sip_svc.h b/plat/imx/common/include/imx_sip_svc.h
+index 2852c2ad0..81459e367 100644
+--- a/plat/imx/common/include/imx_sip_svc.h
++++ b/plat/imx/common/include/imx_sip_svc.h
+@@ -30,6 +30,8 @@
+ #define IMX_SIP_SRC_M4_START		0x00
+ #define IMX_SIP_SRC_M4_STARTED		0x01
+ #define IMX_SIP_SRC_M4_STOP		0x02
++#define IMX_SIP_SRC_SET_SECONDARY_BOOT	0x10
++#define IMX_SIP_SRC_GET_SECONDARY_BOOT	0x11
+ 
+ #define IMX_SIP_GET_SOC_INFO		0xC2000006
+ 
+diff --git a/plat/imx/imx8m/imx8mm/gpc.c b/plat/imx/imx8m/imx8mm/gpc.c
+index 4df1b9a4f..1dd2f39db 100644
+--- a/plat/imx/imx8m/imx8mm/gpc.c
++++ b/plat/imx/imx8m/imx8mm/gpc.c
+@@ -436,6 +436,17 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
+ 	case IMX_SIP_SRC_M4_STARTED:
+ 		val = mmio_read_32(IMX_SRC_BASE + SRC_M4RCR);
+ 		return !(val & SRC_SCR_M4C_NON_SCLR_RST_MASK);
++	case IMX_SIP_SRC_SET_SECONDARY_BOOT:
++		if (x2)
++			mmio_setbits_32(IMX_SRC_BASE + SRC_GPR10_OFFSET,
++					SRC_GPR10_PERSIST_SECONDARY_BOOT);
++		else
++			mmio_clrbits_32(IMX_SRC_BASE + SRC_GPR10_OFFSET,
++					SRC_GPR10_PERSIST_SECONDARY_BOOT);
++		break;
++	case IMX_SIP_SRC_GET_SECONDARY_BOOT:
++		val = mmio_read_32(IMX_SRC_BASE + SRC_GPR10_OFFSET);
++		return !!(val & SRC_GPR10_PERSIST_SECONDARY_BOOT);
+ 	default:
+ 		return SMC_UNK;
+ 
+diff --git a/plat/imx/imx8m/imx8mm/include/platform_def.h b/plat/imx/imx8m/imx8mm/include/platform_def.h
+index 42b03613e..656582612 100644
+--- a/plat/imx/imx8m/imx8mm/include/platform_def.h
++++ b/plat/imx/imx8m/imx8mm/include/platform_def.h
+@@ -117,9 +117,11 @@
+ #define SRC_OTG1PHY_SCR			U(0x20)
+ #define SRC_OTG2PHY_SCR			U(0x24)
+ #define SRC_GPR1_OFFSET			U(0x74)
++#define SRC_GPR10_OFFSET		U(0x98)
+ 
+ #define SRC_SCR_M4_ENABLE_MASK		BIT(3)
+ #define SRC_SCR_M4C_NON_SCLR_RST_MASK  	BIT(0)
++#define SRC_GPR10_PERSIST_SECONDARY_BOOT	BIT(30)
+ #define IMX_M4_STATUS			(IMX_SRC_BASE + SRC_M4RCR)
+ #define IMX_M4_ENABLED_MASK		SRC_SCR_M4C_NON_SCLR_RST_MASK
+ #define LPA_STATUS			U(0x94)
+-- 
+2.25.1
+

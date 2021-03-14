@@ -1,0 +1,114 @@
+From f70d1b0542ed4fa52653b69d1116e189b029963f Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Thu, 18 Mar 2021 20:11:51 +0200
+Subject: [PATCH 2/2] plat: imx8m: add SiP call for triggering internal warm
+ reset
+
+Add SiP call for asserting Software Reset Signal (internal reset) by
+WDOG.
+
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Change-Id: Icbbf82ffab8d224880683e0d8ffdfed6a626606e
+---
+ plat/imx/common/imx_sip_handler.c     | 42 +++++++++++++++++++++++++++
+ plat/imx/common/imx_sip_svc.c         |  4 +++
+ plat/imx/common/include/imx_sip_svc.h |  8 +++++
+ 3 files changed, 54 insertions(+)
+
+diff --git a/plat/imx/common/imx_sip_handler.c b/plat/imx/common/imx_sip_handler.c
+index 903f6b8cc..c745ae0ab 100644
+--- a/plat/imx/common/imx_sip_handler.c
++++ b/plat/imx/common/imx_sip_handler.c
+@@ -12,6 +12,7 @@
+ #include <common/debug.h>
+ #include <common/runtime_svc.h>
+ #include <imx_sip_svc.h>
++#include <lib/mmio.h>
+ #include <sci/sci.h>
+ #include <errno.h>
+ 
+@@ -198,6 +199,47 @@ int imx_get_cpu_rev(uint32_t *cpu_id, uint32_t *cpu_rev)
+ }
+ #endif /* defined(PLAT_imx8qm) || defined(PLAT_imx8qx) || defined(PLAT_imx8dx) || defined(PLAT_imx8qm) || defined(PLAT_imx8dxl) */
+ 
++#if defined(PLAT_imx8mq) || defined(PLAT_imx8mm)
++void __dead2 imx_warm_reset_handler(uint32_t smc_fid, u_register_t x1,
++				    u_register_t x2, u_register_t x3,
++				    void *handle)
++{
++	uintptr_t wdog_base = IMX_WDOG_BASE;
++	unsigned int val;
++
++	val = mmio_read_16(wdog_base);
++	/*
++	 * Common watchdog init flags, for additional details check
++	 * 4.10.5.1 Watchdog Control Register
++	 *
++	 * Initial bit selection:
++	 * WDOG_WCR_WDZST - Suspend the watchdog timer.
++	 * WDOG_WCR_WDE - Enable the watchdog.
++	 *
++	 * 0x000E mask is used to keep previous values (that could be set
++	 * in SPL) of WDBG and WDE/WDT (both are write-one once-only bits).
++	 */
++	val = (val & 0x000E) | WDOG_WCR_WDZST | WDOG_WCR_WDE;
++	/*
++	 * To assert Software Reset Signal (internal reset) we have to
++	 * set SRS bit to 0 (already set in previous step).
++	 * SRE bit is required to be set to 1 when used in conjunction
++	 * with the Software Reset Signal before SRS asserton,
++	 * otherwise SRS bit will just automatically reset to 1.
++	 *
++	 * Also we set WDA to 1 (no effect on system).
++	 */
++	val |= WDOG_WCR_SRE | WDOG_WCR_WDA;
++
++	mmio_write_16(wdog_base, val);
++
++	mmio_write_16(wdog_base + WDOG_WSR, 0x5555);
++	mmio_write_16(wdog_base + WDOG_WSR, 0xaaaa);
++	while (1)
++		;
++}
++#endif /* defined(PLAT_imx8mq) || defined(PLAT_imx8mm) */
++
+ static uint64_t imx_get_commit_hash(u_register_t x2,
+ 		    u_register_t x3,
+ 		    u_register_t x4)
+diff --git a/plat/imx/common/imx_sip_svc.c b/plat/imx/common/imx_sip_svc.c
+index f0b9efd3f..f6afa13f3 100644
+--- a/plat/imx/common/imx_sip_svc.c
++++ b/plat/imx/common/imx_sip_svc.c
+@@ -75,6 +75,10 @@ static uintptr_t imx_sip_handler(unsigned int smc_fid,
+ 	case IMX_SIP_FIPS_CONFIG:
+ 		SMC_RET1(handle, fips_config_handler(smc_fid, x1, x2, x3, x4));
+ #endif
++#endif
++#if defined(PLAT_imx8mm) || defined(PLAT_imx8mq)
++	case IMX_SIP_WARM_RESET:
++		imx_warm_reset_handler(smc_fid, x1, x2, x3, handle);
+ #endif
+ 	case  IMX_SIP_BUILDINFO:
+ 		SMC_RET1(handle, imx_buildinfo_handler(smc_fid, x1, x2, x3, x4));
+diff --git a/plat/imx/common/include/imx_sip_svc.h b/plat/imx/common/include/imx_sip_svc.h
+index 81459e367..268b9df76 100644
+--- a/plat/imx/common/include/imx_sip_svc.h
++++ b/plat/imx/common/include/imx_sip_svc.h
+@@ -67,6 +67,14 @@
+ #define IMX_SIP_FIPS_CONFIG		0xc200000D
+ #define IMX_SIP_FIPS_CONFIG_SET		0x1
+ 
++#define IMX_SIP_WARM_RESET		0xc2000010
++
++#if defined(PLAT_imx8mq) || defined(PLAT_imx8mm)
++void __dead2 imx_warm_reset_handler(uint32_t smc_fid, u_register_t x1,
++				    u_register_t x2, u_register_t x3,
++				    void *handle);
++#endif
++
+ #if defined(PLAT_imx8mq)
+ int imx_soc_info_handler(uint32_t smc_fid, u_register_t x1,
+ 			 u_register_t x2, u_register_t x3);
+-- 
+2.25.1
+

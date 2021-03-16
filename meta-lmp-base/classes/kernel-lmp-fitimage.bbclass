@@ -6,6 +6,140 @@ inherit kernel-fitimage
 FPGA_BINARY ?= "fpga.bin"
 FIT_LOADABLES ?= ""
 
+# Allow transition to cover CVE-2021-27097 and CVE-2021-27138
+FIT_NODE_SEPARATOR ?= "-"
+
+#
+# Emit the fitImage ITS kernel section
+#
+# $1 ... .its filename
+# $2 ... Image counter
+# $3 ... Path to kernel image
+# $4 ... Compression type
+fitimage_emit_section_kernel() {
+
+	kernel_csum="${FIT_HASH_ALG}"
+
+	ENTRYPOINT="${UBOOT_ENTRYPOINT}"
+	if [ -n "${UBOOT_ENTRYSYMBOL}" ]; then
+		ENTRYPOINT=`${HOST_PREFIX}nm vmlinux | \
+			awk '$3=="${UBOOT_ENTRYSYMBOL}" {print "0x"$1;exit}'`
+	fi
+
+	cat << EOF >> ${1}
+                kernel${FIT_NODE_SEPARATOR}${2} {
+                        description = "Linux kernel";
+                        data = /incbin/("${3}");
+                        type = "kernel";
+                        arch = "${UBOOT_ARCH}";
+                        os = "linux";
+                        compression = "${4}";
+                        load = <${UBOOT_LOADADDRESS}>;
+                        entry = <${ENTRYPOINT}>;
+                        hash-1 {
+                                algo = "${kernel_csum}";
+                        };
+                };
+EOF
+}
+
+#
+# Emit the fitImage ITS DTB section
+#
+# $1 ... .its filename
+# $2 ... Image counter
+# $3 ... Path to DTB image
+fitimage_emit_section_dtb() {
+
+	dtb_csum="${FIT_HASH_ALG}"
+
+	dtb_loadline=""
+	dtb_ext=${DTB##*.}
+	if [ "${dtb_ext}" = "dtbo" ]; then
+		if [ -n "${UBOOT_DTBO_LOADADDRESS}" ]; then
+			dtb_loadline="load = <${UBOOT_DTBO_LOADADDRESS}>;"
+		fi
+	elif [ -n "${UBOOT_DTB_LOADADDRESS}" ]; then
+		dtb_loadline="load = <${UBOOT_DTB_LOADADDRESS}>;"
+	fi
+	cat << EOF >> ${1}
+                fdt${FIT_NODE_SEPARATOR}${2} {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("${3}");
+                        type = "flat_dt";
+                        arch = "${UBOOT_ARCH}";
+                        compression = "none";
+                        ${dtb_loadline}
+                        hash-1 {
+                                algo = "${dtb_csum}";
+                        };
+                };
+EOF
+}
+
+#
+# Emit the fitImage ITS setup section
+#
+# $1 ... .its filename
+# $2 ... Image counter
+# $3 ... Path to setup image
+fitimage_emit_section_setup() {
+
+	setup_csum="${FIT_HASH_ALG}"
+
+	cat << EOF >> ${1}
+                setup${FIT_NODE_SEPARATOR}${2} {
+                        description = "Linux setup.bin";
+                        data = /incbin/("${3}");
+                        type = "x86_setup";
+                        arch = "${UBOOT_ARCH}";
+                        os = "linux";
+                        compression = "none";
+                        load = <0x00090000>;
+                        entry = <0x00090000>;
+                        hash-1 {
+                                algo = "${setup_csum}";
+                        };
+                };
+EOF
+}
+
+#
+# Emit the fitImage ITS ramdisk section
+#
+# $1 ... .its filename
+# $2 ... Image counter
+# $3 ... Path to ramdisk image
+fitimage_emit_section_ramdisk() {
+
+	ramdisk_csum="${FIT_HASH_ALG}"
+	ramdisk_loadline=""
+	ramdisk_entryline=""
+
+	if [ -n "${UBOOT_RD_LOADADDRESS}" ]; then
+		ramdisk_loadline="load = <${UBOOT_RD_LOADADDRESS}>;"
+	fi
+	if [ -n "${UBOOT_RD_ENTRYPOINT}" ]; then
+		ramdisk_entryline="entry = <${UBOOT_RD_ENTRYPOINT}>;"
+	fi
+
+	cat << EOF >> ${1}
+                ramdisk${FIT_NODE_SEPARATOR}${2} {
+                        description = "${INITRAMFS_IMAGE}";
+                        data = /incbin/("${3}");
+                        type = "ramdisk";
+                        arch = "${UBOOT_ARCH}";
+                        os = "linux";
+                        compression = "none";
+                        ${ramdisk_loadline}
+                        ${ramdisk_entryline}
+                        hash-1 {
+                                algo = "${ramdisk_csum}";
+                        };
+                };
+EOF
+}
+
 #
 # Emit the fitImage ITS configuration section
 #
@@ -39,29 +173,29 @@ fitimage_emit_section_config() {
 	if [ -n "${2}" ]; then
 		conf_desc="Linux kernel"
 		sep=", "
-		kernel_line="kernel = \"kernel@${2}\";"
+		kernel_line="kernel = \"kernel${FIT_NODE_SEPARATOR}${2}\";"
 	fi
 
 	if [ -n "${3}" ]; then
 		conf_desc="${conf_desc}${sep}FDT blob"
 		sep=", "
-		fdt_line="fdt = \"fdt@${3}\";"
+		fdt_line="fdt = \"fdt${FIT_NODE_SEPARATOR}${3}\";"
 	fi
 
 	if [ -n "${4}" ]; then
 		conf_desc="${conf_desc}${sep}ramdisk"
 		sep=", "
-		ramdisk_line="ramdisk = \"ramdisk@${4}\";"
+		ramdisk_line="ramdisk = \"ramdisk${FIT_NODE_SEPARATOR}${4}\";"
 	fi
 
 	if [ -n "${5}" ]; then
 		conf_desc="${conf_desc}${sep}setup"
-		setup_line="setup = \"setup@${5}\";"
+		setup_line="setup = \"setup${FIT_NODE_SEPARATOR}${5}\";"
 	fi
 
 	if [ -n "${6}" ]; then
 		conf_desc="${conf_desc}${sep}fpga"
-		fpga_line="fpga = \"fpga@${6}\";"
+		fpga_line="fpga = \"fpga${FIT_NODE_SEPARATOR}${6}\";"
 	fi
 
 	if [ -n "${7}" ]; then
@@ -72,18 +206,18 @@ fitimage_emit_section_config() {
 				if [ -n "${loadable_line}" ]; then
 					conf_desc="${conf_desc}${sep}loadables"
 				fi
-				loadable_line="${loadable_line}loadable_${i} = \"loadable@${LOADABLE}\"; "
+				loadable_line="${loadable_line}loadable_${i} = \"loadable${FIT_NODE_SEPARATOR}${LOADABLE}\"; "
 			fi
 		done
 	fi
 
 	if [ "${8}" = "1" ]; then
-		default_line="default = \"conf@${3}\";"
+		default_line="default = \"conf${FIT_NODE_SEPARATOR}${3}\";"
 	fi
 
 	cat << EOF >> ${1}
                 ${default_line}
-                conf@${3} {
+                conf${FIT_NODE_SEPARATOR}${3} {
                         description = "${8} ${conf_desc}";
                         ${kernel_line}
                         ${fdt_line}
@@ -91,7 +225,7 @@ fitimage_emit_section_config() {
                         ${setup_line}
                         ${fpga_line}
                         ${loadable_line}
-                        hash@1 {
+                        hash-1 {
                                 algo = "${conf_csum}";
                         };
 EOF
@@ -138,7 +272,7 @@ EOF
 		sign_line="${sign_line};"
 
 		cat << EOF >> ${1}
-                        signature@1 {
+                        signature-1 {
                                 algo = "${conf_csum},${conf_sign_algo}";
                                 key-name-hint = "${conf_sign_keyname}";
                                 ${sign_line}
@@ -167,14 +301,14 @@ fitimage_emit_section_fpga() {
 	fi
 
 	cat << EOF >> ${1}
-                fpga@${2} {
+                fpga${FIT_NODE_SEPARATOR}${2} {
                         description = "FPGA binary";
                         data = /incbin/("${3}");
                         type = "fpga";
                         arch = "${UBOOT_ARCH}";
                         compression = "none";
                         ${fpga_loadline}
-                        hash@1 {
+                        hash-1 {
                                 algo = "${fpga_csum}";
                         };
                 };
@@ -192,13 +326,13 @@ fitimage_emit_section_loadable() {
 	loadable_csum="${FIT_HASH_ALG}"
 
 	cat << EOF >> ${1}
-                loadable@${2} {
+                loadable${FIT_NODE_SEPARATOR}${2} {
                         description = "Loadable";
                         data = /incbin/("${3}");
                         type = "loadable";
                         arch = "${UBOOT_ARCH}";
                         compression = "none";
-                        hash@1 {
+                        hash-1 {
                                 algo = "${loadable_csum=}";
                         };
                 };

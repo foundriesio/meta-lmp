@@ -16,12 +16,16 @@ B = "${WORKDIR}/build"
 # fitImage Hash Algo
 FIT_HASH_ALG ?= "sha256"
 
+# Allow transition to cover CVE-2021-27097 and CVE-2021-27138
+FIT_NODE_SEPARATOR ?= "-"
+
 inherit deploy
 
 do_configure[noexec] = "1"
 
 do_compile() {
-	cp ${S}/boot.cmd ${B}/boot.cmd
+	sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
+			"${S}/boot.cmd" > boot.cmd
 	sed -e 's/@@FIT_HASH_ALG@@/${FIT_HASH_ALG}/' \
 	    -e 's/@@UBOOT_SIGN_KEYNAME@@/${UBOOT_SIGN_KEYNAME}/' \
 			"${S}/boot.its.in" > boot.its

@@ -2,6 +2,8 @@ DESCRIPTION = "Boot script for launching OSTree based images with u-boot"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 
+INHIBIT_DEFAULT_DEPS = "1"
+
 DEPENDS = "u-boot-mkimage-native"
 
 SRC_URI = " \
@@ -13,14 +15,18 @@ KERNEL_BOOTCMD ??= "bootz"
 KERNEL_BOOTCMD_aarch64 ?= "booti"
 
 S = "${WORKDIR}"
+B = "${WORKDIR}/build"
 
 inherit deploy
 
+do_configure[noexec] = "1"
+
 do_compile() {
+    cp ${S}/boot.cmd ${B}/boot.cmd
     sed -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' \
         -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
-        "${WORKDIR}/uEnv.txt.in" > uEnv.txt
-    mkimage -A arm -T script -C none -n "Ostree boot script" -d "${WORKDIR}/boot.cmd" boot.scr
+        "${S}/uEnv.txt.in" > uEnv.txt
+    mkimage -A arm -T script -C none -n "Ostree boot script" -d boot.cmd boot.scr
 }
 
 do_deploy() {
@@ -32,5 +38,7 @@ do_deploy() {
 }
 
 addtask do_deploy after do_compile before do_build
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 PROVIDES += "u-boot-default-script"

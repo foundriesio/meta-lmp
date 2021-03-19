@@ -1,4 +1,4 @@
 bootcmd_otenv=load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}
 bootcmd_load_f=load ${devtype} ${devnum}:2 ${scriptaddr} "/boot"${kernel_image}
-bootcmd_run=bootm ${scriptaddr}#conf@${fdtfile}
+bootcmd_run=bootm ${scriptaddr}#conf@@FIT_NODE_SEPARATOR@@${fdtfile}
 bootcmd=run bootcmd_otenv; run bootcmd_load_f; run bootcmd_run

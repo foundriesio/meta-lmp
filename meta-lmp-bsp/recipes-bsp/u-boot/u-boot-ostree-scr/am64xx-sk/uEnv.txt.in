@@ -2,5 +2,5 @@ bootcmd_dtb=run findfdt; setenv loadaddr 0x90000000
 bootcmd_load_env=load mmc ${mmcdev}:2 ${loadaddr} /boot/loader/uEnv.txt
 bootcmd_run_env=env import -t ${loadaddr} ${filesize}
 bootcmd_load_k=load mmc ${mmcdev}:2 ${loadaddr} ${kernel_image}
-bootcmd_run=bootm ${loadaddr}#conf@ti_${fdtfile}
+bootcmd_run=bootm ${loadaddr}#conf@@FIT_NODE_SEPARATOR@@ti_${fdtfile}
 bootcmd=run bootcmd_dtb; run bootcmd_load_env; run bootcmd_run_env; run bootcmd_load_k; run bootcmd_run

@@ -30,7 +30,7 @@ do_compile() {
 # deploy a .tar.gz file of artifacts
 do_deploy() {
     install -d ${DEPLOYDIR}/${PN}
-    install -m 0755 ${DEPLOYDIR}/*.tsv ${DEPLOYDIR}/${PN}
+    install -m 0755 ${WORKDIR}/*.tsv ${DEPLOYDIR}/${PN}
     install -m 0755 ${DEPLOY_DIR_IMAGE}/scripts/* ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/*.stm32 ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/bootloader/*.stm32 ${DEPLOYDIR}/${PN}

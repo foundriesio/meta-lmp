@@ -30,6 +30,9 @@
 			linux,default-trigger = "heartbeat";
 		};
 	};
+        chosen {
+                xlnx,eeprom = &eeprom; /* EMAC on EEPROM */
+        };
 };
 
 /* Ethernet0 with hard-coded MAC */
@@ -37,7 +40,7 @@
 	status = "okay";
 	phy-handle = <&phy0>;
 	phy-mode = "rgmii-id";
-	local-mac-address = [00 0a 35 00 02 90];
+	#local-mac-address = [00 0a 35 00 02 90]; /* EMAC on EEPROM */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_gem3_default>;
 	phy0: ethernet-phy@9 {
@@ -69,7 +72,7 @@
 			#size-cells = <0>;
 			reg = <0>;
 			/* IIC_EEPROM */
-			eeprom@51 { /* U5 on UZ3EG IOCC and U7 on the UZ7EV EVCC*/
+			eeprom: eeprom@51 { /* U5 on UZ3EG IOCC and U7 on the UZ7EV EVCC*/
 				compatible = "atmel,24c08";
 				reg = <0x51>;
 				#address-cells = <0x01>;

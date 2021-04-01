@@ -77,14 +77,13 @@ BBMASK += " \
 
 # meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)
 BBMASK += " \
-    /meta-arm/meta-arm/recipes-security/optee/optee-test_3.8.0.bb \
     /meta-arm/meta-arm/recipes-security/optee/optee-test_3.11.0.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-os_3.8.0.bb \
     /meta-arm/meta-arm/recipes-security/optee/optee-os_3.11.0.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.8.0.bb \
     /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.11.0.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-client_3.8.0.bb \
     /meta-arm/meta-arm/recipes-security/optee/optee-client_3.11.0.bb \
+    /meta-arm/meta-arm-bsp/recipes-security/optee/optee-client_3.11.0.bbappend \
+    /meta-arm/meta-arm-bsp/recipes-security/optee/optee-os_3.11.0.bbappend \
+    /meta-arm/meta-arm-bsp/recipes-security/optee/optee-test_3.11.0.bbappend \
 "
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \

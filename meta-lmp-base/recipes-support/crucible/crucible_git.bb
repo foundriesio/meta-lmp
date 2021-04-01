@@ -13,7 +13,7 @@ PV = "0.1+git${SRCPV}"
 
 GO_IMPORT = "github.com/inversepath/crucible"
 
-inherit go godep dos2unix
+inherit go dos2unix
 
 do_install_append() {
     install -d ${D}${datadir}/${BPN}/fusemaps

@@ -1,6 +1,6 @@
-From 0f4c820cb81649d53566679a334a23a2974b3cf3 Mon Sep 17 00:00:00 2001
+From f94c2721002df923b5a70b3fdc44199a3987338e Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
-Date: Wed, 23 Sep 2020 15:20:44 -0300
+Date: Thu, 1 Apr 2021 19:07:29 -0300
 Subject: [PATCH] Add client build support for editline (libedit)
 
 Upstream-Status: Pending
@@ -16,10 +16,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  6 files changed, 41 insertions(+), 1 deletion(-)
 
 diff --git a/clients/cli/agent.c b/clients/cli/agent.c
-index f4057df..0504a59 100644
+index a3c60c46e7..e8b288894e 100644
 --- a/clients/cli/agent.c
 +++ b/clients/cli/agent.c
-@@ -9,8 +9,14 @@
+@@ -7,8 +7,14 @@
  
  #include <stdio.h>
  #include <stdlib.h>
@@ -35,7 +35,7 @@ index f4057df..0504a59 100644
  #include "common.h"
  #include "utils.h"
 diff --git a/clients/cli/common.c b/clients/cli/common.c
-index 04ccf8d..32eb65d 100644
+index 934ff70ef0..c70cf619af 100644
 --- a/clients/cli/common.c
 +++ b/clients/cli/common.c
 @@ -10,8 +10,14 @@
@@ -51,47 +51,47 @@ index 04ccf8d..32eb65d 100644
  #include <readline/history.h>
 +#endif
  
- #include "nm-vpn-helpers.h"
- #include "nm-client-utils.h"
-@@ -1003,7 +1009,9 @@ nmc_readline_echo (const NmcConfig *nmc_config,
- 	va_list args;
- 	gs_free char *prompt = NULL;
- 	char *str;
+ #include "nm-libnm-aux/nm-libnm-aux.h"
+ 
+@@ -995,7 +1001,9 @@ nmc_readline_echo(const NmcConfig *nmc_config, gboolean echo_on, const char *pro
+     va_list       args;
+     gs_free char *prompt = NULL;
+     char *        str;
 +#if defined(HAVE_READLINE_HISTORY_H)
- 	HISTORY_STATE *saved_history;
+     nm_auto_free HISTORY_STATE *saved_history  = NULL;
 +#endif
- 	HISTORY_STATE passwd_history = { 0, };
+     HISTORY_STATE               passwd_history = {
+         0,
+     };
+@@ -1008,8 +1016,10 @@ nmc_readline_echo(const NmcConfig *nmc_config, gboolean echo_on, const char *pro
  
- 	va_start (args, prompt_fmt);
-@@ -1014,8 +1022,10 @@ nmc_readline_echo (const NmcConfig *nmc_config,
- 
- 	/* Hide the actual password */
- 	if (!echo_on) {
+     /* Hide the actual password */
+     if (!echo_on) {
 +#if defined(HAVE_READLINE_HISTORY_H)
- 		saved_history = history_get_history_state ();
- 		history_set_history_state (&passwd_history);
+         saved_history = history_get_history_state();
+         history_set_history_state(&passwd_history);
 +#endif
- 		rl_redisplay_function = nmc_secret_redisplay;
- 	}
- 
-@@ -1024,7 +1034,9 @@ nmc_readline_echo (const NmcConfig *nmc_config,
- 	/* Restore the non-hiding behavior */
- 	if (!echo_on) {
- 		rl_redisplay_function = rl_redisplay;
+         /* stifling history is important as it tells readline to
+          * not store anything, otherwise sensitive data could be
+          * leaked */
+@@ -1022,7 +1032,9 @@ nmc_readline_echo(const NmcConfig *nmc_config, gboolean echo_on, const char *pro
+     /* Restore the non-hiding behavior */
+     if (!echo_on) {
+         rl_redisplay_function = rl_redisplay;
 +#if defined(HAVE_READLINE_HISTORY_H)
- 		history_set_history_state (saved_history);
+         history_set_history_state(saved_history);
 +#endif
- 	}
+     }
  
- 	return str;
+     return str;
 diff --git a/clients/cli/connections.c b/clients/cli/connections.c
-index e13ae9a..f78c52b 100644
+index ee7b8fbbe9..7fbc11c8b3 100644
 --- a/clients/cli/connections.c
 +++ b/clients/cli/connections.c
-@@ -12,8 +12,14 @@
+@@ -11,8 +11,14 @@
+ #include <stdlib.h>
  #include <unistd.h>
  #include <signal.h>
- #include <netinet/ether.h>
 +#if defined(HAVE_READLINE_READLINE_H)
  #include <readline/readline.h>
 +#elif defined(HAVE_EDITLINE_READLINE_H)
@@ -103,39 +103,40 @@ index e13ae9a..f78c52b 100644
  #include <fcntl.h>
  
  #include "nm-client-utils.h"
-@@ -6103,7 +6109,9 @@ gen_property_values (const char *text, int state)
+@@ -6430,8 +6436,10 @@ gen_property_values(const char *text, int state)
+     return nmc_rl_gen_func_basic(text, state, avals);
  }
  
- /* from readline */
 +#if defined(HAVE_READLINE_READLINE_H)
+ /* from readline */
  extern int rl_complete_with_tilde_expansion;
 +#endif
  
  /*
   * Attempt to complete on the contents of TEXT.  START and END show the
-@@ -6131,8 +6139,10 @@ nmcli_editor_tab_completion (const char *text, int start, int end)
- 	/* Disable default filename completion */
- 	rl_attempted_completion_over = 1;
+@@ -6459,8 +6467,10 @@ nmcli_editor_tab_completion(const char *text, int start, int end)
+     /* Disable default filename completion */
+     rl_attempted_completion_over = 1;
  
 +#if defined(HAVE_READLINE_READLINE_H)
- 	/* Enable tilde expansion when filenames are completed */
- 	rl_complete_with_tilde_expansion = 1;
+     /* Enable tilde expansion when filenames are completed */
+     rl_complete_with_tilde_expansion = 1;
 +#endif
  
- 	/* Filter out possible ANSI color escape sequences */
- 	prompt_tmp = nmc_filter_out_colors ((const char *) rl_prompt);
-@@ -9235,7 +9245,9 @@ nmcli_con_tab_completion (const char *text, int start, int end)
- 		generator_func = _meta_abstract_generator;
- 	} else if (g_strcmp0 (rl_prompt, PROMPT_IMPORT_FILE) == 0) {
- 		rl_attempted_completion_over = 0;
+     /* Filter out possible ANSI color escape sequences */
+     prompt_tmp = nmc_filter_out_colors((const char *) rl_prompt);
+@@ -9581,7 +9591,9 @@ nmcli_con_tab_completion(const char *text, int start, int end)
+         generator_func           = _meta_abstract_generator;
+     } else if (g_strcmp0(rl_prompt, PROMPT_IMPORT_FILE) == 0) {
+         rl_attempted_completion_over     = 0;
 +#if defined(HAVE_READLINE_READLINE_H)
- 		rl_complete_with_tilde_expansion = 1;
+         rl_complete_with_tilde_expansion = 1;
 +#endif
- 	} else if (g_strcmp0 (rl_prompt, PROMPT_VPN_CONNECTION) == 0) {
- 		generator_func = gen_vpn_ids;
- 	}
+     } else if (g_strcmp0(rl_prompt, PROMPT_VPN_CONNECTION) == 0) {
+         generator_func = gen_vpn_ids;
+     }
 diff --git a/clients/cli/devices.c b/clients/cli/devices.c
-index c99efd0..f414f9b 100644
+index eea82653c0..eec1a825bd 100644
 --- a/clients/cli/devices.c
 +++ b/clients/cli/devices.c
 @@ -9,7 +9,11 @@
@@ -147,11 +148,11 @@ index c99efd0..f414f9b 100644
 +#elif defined(HAVE_EDITLINE_READLINE_H)
 +#include <editline/readline.h>
 +#endif
+ #include <linux/if_ether.h>
  
- #include "nm-secret-agent-simple.h"
- #include "nm-client-utils.h"
+ #include "nm-glib-aux/nm-secret-utils.h"
 diff --git a/clients/cli/nmcli.c b/clients/cli/nmcli.c
-index 8b8648f..3150ff3 100644
+index 3945721105..75ff39fd08 100644
 --- a/clients/cli/nmcli.c
 +++ b/clients/cli/nmcli.c
 @@ -15,8 +15,14 @@
@@ -170,7 +171,7 @@ index 8b8648f..3150ff3 100644
  #include "nm-client-utils.h"
  
 diff --git a/m4/ax_lib_readline.m4 b/m4/ax_lib_readline.m4
-index af32fda..8b23105 100644
+index af32fdaff7..8b23105d74 100644
 --- a/m4/ax_lib_readline.m4
 +++ b/m4/ax_lib_readline.m4
 @@ -92,7 +92,7 @@ AC_DEFUN([AX_LIB_READLINE], [
@@ -183,5 +184,5 @@ index af32fda..8b23105 100644
    # Check history
    AC_CACHE_CHECK([whether readline supports history],
 -- 
-2.28.0
+2.31.1
 

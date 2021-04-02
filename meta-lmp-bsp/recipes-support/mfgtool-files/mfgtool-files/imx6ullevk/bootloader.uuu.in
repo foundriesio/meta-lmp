@@ -1,9 +1,10 @@
 uuu_version 1.2.39
 
-SDP: dcd -f SPL-mfgtool
-SDP: write -f SPL-mfgtool -ivt 0
-SDP: write -f u-boot-mfgtool.itb -addr 0x80800000
-SDP: jump -f SPL-mfgtool -ivt
+SDP: boot -f SPL-mfgtool -dcdaddr 0x0907000 -cleardcd
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
 
 FB: ucmd if mmc dev 0; then setenv flash_dev 0; setenv emmc_partconf "mmc partconf ${flash_dev} ${emmc_ack} 1 0"; else setenv flash_dev 1; setenv emmc_partconf "true"; fi;
 FB: ucmd setenv fastboot_dev mmc

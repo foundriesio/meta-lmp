@@ -1,0 +1,24 @@
+#!/bin/sh -e
+
+if [ -f /var/lmp/default-apps ] ; then
+	if [ -d /var/sota/compose-apps ] ; then
+		for x in $(ls /var/sota/compose-apps) ; do
+			if ! grep -q $x /var/lmp/default-apps 2>/dev/null ; then
+				echo "Disabling preloaded app: $x"
+				rm -rf /var/sota/compose-apps/$x
+			fi
+		done
+	fi
+fi
+
+if [ -d /var/sota/compose-apps ] ; then
+	cd /var/sota/compose-apps
+	for x in `ls` ; do
+		cd $x
+		echo "Starting $x"
+		docker-compose up -d
+		cd ../
+	done
+else
+	echo "No apps defined"
+fi

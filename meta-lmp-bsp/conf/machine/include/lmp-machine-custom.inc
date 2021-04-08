@@ -361,8 +361,6 @@ M4_INSTALLDIR_stm32mp1-disco = "${prefix}"
 UBOOT_LOADADDRESS_stm32mp1-disco = "0xC2000000"
 UBOOT_ENTRYPOINT_stm32mp1-disco = "0xC2000000"
 UBOOT_DTB_LOADADDRESS_stm32mp1-disco = "0xC4000000"
-UBOOT_RD_LOADADDRESS_stm32mp1-disco = "0xC4400000"
-UBOOT_RD_ENTRYPOINT_stm32mp1-disco = "0xC4400000"
 WKS_FILE_DEPENDS_remove_stm32mp1-disco = "st-image-bootfs st-image-userfs"
 WKS_FILE_sota_stm32mp1-disco = "sdimage-stm32mp157c-dk2-trusted-sota.wks.in"
 

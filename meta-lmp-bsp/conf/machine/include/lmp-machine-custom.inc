@@ -336,7 +336,7 @@ UBOOT_MACHINE_imx8mmevk = "imx8mm_evk_config"
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"
 KERNEL_IMAGETYPE_stm32mp1common = "fitImage"
-KERNEL_CLASSES_stm32mp1common = " kernel-fitimage "
+KERNEL_CLASSES_stm32mp1common = " kernel-lmp-fitimage "
 OSTREE_KERNEL_stm32mp1common = "${KERNEL_IMAGETYPE}-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE}"
 OSTREE_KERNEL_ARGS_COMMON_stm32mp1common = "console=ttySTM0,115200 root=LABEL=otaroot rootfstype=ext4"
 SERIAL_CONSOLES_stm32mp1common = "115200;ttySTM0"

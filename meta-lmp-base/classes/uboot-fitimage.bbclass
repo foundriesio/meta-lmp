@@ -25,6 +25,8 @@ ATF_BINARY ?= "arm-trusted-firmware.bin"
 ATF_SUPPORT = "${@bb.utils.contains('EXTRA_IMAGEDEPENDS', 'virtual/trusted-firmware-a', 'true', 'false', d)}"
 
 do_compile[depends] += " virtual/optee-os:do_deploy"
+BOOTSCR_SUPPORT = "${@bb.utils.contains('PREFERRED_PROVIDER_u-boot-default-script', 'u-boot-ostree-scr-fit', 'true', 'false', d)}"
+do_compile[depends] += " ${@'u-boot-default-script:do_deploy' if d.getVar('BOOTSCR_SUPPORT') == 'true' else ''}"
 do_compile[depends] += " ${@'virtual/trusted-firmware-a:do_deploy' if d.getVar('ATF_SUPPORT') == 'true' else ''}"
 
 # Assemble U-Boot fitImage
@@ -45,6 +47,7 @@ uboot_fitimage_assemble() {
 	ubootloadaddr=${2}
 	opteeloadaddr=${3}
 	atfloadaddr=${4}
+	bootscrloadaddr=${5}
 
 	# u-boot dtb location depends on sign enable
 	if [ "${UBOOT_SIGN_ENABLE}" = "1" -a -n "${UBOOT_DTB_BINARY}" ]; then
@@ -61,6 +64,10 @@ uboot_fitimage_assemble() {
 		optee_type="firmware"
 		config_firmware="optee"
 		config_loadables='"uboot"';
+	fi
+
+	if [ "${BOOTSCR_SUPPORT}" = true ] && [ -n "${bootscrloadaddr}" ] ; then
+		config_loadables="${config_loadables}, \"bootscr\"";
 	fi
 
 cat << EOF > u-boot.its
@@ -93,6 +100,22 @@ cat << EOF > u-boot.its
 			};
 		};
 EOF
+	# Pre-load boot script by SPL
+	if [ "${BOOTSCR_SUPPORT}" = true ] && [ -n "${bootscrloadaddr}" ] ; then
+		cat << EOF >> u-boot.its
+		bootscr {
+			description = "Boot script";
+			data = /incbin/("${DEPLOY_DIR_IMAGE}/boot.itb");
+			type = "standalone";
+			arch = "${UBOOT_ARCH}";
+			compression = "none";
+			load = <${bootscrloadaddr}>;
+			hash-1 {
+				algo = "${FIT_HASH_ALG}";
+			};
+		};
+EOF
+	fi
 	# Add ATF block if ATF is supported by the board
 	if ${ATF_SUPPORT}; then
 		cat << EOF >> u-boot.its
@@ -175,7 +198,7 @@ do_deploy_prepend() {
 				if [ $j -eq $i ]; then
 					cd ${B}/${config}
 					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR}
+					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
@@ -208,7 +231,7 @@ do_deploy_prepend() {
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR}
+		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
 		oe_runmake -C ${S} O=${B} ${SPL_BINARY}

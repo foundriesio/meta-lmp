@@ -332,6 +332,7 @@ PREFERRED_PROVIDER_virtual/dtb_imx8mmevk ?= "lmp-device-tree"
 SOTA_CLIENT_FEATURES_append_imx8mmevk = " ubootenv"
 MACHINE_FEATURES_remove_imx8mmevk = "qca9377 qca6174"
 UBOOT_MACHINE_imx8mmevk = "imx8mm_evk_config"
+BOOTSCR_LOAD_ADDR_imx8mmevk = "0x44800000"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"

@@ -29,6 +29,25 @@ BOOTSCR_SUPPORT = "${@bb.utils.contains('PREFERRED_PROVIDER_u-boot-default-scrip
 do_compile[depends] += " ${@'u-boot-default-script:do_deploy' if d.getVar('BOOTSCR_SUPPORT') == 'true' else ''}"
 do_compile[depends] += " ${@'virtual/trusted-firmware-a:do_deploy' if d.getVar('ATF_SUPPORT') == 'true' else ''}"
 
+# Handle 64 bit address in FIT images
+#
+# If any address passed in is above the 32bit limit then the address
+# will need to be reformatted for the DTC to handle it correctly.
+#
+# $1 ... hex string of address
+#
+fmt_address() {
+	chk=$(printf "%d" 0x100000000)
+	val=$(printf "%d" ${1})
+	if [ $val -ge $chk ]
+	then
+		bbwarn "Address specified was 64-bit. Reformatting"
+		printf "0x%x 0x%x" $(expr $val / $chk) $(expr $val % $chk)
+	else
+		echo ${1}
+	fi
+}
+
 # Assemble U-Boot fitImage
 #
 # - U-Boot no-dtb binary
@@ -43,11 +62,12 @@ do_compile[depends] += " ${@'virtual/trusted-firmware-a:do_deploy' if d.getVar('
 # $2 ... U-Boot load address
 # $3 ... OP-TEE load address
 # $4 ... ATF load address
+# $5 ... bootscr load address
 uboot_fitimage_assemble() {
-	ubootloadaddr=${2}
-	opteeloadaddr=${3}
-	atfloadaddr=${4}
-	bootscrloadaddr=${5}
+	ubootloadaddr=$(fmt_address ${2})
+	opteeloadaddr=$(fmt_address ${3})
+	atfloadaddr=$(fmt_address ${4})
+	bootscrloadaddr=$(fmt_address ${5})
 
 	# u-boot dtb location depends on sign enable
 	if [ "${UBOOT_SIGN_ENABLE}" = "1" -a -n "${UBOOT_DTB_BINARY}" ]; then

@@ -1,4 +1,4 @@
 require u-boot-fio-common.inc
 
-SRCREV = "dbb9acc4ebd2f646832caf0de05bbc011724a942"
+SRCREV = "7312631761203071e12f4087d144cc03af67992a"
 SRCBRANCH = "2020.04+fio"

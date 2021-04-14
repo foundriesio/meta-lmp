@@ -40,3 +40,14 @@ do_deploy_append_mx8m() {
         ln -sf u-boot-spl.bin-${MACHINE} u-boot-spl.bin-${MACHINE}-
     fi
 }
+
+DEPENDS_append_freedom-u540 = " opensbi"
+
+do_compile_prepend_freedom-u540() {
+    export OPENSBI=${DEPLOY_DIR_IMAGE}/fw_dynamic.bin
+}
+
+UBOOT_BUILD_DEP_freedom-u540 = "opensbi:do_deploy"
+UBOOT_BUILD_DEP ?= ""
+
+do_configure[depends] += "${UBOOT_BUILD_DEP}"

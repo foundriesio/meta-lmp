@@ -1,0 +1,22 @@
+# short-description: Create SD card image for HiFive Unleashed development
+#   board with U-Boot SPL and OpenSBI (FW_DYNAMIC)
+# long-description: Creates a partitioned SD card image with OSTree
+#   physical sysroot as a payload. Boot files are located in the
+#   first vfat partition.
+#
+# orignal-source: https://github.com/sifive/meta-sifive/blob/2021.03/scripts/lib/wic/canned-wks/freedom-u540-spl-opensbi.wks
+#
+# The disk layout used is:
+#  - ------ ------------- -------------- -------------
+# | | FSBL | u-boot.itb  |     boot     |    rootfs   |
+#  - ------ ------------- -------------- -------------
+# ^ ^ 1MiB ^ 4MiB        ^ 83MiB        ^
+# | |      |             |              |
+# 0 17kiB  ~1MiB         8MiB           92MiB + rootfs + IMAGE_EXTRA_SPACE (default 10MiB)
+
+part --source rawcopy --sourceparams="file=u-boot-spl.bin" --ondisk mmcblk0 --fixed-size 1M --align 17 --part-type 5b193300-fc78-40cd-8002-e86c45580b47
+part --source rawcopy --sourceparams="file=u-boot.itb" --ondisk mmcblk0 --fixed-size 4M --align 1 --part-type 2e54b353-1271-4842-806f-e436d6af6985
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 4096 --size 64
+part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096
+
+bootloader --ptable gpt

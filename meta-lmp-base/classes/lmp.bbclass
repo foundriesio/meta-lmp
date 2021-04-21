@@ -45,6 +45,29 @@ IMAGE_CMD_ota_append () {
 	fi
 }
 
+run_fiotool_cmd () {
+	if [ -n "${SOTA_PACKED_CREDENTIALS}" ]; then
+                if [ -e "${SOTA_PACKED_CREDENTIALS}" ]; then
+                        "${1}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}"
+                else
+                        bbwarn "SOTA_PACKED_CREDENTIALS file does not exist."
+                fi
+        else
+                bbwarn "SOTA_PACKED_CREDENTIALS not set. Please add SOTA_PACKED_CREDENTIALS."
+        fi
+
+}
+
+do_image_ostreepush[depends] += "fiotools-native:do_populate_sysroot ca-certificates-native:do_populate_sysroot"
+IMAGE_CMD_ostreepush_lmp () {
+	run_fiotool_cmd "fiopush"
+}
+
+do_image_garagecheck[depends] += "fiotools-native:do_populate_sysroot ca-certificates-native:do_populate_sysroot"
+IMAGE_CMD_garagecheck_lmp () {
+	run_fiotool_cmd "fiocheck"
+}
+
 # LMP specific cleanups after the main ostree image from meta-updater
 IMAGE_CMD_ostree_append () {
 	# No need for var/local as the entire var is bind-mounted

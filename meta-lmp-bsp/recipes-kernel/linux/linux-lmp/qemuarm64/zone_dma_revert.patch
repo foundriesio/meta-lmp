@@ -1,0 +1,132 @@
+Revert ZONE_DMA patches
+
+Temporarily revert these patches to allow for qemuarm64-secureboot to
+continue working while the root cause is being investigated.  The
+patches in question are:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=35ec3d09ff6a49ee90e1bfd09166596f017eb5bb
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=8eaef922e9381af7b923c4e3c57a632a87101acb
+
+Upstream-Status: Inappropriate
+Signed-off-by: Jon Mason <jon.mason@arm.com>
+
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 916e0547fdcc..7fbb9c85af8a 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -29,7 +29,6 @@
+ #include <linux/kexec.h>
+ #include <linux/crash_dump.h>
+ #include <linux/hugetlb.h>
+-#include <linux/acpi_iort.h>
+ 
+ #include <asm/boot.h>
+ #include <asm/fixmap.h>
+@@ -43,6 +42,8 @@
+ #include <asm/tlb.h>
+ #include <asm/alternative.h>
+ 
++#define ARM64_ZONE_DMA_BITS	30
++
+ /*
+  * We need to be able to catch inadvertent references to memstart_addr
+  * that occur (potentially in generic code) before arm64_memblock_init()
+@@ -187,13 +188,9 @@ static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
+ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+ {
+ 	unsigned long max_zone_pfns[MAX_NR_ZONES]  = {0};
+-	unsigned int __maybe_unused acpi_zone_dma_bits;
+-	unsigned int __maybe_unused dt_zone_dma_bits;
+ 
+ #ifdef CONFIG_ZONE_DMA
+-	acpi_zone_dma_bits = fls64(acpi_iort_dma_get_max_cpu_address());
+-	dt_zone_dma_bits = fls64(of_dma_get_max_cpu_address(NULL));
+-	zone_dma_bits = min3(32U, dt_zone_dma_bits, acpi_zone_dma_bits);
++	zone_dma_bits = ARM64_ZONE_DMA_BITS;
+ 	arm64_dma_phys_limit = max_zone_phys(zone_dma_bits);
+ 	max_zone_pfns[ZONE_DMA] = PFN_DOWN(arm64_dma_phys_limit);
+ #endif
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 2494138a6905..94f34109695c 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -1730,58 +1730,3 @@ void __init acpi_iort_init(void)
+ 
+ 	iort_init_platform_devices();
+ }
+-
+-#ifdef CONFIG_ZONE_DMA
+-/*
+- * Extract the highest CPU physical address accessible to all DMA masters in
+- * the system. PHYS_ADDR_MAX is returned when no constrained device is found.
+- */
+-phys_addr_t __init acpi_iort_dma_get_max_cpu_address(void)
+-{
+-	phys_addr_t limit = PHYS_ADDR_MAX;
+-	struct acpi_iort_node *node, *end;
+-	struct acpi_table_iort *iort;
+-	acpi_status status;
+-	int i;
+-
+-	if (acpi_disabled)
+-		return limit;
+-
+-	status = acpi_get_table(ACPI_SIG_IORT, 0,
+-				(struct acpi_table_header **)&iort);
+-	if (ACPI_FAILURE(status))
+-		return limit;
+-
+-	node = ACPI_ADD_PTR(struct acpi_iort_node, iort, iort->node_offset);
+-	end = ACPI_ADD_PTR(struct acpi_iort_node, iort, iort->header.length);
+-
+-	for (i = 0; i < iort->node_count; i++) {
+-		if (node >= end)
+-			break;
+-
+-		switch (node->type) {
+-			struct acpi_iort_named_component *ncomp;
+-			struct acpi_iort_root_complex *rc;
+-			phys_addr_t local_limit;
+-
+-		case ACPI_IORT_NODE_NAMED_COMPONENT:
+-			ncomp = (struct acpi_iort_named_component *)node->node_data;
+-			local_limit = DMA_BIT_MASK(ncomp->memory_address_limit);
+-			limit = min_not_zero(limit, local_limit);
+-			break;
+-
+-		case ACPI_IORT_NODE_PCI_ROOT_COMPLEX:
+-			if (node->revision < 1)
+-				break;
+-
+-			rc = (struct acpi_iort_root_complex *)node->node_data;
+-			local_limit = DMA_BIT_MASK(rc->memory_address_limit);
+-			limit = min_not_zero(limit, local_limit);
+-			break;
+-		}
+-		node = ACPI_ADD_PTR(struct acpi_iort_node, node, node->length);
+-	}
+-	acpi_put_table(&iort->header);
+-	return limit;
+-}
+-#endif
+diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
+index 1a12baa58e40..20a32120bb88 100644
+--- a/include/linux/acpi_iort.h
++++ b/include/linux/acpi_iort.h
+@@ -38,7 +38,6 @@ void iort_dma_setup(struct device *dev, u64 *dma_addr, u64 *size);
+ const struct iommu_ops *iort_iommu_configure_id(struct device *dev,
+ 						const u32 *id_in);
+ int iort_iommu_msi_get_resv_regions(struct device *dev, struct list_head *head);
+-phys_addr_t acpi_iort_dma_get_max_cpu_address(void);
+ #else
+ static inline void acpi_iort_init(void) { }
+ static inline u32 iort_msi_map_id(struct device *dev, u32 id)
+@@ -56,9 +55,6 @@ static inline const struct iommu_ops *iort_iommu_configure_id(
+ static inline
+ int iort_iommu_msi_get_resv_regions(struct device *dev, struct list_head *head)
+ { return 0; }
+-
+-static inline phys_addr_t acpi_iort_dma_get_max_cpu_address(void)
+-{ return PHYS_ADDR_MAX; }
+ #endif
+ 
+ #endif /* __ACPI_IORT_H__ */

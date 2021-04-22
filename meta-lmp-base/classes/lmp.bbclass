@@ -50,3 +50,33 @@ IMAGE_CMD_ostree_append () {
 	# Update default home path
 	sed -i -e 's,:/home,:/var/rootdirs/home,g' usr/etc/passwd
 }
+
+run_fiotool_cmd () {
+	if [ -n "${SOTA_PACKED_CREDENTIALS}" ]; then
+                if [ -e "${SOTA_PACKED_CREDENTIALS}" ]; then
+                        "${1}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}"
+                else
+                        bbwarn "SOTA_PACKED_CREDENTIALS file does not exist."
+                fi
+        else
+                bbwarn "SOTA_PACKED_CREDENTIALS not set. Please add SOTA_PACKED_CREDENTIALS."
+        fi
+}
+
+do_image_ostreepush[depends] += "fiotools-native:do_populate_sysroot"
+IMAGE_CMD_ostreepush_prepend_lmp () {
+	if [ "${USE_FIOTOOLS}" = "1" ]; then
+		run_fiotool_cmd "fiopush"
+		# force return so garage-push called from meta-updater's IMAGE_CMD_ostreepush is not executed
+		return
+	fi
+}
+
+do_image_garagecheck[depends] += "fiotools-native:do_populate_sysroot"
+IMAGE_CMD_garagecheck_prepend_lmp () {
+	if [ "${USE_FIOTOOLS}" = "1" ]; then
+		run_fiotool_cmd "fiocheck"
+		# force return so garage-check called from meta-updater's IMAGE_CMD_garagecheck is not executed
+		return
+	fi
+}

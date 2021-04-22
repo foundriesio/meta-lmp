@@ -1,8 +1,8 @@
 include recipes-kernel/linux/kmeta-linux-lmp-5.4.y.inc
 
-LINUX_VERSION ?= "5.4.93"
+LINUX_VERSION ?= "5.4.106"
 KBRANCH = "ti-linux-5.4.y"
-SRCREV_machine = "87c0425824b4169e4d697c4f6219243249a8c08b"
+SRCREV_machine = "023faefa70274929bff92dc41167b007f7523792"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 TI_DEFCONFIG_BUILDER_TARGET ?= "ti_sdk_arm64_release"

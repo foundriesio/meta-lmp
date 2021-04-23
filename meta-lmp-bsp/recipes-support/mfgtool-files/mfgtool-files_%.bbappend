@@ -1,5 +1,10 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+SRC_URI_append_imx6ullevk-sec = " \
+    file://fuse.uuu \
+    file://close.uuu \
+"
+
 # Machine specific dependencies
 def get_do_deploy_depends(d):
     imxboot_families = ['mx8']
@@ -32,6 +37,17 @@ do_deploy_prepend_mx6ull() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/SPL ${DEPLOYDIR}/${PN}/SPL-mfgtool
     install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb
+}
+
+do_compile_append_imx6ullevk-sec(){
+    sed -i -e 's/SPL-mfgtool/&.signed/g' -e 's/SPL-.*-sec/&.signed/g' bootloader.uuu
+    sed -i -e 's/SPL-mfgtool/&.signed/g' -e 's/SPL-.*-sec/&.signed/g' full_image.uuu
+}
+
+do_deploy_prepend_imx6ullevk-sec() {
+    install -d ${DEPLOYDIR}/${PN}
+    install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
+    install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu
 }
 
 do_deploy_prepend_apalis-imx6() {

@@ -1,0 +1,19 @@
+uuu_version 1.2.39
+
+SDP: boot -f SPL-mfgtool.signed -dcdaddr 0x0907000 -cleardcd
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+
+FB: ucmd fuse prog -y 3 0 0xEA2F0B50
+FB: ucmd fuse prog -y 3 1 0x871167F7
+FB: ucmd fuse prog -y 3 2 0xF5CECF5D
+FB: ucmd fuse prog -y 3 3 0x364727C3
+FB: ucmd fuse prog -y 3 4 0x8DD52832
+FB: ucmd fuse prog -y 3 5 0xF158F65F
+FB: ucmd fuse prog -y 3 6 0xA71BBE78
+FB: ucmd fuse prog -y 3 7 0xA3AD024A
+FB: acmd reset
+
+FB: DONE

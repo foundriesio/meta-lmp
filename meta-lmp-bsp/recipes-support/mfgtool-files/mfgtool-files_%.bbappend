@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI_append_imx6ullevk-sec = " \
     file://fuse.uuu \
     file://close.uuu \
+    file://readme.md \
 "
 
 # Machine specific dependencies
@@ -48,6 +49,7 @@ do_deploy_prepend_imx6ullevk-sec() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
     install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu
+    install -m 0644 ${WORKDIR}/readme.md ${DEPLOYDIR}/${PN}/readme.md
 }
 
 do_deploy_prepend_apalis-imx6() {

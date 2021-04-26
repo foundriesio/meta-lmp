@@ -155,7 +155,7 @@
 
 &dwc3_0 {
 	status = "okay";
-	dr_mode = "host";
+	dr_mode = "otg";
 	snps,usb3_lpm_capable;
 	phy-names = "usb3-phy";
 	/* 4==PHY_TYPE_USB3 */

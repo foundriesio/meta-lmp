@@ -25,10 +25,10 @@ inherit deploy
 do_configure[noexec] = "1"
 
 do_compile() {
-    sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
-        "${S}/boot.cmd" > boot.cmd
+    cp ${S}/boot.cmd ${B}/boot.cmd
     sed -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' \
         -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
+        -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
         "${S}/uEnv.txt.in" > uEnv.txt
     mkimage -A arm -T script -C none -n "Ostree boot script" -d boot.cmd boot.scr
 }

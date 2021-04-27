@@ -1,0 +1,33 @@
+From 350b702d9ee108f183a594ad6791edd9290a2db1 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 27 Oct 2021 13:46:55 -0300
+Subject: [PATCH] [FIO extras] pkcs11: change UUID to avoid conflict with SKS
+
+Upstream pkcs11 TA shares the same UUID as previously used by SKS, but
+they are not compatible with each other from the storage perspective, so
+change UUID to avoid conflict and facilitate the transition by the user
+by allowing both TAs to be installed at the same time.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ libckteec/include/pkcs11_ta.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libckteec/include/pkcs11_ta.h b/libckteec/include/pkcs11_ta.h
+index 36cc7b4..bb1d3b2 100644
+--- a/libckteec/include/pkcs11_ta.h
++++ b/libckteec/include/pkcs11_ta.h
+@@ -9,8 +9,8 @@
+ #include <stdbool.h>
+ #include <stdint.h>
+ 
+-#define PKCS11_TA_UUID { 0xfd02c9da, 0x306c, 0x48c7, \
+-			 { 0xa4, 0x9c, 0xbb, 0xd8, 0x27, 0xae, 0x86, 0xee } }
++#define PKCS11_TA_UUID { 0x7f10a757, 0x4139, 0x4eae, \
++			 { 0x90, 0xc9, 0xf2, 0xb2, 0xeb, 0x11, 0x81, 0x39} }
+ 
+ /* PKCS11 trusted application version information */
+ #define PKCS11_TA_VERSION_MAJOR			0
+-- 
+2.33.0
+

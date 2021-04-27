@@ -11,9 +11,7 @@ inherit python3native
 
 require optee.inc
 
-SRC_URI = "git://github.com/linaro-swg/optee_examples.git \
-           file://0001-make-Pass-ldflags-during-link.patch \
-          "
+SRC_URI = "git://github.com/linaro-swg/optee_examples.git"
 
 EXTRA_OEMAKE += "TA_DEV_KIT_DIR=${TA_DEV_KIT_DIR} \
                  HOST_CROSS_COMPILE=${HOST_PREFIX} \

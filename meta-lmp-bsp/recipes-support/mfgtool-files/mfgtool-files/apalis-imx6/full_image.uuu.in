@@ -19,5 +19,8 @@ FB: ucmd mmc dev ${flash_dev} 1; mmc erase 0 0x7FF
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: flash bootloader ../SPL-@@MACHINE@@
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
+FB: flash bootloader_s ../SPL-@@MACHINE@@
+FB: flash bootloader2_s ../u-boot-@@MACHINE@@.itb
+FB: flash sit ../sit-@@MACHINE@@.bin
 FB: ucmd if env exist emmc_partconf; then run emmc_partconf; fi;
 FB: done

@@ -6,11 +6,15 @@ do_compile[depends] += "virtual/pmu-firmware:do_deploy"
 SRC_URI_append = " \
     file://0001-arm-zynqmp-add-support-to-handoff-bl32-parameters.patch \
     file://0001-board-zynqmp-subtract-optee-runtime-length-from-ram_.patch \
-"
-
-SRC_URI_append_uz = " \
     file://fw_env.config \
     file://lmp.cfg \
+"
+
+# LMP base requires a different u-boot configuration fragment
+SRC_URI_append_lmp-base = " file://lmp-base.cfg "
+SRC_URI_remove_lmp-base = "file://lmp.cfg"
+
+SRC_URI_append_uz = " \
     file://pm_cfg_obj.c \
 "
 

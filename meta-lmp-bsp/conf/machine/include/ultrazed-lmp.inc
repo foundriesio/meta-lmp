@@ -21,6 +21,7 @@ PREFERRED_PROVIDER_u-boot-default-script = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota = "u-boot-ostree-scr-fit"
 
 SPL_BINARY ?= "spl/boot.bin"
+UBOOT_SUFFIX = "itb"
 UBOOT_MACHINE ?= "xilinx_zynqmp_virt_defconfig"
 UBOOT_CLASSES = "uboot-fitimage"
 UBOOTFDT_LOADADDRESS = "0x00100000"
@@ -47,8 +48,9 @@ EXTRA_IMAGEDEPENDS += " \
 "
 
 # Used to create a wic image to boot from emmc
-IMAGE_BOOT_FILES_append = " boot.bin"
-IMAGE_BOOT_FILES_sota = " u-boot.itb boot.itb"
+WKS_FILE = "sdimage-bootpart.wks"
+IMAGE_BOOT_FILES = "${@get_default_image_boot_files(d)} boot.bin boot.scr uEnv.txt system-top.dtb bitstream.bit.bin"
+IMAGE_BOOT_FILES_sota = "boot.bin u-boot.itb boot.itb"
 
 PMU_FIRMWARE_IMAGE_NAME ?= "pmu-firmware-${MACHINE}"
 PMU_FIRMWARE_DEPLOY_DIR ?= "${DEPLOY_DIR_IMAGE}"

@@ -345,6 +345,7 @@ WKS_FILE_sota_stm32mp1-disco = "sdimage-stm32mp157c-dk2-trusted-sota.wks.in"
 
 # Xilinx
 USE_XSCT_TARBALL_zynqmp = "1"
+KERNEL_BUILTIN_WIREGUARD_uz = "1"
 
 # TI AM64x
 PREFERRED_PROVIDER_virtual/kernel_am64xx-sk ?= "linux-lmp-ti-staging"

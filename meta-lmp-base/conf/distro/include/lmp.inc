@@ -92,6 +92,10 @@ BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_1.0.bb \
     /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
 "
+# meta-st-stm32mp: mask libdrm append only compatible with gatesgarth
+BBMASK += " \
+    /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.102.bbappend \
+"
 
 # disable xsct tarball by default (xilinx)
 USE_XSCT_TARBALL = "0"

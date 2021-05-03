@@ -1,0 +1,334 @@
+From c0e5ff1155b338f824f3c72b1fddf2ceefbb7fbe Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 8 Jun 2021 22:58:07 -0300
+Subject: [PATCH] Revert "mmc: zynq_sdhci: Use xilinx pm request instead of
+ mmio_write call"
+
+Revert otherwise unable to boot reliably from sdhci.
+
+This reverts commit ee4692d8a0b7afbd7aa5069c88c2dde45a8237fd.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ board/xilinx/zynqmp/tap_delays.c | 89 +++++++++++++++++++++++++++++---
+ drivers/mmc/zynq_sdhci.c         | 80 +++++-----------------------
+ include/zynqmp_tap_delay.h       | 25 +++------
+ 3 files changed, 100 insertions(+), 94 deletions(-)
+
+diff --git a/board/xilinx/zynqmp/tap_delays.c b/board/xilinx/zynqmp/tap_delays.c
+index 4ce2244060d..d16bbb8eff9 100644
+--- a/board/xilinx/zynqmp/tap_delays.c
++++ b/board/xilinx/zynqmp/tap_delays.c
+@@ -10,17 +10,92 @@
+ #include <asm/arch/sys_proto.h>
+ #include <linux/delay.h>
+ #include <mmc.h>
+-#include <zynqmp_firmware.h>
+ 
+-int arasan_zynqmp_set_in_tapdelay(u8 deviceid, u32 type, u32 itap_delay)
++#define SD_DLL_CTRL			0xFF180358
++#define SD_ITAP_DLY			0xFF180314
++#define SD_OTAP_DLY			0xFF180318
++#define SD0_DLL_RST_MASK		0x00000004
++#define SD0_DLL_RST			0x00000004
++#define SD1_DLL_RST_MASK		0x00040000
++#define SD1_DLL_RST			0x00040000
++#define SD0_ITAPCHGWIN_MASK		0x00000200
++#define SD0_ITAPCHGWIN			0x00000200
++#define SD1_ITAPCHGWIN_MASK		0x02000000
++#define SD1_ITAPCHGWIN			0x02000000
++#define SD0_ITAPDLYENA_MASK		0x00000100
++#define SD0_ITAPDLYENA			0x00000100
++#define SD1_ITAPDLYENA_MASK		0x01000000
++#define SD1_ITAPDLYENA			0x01000000
++#define SD0_ITAPDLYSEL_MASK		0x000000FF
++#define SD1_ITAPDLYSEL_MASK		0x00FF0000
++#define SD0_OTAPDLYSEL_MASK		0x0000003F
++#define SD1_OTAPDLYSEL_MASK		0x003F0000
++
++void zynqmp_dll_reset(u8 deviceid)
+ {
++	/* Issue DLL Reset */
++	if (deviceid == 0)
++		zynqmp_mmio_write(SD_DLL_CTRL, SD0_DLL_RST_MASK,
++				  SD0_DLL_RST);
++	else
++		zynqmp_mmio_write(SD_DLL_CTRL, SD1_DLL_RST_MASK,
++				  SD1_DLL_RST);
++
++	mdelay(1);
+ 
+-	return xilinx_pm_request(PM_IOCTL, (u32)deviceid, IOCTL_SET_SD_TAPDELAY,
+-			  type, itap_delay, NULL);
++	/* Release DLL Reset */
++	if (deviceid == 0)
++		zynqmp_mmio_write(SD_DLL_CTRL, SD0_DLL_RST_MASK, 0x0);
++	else
++		zynqmp_mmio_write(SD_DLL_CTRL, SD1_DLL_RST_MASK, 0x0);
+ }
+ 
+-int arasan_zynqmp_set_out_tapdelay(u8 deviceid, u32 type, u32 otap_delay)
++void arasan_zynqmp_set_in_tapdelay(u8 deviceid, u32 itap_delay)
+ {
+-	return xilinx_pm_request(PM_IOCTL, (u32)deviceid, IOCTL_SET_SD_TAPDELAY,
+-			  type, otap_delay, NULL);
++	if (deviceid == 0) {
++		zynqmp_mmio_write(SD_DLL_CTRL, SD0_DLL_RST_MASK, SD0_DLL_RST);
++
++		/* Program ITAP delay */
++		zynqmp_mmio_write(SD_ITAP_DLY, SD0_ITAPCHGWIN_MASK,
++				  SD0_ITAPCHGWIN);
++		zynqmp_mmio_write(SD_ITAP_DLY, SD0_ITAPDLYENA_MASK,
++				  SD0_ITAPDLYENA);
++		zynqmp_mmio_write(SD_ITAP_DLY, SD0_ITAPDLYSEL_MASK, itap_delay);
++		zynqmp_mmio_write(SD_ITAP_DLY, SD0_ITAPCHGWIN_MASK, 0x0);
++
++		zynqmp_mmio_write(SD_DLL_CTRL, SD0_DLL_RST_MASK, 0x0);
++	} else {
++		zynqmp_mmio_write(SD_DLL_CTRL, SD1_DLL_RST_MASK, SD1_DLL_RST);
++
++		/* Program ITAP delay */
++		zynqmp_mmio_write(SD_ITAP_DLY, SD1_ITAPCHGWIN_MASK,
++				  SD1_ITAPCHGWIN);
++		zynqmp_mmio_write(SD_ITAP_DLY, SD1_ITAPDLYENA_MASK,
++				  SD1_ITAPDLYENA);
++		zynqmp_mmio_write(SD_ITAP_DLY, SD1_ITAPDLYSEL_MASK,
++				  (itap_delay << 16));
++		zynqmp_mmio_write(SD_ITAP_DLY, SD1_ITAPCHGWIN_MASK, 0x0);
++
++		zynqmp_mmio_write(SD_DLL_CTRL, SD1_DLL_RST_MASK, 0x0);
++	}
++}
++
++void arasan_zynqmp_set_out_tapdelay(u8 deviceid, u32 otap_delay)
++{
++	if (deviceid == 0) {
++		zynqmp_mmio_write(SD_DLL_CTRL, SD0_DLL_RST_MASK, SD0_DLL_RST);
++
++		/* Program OTAP delay */
++		zynqmp_mmio_write(SD_OTAP_DLY, SD0_OTAPDLYSEL_MASK, otap_delay);
++
++		zynqmp_mmio_write(SD_DLL_CTRL, SD0_DLL_RST_MASK, 0x0);
++	} else {
++		zynqmp_mmio_write(SD_DLL_CTRL, SD1_DLL_RST_MASK, SD1_DLL_RST);
++
++		/* Program OTAP delay */
++		zynqmp_mmio_write(SD_OTAP_DLY, SD1_OTAPDLYSEL_MASK,
++				  (otap_delay << 16));
++
++		zynqmp_mmio_write(SD_DLL_CTRL, SD1_DLL_RST_MASK, 0x0);
++	}
+ }
+diff --git a/drivers/mmc/zynq_sdhci.c b/drivers/mmc/zynq_sdhci.c
+index ba13c48e352..d39731aab5b 100644
+--- a/drivers/mmc/zynq_sdhci.c
++++ b/drivers/mmc/zynq_sdhci.c
+@@ -18,7 +18,6 @@
+ #include <malloc.h>
+ #include <sdhci.h>
+ #include <zynqmp_tap_delay.h>
+-#include <zynqmp_firmware.h>
+ 
+ #define SDHCI_ARASAN_ITAPDLY_REGISTER	0xF0F8
+ #define SDHCI_ARASAN_ITAPDLY_SEL_MASK	0xFF
+@@ -76,39 +75,26 @@ static const u8 mode2timing[] = {
+ 	[MMC_HS_200] = MMC_TIMING_MMC_HS200,
+ };
+ 
+-static int arasan_zynqmp_dll_reset(struct sdhci_host *host, u8 deviceid)
++static void arasan_zynqmp_dll_reset(struct sdhci_host *host, u8 deviceid)
+ {
+-	struct mmc *mmc = (struct mmc *)host->mmc;
+-	struct udevice *dev = mmc->dev;
+-	unsigned long timeout;
+-	int ret;
+ 	u16 clk;
++	unsigned long timeout;
+ 
+ 	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+ 	clk &= ~(SDHCI_CLOCK_CARD_EN);
+ 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+ 
+ 	/* Issue DLL Reset */
+-	ret = zynqmp_pm_sd_dll_reset(deviceid, PM_DLL_RESET_ASSERT);
+-	if (ret) {
+-		dev_err(dev, "dll_reset assert failed with err: %d\n", ret);
+-		return ret;
+-	}
+-
+-	mdelay(1);
+-	ret = zynqmp_pm_sd_dll_reset(deviceid, PM_DLL_RESET_RELEASE);
+-	if (ret) {
+-		dev_err(dev, "dll_reset release failed with err: %d\n", ret);
+-		return ret;
+-	}
++	zynqmp_dll_reset(deviceid);
+ 
+ 	/* Wait max 20 ms */
+ 	timeout = 100;
+ 	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+ 				& SDHCI_CLOCK_INT_STABLE)) {
+ 		if (timeout == 0) {
+-			dev_err(dev, ": Internal clock never stabilised.\n");
+-			return -EBUSY;
++			dev_err(mmc_dev(host->mmc),
++				": Internal clock never stabilised.\n");
++			return;
+ 		}
+ 		timeout--;
+ 		udelay(1000);
+@@ -116,8 +102,6 @@ static int arasan_zynqmp_dll_reset(struct sdhci_host *host, u8 deviceid)
+ 
+ 	clk |= SDHCI_CLOCK_CARD_EN;
+ 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+-
+-	return 0;
+ }
+ 
+ static int arasan_sdhci_execute_tuning(struct mmc *mmc, u8 opcode)
+@@ -212,11 +196,8 @@ static int sdhci_zynqmp_sdcardclk_set_phase(struct sdhci_host *host,
+ {
+ 	struct arasan_sdhci_priv *priv = dev_get_priv(host->mmc->dev);
+ 	struct mmc *mmc = (struct mmc *)host->mmc;
+-	struct udevice *dev = mmc->dev;
+-	u32 node_id = dev->seq ? NODE_SD_0 : NODE_SD_1;
+ 	u8 tap_delay, tap_max = 0;
+ 	int timing = mode2timing[mmc->selected_mode];
+-	int ret;
+ 
+ 	/*
+ 	 * This is applicable for SDHCI_SPEC_300 and above
+@@ -252,20 +233,7 @@ static int sdhci_zynqmp_sdcardclk_set_phase(struct sdhci_host *host,
+ 	/* Limit output tap_delay value to 6 bits */
+ 	tap_delay &= SDHCI_ARASAN_OTAPDLY_SEL_MASK;
+ 
+-	/* Set the Clock Phase */
+-	ret = arasan_zynqmp_set_out_tapdelay(priv->deviceid,
+-					     PM_TAPDELAY_OUTPUT, tap_delay);
+-	if (ret) {
+-		dev_err(dev, "Error setting output Tap Delay\n");
+-		return ret;
+-	}
+-
+-	/* Release DLL Reset */
+-	ret = zynqmp_pm_sd_dll_reset(node_id, PM_DLL_RESET_RELEASE);
+-	if (ret) {
+-		dev_err(dev, "dll_reset release failed with err: %d\n", ret);
+-		return ret;
+-	}
++	arasan_zynqmp_set_out_tapdelay(priv->deviceid, tap_delay);
+ 
+ 	return 0;
+ }
+@@ -284,11 +252,8 @@ static int sdhci_zynqmp_sampleclk_set_phase(struct sdhci_host *host,
+ {
+ 	struct arasan_sdhci_priv *priv = dev_get_priv(host->mmc->dev);
+ 	struct mmc *mmc = (struct mmc *)host->mmc;
+-	struct udevice *dev = mmc->dev;
+-	u32 node_id = dev->seq ? NODE_SD_0 : NODE_SD_1;
+ 	u8 tap_delay, tap_max = 0;
+ 	int timing = mode2timing[mmc->selected_mode];
+-	int ret;
+ 
+ 	/*
+ 	 * This is applicable for SDHCI_SPEC_300 and above
+@@ -298,13 +263,6 @@ static int sdhci_zynqmp_sampleclk_set_phase(struct sdhci_host *host,
+ 	if (SDHCI_GET_VERSION(host) < SDHCI_SPEC_300)
+ 		return 0;
+ 
+-	/* Assert DLL Reset */
+-	ret = zynqmp_pm_sd_dll_reset(node_id, PM_DLL_RESET_ASSERT);
+-	if (ret) {
+-		dev_err(dev, "dll_reset assert failed with err: %d\n", ret);
+-		return ret;
+-	}
+-
+ 	switch (timing) {
+ 	case MMC_TIMING_MMC_HS:
+ 	case MMC_TIMING_SD_HS:
+@@ -331,12 +289,7 @@ static int sdhci_zynqmp_sampleclk_set_phase(struct sdhci_host *host,
+ 	/* Limit input tap_delay value to 8 bits */
+ 	tap_delay &= SDHCI_ARASAN_ITAPDLY_SEL_MASK;
+ 
+-	ret = arasan_zynqmp_set_in_tapdelay(priv->deviceid,
+-					    PM_TAPDELAY_INPUT, tap_delay);
+-	if (ret) {
+-		dev_err(dev, "Error setting Input Tap Delay\n");
+-		return ret;
+-	}
++	arasan_zynqmp_set_in_tapdelay(priv->deviceid, tap_delay);
+ 
+ 	return 0;
+ }
+@@ -478,26 +431,17 @@ static int arasan_sdhci_set_tapdelay(struct sdhci_host *host)
+ 	u8 timing = mode2timing[mmc->selected_mode];
+ 	u32 iclk_phase = clk_data->clk_phase_in[timing];
+ 	u32 oclk_phase = clk_data->clk_phase_out[timing];
+-	int ret;
+ 
+ 	dev_dbg(dev, "%s, host:%s, mode:%d\n", __func__, host->name, timing);
+ 
+ 	if (IS_ENABLED(CONFIG_ARCH_ZYNQMP) &&
+ 	    device_is_compatible(dev, "xlnx,zynqmp-8.9a")) {
+-		ret = sdhci_zynqmp_sampleclk_set_phase(host, iclk_phase);
+-		if (ret)
+-			return ret;
+-		ret = sdhci_zynqmp_sdcardclk_set_phase(host, oclk_phase);
+-		if (ret)
+-			return ret;
++		sdhci_zynqmp_sampleclk_set_phase(host, iclk_phase);
++		sdhci_zynqmp_sdcardclk_set_phase(host, oclk_phase);
+ 	} else if (IS_ENABLED(CONFIG_ARCH_VERSAL) &&
+ 		   device_is_compatible(dev, "xlnx,versal-8.9a")) {
+-		ret = sdhci_versal_sampleclk_set_phase(host, iclk_phase);
+-		if (ret)
+-			return ret;
+-		ret = sdhci_versal_sdcardclk_set_phase(host, oclk_phase);
+-		if (ret)
+-			return ret;
++		sdhci_versal_sampleclk_set_phase(host, iclk_phase);
++		sdhci_versal_sdcardclk_set_phase(host, oclk_phase);
+ 	}
+ 
+ 	return 0;
+diff --git a/include/zynqmp_tap_delay.h b/include/zynqmp_tap_delay.h
+index b159f0ca7ba..1c1e3e7deed 100644
+--- a/include/zynqmp_tap_delay.h
++++ b/include/zynqmp_tap_delay.h
+@@ -8,27 +8,14 @@
+ #ifndef __ZYNQMP_TAP_DELAY_H__
+ #define __ZYNQMP_TAP_DELAY_H__
+ 
+-#include <zynqmp_firmware.h>
+-
+ #ifdef CONFIG_ARCH_ZYNQMP
+-int arasan_zynqmp_set_in_tapdelay(u8 device_id, u32 type, u32 itap_delay);
+-int arasan_zynqmp_set_out_tapdelay(u8 device_id, u32 type, u32 otap_delay);
++void zynqmp_dll_reset(u8 deviceid);
++void arasan_zynqmp_set_in_tapdelay(u8 device_id, u32 itap_delay);
++void arasan_zynqmp_set_out_tapdelay(u8 device_id, u32 otap_delay);
+ #else
+-inline int arasan_zynqmp_set_in_tapdelay(u8 device_id, u32 type, u32 itap_delay)
+-{
+-	return 0;
+-}
+-
+-int arasan_zynqmp_set_out_tapdelay(u8 device_id, u32 type, u32 otap_delay)
+-{
+-	return 0;
+-}
++inline void zynqmp_dll_reset(u8 deviceid) {}
++inline void arasan_zynqmp_set_in_tapdelay(u8 device_id, u32 itap_delay) {}
++inline void arasan_zynqmp_set_out_tapdelay(u8 device_id, u32 otap_delay) {}
+ #endif
+ 
+-static inline int zynqmp_pm_sd_dll_reset(u32 node_id, u32 type)
+-{
+-	return xilinx_pm_request(PM_IOCTL, node_id, IOCTL_SD_DLL_RESET,
+-				 type, 0, NULL);
+-}
+-
+ #endif
+-- 
+2.31.1
+

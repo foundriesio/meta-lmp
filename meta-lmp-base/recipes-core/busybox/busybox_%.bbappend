@@ -4,6 +4,7 @@ SRC_URI_append_lmp = " \
     file://less.cfg \
     file://shell.cfg \
     file://utils.cfg \
+    file://removed.cfg \
 "
 
 # Remove syslog as it is not required with systemd

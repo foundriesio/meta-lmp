@@ -6,6 +6,7 @@ do_compile[depends] += "virtual/pmu-firmware:do_deploy"
 SRC_URI_append = " \
     file://0001-arm-zynqmp-add-support-to-handoff-bl32-parameters.patch \
     file://0001-board-zynqmp-subtract-optee-runtime-length-from-ram_.patch \
+    file://0001-Revert-mmc-zynq_sdhci-Use-xilinx-pm-request-instead-.patch \
     file://fw_env.config \
     file://lmp.cfg \
 "

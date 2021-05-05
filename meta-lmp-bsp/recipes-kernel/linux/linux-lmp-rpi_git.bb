@@ -15,4 +15,4 @@ KMETA = "kernel-meta"
 
 include recipes-kernel/linux/linux-lmp.inc
 
-KERNEL_EXTRA_ARGS += "DTC_FLAGS='-@ -H epapr'"
+KERNEL_DTC_FLAGS += "-@ -H epapr"

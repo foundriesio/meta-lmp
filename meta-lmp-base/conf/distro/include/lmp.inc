@@ -28,12 +28,11 @@ PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 INIT_MANAGER = "systemd"
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
-DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
+DISTRO_FEATURES_append = " pam usrmerge seccomp virtualization ptest"
 
 # Extended packageconfig options for LMP
 PACKAGECONFIG_append_pn-docker-ce = " seccomp"
 PACKAGECONFIG_append_pn-docker-moby = " seccomp"
-PACKAGECONFIG_append_pn-runc-docker = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG_remove_pn-runc-docker = "static"
 PACKAGECONFIG_append_pn-systemd = " journal-upload resolved seccomp serial-getty-generator"

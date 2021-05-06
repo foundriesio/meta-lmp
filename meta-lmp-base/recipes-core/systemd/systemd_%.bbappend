@@ -8,6 +8,9 @@ EXTRA_OEMESON += ' \
 '
 
 SRC_URI_append = " \
+	file://0001-cgroup-Simplify-cg_get_path_and_check.patch \
+	file://0002-core-Make-user-instance-aware-of-delegated-cgroup-co.patch \
+	file://0003-Revert-Silence-cgroups-v1-read-only-filesystem-warni.patch \
 	file://0001-tmpfiles-tmp.conf-reduce-cleanup-age-to-half.patch \
 	file://systemd-networkd-wait-online.service.in-use-any-by-d.patch \
 	file://systemd-timesyncd-update.service \

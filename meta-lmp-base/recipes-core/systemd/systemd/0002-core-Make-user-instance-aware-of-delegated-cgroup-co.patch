@@ -1,0 +1,163 @@
+From c89298e9c11f951b8fede331ca9e227482e632fc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+Date: Tue, 26 Jan 2021 19:15:45 +0100
+Subject: [PATCH 2/3] core: Make (user) instance aware of delegated cgroup
+ controllers
+
+systemd user instance assumed same controllers are available to it as to
+PID 1. That is not true generally, in v1 (legacy, hybrid) we don't delegate any
+controllers to anyone and in v2 (unified) we may delegate only subset of
+controllers.
+The user instance would fail silently when the controller cgroup cannot
+be created or the controller cannot be enabled on the unified hierarchy.
+
+The changes in 7b63961415 ("cgroup: Swap cgroup v1 deletion and
+migration") caused some attempts of operating on non-delegated
+controllers to be logged.
+
+Make the user instance first check what controllers are availble to it
+and narrow operations only to these controllers. The original checks are
+kept in place.
+
+Note that daemon-reexec needs to be invoked in order to update the set
+of unabled controllers after a change.
+
+Fixes: #18047
+Fixes: #17862
+(cherry picked from commit 0fa7b50053695a3012af71c719dd86c12ab10fc6)
+---
+ src/basic/cgroup-util.c | 41 +++++++++++++++++++++++++++--------------
+ src/basic/cgroup-util.h |  1 +
+ src/core/cgroup.c       |  2 +-
+ 3 files changed, 29 insertions(+), 15 deletions(-)
+
+diff --git a/src/basic/cgroup-util.c b/src/basic/cgroup-util.c
+index 951192d98a..2c27657283 100644
+--- a/src/basic/cgroup-util.c
++++ b/src/basic/cgroup-util.c
+@@ -527,15 +527,21 @@ int cg_get_path(const char *controller, const char *path, const char *suffix, ch
+         return 0;
+ }
+ 
+-static int controller_is_v1_accessible(const char *controller) {
+-        const char *cc, *dn;
++static int controller_is_v1_accessible(const char *root, const char *controller) {
++        const char *cpath, *dn;
+ 
+         assert(controller);
+ 
+         dn = controller_to_dirname(controller);
+-        cc = strjoina("/sys/fs/cgroup/", dn);
+-
+-        if (laccess(cc, F_OK) < 0)
++        cpath = strjoina("/sys/fs/cgroup/", dn);
++        if (root)
++                /* Also check that:
++                 * - possible subcgroup is created at root,
++                 * - we can modify the hierarchy.
++                 * "Leak" cpath on stack */
++                cpath = strjoina(cpath, root, "/cgroup.procs");
++
++        if (laccess(cpath, root ? W_OK : F_OK) < 0)
+                 return -errno;
+ 
+         return 0;
+@@ -560,7 +566,7 @@ int cg_get_path_and_check(const char *controller, const char *path, const char *
+                         return -EOPNOTSUPP;
+         } else {
+                 /* Check if the specified controller is actually accessible */
+-                r = controller_is_v1_accessible(controller);
++                r = controller_is_v1_accessible(NULL, controller);
+                 if (r < 0)
+                         return r;
+         }
+@@ -1849,7 +1855,7 @@ int cg_mask_from_string(const char *value, CGroupMask *ret) {
+         return 0;
+ }
+ 
+-int cg_mask_supported(CGroupMask *ret) {
++int cg_mask_supported_subtree(const char *root, CGroupMask *ret) {
+         CGroupMask mask;
+         int r;
+ 
+@@ -1861,15 +1867,11 @@ int cg_mask_supported(CGroupMask *ret) {
+         if (r < 0)
+                 return r;
+         if (r > 0) {
+-                _cleanup_free_ char *root = NULL, *controllers = NULL, *path = NULL;
++                _cleanup_free_ char *controllers = NULL, *path = NULL;
+ 
+                 /* In the unified hierarchy we can read the supported and accessible controllers from
+                  * the top-level cgroup attribute */
+ 
+-                r = cg_get_root_path(&root);
+-                if (r < 0)
+-                        return r;
+-
+                 r = cg_get_path(SYSTEMD_CGROUP_CONTROLLER, root, "cgroup.controllers", &path);
+                 if (r < 0)
+                         return r;
+@@ -1888,7 +1890,7 @@ int cg_mask_supported(CGroupMask *ret) {
+         } else {
+                 CGroupController c;
+ 
+-                /* In the legacy hierarchy, we check which hierarchies are mounted. */
++                /* In the legacy hierarchy, we check which hierarchies are accessible. */
+ 
+                 mask = 0;
+                 for (c = 0; c < _CGROUP_CONTROLLER_MAX; c++) {
+@@ -1899,7 +1901,7 @@ int cg_mask_supported(CGroupMask *ret) {
+                                 continue;
+ 
+                         n = cgroup_controller_to_string(c);
+-                        if (controller_is_v1_accessible(n) >= 0)
++                        if (controller_is_v1_accessible(root, n) >= 0)
+                                 mask |= bit;
+                 }
+         }
+@@ -1908,6 +1910,17 @@ int cg_mask_supported(CGroupMask *ret) {
+         return 0;
+ }
+ 
++int cg_mask_supported(CGroupMask *ret) {
++        _cleanup_free_ char *root = NULL;
++        int r;
++
++        r = cg_get_root_path(&root);
++        if (r < 0)
++                return r;
++
++        return cg_mask_supported_subtree(root, ret);
++}
++
+ int cg_kernel_controllers(Set **ret) {
+         _cleanup_set_free_free_ Set *controllers = NULL;
+         _cleanup_fclose_ FILE *f = NULL;
+diff --git a/src/basic/cgroup-util.h b/src/basic/cgroup-util.h
+index bdc0d0d086..5a6f42d4d4 100644
+--- a/src/basic/cgroup-util.h
++++ b/src/basic/cgroup-util.h
+@@ -257,6 +257,7 @@ int cg_slice_to_path(const char *unit, char **ret);
+ typedef const char* (*cg_migrate_callback_t)(CGroupMask mask, void *userdata);
+ 
+ int cg_mask_supported(CGroupMask *ret);
++int cg_mask_supported_subtree(const char *root, CGroupMask *ret);
+ int cg_mask_from_string(const char *s, CGroupMask *ret);
+ int cg_mask_to_string(CGroupMask mask, char **ret);
+ 
+diff --git a/src/core/cgroup.c b/src/core/cgroup.c
+index 36d730b596..c6850c5d3a 100644
+--- a/src/core/cgroup.c
++++ b/src/core/cgroup.c
+@@ -3110,7 +3110,7 @@ int manager_setup_cgroup(Manager *m) {
+                 (void) cg_set_attribute("memory", "/", "memory.use_hierarchy", "1");
+ 
+         /* 8. Figure out which controllers are supported */
+-        r = cg_mask_supported(&m->cgroup_supported);
++        r = cg_mask_supported_subtree(m->cgroup_root, &m->cgroup_supported);
+         if (r < 0)
+                 return log_error_errno(r, "Failed to determine supported controllers: %m");
+ 
+-- 
+2.31.1
+

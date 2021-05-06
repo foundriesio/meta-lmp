@@ -27,7 +27,7 @@ PREFERRED_PROVIDER_virtual/runc = "runc-opencontainers"
 INIT_MANAGER = "systemd"
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
-DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
+DISTRO_FEATURES_append = " pam usrmerge seccomp virtualization ptest"
 
 # Extended packageconfig options for LMP
 PACKAGECONFIG_append_pn-docker-moby = " seccomp"

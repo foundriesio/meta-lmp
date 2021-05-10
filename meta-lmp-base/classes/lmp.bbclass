@@ -63,7 +63,7 @@ run_fiotool_cmd () {
         fi
 }
 
-do_image_ostreepush[depends] += "fiotools-native:do_populate_sysroot"
+do_image_ostreepush[depends] += "ostreeuploader-native:do_populate_sysroot"
 IMAGE_CMD_ostreepush_prepend_lmp () {
 	if [ "${USE_FIOTOOLS}" = "1" ]; then
 		run_fiotool_cmd "fiopush"
@@ -72,7 +72,7 @@ IMAGE_CMD_ostreepush_prepend_lmp () {
 	fi
 }
 
-do_image_garagecheck[depends] += "fiotools-native:do_populate_sysroot"
+do_image_garagecheck[depends] += "ostreeuploader-native:do_populate_sysroot"
 IMAGE_CMD_garagecheck_prepend_lmp () {
 	if [ "${USE_FIOTOOLS}" = "1" ]; then
 		run_fiotool_cmd "fiocheck"

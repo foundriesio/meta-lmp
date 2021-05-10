@@ -70,7 +70,6 @@ SPL_BINARY_freedom-u540 = "spl/u-boot-spl.bin"
 UBOOT_SUFFIX_freedom-u540 ?= "itb"
 KERNEL_CLASSES_freedom-u540 = " kernel-lmp-fitimage "
 UBOOT_ENV_freedom-u540 = ""
-# TODO: drop this once opensbi moves to 0.9
 RISCV_SBI_PAYLOAD_freedom-u540 = ""
 IMAGE_BOOT_FILES_freedom-u540 = "fitImage boot.scr uEnv.txt"
 IMAGE_BOOT_FILES_sota_freedom-u540 = "boot.itb"

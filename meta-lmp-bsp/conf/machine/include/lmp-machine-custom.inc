@@ -391,7 +391,7 @@ WKS_FILE_DEPENDS_append_sota_am64xx-sk = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script_sota_am64xx-sk = "u-boot-ostree-scr"
 KERNEL_IMAGETYPE_sota_am64xx-sk = "fitImage"
 KERNEL_CLASSES_sota_am64xx-sk = " kernel-lmp-fitimage "
-IMAGE_BOOT_FILES_am64xx-sk = "tiboot3.bin tispl.bin u-boot.img boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_append_am64xx-sk = " boot.scr uEnv.txt"
 UBOOT_ENTRYPOINT_am64xx-sk = "0x82000000"
 UBOOT_LOADADDRESS_am64xx-sk = "0x82000000"
 

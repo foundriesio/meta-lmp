@@ -255,17 +255,13 @@ PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx8 = "u-boot-ostree-scr-f
 
 # iMX8MQ
 UBOOT_SIGN_ENABLE_sota_mx8mq = "1"
-PREFERRED_PROVIDER_virtual/bootloader_mx8mq ?= "u-boot-fio"
-PREFERRED_PROVIDER_u-boot_mx8mq ?= "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_mx8mq = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_mx8mq = "libubootenv"
+IMX_DEFAULT_BOOTLOADER_mx8mq ?= "u-boot-fio"
 UBOOT_DTB_LOADADDRESS_mx8mq = "0x43000000"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a_mx8mq ?= "imx-atf"
 EXTRA_IMAGEDEPENDS_append_mx8mq = "virtual/trusted-firmware-a"
 UBOOT_CLASSES_mx8mq = "uboot-fitimage"
 ATF_BINARY_mx8mq = "arm-trusted-firmware.bin"
 UBOOT_CONFIG_mx8mq = ""
-UBOOT_SUFFIX_mx8mq = "bin"
 LMP_BOOT_FIRMWARE_FILES_mx8mq = "imx-boot imx-boot-nohdmi u-boot.itb"
 IMAGE_BOOT_FILES_mx8mq = "imx-boot u-boot.itb ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 IMAGE_BOOT_FILES_sota_mx8mq = "imx-boot u-boot.itb boot.itb"

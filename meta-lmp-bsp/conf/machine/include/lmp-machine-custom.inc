@@ -155,29 +155,6 @@ OSTREE_KERNEL_ARGS_mx6ull ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNE
 OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
-# cubox-i (hummingboard2)
-KERNEL_DEVICETREE_append_cubox-i = " \
-    imx6dl-hummingboard2-som-v15.dtb imx6q-hummingboard2-som-v15.dtb \
-    imx6dl-hummingboard2-emmc-som-v15.dtb imx6q-hummingboard2-emmc-som-v15.dtb \
-    imx6dl-hummingboard2.dtb imx6q-hummingboard2.dtb \
-"
-PREFERRED_PROVIDER_virtual/bootloader_cubox-i = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot_cubox-i = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_cubox-i = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_cubox-i = "libubootenv"
-WKS_FILE_DEPENDS_append_cubox-i = " u-boot-default-script"
-PREFERRED_PROVIDER_u-boot-default-script_cubox-i = "u-boot-ostree-scr-fit"
-SOTA_CLIENT_FEATURES_append_cubox-i = " ubootenv"
-IMAGE_BOOT_FILES_append_cubox-i = " boot.itb "
-KERNEL_IMAGETYPE_cubox-i = "fitImage"
-KERNEL_CLASSES_cubox-i = " kernel-lmp-fitimage "
-UBOOT_CONFIG_cubox-i = ""
-UBOOT_MACHINE_cubox-i = "mx6cuboxi_defconfig"
-UBOOT_DTB_LOADADDRESS_cubox-i = "0x18000000"
-UBOOT_RD_LOADADDRESS_cubox-i = "0x13000000"
-WKS_FILES_sota_cubox-i = "sdimage-imx6-spl-sota.wks"
-UBOOT_EXTLINUX_cubox-i = ""
-
 # Toradex Colibri iMX7 eMMC
 PREFERRED_PROVIDER_u-boot-default-script_colibri-imx7-emmc = "u-boot-ostree-scr"
 PREFERRED_PROVIDER_virtual/bootloader_colibri-imx7-emmc = "u-boot-fio"

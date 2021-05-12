@@ -1,7 +1,7 @@
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE_imx8mm-lpddr4-evk = "imx-mx8mmevk"
-OPTEEMACHINE_imx8mqevk = "imx-mx8mqevk"
+OPTEEMACHINE_imx8mq-evk = "imx-mx8mqevk"
 
 EXTRA_OEMAKE_append_imx = " \
     CFG_CAAM_DBG=0x001 \
@@ -19,7 +19,7 @@ EXTRA_OEMAKE_append_imx6ullevk = " \
     CFG_TZDRAM_START=0x9e000000 CFG_OVERLAY_ADDR=0x86000000 \
     CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS=1 CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS=1 \
 "
-EXTRA_OEMAKE_append_imx8mqevk = " \
+EXTRA_OEMAKE_append_imx8mq-evk = " \
     CFG_CORE_DYN_SHM=n CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
 "
 EXTRA_OEMAKE_append_imx8mm-lpddr4-evk = " \

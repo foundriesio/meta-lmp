@@ -271,11 +271,12 @@ PREFERRED_PROVIDER_virtual/kernel_mx8mq ?= "linux-lmp-fslc-imx"
 WKS_FILE_sota_mx8mq = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS_mx8mq = "flash_evk_spl"
 ## iMX8MQ EVK
-OSTREE_KERNEL_ARGS_imx8mqevk ?= "console=tty1 console=ttymxc0,115200 earlycon=ec_imx6q,0x30860000,115200 root=/dev/mmcblk0p2 rootfstype=ext4"
-SOTA_CLIENT_FEATURES_append_imx8mqevk = " ubootenv"
-MACHINE_FEATURES_remove_imx8mqevk = "qca6174"
-MACHINE_FEATURES_append_imx8mqevk = " bcm4356"
-UBOOT_MACHINE_imx8mqevk ?= "imx8mq_evk_config"
+KMACHINE_imx8mq-evk = "imx8mqevk"
+OSTREE_KERNEL_ARGS_imx8mq-evk ?= "console=tty1 console=ttymxc0,115200 earlycon=ec_imx6q,0x30860000,115200 root=/dev/mmcblk0p2 rootfstype=ext4"
+SOTA_CLIENT_FEATURES_append_imx8mq-evk = " ubootenv"
+MACHINE_FEATURES_remove_imx8mq-evk = "qca6174"
+MACHINE_FEATURES_append_imx8mq-evk = " bcm4356"
+UBOOT_MACHINE_imx8mq-evk ?= "imx8mq_evk_config"
 
 # iMX8MM
 UBOOT_SIGN_ENABLE_sota_mx8mm = "1"

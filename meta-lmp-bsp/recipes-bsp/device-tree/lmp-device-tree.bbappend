@@ -9,7 +9,7 @@ SRC_URI_append_rpi = " \
 COMPATIBLE_MACHINE_rpi = ".*"
 
 # Name compatible with 4.19-based BSP
-SRC_URI_append_imx8mmevk = " \
+SRC_URI_append_imx8mm-lpddr4-evk = " \
         file://freescale_fsl-imx8mm-evk.dts \
 "
-COMPATIBLE_MACHINE_imx8mmevk = ".*"
+COMPATIBLE_MACHINE_imx8mm-lpddr4-evk = ".*"

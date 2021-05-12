@@ -1,7 +1,7 @@
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE_imx8mqevk = "imx-mx8mqevk"
-OPTEEMACHINE_imx8mmevk = "imx-mx8mmevk"
+OPTEEMACHINE_imx8mm-lpddr4-evk = "imx-mx8mmevk"
 
 EXTRA_OEMAKE_append_imx = " \
     CFG_CAAM_DBG=0x001 \
@@ -22,7 +22,7 @@ EXTRA_OEMAKE_append_imx8mqevk = " \
     CFG_NXP_CAAM=y CFG_RNG_PTA=y \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
 "
-EXTRA_OEMAKE_append_imx8mmevk = " \
+EXTRA_OEMAKE_append_imx8mm-lpddr4-evk = " \
     CFG_NXP_CAAM=y CFG_RNG_PTA=y \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
 "

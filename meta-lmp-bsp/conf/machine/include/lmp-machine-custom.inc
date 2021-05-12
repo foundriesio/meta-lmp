@@ -157,10 +157,7 @@ OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL
 
 # Toradex Colibri iMX7 eMMC
 PREFERRED_PROVIDER_u-boot-default-script_colibri-imx7-emmc = "u-boot-ostree-scr"
-PREFERRED_PROVIDER_virtual/bootloader_colibri-imx7-emmc = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot_colibri-imx7-emmc = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils_colibri-imx7-emmc = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_colibri-imx7-emmc = "libubootenv"
+IMX_DEFAULT_BOOTLOADER_colibri-imx7-emmc ?= "u-boot-fio"
 IMAGE_BOOT_FILES_colibri-imx7-emmc = "uEnv.txt u-boot.imx"
 KERNEL_IMAGETYPE_colibri-imx7-emmc = "fitImage"
 KERNEL_CLASSES_colibri-imx7-emmc = " kernel-lmp-fitimage "

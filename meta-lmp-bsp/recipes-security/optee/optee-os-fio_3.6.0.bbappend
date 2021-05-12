@@ -1,6 +1,5 @@
 OPTEEMACHINE_imx7ulpea-ucom = "imx-mx7ulpeaucom"
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
-OPTEEMACHINE_cubox-i = "imx-mx6dhmbedge"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE_imx8mmevk = "imx-imx8mmevk"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
@@ -12,10 +11,6 @@ EXTRA_OEMAKE_append_apalis-imx6 = " \
     CFG_NS_ENTRY_ADDR=0x17800000 CFG_IMX_WDOG_EXT_RESET=y CFG_RNG_PTA=y \
     CFG_TZDRAM_START=0x4e000000 CFG_CORE_DYN_SHM=n CFG_OVERLAY_ADDR=0x16000000 \
     CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS=1 CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS=1 \
-"
-EXTRA_OEMAKE_append_cubox-i = " \
-    CFG_NS_ENTRY_ADDR= CFG_IMX_WDOG_EXT_RESET=y \
-    CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x18200000 \
 "
 EXTRA_OEMAKE_append_imx7ulpea-ucom = " \
     CFG_RNG_PTA=y \

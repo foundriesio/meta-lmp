@@ -31,6 +31,7 @@ do_configure_prepend_lmp() {
     cd ${S}
     git log -1 --format=%h | tr -d '\n' > VERSION
     cp VERSION aktualizr/VERSION
+    cd ${B}
 }
 
 do_compile_append_lmp() {

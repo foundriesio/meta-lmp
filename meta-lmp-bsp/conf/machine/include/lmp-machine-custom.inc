@@ -239,6 +239,10 @@ WKS_FILES_sota_apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
 MACHINE_FEATURES_append_apalis-imx6 = " optee"
 BOOTSCR_LOAD_ADDR_apalis-imx6 = "0x15000000"
 
+# Toradex Apalis iMX6 with secure boot support
+SOTA_CLIENT_FEATURES_remove_sota_apalis-imx6-sec = "ubootenv"
+SOTA_EXTRA_CLIENT_FEATURES_append_sota_apalis-imx6-sec = " fiovb"
+
 # Toradex Apalis iMX8QM
 SOTA_CLIENT_FEATURES_append_apalis-imx8 = " ubootenv"
 IMAGE_BOOT_FILES_apalis-imx8 = "imx-boot hdmitxfw.bin ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"

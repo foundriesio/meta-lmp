@@ -301,6 +301,7 @@ MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE_sota_mx8mm = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS_mx8mm = "flash_evk_spl"
 ## iMX8MM EVK
+KERNEL_DEVICETREE_append_imx8mm-lpddr4-evk = " freescale/imx8mm-evkb.dtb"
 KMACHINE_imx8mm-lpddr4-evk = "imx8mmevk"
 OSTREE_KERNEL_ARGS_imx8mm-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
 PREFERRED_PROVIDER_virtual/dtb_imx8mm-lpddr4-evk ?= "lmp-device-tree"

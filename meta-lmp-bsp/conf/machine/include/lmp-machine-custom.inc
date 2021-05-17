@@ -240,6 +240,7 @@ WKS_FILE_mx6ull_sota = "sdimage-imx6-spl-fit-sota.wks"
 SOTA_CLIENT_FEATURES_append_imx6ullevk = " ubootenv"
 UBOOT_MACHINE_imx6ullevk = "mx6ull_14x14_evk_defconfig"
 KERNEL_DEVICETREE_imx6ullevk = "imx6ull-14x14-evk.dtb"
+BOOTSCR_LOAD_ADDR_imx6ullevk = "0x85000000"
 
 # Toradex Apalis iMX6
 UBOOT_SIGN_ENABLE_sota_apalis-imx6 = "1"

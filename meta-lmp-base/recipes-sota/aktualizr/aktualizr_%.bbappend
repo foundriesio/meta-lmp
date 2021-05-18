@@ -50,5 +50,9 @@ do_install_append() {
     install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
 }
 
+PACKAGES += "${PN}-get ${PN}-lite"
+FILES_${PN}-get = "${bindir}/aktualizr-get"
+FILES_${PN}-lite = "${bindir}/aktualizr-lite"
+
 # Force same RDEPENDS, packageconfig rdepends common to both
 RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr}"

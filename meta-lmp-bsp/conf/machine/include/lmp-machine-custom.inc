@@ -239,8 +239,6 @@ SOTA_CLIENT_FEATURES_remove_sota_apalis-imx6-sec = "ubootenv"
 SOTA_EXTRA_CLIENT_FEATURES_append_sota_apalis-imx6-sec = " fiovb"
 
 # Toradex Apalis iMX8QM
-PREFERRED_PROVIDER_virtual/bootloader_apalis-imx8 ?= "u-boot-fio"
-PREFERRED_PROVIDER_u-boot_apalis-imx8 ?= "u-boot-fio"
 SOTA_CLIENT_FEATURES_append_apalis-imx8 = " ubootenv"
 IMAGE_BOOT_FILES_apalis-imx8 = "imx-boot hdmitxfw.bin ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
 IMAGE_BOOT_FILES_sota_apalis-imx8 = "imx-boot boot.itb"

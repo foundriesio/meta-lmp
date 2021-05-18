@@ -61,8 +61,7 @@ KERNEL_IMAGETYPE_apalis-imx6 = "fitImage"
 KERNEL_CLASSES_apalis-imx6 = " kernel-lmp-fitimage "
 
 # Apalis-iMX8
-PREFERRED_PROVIDER_virtual/bootloader_apalis-imx8 = "u-boot-fio-mfgtool"
-PREFERRED_PROVIDER_u-boot_apalis-imx8 = "u-boot-fio-mfgtool"
+IMX_DEFAULT_BOOTLOADER_apalis-imx8 ?= "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_apalis-imx8 = "u-boot-ostree-scr-fit"
 KERNEL_IMAGETYPE_apalis-imx8 = "fitImage"
 KERNEL_CLASSES_apalis-imx8 = " kernel-lmp-fitimage "

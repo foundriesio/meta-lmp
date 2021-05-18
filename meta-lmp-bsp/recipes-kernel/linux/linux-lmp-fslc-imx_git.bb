@@ -16,6 +16,7 @@ SRC_URI = "git://github.com/Freescale/linux-fslc.git;protocol=https;branch=${KBR
     file://0001-FIO-fromlist-drivers-optee-i2c-add-bus-retry-configu.patch \
     file://0001-FIO-fromtree-ath10k-add-QCA9377-sdio-hw_param-item.patch \
     file://0001-FIO-extras-arm64-dts-imx8mm-evk-use-imx8mm-evkb-for-.patch \
+    file://0001-FIO-extras-drm-ipuv3-fix-missing-ret.patch \
 "
 
 KMETA = "kernel-meta"

@@ -267,6 +267,7 @@ UBOOT_RD_LOADADDRESS_apalis-imx6 = "0x14000000"
 WKS_FILE_apalis-imx6 = "sdimage-imx6dq-spl-fit.wks"
 WKS_FILES_sota_apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
 MACHINE_FEATURES_append_apalis-imx6 = " optee"
+BOOTSCR_LOAD_ADDR_apalis-imx6 = "0x15000000"
 
 # Toradex Apalis iMX8QM
 PREFERRED_PROVIDER_virtual/bootloader_apalis-imx8 ?= "u-boot-fio"

@@ -25,6 +25,7 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 
 # Base packages
 CORE_IMAGE_BASE_INSTALL += " \
+    lmp-boot-firmware \
     networkmanager \
     resize-helper \
     sudo \

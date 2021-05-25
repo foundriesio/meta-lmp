@@ -316,6 +316,7 @@ SOTA_CLIENT_FEATURES_append_imx8mqevk = " ubootenv"
 MACHINE_FEATURES_remove_imx8mqevk = "qca6174"
 MACHINE_FEATURES_append_imx8mqevk = " bcm4356"
 UBOOT_MACHINE_imx8mqevk ?= "imx8mq_evk_config"
+BOOTSCR_LOAD_ADDR_imx8mqevk = "0x44800000"
 
 # iMX8MM
 UBOOT_SIGN_ENABLE_sota_mx8mm = "1"

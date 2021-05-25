@@ -6,6 +6,7 @@ RPROVIDES_${PN} += "virtual/trusted-firmware-a"
 SRC_URI_append = " \
     file://0002-plat-imx8m-add-SiP-call-for-SRC-PERSIST_SECONDARY_BO.patch \
     file://0003-plat-imx8m-add-SiP-call-for-triggering-internal-warm.patch \
+    file://0004-plat-imx8mq-SiP-call-for-secondary-boot.patch \
 "
 
 SRC_URI_append_toradex = " \

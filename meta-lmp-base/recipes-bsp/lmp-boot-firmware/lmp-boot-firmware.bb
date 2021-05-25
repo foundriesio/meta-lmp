@@ -53,7 +53,7 @@ do_install() {
         install -m 644 ${S}/version.txt ${D}${nonarch_base_libdir}/firmware/
     fi
 }
-do_install[depends] = "virtual/bootloader:do_deploy"
+do_install[depends] = "${@bb.utils.contains('WKS_FILE_DEPENDS', 'virtual/bootloader', 'virtual/bootloader:do_deploy', '', d)}"
 do_install[depends] += "${@bb.utils.contains('WKS_FILE_DEPENDS', 'imx-boot', 'imx-boot:do_deploy', '', d)}"
 
 do_deploy() {

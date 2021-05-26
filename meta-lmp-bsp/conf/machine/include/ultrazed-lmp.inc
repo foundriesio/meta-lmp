@@ -21,7 +21,6 @@ PREFERRED_PROVIDER_u-boot-default-script = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script_sota = "u-boot-ostree-scr-fit"
 
 SPL_BINARY ?= "spl/boot.bin"
-UBOOT_SUFFIX = "itb"
 UBOOT_MACHINE ?= "xilinx_zynqmp_virt_defconfig"
 UBOOT_CLASSES = "uboot-fitimage"
 UBOOTFDT_LOADADDRESS = "0x00100000"

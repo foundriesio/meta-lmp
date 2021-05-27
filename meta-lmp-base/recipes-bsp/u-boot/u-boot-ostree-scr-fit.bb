@@ -40,11 +40,13 @@ do_compile() {
 
 do_install() {
 	install -d ${D}${datadir}/${BPN}
+	install -m 0644 boot.cmd ${D}${datadir}/${BPN}
 	install -m 0644 boot.itb ${D}${datadir}/${BPN}
 }
 
 do_deploy() {
 	install -d ${DEPLOYDIR}
+	install -m 0644 boot.cmd ${DEPLOYDIR}
 	install -m 0644 boot.itb ${DEPLOYDIR}
 }
 

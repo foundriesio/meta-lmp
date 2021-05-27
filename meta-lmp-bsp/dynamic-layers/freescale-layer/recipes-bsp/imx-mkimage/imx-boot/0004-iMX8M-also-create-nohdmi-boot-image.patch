@@ -1,0 +1,28 @@
+From 6cf2181d10988acdba0a91cc3cc22cd88c27e747 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Thu, 27 May 2021 18:02:21 +0300
+Subject: [PATCH] iMX8M: also create nohdmi boot image
+
+Create also nohdmi boot image alongside with the one with hdmi firmware
+included to be able to use it for secondary boot path.
+
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+---
+ iMX8M/soc.mak | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
+index b7eb743..cde36f3 100644
+--- a/iMX8M/soc.mak
++++ b/iMX8M/soc.mak
+@@ -224,6 +224,7 @@ endif
+ ifeq ($(HDMI),yes)
+ flash_evk_spl: $(MKIMG) signed_hdmi_imx8m.bin u-boot-spl-combine u-boot-spl-ddr.bin
+ 	./mkimage_imx8 -version $(VERSION) -signed_hdmi signed_hdmi_imx8m.bin -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -out $(OUTIMG)
++	./mkimage_imx8 -version $(VERSION) -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -out $(OUTIMG)-nohdmi
+ else
+ flash_evk_spl: $(MKIMG) u-boot-spl-combine u-boot-spl-ddr.bin
+ 	./mkimage_imx8 -version $(VERSION) -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -out $(OUTIMG)
+-- 
+2.25.1
+

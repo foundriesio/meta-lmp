@@ -7,6 +7,7 @@ INHIBIT_DEFAULT_DEPS = "1"
 DEPENDS = "dtc-native u-boot-mkimage-native"
 
 SRC_URI = "file://boot.cmd \
+	file://boot-common.cmd.in \
 	file://boot.its.in \
 "
 
@@ -24,8 +25,10 @@ inherit deploy
 do_configure[noexec] = "1"
 
 do_compile() {
+	sed -e '/@@INCLUDE_COMMON@@/ {' -e 'r ${S}/boot-common.cmd.in' -e 'd' -e '}' \
+			"${S}/boot.cmd" > boot.cmd.in
 	sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
-			"${S}/boot.cmd" > boot.cmd
+			boot.cmd.in > boot.cmd
 	sed -e 's/@@FIT_HASH_ALG@@/${FIT_HASH_ALG}/' \
 	    -e 's/@@UBOOT_SIGN_KEYNAME@@/${UBOOT_SIGN_KEYNAME}/' \
 			"${S}/boot.its.in" > boot.its

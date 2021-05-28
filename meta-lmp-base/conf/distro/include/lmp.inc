@@ -74,6 +74,7 @@ MIRRORS =+ "\
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/recipes-kernel/linux/linux-%_5.%.bbappend \
+    /meta-security/meta-integrity/recipes-core/systemd/systemd_%.bbappend \
     /meta-updater/recipes-connectivity/nfs-utils/nfs-utils_%.bbappend \
 "
 

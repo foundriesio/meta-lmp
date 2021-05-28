@@ -1,0 +1,32 @@
+#!/bin/sh -x
+
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Copyright (c) Fathi Boudra <fathi.boudra@linaro.org>
+# Copyright (c) Michael Scott <mike@foundries.io>
+# All rights reserved.
+
+# exit on any error
+set -e
+
+# we must be root
+[ $(whoami) = "root" ] || { echo "E: You must be root" && exit 1; }
+
+# we must have few tools
+PARTED=$(which parted) || { echo "E: You must have parted" && exit 1; }
+PARTPROBE=$(which partprobe) || { echo "E: You must have partprobe" && exit 1; }
+RESIZE2FS=$(which resize2fs) || { echo "E: You must have resize2fs" && exit 1; }
+E2FSCK=$(which e2fsck) || { echo "E: You must have e2fsck" && exit 1; }
+
+ROOT_DEVICE=${1}
+PART_ENTRY_NUMBER=${2}
+
+# Make sure everything gets probed before any command gets executed
+${PARTPROBE} --summary
+
+echo "CMD: ${PARTED} ---pretend-input-tty ${ROOT_DEVICE} resizepart ${PART_ENTRY_NUMBER}"
+
+echo -e '100%' | ${PARTED} ---pretend-input-tty ${ROOT_DEVICE} resizepart ${PART_ENTRY_NUMBER}
+${PARTPROBE} --summary
+${E2FSCK} -f -p "${ROOT_DEVICE}p${PART_ENTRY_NUMBER}"
+${RESIZE2FS} "${ROOT_DEVICE}p${PART_ENTRY_NUMBER}"

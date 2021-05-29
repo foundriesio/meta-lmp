@@ -47,6 +47,6 @@ python () {
 }
 
 EXTRA_USERS_PARAMS = "\
-useradd -P ${LMP_USER} ${LMP_PASSWORD}; \
+useradd -P ${LMP_PASSWORD} ${LMP_USER}; \
 usermod -a -G sudo,users,plugdev ${LMP_USER}; \
 "

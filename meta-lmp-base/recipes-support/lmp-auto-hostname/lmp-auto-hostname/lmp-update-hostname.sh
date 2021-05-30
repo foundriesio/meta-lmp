@@ -59,4 +59,8 @@ echo "Updating system hostname to ${NEW_HOSTNAME}"
 /usr/bin/hostnamectl --static --transient set-hostname ${NEW_HOSTNAME}
 
 echo "Updating /etc/hosts with hostname ${NEW_HOSTNAME}"
-sed -i -e "s/^127.0.1.1 .*/127.0.1.1 ${NEW_HOSTNAME}/g" /etc/hosts
+if grep -q "^127.0.1.1" /etc/hosts; then
+	sed -i -e "s/^127.0.1.1 .*/127.0.1.1 ${NEW_HOSTNAME}/g" /etc/hosts
+else
+	echo "127.0.1.1 ${NEW_HOSTNAME}" >> /etc/hosts
+fi

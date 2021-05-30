@@ -38,8 +38,11 @@ IMAGE_CMD_ostree_append () {
 	# Cover missing /var/rootdirs/home (pending in meta-updater)
 	echo "d /var/rootdirs/home 0755 root root -" >> usr/lib/tmpfiles.d/00ostree-tmpfiles.conf
 
-	# Update default home path
+	# Update default home path (compatible with nss alt files)
 	sed -i -e 's,:/home,:/var/rootdirs/home,g' usr/etc/passwd
+	if [ -f usr/lib/passwd ]; then
+		sed -i -e 's,:/home,:/var/rootdirs/home,g' usr/lib/passwd
+	fi
 }
 
 run_fiotool_cmd () {

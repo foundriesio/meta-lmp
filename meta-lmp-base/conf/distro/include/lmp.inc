@@ -43,6 +43,9 @@ PACKAGECONFIG_remove_pn-systemd = "networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"
 PACKAGECONFIG_append_pn-networkmanager = " nss"
 
+# Alternatives used by nss-altfiles
+NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"
+
 # Default image formats
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
 IMAGE_FSTYPES_remove = "tar.gz tar.bz2"

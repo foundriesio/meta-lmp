@@ -1,0 +1,32 @@
+root:x:0:0:root:/home/root:/bin/sh
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+avahi:x:980:980::/run/avahi-daemon:/bin/false
+avahi-autoipd:x:981:981:Avahi autoip daemon:/run/avahi-autoipd:/bin/false
+sshd:x:983:983::/var/run/sshd:/bin/false
+messagebus:x:984:984::/var/lib/dbus:/bin/false
+rpcuser:x:985:985::/var/lib/nfs:/bin/false
+bind:x:986:986::/var/cache/bind:/bin/sh
+dhcp:x:987:987::/var/run/dhcp:/bin/false
+rpc:x:988:988::/:/bin/false
+polkitd:x:989:989::/etc/polkit-1:/bin/sh
+systemd-journal-upload:x:990:990::/:/sbin/nologin
+systemd-bus-proxy:x:991:991::/:/sbin/nologin
+systemd-timesync:x:992:992::/:/sbin/nologin
+systemd-resolve:x:993:993::/:/sbin/nologin
+fio:x:1000:1000::/home/fio:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh

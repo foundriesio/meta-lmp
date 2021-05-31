@@ -44,6 +44,12 @@ PACKAGECONFIG_append_pn-networkmanager = " nss"
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"
 
+# Use staticids for deterministic uid/gid values
+USERADDEXTENSION = "useradd-staticids"
+USERADD_UID_TABLES = "files/lmp-passwd-table"
+USERADD_GID_TABLES = "files/lmp-group-table"
+USERADD_ERROR_DYNAMIC = "error"
+
 # Default image formats
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
 IMAGE_FSTYPES_remove = "tar.gz tar.bz2"

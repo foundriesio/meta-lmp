@@ -1,0 +1,34 @@
+# PROC_SUPER_MAGIC = 0x9fa0
+dont_measure fsmagic=0x9fa0
+# SYSFS_MAGIC = 0x62656572
+dont_measure fsmagic=0x62656572
+# DEBUGFS_MAGIC = 0x64626720
+dont_measure fsmagic=0x64626720
+# TMPFS_MAGIC = 0x1021994
+dont_measure fsmagic=0x1021994
+# DEVPTS_SUPER_MAGIC=0x1cd1
+dont_measure fsmagic=0x1cd1
+# BINFMTFS_MAGIC=0x42494e4d
+dont_measure fsmagic=0x42494e4d
+# SECURITYFS_MAGIC=0x73636673
+dont_measure fsmagic=0x73636673
+# SELINUX_MAGIC=0xf97cff8c
+dont_measure fsmagic=0xf97cff8c
+# SMACK_MAGIC=0x43415d53
+dont_measure fsmagic=0x43415d53
+# CGROUP_SUPER_MAGIC=0x27e0eb
+dont_measure fsmagic=0x27e0eb
+# CGROUP2_SUPER_MAGIC=0x63677270
+dont_measure fsmagic=0x63677270
+# NSFS_MAGIC=0x6e736673
+dont_measure fsmagic=0x6e736673
+# EFIVARFS_MAGIC=0xde5e81e4
+dont_measure fsmagic=0xde5e81e4
+
+measure func=MMAP_CHECK mask=MAY_EXEC
+measure func=BPRM_CHECK mask=MAY_EXEC
+measure func=FILE_CHECK mask=^MAY_READ euid=0
+measure func=FILE_CHECK mask=^MAY_READ uid=0
+measure func=MODULE_CHECK
+measure func=FIRMWARE_CHECK
+measure func=POLICY_CHECK

@@ -5,6 +5,7 @@ PACKAGE_INSTALL = "initramfs-framework-base \
 	initramfs-module-rootfs \
 	initramfs-module-ostree \
 	${VIRTUAL-RUNTIME_base-utils} \
+	${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'initramfs-framework-ima', '', d)} \
 	udev base-passwd e2fsprogs-e2fsck \
 	${ROOTFS_BOOTSTRAP_INSTALL}"
 

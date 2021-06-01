@@ -30,6 +30,9 @@ DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
 DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
 
+# Default IMA policy (tcb)
+IMA_POLICY ?= "ima-policy-tcb"
+
 # Extended packageconfig options for LMP
 PACKAGECONFIG_append_pn-docker-ce = " seccomp"
 PACKAGECONFIG_append_pn-docker-moby = " seccomp"

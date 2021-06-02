@@ -223,6 +223,8 @@ if [ -d /run/media/$1/ostree/deploy/lmp/var/lib/docker ]; then
     cp -a /run/media/$1/ostree/deploy/lmp/var/sota/import/installed_versions /tgt_root/ostree/deploy/lmp/var/sota/import/
 fi
 if [ -d /run/media/$1/ostree/deploy/lmp/var/sota/compose-apps ]; then
+    # Delete preloaded containers previously available as part of rootfs.img (platform build)
+    rm -rf /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
     cp -a /run/media/$1/ostree/deploy/lmp/var/sota/compose-apps /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
 fi
 

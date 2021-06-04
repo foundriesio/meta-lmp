@@ -63,6 +63,8 @@ do_deploy_append() {
                 install -m 0644 ${S}/${BOOT_CONFIG_MACHINE}-${target}-nohdmi ${DEPLOYDIR}
                 ln -sf ${BOOT_CONFIG_MACHINE}-${target}-nohdmi \
 		    ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}-nohdmi
+                ln -sf ${BOOT_CONFIG_MACHINE}-${target}-nohdmi \
+		    ${DEPLOYDIR}/${BOOT_NAME}-nohdmi
             fi
         fi
     done

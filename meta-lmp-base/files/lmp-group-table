@@ -47,6 +47,7 @@ weston-launch:x:62:
 shutdown:x:70:
 nobody:*:99:
 users:x:100:
+tss:x:978:
 crontab:x:979:
 avahi:x:980:
 avahi-autoipd:x:981:

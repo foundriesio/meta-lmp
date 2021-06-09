@@ -12,7 +12,7 @@ setenv saveenv_mmc 'if test -z "${fiovb_rpmb}"; then saveenv; fi;'
 
 # Boot firmware update helpers
 setenv rollback_setup 'if test -n "${fiovb_rpmb}"; then fiovb write_pvalue rollback 1; fiovb write_pvalue upgrade_available 0; fiovb write_pvalue bootupgrade_available 0; else setenv rollback 1; setenv upgrade_available 0; setenv bootupgrade_available 0; setenv fiovb.rollback "${rollback}"; setenv fiovb.upgrade_available "${upgrade_available}"; setenv fiovb.bootupgrade_available "${bootupgrade_available}"; fi;'
-setenv load_image 'if ext4load ${devtype} ${devnum}:2 ${loadaddr} ${image_path}; then echo "${fio_msg} loaded ${image_path}"; else "${fio_msg} error occured while loading ${image_path}, scheduling rollback after reset ..."; run rollback_setup; run saveenv_mmc; reset; fi;'
+setenv load_image 'if ext4load ${devtype} ${devnum}:2 ${loadaddr} ${image_path}; then echo "${fio_msg} loaded ${image_path}"; else "${fio_msg} error occured while loading ${image_path}, scheduling rollback after reset ..."; run rollback_setup; run saveenv_mmc; imx_secondary_boot 0; reset; fi;'
 setenv set_blkcnt 'setexpr blkcnt ${filesize} + 0x1ff && setexpr blkcnt ${blkcnt} / 0x200'
 setenv update_image 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} ${uboot_hwpart} && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 
@@ -124,6 +124,7 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 
 		run saveenv_mmc
 		echo "${fio_msg} reset ..."
+		imx_secondary_boot 0
 		reset
 	fi
 fi
@@ -136,6 +137,13 @@ setenv bootcmd_rollback 'if test -n "${kernel_image2}" && test "${fiovb.is_secon
 run bootcmd_rollback
 run bootcmd_load_f
 run bootcmd_tee_ovy
+
+# If we are validating secondary boot path, Linux should force reboot back to
+# primary path after running reboot cmd (this is needed for boards without
+# software POR reset support, like Apalis iMX6)
+echo "${fiovb_msg} Forcing secondary boot to 0 after reboot"
+imx_secondary_boot 0
+
 run bootcmd_run
 
 reset

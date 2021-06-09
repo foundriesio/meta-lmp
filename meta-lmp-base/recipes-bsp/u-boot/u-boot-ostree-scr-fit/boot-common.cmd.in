@@ -16,10 +16,6 @@ setenv load_image 'if ext4load ${devtype} ${devnum}:2 ${loadaddr} ${image_path};
 setenv set_blkcnt 'setexpr blkcnt ${filesize} + 0x1ff && setexpr blkcnt ${blkcnt} / 0x200'
 setenv update_image 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} ${uboot_hwpart} && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 
-if test -z "${bootcount}"; then
-	setenv bootcount 0;
-fi
-
 # Import uEnv.txt
 run bootcmd_otenv
 # Get deployment sysroot absolute path
@@ -37,6 +33,14 @@ if fiovb init ${devnum} && test -n "${board_is_closed}"; then
 	setenv fiovb_rpmb 1;
 else
 	echo "${fio_msg} Using ubootenv"
+	# Make sure initial environment is valid
+	if test -z "${bootcount}"; then setenv bootcount 0; setenv envsave 1; fi
+	if test -z "${rollback}"; then setenv rollback 0; setenv envsave 1; fi
+	if test -z "${upgrade_available}"; then setenv upgrade_available 0; setenv envsave 1; fi
+	if test -z "${bootupgrade_available}"; then setenv bootupgrade_available 0; setenv envsave 1; fi
+	# Call saveenv if not yet set (e.g. first boot after clean flash)
+	if test "${envsave}" = "1"; then setenv envsave; run saveenv_mmc; fi
+
 	setenv fiovb.bootcount "${bootcount}"
 	setenv fiovb.rollback "${rollback}"
 	setenv fiovb.upgrade_available "${upgrade_available}"

@@ -2,7 +2,7 @@
 setenv bootlimit 3
 
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}'
+setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${addr_fit} "/boot"${kernel_image}'
 setenv bootcmd_run 'bootm ${addr_fit}#conf@@FIT_NODE_SEPARATOR@@${fdtfile}'
 setenv bootcmd_rollbackenv 'setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}'

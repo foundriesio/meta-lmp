@@ -38,6 +38,7 @@ else
 	if test -z "${rollback}"; then setenv rollback 0; setenv envsave 1; fi
 	if test -z "${upgrade_available}"; then setenv upgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_available}"; then setenv bootupgrade_available 0; setenv envsave 1; fi
+	if test -z "${bootfirmware_version}"; then run bootcmd_bootenv; setenv envsave 1; fi
 	# Call saveenv if not yet set (e.g. first boot after clean flash)
 	if test "${envsave}" = "1"; then setenv envsave; run saveenv_mmc; fi
 

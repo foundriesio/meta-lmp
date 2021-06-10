@@ -3,7 +3,7 @@ setenv fio_msg "FIO:"
 
 # uEnv handling
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:${rootpart} ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}'
+setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:${rootpart} ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
 setenv bootcmd_bootenv 'setenv bootfirmware_version; ext4load ${devtype} ${devnum}:2 ${loadaddr} ${ostree_root}/usr/lib/firmware/version.txt; env import -t ${loadaddr} ${filesize} bootfirmware_version'
 setenv bootcmd_getroot 'setexpr ostree_root gsub "^.*ostree=([^ ]*).*$" "\\\\1" "${bootargs}"'
 

@@ -14,7 +14,7 @@ setenv optee_ovl_addr 0x22000000
 setenv fpga_addr 0x18000000
 
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize}'
+setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${loadaddr} "/boot"${kernel_image}'
 setenv bootcmd_tee_ovy 'imxtract ${loadaddr}#conf@@FIT_NODE_SEPARATOR@@${fdtfile} fdt@@FIT_NODE_SEPARATOR@@${fdt_file} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}'
 setenv bootcmd_fpga 'imxtract ${loadaddr}#conf@@FIT_NODE_SEPARATOR@@${fdtfile} loadable@@FIT_NODE_SEPARATOR@@${fpga_image} ${fpga_addr}; fpga load 0 ${fpga_addr} ${filesize}'

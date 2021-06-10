@@ -9,7 +9,7 @@ setenv devnum 0
 setenv optee_ovl_addr 0x65000000
 
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${initrd_addr} /boot/loader/uEnv.txt; env import -t ${initrd_addr} ${filesize}'
+setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${initrd_addr} /boot/loader/uEnv.txt; env import -t ${initrd_addr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${initrd_addr} "/boot"${kernel_image}'
 setenv bootcmd_tee_ovy 'imxtract ${initrd_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file} fdt@@FIT_NODE_SEPARATOR@@${fdt_file} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}'
 setenv bootcmd_run 'bootm ${initrd_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file} ${initrd_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file} ${fdt_addr}'

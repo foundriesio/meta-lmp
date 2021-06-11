@@ -63,7 +63,8 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		if test ! $? -eq 0; then fiovb write_pvalue bootupgrade_available 0; fi
 	fi
 
-	# Only update bootcount when upgrade_available is set
+	# Only update bootcount when upgrade_available is set and boot mode is
+	# primary since counting on secondary would double count on upgrades
 	if test "${fiovb.upgrade_available}" = "1"; then
 		setexpr bootcount ${fiovb.bootcount} + 1;
 		if test -n "${fiovb_rpmb}"; then

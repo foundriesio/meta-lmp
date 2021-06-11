@@ -134,6 +134,12 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		imx_secondary_boot 0
 		reset
 	fi
+else
+	# Save fiovb.is_secondary_boot state for allowing userspace
+	# to easily identify the boot mode via environment
+	if test -z "${fiovb_rpmb}"; then
+		run saveenv_mmc
+	fi
 fi
 
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:${rootpart} ${fit_addr} "/boot"${kernel_image}'

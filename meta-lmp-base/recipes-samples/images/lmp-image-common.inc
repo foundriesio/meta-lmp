@@ -51,7 +51,7 @@ configure_rootfs_nss_altfiles () {
 
         # Defaults which can later be replaced by the user
         if [ "$type" = "hosts" ]; then
-            grep "^127.0.1.1" ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
+            cat ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
         elif [ "$type" = "pwd" ]; then
             grep "^${LMP_USER}:" ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
         fi

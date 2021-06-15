@@ -45,7 +45,7 @@ configure_rootfs_nss_altfiles () {
             *) continue ;;
         esac
         cp -a ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file} ${IMAGE_ROOTFS}${libdir}
-        echo "# Default file provided via NSS altfiles at ${libdir}/${sysconf_file}" > ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
+        echo "# Default file provided via NSS altfiles at ${libdir}/${sysconf_file}" >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
         # NSS altfiles should be right after files
         sed -i -e "/^${sysconf_file}/s/files/files altfiles/" ${IMAGE_ROOTFS}${sysconfdir}/nsswitch.conf
 

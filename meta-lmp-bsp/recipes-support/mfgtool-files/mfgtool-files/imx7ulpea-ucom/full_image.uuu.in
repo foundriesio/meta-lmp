@@ -34,10 +34,15 @@ FBK: ucmd dev=`ls /dev/mmcblk*boot*`; dev=($dev); dev=${dev[0]}; dev=${dev#/dev/
 # bootloaders
 FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/dev/zero of=/dev/mmcblk${mmc} bs=1k seek=384 conv=fsync count=129
 FBK: ucmd mmc=`cat /tmp/mmcdev`; echo 0 > /sys/block/mmcblk${mmc}boot0/force_ro
+FBK: ucp ../sit-@@MACHINE@@.bin t:/tmp
 FBK: ucp ../SPL-@@MACHINE@@ t:/tmp
 FBK: ucp ../u-boot-@@MACHINE@@.itb t:/tmp
+FBK: ucp ../u-boot-@@MACHINE@@.itb t:/tmp
+FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/sit-@@MACHINE@@.bin of=/dev/mmcblk${mmc}boot0 bs=512 seek=1
 FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/SPL-@@MACHINE@@ of=/dev/mmcblk${mmc}boot0 bs=1k seek=1
 FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/u-boot-@@MACHINE@@.itb of=/dev/mmcblk${mmc}boot0 bs=1k seek=192
+FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/SPL-@@MACHINE@@ of=/dev/mmcblk${mmc}boot0 bs=1k seek=2049
+FBK: ucmd mmc=`cat /tmp/mmcdev`; dd if=/tmp/u-boot-@@MACHINE@@.itb of=/dev/mmcblk${mmc}boot0 bs=1k seek=2240
 FBK: ucmd mmc=`cat /tmp/mmcdev`; echo 1 > /sys/block/mmcblk${mmc}boot0/force_ro
 FBK: ucmd mmc=`cat /tmp/mmcdev`; mmc bootpart enable 1 1 /dev/mmcblk${mmc}
 

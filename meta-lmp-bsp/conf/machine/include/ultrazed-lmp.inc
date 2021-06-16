@@ -51,8 +51,5 @@ WKS_FILE = "sdimage-bootpart.wks"
 IMAGE_BOOT_FILES = "${@get_default_image_boot_files(d)} boot.bin boot.scr uEnv.txt system-top.dtb bitstream.bit.bin"
 IMAGE_BOOT_FILES_sota = "boot.bin u-boot.itb boot.itb"
 
-PMU_FIRMWARE_IMAGE_NAME ?= "pmu-firmware-${MACHINE}"
-PMU_FIRMWARE_DEPLOY_DIR ?= "${DEPLOY_DIR_IMAGE}"
-
 # Not building for QEMU standard Xinix build
 EXTRA_IMAGEDEPENDS_remove = "qemu-devicetrees"

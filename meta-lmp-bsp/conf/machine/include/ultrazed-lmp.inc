@@ -2,7 +2,7 @@
 
 MACHINEOVERRIDES = "uz:uz3eg:${MACHINE}"
 
-XILINX_VER_MAIN ?= "2020.2"
+XILINX_VER_MAIN ?= "2021.1"
 
 PREFERRED_PROVIDER_virtual/kernel_uz ?= "linux-lmp-xlnx"
 

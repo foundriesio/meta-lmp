@@ -103,8 +103,7 @@ BBMASK += " \
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \
     /meta-xilinx-bsp/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
-    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_1.0.bb \
-    /meta-xilinx-tools/recipes-bsp/ai-engine/ai-engine-driver_2.0.bb \
+    /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \
 "
 # meta-st-stm32mp: mask appends that are only compatible with gatesgarth
 BBMASK += " \

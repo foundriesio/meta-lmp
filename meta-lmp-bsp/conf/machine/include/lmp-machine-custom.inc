@@ -183,6 +183,8 @@ PREFERRED_VERSION_optee-examples_imx7ulpea-ucom = "3.6.0"
 PREFERRED_VERSION_optee-test_imx7ulpea-ucom = "3.6.0"
 OPTEE_BINARY_imx7ulpea-ucom = "tee-pager.bin"
 BOOTSCR_LOAD_ADDR_imx7ulpea-ucom = "0x60800000"
+UBOOT_MACHINE_imx7ulpea-ucom = "mx7ulp_com_defconfig"
+UBOOT_CONFIG_imx7ulpea-ucom = ""
 
 # iMX6ULL
 UBOOT_SIGN_ENABLE_sota_mx6ull = "1"

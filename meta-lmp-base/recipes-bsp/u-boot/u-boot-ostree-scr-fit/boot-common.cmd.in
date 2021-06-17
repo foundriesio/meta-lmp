@@ -62,6 +62,8 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		if test ! $? -eq 0; then fiovb write_pvalue upgrade_available 0; fi
 		fiovb read_pvalue bootupgrade_available 4
 		if test ! $? -eq 0; then fiovb write_pvalue bootupgrade_available 0; fi
+		fiovb read_pvalue bootfirmware_version 128
+		if test ! $? -eq 0; then run bootcmd_bootenv; fiovb write_pvalue bootfirmware_version ${bootfirmware_version}; fi
 	fi
 
 	# Only update bootcount when upgrade_available is set and boot mode is

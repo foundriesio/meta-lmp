@@ -33,6 +33,35 @@
 	xlnk {
 		compatible = "xlnx,xlnk-1.0";
 	};
+
+	cpu-opp-table {
+		compatible = "operating-points-v2";
+		opp-shared;
+
+		opp00 {
+			opp-hz = /bits/ 64 <1200000000>;
+			opp-microvolt = <1000000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp01 {
+			opp-hz = /bits/ 64 <600000000>;
+			opp-microvolt = <1000000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp02 {
+			opp-hz = /bits/ 64 <400000000>;
+			opp-microvolt = <1000000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp03 {
+			opp-hz = /bits/ 64 <300000000>;
+			opp-microvolt = <1000000>;
+			clock-latency-ns = <500000>;
+		};
+	};
 };
 
 &gpio {

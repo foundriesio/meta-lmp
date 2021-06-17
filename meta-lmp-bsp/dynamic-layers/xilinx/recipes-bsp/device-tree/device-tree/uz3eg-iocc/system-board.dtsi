@@ -34,6 +34,24 @@
 	chosen {
 		xlnx,eeprom = &eeprom; /* EMAC on EEPROM */
 	};
+
+	clock_gtr_1: clk125 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <125000000>;
+	};
+
+	clock_gtr_2: clk26 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <26000000>;
+	};
+
+	clock_gtr_3: clk27 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <27000000>;
+	};
 };
 
 /* Ethernet0 with hard-coded MAC */
@@ -146,6 +164,20 @@
 	pinctrl-0 = <&pinctrl_uart1_default>;
 };
 
+&psgtr {
+	status = "okay";
+	/* nc, sata, usb3, dp */
+	clocks = <&clock_gtr_1>, <&clock_gtr_2>, <&clock_gtr_3>;
+	clock-names = "ref1", "ref2", "ref3";
+};
+
+&sata {
+	status = "okay";
+	phy-names = "sata-phy";
+	/* 1==PHY_TYPE_SATA */
+	phys = <&psgtr 1 1 1 1>;
+};
+
 /* ULPI SMSC USB3320 */
 &usb0 {
 	status = "okay";
@@ -159,7 +191,7 @@
 	snps,usb3_lpm_capable;
 	phy-names = "usb3-phy";
 	/* 4==PHY_TYPE_USB3 */
-	phys = <&lane2 4 0 2 26000000>;
+	phys = <&psgtr 2 4 0 2>;
 	maximum-speed = "super-speed";
 };
 

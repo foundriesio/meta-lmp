@@ -12,7 +12,7 @@ Restart=always
 ExecStartPre=/usr/bin/mkdir -p /run/aktualizr
 Environment="TMPDIR=/run/aktualizr"
 Environment="COMPOSE_HTTP_TIMEOUT=@@COMPOSE_HTTP_TIMEOUT@@"
-ExecStart=/usr/bin/aktualizr-lite --update-lockfile /run/lock/aktualizr-lite-update daemon
+ExecStart=/usr/bin/aktualizr-lite daemon
 
 [Install]
 WantedBy=multi-user.target

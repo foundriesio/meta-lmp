@@ -1,5 +1,10 @@
 # LMP specific configuration
 
+OPTEE_TA_SIGN_KEY = "${TOPDIR}/conf/keys/opteedev.key"
+MODSIGN_KEY_DIR = "${TOPDIR}/conf/keys"
+UBOOT_SIGN_KEYDIR = "${TOPDIR}/conf/keys"
+UBOOT_SIGN_KEYNAME = "ubootdev"
+
 # Beaglebone
 PREFERRED_PROVIDER_virtual/bootloader_beaglebone-yocto = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot_beaglebone-yocto = "u-boot-fio"

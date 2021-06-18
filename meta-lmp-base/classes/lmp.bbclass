@@ -23,20 +23,6 @@ IMAGE_CMD_ota_append () {
 		${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/import/installed_versions \
 			${GARAGE_TARGET_NAME}-${target_version}
 	fi
-
-	if [ "${DOCKER_COMPOSE_APP_PRELOAD}" = "1" ]; then
-		if [ -n "${APP_IMAGES_PRELOADER}" ]; then
-			bbplain "Preloading container images of the given target's apps"
-
-			mkdir -p ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/lib/docker
-
-			${APP_IMAGES_PRELOADER} \
-				${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/import/installed_versions \
-				${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/lib/docker
-		else
-			bbwarn "Compose app preloading is turned on but an app preloader is not specified"
-		fi
-	fi
 }
 
 # LMP specific cleanups after the main ostree image from meta-updater

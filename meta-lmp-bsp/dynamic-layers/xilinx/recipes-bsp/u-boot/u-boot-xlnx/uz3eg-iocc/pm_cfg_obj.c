@@ -577,7 +577,8 @@
 	/**********************************************************************/
 	/* SHUTDOWN SECTION */
 	PM_CONFIG_SHUTDOWN_SECTION_ID,		/* Section ID */
-	0,					/* Number of shutdown types */
+	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_1_MASK, /* System Shutdown/Restart Permission */
+
 	/**********************************************************************/
 	/* GPO SECTION */
 	PM_CONFIG_GPO_SECTION_ID,		/* GPO Section ID */

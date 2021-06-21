@@ -23,6 +23,9 @@ FIT_HASH_ALG ?= "sha256"
 OPTEE_BINARY ?= "tee-pager_v2.bin"
 ATF_BINARY ?= "arm-trusted-firmware.bin"
 ATF_SUPPORT = "${@bb.utils.contains('EXTRA_IMAGEDEPENDS', 'virtual/trusted-firmware-a', 'true', 'false', d)}"
+# FPGA loading via SPL
+SPL_FPGA_BINARY ?= ""
+SPL_FPGA_LOAD_ADDR ?= ""
 
 do_compile[depends] += " virtual/optee-os:do_deploy"
 BOOTSCR_SUPPORT = "${@bb.utils.contains('PREFERRED_PROVIDER_u-boot-default-script', 'u-boot-ostree-scr-fit', 'true', 'false', d)}"
@@ -54,6 +57,8 @@ fmt_address() {
 # - Signed U-Boot dtb
 # - OP-TEE
 # - ATF (if enabled)
+# - FPGA (if available)
+# - Boot script (if available)
 #
 # Only one U-Boot dtb is currently supported, as it needs to provide the
 # signature for runtime check
@@ -62,12 +67,18 @@ fmt_address() {
 # $2 ... U-Boot load address
 # $3 ... OP-TEE load address
 # $4 ... ATF load address
-# $5 ... bootscr load address
+# $5 ... FPGA load address
+# $6 ... bootscr load address
 uboot_fitimage_assemble() {
 	ubootloadaddr=$(fmt_address ${2})
 	opteeloadaddr=$(fmt_address ${3})
 	atfloadaddr=$(fmt_address ${4})
-	bootscrloadaddr=$(fmt_address ${5})
+	fpgaloadaddr=$(fmt_address ${5})
+	bootscrloadaddr=$(fmt_address ${6})
+
+	# lines for the config block
+	fpga_line=""
+	sign_line="sign-images = \"firmware\", \"loadables\", \"fdt\""
 
 	# u-boot dtb location depends on sign enable
 	if [ "${UBOOT_SIGN_ENABLE}" = "1" -a -n "${UBOOT_DTB_BINARY}" ]; then
@@ -88,6 +99,11 @@ uboot_fitimage_assemble() {
 
 	if [ "${BOOTSCR_SUPPORT}" = true ] && [ -n "${bootscrloadaddr}" ] ; then
 		config_loadables="${config_loadables}, \"bootscr\"";
+	fi
+
+	if [ -n "${SPL_FPGA_BINARY}" ]; then
+		fpga_line="fpga = \"fpga\";"
+		sign_line="${sign_line}, \"fpga\""
 	fi
 
 cat << EOF > u-boot.its
@@ -154,6 +170,22 @@ EOF
 		};
 EOF
 	fi
+	# Add FPGA block if binary is set and available
+	if [ -n "${SPL_FPGA_BINARY}" ]; then
+		cat << EOF >> u-boot.its
+		fpga {
+			description = "FPGA binary";
+			data = /incbin/("${DEPLOY_DIR_IMAGE}/${SPL_FPGA_BINARY}");
+			type = "fpga";
+			arch = "${UBOOT_ARCH}";
+			compression = "none";
+			load = <${fpgaloadaddr}>;
+			hash-1 {
+				algo = "${FIT_HASH_ALG}";
+			};
+		};
+EOF
+	fi
 	cat << EOF >> u-boot.its
 		optee {
 			description = "OP-TEE";
@@ -175,11 +207,12 @@ EOF
 			description = "OP-TEE with U-Boot in normal world for ${MACHINE}";
 			firmware = "${config_firmware}";
 			loadables = ${config_loadables};
+			${fpga_line}
 			fdt = "ubootfdt";
 			signature {
 				algo = "${FIT_HASH_ALG},rsa2048";
 				key-name-hint = "${UBOOT_SPL_SIGN_KEYNAME}";
-				sign-images = "firmware", "loadables", "fdt";
+				${sign_line};
 			};
 		};
 	};
@@ -220,7 +253,7 @@ do_deploy_prepend() {
 				if [ $j -eq $i ]; then
 					cd ${B}/${config}
 					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
+					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${SPL_FPGA_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
@@ -253,7 +286,7 @@ do_deploy_prepend() {
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
+		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${SPL_FPGA_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
 		oe_runmake -C ${S} O=${B} ${SPL_BINARY}

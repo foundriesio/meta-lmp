@@ -36,4 +36,5 @@ do_compile_prepend_uz() {
 
 # Support additional u-boot classes such as u-boot-fitimage
 UBOOT_CLASSES ?= ""
-inherit ${UBOOT_CLASSES}
+LOCALVERSION = "+xlnx"
+inherit ${UBOOT_CLASSES} fio-u-boot-localversion

@@ -253,7 +253,7 @@ do_deploy_prepend() {
 				if [ $j -eq $i ]; then
 					cd ${B}/${config}
 					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-					uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${SPL_FPGA_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
+					uboot_fitimage_assemble "${UBOOT_ITB_BINARY}" "${UBOOT_LOAD_ADDR}" "${OPTEE_LOAD_ADDR}" "${ATF_LOAD_ADDR}" "${SPL_FPGA_LOAD_ADDR}" "${BOOTSCR_LOAD_ADDR}"
 					uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
@@ -286,7 +286,7 @@ do_deploy_prepend() {
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
-		uboot_fitimage_assemble ${UBOOT_ITB_BINARY} ${UBOOT_LOAD_ADDR} ${OPTEE_LOAD_ADDR} ${ATF_LOAD_ADDR} ${SPL_FPGA_LOAD_ADDR} ${BOOTSCR_LOAD_ADDR}
+		uboot_fitimage_assemble "${UBOOT_ITB_BINARY}" "${UBOOT_LOAD_ADDR}" "${OPTEE_LOAD_ADDR}" "${ATF_LOAD_ADDR}" "${SPL_FPGA_LOAD_ADDR}" "${BOOTSCR_LOAD_ADDR}"
 		uboot_fitimage_sign ${UBOOT_ITB_BINARY}
 		# Make SPL to generate a board-compatible binary via mkimage
 		oe_runmake -C ${S} O=${B} ${SPL_BINARY}

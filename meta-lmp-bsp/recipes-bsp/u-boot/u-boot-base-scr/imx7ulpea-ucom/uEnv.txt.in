@@ -1,0 +1,5 @@
+loadaddr=0x60008000
+optee_ovl_addr=0x65000000
+bootcmd_tee_ovy=fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}
+bootargs=setenv bootargs console=${console},${baudrate} root=${mmcroot}
+bootcmd=setenv fdt_file imx7ulpea-ucom-kit_v2.dtb; run loadimage; run loadfdt; run bootcmd_tee_ovy; run bootargs; bootz ${loadaddr} - ${fdt_addr}

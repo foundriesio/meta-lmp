@@ -174,7 +174,7 @@ IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.scr uEnv.txt zImage ${@make_dtb_boot_fil
 IMAGE_BOOT_FILES_sota_imx7ulpea-ucom = "boot.itb"
 KERNEL_IMAGETYPE_sota_imx7ulpea-ucom = "fitImage"
 KERNEL_CLASSES_sota_imx7ulpea-ucom = " kernel-lmp-fitimage "
-OSTREE_KERNEL_ARGS_COMMON_imx7ulpea-ucom ?= "earlycon=lpuart32,0x402D0000,115200 root=/dev/mmcblk0p2 rootfstype=ext4"
+OSTREE_KERNEL_ARGS_COMMON_imx7ulpea-ucom ?= "earlycon root=/dev/mmcblk0p2 rootfstype=ext4"
 SOTA_CLIENT_FEATURES_append_imx7ulpea-ucom = " ubootenv"
 UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
 PREFERRED_VERSION_optee-os-fio_imx7ulpea-ucom = "3.6.0+git"

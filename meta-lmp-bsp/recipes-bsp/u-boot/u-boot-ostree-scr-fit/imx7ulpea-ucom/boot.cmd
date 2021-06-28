@@ -13,6 +13,7 @@ setenv rootpart 2
 # Boot image files
 setenv optee_ovl_addr 0x65000000
 setenv fit_addr ${initrd_addr}
+setenv loadaddr ${fit_addr}
 
 # Boot firmware updates
 setenv bootloader 2

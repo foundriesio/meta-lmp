@@ -1,8 +1,8 @@
 include recipes-kernel/linux/kmeta-linux-lmp-5.4.y.inc
 
-LINUX_VERSION ?= "5.4.114"
+LINUX_VERSION ?= "5.4.127"
 KBRANCH = "5.4-2.3.x-imx"
-SRCREV_machine = "f5b1a0c923d04cd49158bfb94fcfc5273474c076"
+SRCREV_machine = "4efcf5cb62af1dae546bc1022b4edf6dedb6c983"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"

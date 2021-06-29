@@ -1,8 +1,8 @@
 include recipes-kernel/linux/kmeta-linux-lmp-5.10.y.inc
 
-LINUX_VERSION ?= "5.10.42"
+LINUX_VERSION ?= "5.10.46"
 KBRANCH = "xlnx_v5.10.y"
-SRCREV_machine = "1dd3f089dcec4a62193fcb972bb8d96273a18631"
+SRCREV_machine = "2c52ca14f6c31be029f5caa82e282854b84b4ce6"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 # make sure bitstream is deployed for fit-image generation

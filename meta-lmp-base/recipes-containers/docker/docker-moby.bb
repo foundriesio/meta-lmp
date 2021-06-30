@@ -49,6 +49,7 @@ SRC_URI = "\
 	file://cli-config-support-default-system-config.patch \
 	file://increase_containerd_timeouts.patch \
 	file://dockerd-daemon-reload-image-store-on-a-hup-signal.patch \
+	file://0001-registry-increase-TLS-and-connection-timeouts.patch \
 	"
 
 require recipes-containers/docker/docker.inc

@@ -48,6 +48,7 @@ SRC_URI = "\
 	file://dockerd-daemon-use-default-system-config-when-none-i.patch \
 	file://cli-config-support-default-system-config.patch \
 	file://increase_containerd_timeouts.patch \
+	file://0001-registry-increase-TLS-and-connection-timeouts.patch \
 	"
 
 require recipes-containers/docker/docker.inc

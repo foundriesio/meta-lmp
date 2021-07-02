@@ -28,5 +28,5 @@ echo "CMD: ${PARTED} ---pretend-input-tty ${ROOT_DEVICE} resizepart ${PART_ENTRY
 
 echo -e '100%' | ${PARTED} ---pretend-input-tty ${ROOT_DEVICE} resizepart ${PART_ENTRY_NUMBER}
 ${PARTPROBE} --summary
-${E2FSCK} -f -p "${ROOT_DEVICE}p${PART_ENTRY_NUMBER}"
-${RESIZE2FS} "${ROOT_DEVICE}p${PART_ENTRY_NUMBER}"
+${E2FSCK} -f -y "${ROOT_DEVICE}p${PART_ENTRY_NUMBER}"
+${RESIZE2FS} -f "${ROOT_DEVICE}p${PART_ENTRY_NUMBER}"

@@ -1,0 +1,74 @@
+#!/bin/sh
+# Copyright (C) 2021 Foundries.io Ltd
+#
+# SPDX-License-Identifier: MIT
+
+OSTREE_DISTRO="lmp"
+FACTORY_RESET_TAG=".factory_reset"
+FACTORY_RESET_KEEP_SOTA_TAG=".factory_reset_keep_sota"
+FACTORY_RESET_KEEP_SOTA_DOCKER_TAG=".factory_reset_keep_sota_docker"
+
+ostree_factory_reset_enabled() {
+	return 0
+}
+
+factory_reset() {
+	keep_sota=$1
+	keep_docker=$2
+
+	msg "Performing factory reset..."
+
+	# Replace /etc/ with /usr/etc (from deployment)
+	rm -rf ${ROOTFS_DIR}/etc
+	cp -a ${ROOTFS_DIR}/usr/etc ${ROOTFS_DIR}/
+	# TODO: Handle use case when var is provided via a separated partition
+	OSTREE_VAR="${ROOTFS_DIR}/sysroot/ostree/deploy/${OSTREE_DISTRO}/var"
+
+	# Filter of what not to remove (at /var root level)
+	FIND_EXCLUDE="! -name '.' ! -name '..' ! -name '${FACTORY_RESET_TAG}' \
+		! -name '${FACTORY_RESET_KEEP_SOTA_TAG}' ! -name '${FACTORY_RESET_KEEP_SOTA_DOCKER_TAG}'"
+	if [ "${keep_sota}" = "true" ]; then
+		msg "Keeping current ${OSTREE_DISTRO} SOTA content"
+		FIND_EXCLUDE="${FIND_EXCLUDE} ! -name 'sota'"
+	fi
+	if [ "${keep_docker}" = "true" ]; then
+		msg "Keeping current docker content"
+		FIND_EXCLUDE="${FIND_EXCLUDE} ! -name 'lib'"
+	fi
+
+	# Clear /var, stored under the shared ostree folder, not
+	# available after prepare-root (mounted later by systemd)
+	cd ${OSTREE_VAR}
+	eval find . -maxdepth 1 ${FIND_EXCLUDE} -exec rm -rf {} "';'"
+	if [ "${keep_docker}" = "true" ] && [ -d lib ]; then
+		find lib -maxdepth 1 ! -name "lib" ! -name "docker" -exec rm -rf {} ';'
+	else
+		rm -rf sota/compose-apps*
+	fi
+	cd - >/dev/null
+
+	# TODO: Erase HSM/Secure storage content?
+	# TODO: U-Boot/fiovb env?
+}
+
+ostree_factory_reset_run() {
+	FACTORY_RESET_TAG_PATH="${ROOTFS_DIR}/sysroot/ostree/deploy/${OSTREE_DISTRO}/var/${FACTORY_RESET_TAG}"
+	FACTORY_RESET_KEEP_SOTA_TAG_PATH="${ROOTFS_DIR}/sysroot/ostree/deploy/${OSTREE_DISTRO}/var/${FACTORY_RESET_KEEP_SOTA_TAG}"
+	FACTORY_RESET_KEEP_SOTA_DOCKER_TAG_PATH="${ROOTFS_DIR}/sysroot/ostree/deploy/${OSTREE_DISTRO}/var/${FACTORY_RESET_KEEP_SOTA_DOCKER_TAG}"
+
+	# Only run after ostree-prepare-root
+	if [ -n "${ROOTFS_DIR}" ] && [ -h "${ROOTFS_DIR}/ostree" ]; then
+		if [ -f "${FACTORY_RESET_TAG_PATH}" ]; then
+			factory_reset "false" "false"
+			rm -f ${FACTORY_RESET_TAG_PATH} ${FACTORY_RESET_KEEP_SOTA_TAG_PATH} ${FACTORY_RESET_KEEP_SOTA_DOCKER_TAG_PATH}
+		elif [ -f "${FACTORY_RESET_KEEP_SOTA_TAG_PATH}" ]; then
+			factory_reset "true" "false"
+			rm -f ${FACTORY_RESET_TAG_PATH} ${FACTORY_RESET_KEEP_SOTA_TAG_PATH} ${FACTORY_RESET_KEEP_SOTA_DOCKER_TAG_PATH}
+		elif [ -f "${FACTORY_RESET_KEEP_SOTA_DOCKER_TAG_PATH}" ]; then
+			factory_reset "true" "true"
+			rm -f ${FACTORY_RESET_TAG_PATH} ${FACTORY_RESET_KEEP_SOTA_TAG_PATH} ${FACTORY_RESET_KEEP_SOTA_DOCKER_TAG_PATH}
+		fi
+	else
+		msg "No ostree deployment found"
+	fi
+}

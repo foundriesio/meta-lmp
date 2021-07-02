@@ -32,6 +32,8 @@ IMAGE_CMD_ostree_append () {
 
 	# Prefer /usr/lib/tmpfiles.d instead of /etc
 	mv usr/etc/tmpfiles.d/00ostree-tmpfiles.conf usr/lib/tmpfiles.d
+	# Cover missing /var/rootdirs/home (pending in meta-updater)
+	echo "d /var/rootdirs/home 0755 root root -" >> usr/lib/tmpfiles.d/00ostree-tmpfiles.conf
 
 	# Update default home path (compatible with nss alt files)
 	sed -i -e 's,:/home,:/var/rootdirs/home,g' usr/etc/passwd

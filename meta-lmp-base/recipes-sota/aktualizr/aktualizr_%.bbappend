@@ -8,6 +8,7 @@ SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;branch=${BRANCH};na
     file://aktualizr-lite.service.in \
     file://aktualizr-secondary.service \
     file://aktualizr-serialcan.service \
+    file://tmpfiles.conf \
     file://10-resource-control.conf \
     ${@ d.expand("https://tuf-cli-releases.ota.here.com/cli-${GARAGE_SIGN_PV}.tgz;unpack=0;name=garagesign") if not oe.types.boolean(d.getVar('GARAGE_SIGN_AUTOVERSION')) else ''} \
 "
@@ -45,9 +46,11 @@ do_install_prepend_lmp() {
     [ -e ${B}/src ] || ln -s ${B}/aktualizr/src ${B}/src
 }
 
-do_install_append() {
+do_install_append_lmp() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
+    install -d ${D}${nonarch_libdir}/tmpfiles.d
+    install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
 }
 
 PACKAGES += "${PN}-get ${PN}-lite"
@@ -56,3 +59,5 @@ FILES_${PN}-lite = "${bindir}/aktualizr-lite"
 
 # Force same RDEPENDS, packageconfig rdepends common to both
 RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr}"
+
+FILES_${PN}-lite += "${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf"

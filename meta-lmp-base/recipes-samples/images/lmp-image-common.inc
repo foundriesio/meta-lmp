@@ -28,6 +28,7 @@ REQUIRED_DISTRO_FEATURES = "pam systemd"
 CORE_IMAGE_BASE_INSTALL += " \
     networkmanager \
     nss-altfiles \
+    pam-plugin-mkhomedir \
     resize-helper \
     sudo \
     zram \
@@ -66,6 +67,9 @@ configure_rootfs_nss_altfiles () {
 fakeroot do_populate_rootfs_common_src () {
     # Allow sudo group users to use sudo
     install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/50-lmp
+
+    # Enable pam_mkhomedir (requires pam-plugin-mkhomedir to be installed)
+    echo "session required pam_mkhomedir.so silent skel=/etc/skel/ umask=0022" >> ${IMAGE_ROOTFS}${sysconfdir}/pam.d/common-session
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_rootfs_common_src; "

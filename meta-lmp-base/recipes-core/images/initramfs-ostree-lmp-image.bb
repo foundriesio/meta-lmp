@@ -4,6 +4,7 @@ PACKAGE_INSTALL = "initramfs-framework-base \
 	initramfs-module-udev \
 	initramfs-module-rootfs \
 	initramfs-module-ostree \
+	initramfs-module-ostree-factory-reset \
 	${VIRTUAL-RUNTIME_base-utils} \
 	${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'initramfs-framework-ima', '', d)} \
 	udev base-passwd e2fsprogs-e2fsck \

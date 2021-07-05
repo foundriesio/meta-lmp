@@ -2,17 +2,17 @@
 # long-description: Creates a partitioned SD card image
 #
 #  - ----- --------- -------------- ---------------
-# | | TFA | u-boot  |    /bootfs   |   rootfsfs   |
+# | | TFA | fip     |    /bootfs   |   rootfsfs   |
 #  - ----- --------- -------------- ---------------
 # ^ ^     ^         ^              ^
 # | |     |         |              |
 # 0 17kB 529kB     4MB           68MB
 #
-# Warning: the first stage of boot (here fsbl1, fsbl2, ssbl) MUST be on GPT partition to be detected.
+# Warning: the first stage of boot (here fsbl1, fsbl2, fip) MUST be on GPT partition to be detected.
 #
-part fsbl1 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl1 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-trusted.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K --align 17
-part fsbl2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl2 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-trusted.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K
-part ssbl  --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=ssbl --sourceparams="file=${DEPLOY_DIR_IMAGE}/bootloader/u-boot-stm32mp157c-dk2-trusted.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 2048K
+part fsbl1 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl1 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K --align 17
+part fsbl2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl2 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K
+part fip --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip --sourceparams="file=${DEPLOY_DIR_IMAGE}/fip/fip-stm32mp157c-dk2-trusted.bin" --ondisk mmcblk --part-type 0x8301 --fixed-size 4096K
 
 part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096
 

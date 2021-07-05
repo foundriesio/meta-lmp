@@ -14,6 +14,7 @@ part fsbl1 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl1
 part fsbl2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl2 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K
 part fip --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip --sourceparams="file=${DEPLOY_DIR_IMAGE}/fip/fip-stm32mp157c-dk2-trusted.bin" --ondisk mmcblk --part-type 0x8301 --fixed-size 4096K
 
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 4096 --size 16
 part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096
 
 bootloader --ptable gpt

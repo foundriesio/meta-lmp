@@ -1,7 +1,7 @@
 #Opt	Id	Name		Type		IP	Offset		Binary
--	0x01	fsbl1-boot	Binary		none	0x0		tf-a-@@BOARD_NAME@@-serialboot.stm32
--	0x03	ssbl-boot	Binary		none	0x0		u-boot-@@BOARD_NAME@@-trusted.stm32
-P	0x04	fsbl1		Binary		@@BOARD_DISK@@	@@BOARD_OFFSET_FSBL1@@		tf-a-@@BOARD_NAME@@-trusted.stm32
-P	0x05	fsbl2		Binary		@@BOARD_DISK@@	@@BOARD_OFFSET_FSBL2@@		tf-a-@@BOARD_NAME@@-trusted.stm32
-PD	0x06	ssbl		Binary		@@BOARD_DISK@@	@@BOARD_OFFSET_SSBL@@	u-boot-@@BOARD_NAME@@-trusted.stm32
+-	0x01	fsbl1-boot	Binary		none	0x0		tf-a-@@BOARD_NAME@@-usb.stm32
+-	0x03	fip-boot	Binary		none	0x0		fip-@@BOARD_NAME@@-trusted.bin
+P	0x04	fsbl1		Binary		@@BOARD_DISK@@	@@BOARD_OFFSET_FSBL1@@	tf-a-@@BOARD_NAME@@-emmc.stm32
+P	0x05	fsbl2		Binary		@@BOARD_DISK@@	@@BOARD_OFFSET_FSBL2@@	tf-a-@@BOARD_NAME@@-emmc.stm32
+PD	0x06	fip		Binary		@@BOARD_DISK@@	@@BOARD_OFFSET_FIP@@	fip-@@BOARD_NAME@@-trusted.bin
 P	0x21	rootfs		FileSystem	@@BOARD_DISK@@	@@BOARD_OFFSET_ROOT@@	@@IMAGE@@-@@MACHINE@@.ext4

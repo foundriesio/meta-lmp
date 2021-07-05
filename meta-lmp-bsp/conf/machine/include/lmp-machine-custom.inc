@@ -324,6 +324,7 @@ IMAGE_CLASSES_remove_stm32mp1common = "st-partitions-image"
 IMAGE_CLASSES_remove_stm32mp1common = "image_types-stubi"
 ENABLE_FLASHLAYOUT_CONFIG_stm32mp1common = "0"
 IMAGE_ROOTFS_MAXSIZE_stm32mp1common = ""
+KERNEL_BUILTIN_WIREGUARD_stm32mp1common = "1"
 ## STM32MP1-EVAL
 IMAGE_FSTYPES_remove_stm32mp1-eval = "wic wic.gz wic.bmap"
 EXTRA_IMAGEDEPENDS_append_stm32mp1-eval = "flashlayouts-stm32mp1"

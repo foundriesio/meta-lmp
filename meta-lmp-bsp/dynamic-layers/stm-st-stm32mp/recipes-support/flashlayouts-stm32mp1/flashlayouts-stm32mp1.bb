@@ -22,7 +22,7 @@ do_compile() {
         -e 's/@@BOARD_DISK@@/${LMP_FLASHLAYOUT_BOARD_DISK}/' \
         -e 's/@@BOARD_OFFSET_FSBL1@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL1}/' \
         -e 's/@@BOARD_OFFSET_FSBL2@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL2}/' \
-        -e 's/@@BOARD_OFFSET_SSBL@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_SSBL}/' \
+        -e 's/@@BOARD_OFFSET_FIP@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FIP}/' \
         -e 's/@@BOARD_OFFSET_ROOT@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_ROOT}/' \
         ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_FLASHLAYOUT}
 }
@@ -33,7 +33,7 @@ do_deploy() {
     install -m 0755 ${WORKDIR}/*.tsv ${DEPLOYDIR}/${PN}
     install -m 0755 ${DEPLOY_DIR_IMAGE}/scripts/* ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/*.stm32 ${DEPLOYDIR}/${PN}
-    install -m 0644 ${DEPLOY_DIR_IMAGE}/bootloader/*.stm32 ${DEPLOYDIR}/${PN}
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/fip/*.bin ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/${LMP_FLASHLAYOUT_IMAGE} ${DEPLOYDIR}/${PN}/${MFGTOOL_FLASH_IMAGE}-${MACHINE}.ext4
 
     tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \
@@ -45,7 +45,6 @@ do_deploy() {
 
 # Make sure the artifacts are deployed
 do_deploy[depends] += "virtual/trusted-firmware-a:do_deploy"
-do_deploy[depends] += "virtual/trusted-firmware-a-serialboot:do_deploy"
 do_deploy[depends] += "virtual/bootloader:do_deploy"
 do_deploy[depends] += "sdcard-raw-tools-native:do_deploy"
 do_deploy[depends] += "${MFGTOOL_FLASH_IMAGE}:do_image_complete"

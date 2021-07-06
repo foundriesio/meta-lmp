@@ -21,8 +21,8 @@
 
 	aliases {
 		gpio0 = &gpio;
-		mmc0 = &sdhci1;
-		mmc1 = &sdhci0;
+		mmc1 = &sdhci1;
+		mmc0 = &sdhci0;
 		rtc0 = &rtc;
 		serial0 = &uart0;
 		serial1 = &uart1;

@@ -5,7 +5,7 @@ echo "Using ${fdt_file}"
 # Default boot type and device
 setenv bootlimit 3
 setenv devtype mmc
-setenv devnum 0
+setenv devnum 1
 
 setenv loadaddr 0x10000000
 setenv fdt_addr 0x1f000000

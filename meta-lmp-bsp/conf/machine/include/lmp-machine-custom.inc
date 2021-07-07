@@ -355,17 +355,17 @@ USE_XSCT_TARBALL_zynqmp = "1"
 KERNEL_BUILTIN_WIREGUARD_uz = "1"
 
 # TI AM64x
-PREFERRED_PROVIDER_virtual/kernel_am64xx-sk ?= "linux-lmp-ti-staging"
-PREFERRED_PROVIDER_u-boot-fw-utils_am64xx-sk = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils_am64xx-sk = "libubootenv"
+PREFERRED_PROVIDER_virtual/kernel_am64xx-evm ?= "linux-lmp-ti-staging"
+PREFERRED_PROVIDER_u-boot-fw-utils_am64xx-evm = "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils_am64xx-evm = "libubootenv"
 # only need boot script for sota builds
-WKS_FILE_DEPENDS_append_sota_am64xx-sk = " u-boot-default-script"
-PREFERRED_PROVIDER_u-boot-default-script_sota_am64xx-sk = "u-boot-ostree-scr"
-KERNEL_IMAGETYPE_sota_am64xx-sk = "fitImage"
-KERNEL_CLASSES_sota_am64xx-sk = " kernel-lmp-fitimage "
-IMAGE_BOOT_FILES_append_am64xx-sk = " boot.scr uEnv.txt"
-UBOOT_ENTRYPOINT_am64xx-sk = "0x82000000"
-UBOOT_LOADADDRESS_am64xx-sk = "0x82000000"
+WKS_FILE_DEPENDS_append_sota_am64xx-evm = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script_sota_am64xx-evm = "u-boot-ostree-scr"
+KERNEL_IMAGETYPE_sota_am64xx-evm = "fitImage"
+KERNEL_CLASSES_sota_am64xx-evm = " kernel-lmp-fitimage "
+IMAGE_BOOT_FILES_append_am64xx-evm = " boot.scr uEnv.txt"
+UBOOT_ENTRYPOINT_am64xx-evm = "0x82000000"
+UBOOT_LOADADDRESS_am64xx-evm = "0x82000000"
 
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP

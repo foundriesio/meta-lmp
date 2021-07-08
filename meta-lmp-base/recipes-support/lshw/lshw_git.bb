@@ -15,7 +15,7 @@ SRC_URI = "git://github.com/lyonel/lshw.git \
     file://docbook2man.patch \
 "
 
-SRCREV = "e6a0a1628e394bbd56f44a9c3962453e5d7589c1"
+SRCREV = "996aaad9c760efa6b6ffef8518999ec226af049a"
 
 S = "${WORKDIR}/git"
 

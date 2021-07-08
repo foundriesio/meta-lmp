@@ -1,6 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_am64xx-sk = " \
+SRC_URI_append_am64xx-evm = " \
     file://0001-am64xx-sk-set-bootm-len-to-64.patch \
 "
 

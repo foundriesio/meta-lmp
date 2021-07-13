@@ -13,7 +13,7 @@ index 0ce3ff00..d50d62e7 100644
 +  if (curl_timeout_str != NULL)
 +    curl_timeout = atoi(curl_timeout_str);
 +  if (curl_timeout == 0)
-+    curl_timeout = 600L;
++    curl_timeout = 780L;
 +  curl_easy_setopt (req->easy, CURLOPT_TIMEOUT, curl_timeout);
 +
    CURLMcode multi_rc = curl_multi_add_handle (self->multi, req->easy);

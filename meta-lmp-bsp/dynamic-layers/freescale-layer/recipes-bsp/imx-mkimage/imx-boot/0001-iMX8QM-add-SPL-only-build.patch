@@ -1,0 +1,42 @@
+From 54fba32d3a99969fe8ff6e0b3f8ffc8dc3c4b1b5 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Mon, 12 Jul 2021 16:35:58 +0300
+Subject: [PATCH] iMX8QM: add SPL-only build
+
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+---
+ iMX8QM/soc.mak | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/iMX8QM/soc.mak b/iMX8QM/soc.mak
+index 7359677..7c46be7 100755
+--- a/iMX8QM/soc.mak
++++ b/iMX8QM/soc.mak
+@@ -75,6 +75,24 @@ flash_flexspi: $(MKIMG) $(AHAB_IMG) scfw_tcm.bin u-boot-atf.bin
+ 	./$(MKIMG) -soc QM -rev B0 -dev flexspi -append $(AHAB_IMG) -c -scfw scfw_tcm.bin -ap u-boot-atf.bin a53 0x80000000 -out flash.bin
+ 	./$(QSPI_PACKER) $(QSPI_HEADER)
+ 
++# use this to trigger re-combining u-boot-spl.bin u-boot-spl.dtb
++u-boot-spl-combine:
++	@cat u-boot-spl-nodtb.bin u-boot-spl.dtb > u-boot-spl.bin
++
++###############################
++# Generate SPL-only bootable  #
++###############################
++flash_evk_spl: $(MKIMG) $(AHAB_IMG) scfw_tcm.bin u-boot-spl-combine
++	./$(MKIMG) -soc QM -rev B0 -dcd skip -append $(AHAB_IMG) -c -scfw scfw_tcm.bin -ap u-boot-spl.bin a53 0x00100000 -out flash.bin
++
++flash_spl: $(MKIMG) $(AHAB_IMG) scfw_tcm.bin u-boot-spl.bin u-boot-atf-container.img
++	./$(MKIMG) -soc QM -rev B0 -dcd skip -append $(AHAB_IMG) -c -scfw scfw_tcm.bin -ap u-boot-spl.bin a53 0x00100000 -out flash.bin
++	cp flash.bin boot-spl-container.img
++	@flashbin_size=`wc -c flash.bin | awk '{print $$1}'`; \
++                   pad_cnt=$$(((flashbin_size + 0x400 - 1) / 0x400)); \
++                   echo "append u-boot-atf-container.img at $$pad_cnt KB"; \
++                   dd if=u-boot-atf-container.img of=flash.bin bs=1K seek=$$pad_cnt;
++
+ flash_spl: $(MKIMG) $(AHAB_IMG) scfw_tcm.bin u-boot-spl.bin u-boot-atf-container.img
+ 	./$(MKIMG) -soc QM -rev B0 -dcd skip -append $(AHAB_IMG) -c -scfw scfw_tcm.bin -ap u-boot-spl.bin a53 0x00100000 -out flash.bin
+ 	cp flash.bin boot-spl-container.img
+-- 
+2.30.2
+

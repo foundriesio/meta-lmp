@@ -17,3 +17,8 @@ do_deploy_append_mx8m() {
     install -m 0644 ${S}/build-optee/${PLATFORM}/release/bl31.bin ${DEPLOYDIR}/arm-trusted-firmware.bin
     install -m 0644 ${S}/build-optee/${PLATFORM}/release/bl31/bl31.elf ${DEPLOYDIR}/arm-trusted-firmware.elf
 }
+
+do_deploy_append_apalis-imx8() {
+    install -m 0644 ${S}/build/${PLATFORM}/release/bl31.bin ${DEPLOYDIR}/arm-trusted-firmware.bin
+    install -m 0644 ${S}/build/${PLATFORM}/release/bl31/bl31.elf ${DEPLOYDIR}/arm-trusted-firmware.elf
+}

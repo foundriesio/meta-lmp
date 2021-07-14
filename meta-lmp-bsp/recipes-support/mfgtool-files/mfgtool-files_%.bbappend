@@ -25,10 +25,6 @@ do_deploy[depends] += "${@get_do_deploy_depends(d)}"
 do_deploy_prepend_mx8() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool
-}
-
-do_deploy_prepend_mx8m() {
-    install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE} ${DEPLOYDIR}/${PN}/fitImage-${MACHINE}-mfgtool
 }

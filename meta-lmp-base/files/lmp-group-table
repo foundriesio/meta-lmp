@@ -44,6 +44,8 @@ pwm:x:54:
 games:x:60:
 render:x:61:
 weston-launch:x:62:
+weston:x:63:
+wayland:x:64:
 shutdown:x:70:
 nobody:*:99:
 users:x:100:

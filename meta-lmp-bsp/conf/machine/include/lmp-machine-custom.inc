@@ -368,6 +368,19 @@ IMAGE_BOOT_FILES_append_am64xx-evm = " boot.scr uEnv.txt"
 UBOOT_ENTRYPOINT_am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS_am64xx-evm = "0x82000000"
 
+# Nvidia Tegra
+DISTRO_FEATURES_append_tegra = " opengl"
+DISTRO_FEATURES_DEFAULT_remove_tegra = "modsign"
+INITRAMFS_IMAGE_BUNDLE_tegra = ""
+PREFERRED_PROVIDER_virtual/kernel_tegra ?= "linux-tegra"
+IMAGE_TEGRAFLASH_FS_TYPE_tegra = "ota-ext4"
+IMAGE_FSTYPES_append_tegra = " tegraflash"
+IMAGE_FSTYPES_remove_tegra = "wic wic.gz wic.bmap"
+## jetson-agx-xavier-devkit (tegra194)
+OSTREE_DEPLOY_DEVICETREE_tegra194 = "1"
+OSTREE_KERNEL_ARGS_tegra194 ?= "\${cbootargs} ${OSTREE_KERNEL_ARGS_COMMON}"
+OSTREE_BOOTLOADER_tegra194 = "syslinux"
+
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"

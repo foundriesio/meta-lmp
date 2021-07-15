@@ -1,0 +1,11 @@
+--- weston-init/weston.service	2021-07-14 19:28:08.215047280 -0300
++++ weston-init/weston.service_new	2021-07-14 19:37:25.339173787 -0300
+@@ -34,7 +34,7 @@
+ # Requires systemd-notify.so Weston plugin.
+ Type=notify
+ EnvironmentFile=/etc/default/weston
+-ExecStart=/usr/bin/weston --modules=systemd-notify.so
++ExecStart=/usr/bin/weston --modules=systemd-notify.so $OPTARGS
+ 
+ # Optional watchdog setup
+ TimeoutStartSec=60

@@ -28,14 +28,17 @@ UBOOT_ENTRYPOINT  = "0x00080000"
 UBOOT_DTB_LOADADDRESS = "0x1f000000"
 UBOOT_RD_LOADADDRESS = "0x20000000"
 
+EFI_PROVIDER ?= "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'grub-efi', '', d)}"
+
 ATF_BINARY = "arm-trusted-firmware.bin"
 ATF_MEM_BASE = "0xfffe5000"
 ATF_MEM_SIZE = "0x1affe"
 
 SERIAL_CONSOLES ?= "115200;ttyPS0"
 
-KERNEL_IMAGETYPE_sota = "fitImage"
-KERNEL_CLASSES_sota = " kernel-lmp-fitimage "
+OSTREE_BOOTLOADER ?= "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'grub', 'u-boot', d)}"
+KERNEL_IMAGETYPE_sota ?= "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'Image', 'fitImage', d)}"
+KERNEL_CLASSES_sota ?= "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', '', ' kernel-lmp-fitimage ', d)}"
 OSTREE_KERNEL_ARGS ?= "console=ttyPS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 PREFERRED_PROVIDER_virtual/dtb ?= "device-tree"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a ?= "arm-trusted-firmware"
@@ -44,12 +47,15 @@ EXTRA_IMAGEDEPENDS += " \
     virtual/bootloader \
     virtual/pmu-firmware \
     virtual/trusted-firmware-a \
+    ${@bb.utils.contains('OSTREE_BOOTLOADER', 'grub', 'grub-efi', '', d)} \
 "
 
 # Used to create a wic image to boot from emmc
 WKS_FILE = "sdimage-bootpart.wks"
+WKS_FILE_sota = "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'sdimage-mbr-efi-sota.wks', 'sdimage-sota.wks', d)}"
 IMAGE_BOOT_FILES = "${@get_default_image_boot_files(d)} boot.bin boot.scr uEnv.txt system-top.dtb bitstream.bit.bin"
 IMAGE_BOOT_FILES_sota = "boot.bin u-boot.itb boot.itb"
+IMAGE_BOOT_FILES_sota += "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'system-top.dtb', '', d)}"
 
 # Not building for QEMU standard Xinix build
 EXTRA_IMAGEDEPENDS_remove = "qemu-devicetrees"

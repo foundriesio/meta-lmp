@@ -26,7 +26,7 @@ PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"
-DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign"
+DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
 DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
 

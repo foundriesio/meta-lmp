@@ -1,0 +1,10 @@
+# short-description: Create OTA-enabled MBR SD card image compatible with UEFI
+# long-description: Creates a partitioned MBR SD card image compatible with UEFI,
+# using OSTree physical sysroot as a payload. Firmware related boot files located
+# in the first vfat partition (firmware) and UEFI related files and setup available
+# at the second vfat partition (id 0xef)
+
+part firmware --source bootimg-partition --fstype=vfat --system-id 0xf8 --label boot --active --align 4096 --size 32
+part /boot/efi --source bootimg-sota-efi --sourceparams="loader=grub-efi" --fstype=vfat --system-id 0xef --label efi --align 4096 --use-uuid --fixed-size 128M
+part / --source otaimage --fstype=ext4 --align 4096 --use-uuid
+bootloader --configfile="grub-ota.cfg"

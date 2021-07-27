@@ -3,6 +3,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI_append_lmp-wayland = " \
     file://utilities-terminal.png \
     file://background.jpg \
+    file://weston.env \
+    file://weston.service.patch \
 "
 
 FILES_${PN}_append_lmp-wayland = " \

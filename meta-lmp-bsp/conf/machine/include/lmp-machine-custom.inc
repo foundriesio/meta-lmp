@@ -237,18 +237,28 @@ BOOTSCR_LOAD_ADDR_apalis-imx6 = "0x15000000"
 SOTA_CLIENT_FEATURES_remove_sota_apalis-imx6-sec = "ubootenv"
 SOTA_EXTRA_CLIENT_FEATURES_append_sota_apalis-imx6-sec = " fiovb"
 
-# Toradex Apalis iMX8QM
-SOTA_CLIENT_FEATURES_append_apalis-imx8 = " ubootenv"
-IMAGE_BOOT_FILES_apalis-imx8 = "imx-boot hdmitxfw.bin ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
-IMAGE_BOOT_FILES_sota_apalis-imx8 = "imx-boot boot.itb"
-KERNEL_IMAGETYPE_sota_apalis-imx8 = "fitImage"
-KERNEL_CLASSES_sota_apalis-imx8 = " kernel-lmp-fitimage "
-FIT_LOADABLES_apalis-imx8 ?= "hdmitxfw.bin"
+# iMX8QM
+SOTA_CLIENT_FEATURES_append_mx8qm = " ubootenv"
+IMAGE_BOOT_FILES_mx8qm = "imx-boot hdmitxfw.bin ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+IMAGE_BOOT_FILES_sota_mx8qm = "imx-boot boot.itb"
+KERNEL_IMAGETYPE_sota_mx8qm = "fitImage"
+KERNEL_CLASSES_sota_mx8qm = " kernel-lmp-fitimage "
+FIT_LOADABLES_mx8qm ?= "hdmitxfw.bin"
+WKS_FILE_mx8qm_sota = "sdimage-imx8-sota.wks.in"
+IMX_DEFAULT_BOOTLOADER_mx8qm ?= "u-boot-fio"
+WKS_FILE_DEPENDS_append_mx8qm = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script_mx8qm = "u-boot-base-scr"
+PREFERRED_PROVIDER_u-boot-default-script_sota_mx8qm = "u-boot-ostree-scr-fit"
+## iMX8QM MEK
+OSTREE_KERNEL_ARGS_imx8qm-mek ?= "pci=nomsi console=ttyLP0,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"
+PREFERRED_PROVIDER_virtual/kernel_imx8qm-mek ?= "linux-imx"
+KERNEL_DANGLING_FEATURES_WARN_ONLY_imx8qm-mek ?= "1"
+UBOOT_ENTRYPOINT_imx8qm-mek = "0x80280000"
+UBOOT_LOADADDRESS_imx8qm-mek = "0x80280000"
+UBOOT_DTB_LOADADDRESS_imx8qm-mek = "0x83000000"
+## Toradex Apalis iMX8QM
 OSTREE_KERNEL_ARGS_apalis-imx8 ?= "pci=nomsi console=tty1 console=ttyLP1,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"
 PREFERRED_PROVIDER_virtual/kernel_apalis-imx8 ?= "linux-lmp-toradex-imx"
-WKS_FILE_apalis-imx8_sota = "sdimage-imx8-sota.wks.in"
-PREFERRED_PROVIDER_u-boot-default-script_apalis-imx8 = "u-boot-base-scr"
-PREFERRED_PROVIDER_u-boot-default-script_sota_apalis-imx8 = "u-boot-ostree-scr-fit"
 
 # iMX8MQ
 UBOOT_SIGN_ENABLE_sota_mx8mq = "1"

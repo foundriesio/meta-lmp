@@ -1,0 +1,5 @@
+bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr} ${fdt_file}
+bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${kernel_addr_r} ${boot_file}
+bootcmd_run=booti ${kernel_addr_r} - ${fdt_addr}
+bootcmd=run set_bootargs; run bootcmd_dtb; run bootcmd_load_k; run bootcmd_run
+set_bootargs=setenv bootargs console=ttyLP0,115200 earlycon root=${mmcroot} rootwait rw

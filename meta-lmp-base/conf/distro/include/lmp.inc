@@ -46,6 +46,8 @@ PACKAGECONFIG_append_pn-networkmanager = " nss"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"
+# Unix groups that will be mirrored in /etc/group to allow manipulation
+ETC_GROUP_MEMBERS ?= "sudo audio video plugdev users docker"
 
 # Use staticids for deterministic uid/gid values
 USERADDEXTENSION = "useradd-staticids"

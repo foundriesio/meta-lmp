@@ -11,6 +11,10 @@ SRC_URI_append_mx8m = " \
      file://0004-iMX8M-also-create-nohdmi-boot-image.patch \
 "
 
+SRC_URI_append_mx8qm = " \
+     file://0001-iMX8QM-add-SPL-only-build.patch \
+"
+
 do_compile[depends] = " \
     virtual/bootloader:do_deploy \
     ${@' '.join('%s:do_deploy' % r for r in '${IMX_EXTRA_FIRMWARE}'.split() )} \
@@ -18,7 +22,7 @@ do_compile[depends] = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os:do_deploy', '', d)} \
 "
 
-do_compile_prepend_mx8m() {
+do_compile_prepend_mx8() {
     for target in ${IMXBOOT_TARGETS}; do
         if [ "${target}" = "flash_evk_spl" ]; then
             # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
@@ -58,7 +62,7 @@ do_deploy_append() {
     for target in ${IMXBOOT_TARGETS}; do
         if [ "${target}" = "flash_evk_spl" ]; then
             # Also create imx-boot link with the machine name
-            ln -sf ${BOOT_CONFIG_MACHINE}-${target} ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}
+            #ln -sf ${BOOT_CONFIG_MACHINE}-${target} ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}
             if [ -e "${S}/${BOOT_CONFIG_MACHINE}-${target}-nohdmi" ]; then
                 install -m 0644 ${S}/${BOOT_CONFIG_MACHINE}-${target}-nohdmi ${DEPLOYDIR}
                 ln -sf ${BOOT_CONFIG_MACHINE}-${target}-nohdmi \

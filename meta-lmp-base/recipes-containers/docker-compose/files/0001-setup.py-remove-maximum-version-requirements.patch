@@ -1,0 +1,57 @@
+From e3aca6421e003d03d119e69bf3d6b30bb5c662c9 Mon Sep 17 00:00:00 2001
+From: Chen Qi <Qi.Chen@windriver.com>
+Date: Fri, 22 Nov 2019 09:24:58 +0800
+Subject: [PATCH] setup.py: remove maximum version requirements
+
+Remove maximum version requirements so that docker-compose will not
+require old version recipes.
+
+Upstream-Status: Inappropriate [OE Specific]
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+Signed-off-by: Ming Liu <liu.ming50@gmail.com>
+---
+ setup.py | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+Index: docker-compose-1.29.1/setup.py
+===================================================================
+--- docker-compose-1.29.1.orig/setup.py
++++ docker-compose-1.29.1/setup.py
+@@ -25,16 +25,21 @@
+ 
+ 
+ install_requires = [
+-    'docopt >= 0.6.1, < 1',
+-    'PyYAML >= 3.10, < 6',
+-    'requests >= 2.20.0, < 3',
+-    'texttable >= 0.9.0, < 2',
++    'docopt >= 0.6.1',
++    'PyYAML >= 3.10',
++    'requests >= 2.20.0',
++    'texttable >= 0.9.0',
+     'websocket-client >= 0.32.0, < 1',
+     'distro >= 1.5.0, < 2',
+-    'docker[ssh] >= 5',
++    'docker[ssh] >= 4.4.0, < 5',
+     'dockerpty >= 0.4.1, < 1',
+     'jsonschema >= 2.5.1, < 4',
+-    'python-dotenv >= 0.13.0, < 1',
++    'websocket-client >= 0.32.0',
++    'distro >= 1.5.0',
++    'docker[ssh] >= 5',
++    'dockerpty >= 0.4.1',
++    'jsonschema >= 2.5.1',
++    'python-dotenv >= 0.13.0',
+ ]
+ 
+ 
+@@ -51,7 +56,7 @@
+     ':python_version < "3.5"': ['backports.ssl_match_hostname >= 3.5, < 4'],
+     ':python_version < "3.8"': ['cached-property >= 1.2.0, < 2'],
+     ':sys_platform == "win32"': ['colorama >= 0.4, < 1'],
+-    'socks': ['PySocks >= 1.5.6, != 1.5.7, < 2'],
++    'socks': ['PySocks >= 1.5.6, != 1.5.7'],
+     'tests': tests_require,
+ }
+ 

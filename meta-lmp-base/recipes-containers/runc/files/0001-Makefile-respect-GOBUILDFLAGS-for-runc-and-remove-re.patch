@@ -1,0 +1,32 @@
+From d2c47a973f354ffd505bb4e809c59e57b543726d Mon Sep 17 00:00:00 2001
+From: Chen Qi <Qi.Chen@windriver.com>
+Date: Tue, 6 Aug 2019 19:01:45 +0800
+Subject: [PATCH] Makefile: respect GOBUILDFLAGS for runc and remove recvtty
+ from static
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+---
+ Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+Index: git/src/import/Makefile
+===================================================================
+--- git.orig/src/import/Makefile
++++ git/src/import/Makefile
+@@ -25,7 +25,7 @@
+ 		endif
+ 	endif
+ endif
+-GO_BUILD := $(GO) build -trimpath $(MOD_VENDOR) $(GO_BUILDMODE) $(EXTRA_FLAGS) -tags "$(BUILDTAGS)" \
++GO_BUILD := $(GO) build $(GOBUILDFLAGS) -trimpath $(MOD_VENDOR) $(GO_BUILDMODE) $(EXTRA_FLAGS) -tags "$(BUILDTAGS)" \
+ 	-ldflags "-X main.gitCommit=$(COMMIT) -X main.version=$(VERSION) $(EXTRA_LDFLAGS)"
+ GO_BUILD_STATIC := CGO_ENABLED=1 $(GO) build -trimpath $(MOD_VENDOR) $(EXTRA_FLAGS) -tags "$(BUILDTAGS) netgo osusergo" \
+ 	-ldflags "-w -extldflags -static -X main.gitCommit=$(COMMIT) -X main.version=$(VERSION) $(EXTRA_LDFLAGS)"
+@@ -42,7 +42,6 @@
+ 
+ static:
+ 	$(GO_BUILD_STATIC) -o runc .
+-	$(GO_BUILD_STATIC) -o contrib/cmd/recvtty/recvtty ./contrib/cmd/recvtty
+ 
+ release:
+ 	script/release.sh -r release/$(VERSION) -v $(VERSION)

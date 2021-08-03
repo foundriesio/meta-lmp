@@ -34,16 +34,16 @@ DESCRIPTION = "Linux container runtime \
 #   - The common components of this recipe and docker-ce do need to be moved
 #     to a docker.inc recipe
 
-# commits based on v20.10.5
-SRCREV_moby = "363e9a88a11be517d9e8c65c998ff56f774eb4dc"
-SRCREV_libnetwork = "fa125a3512ee0f6187721c88582bf8c4378bd4d7"
-SRCREV_cli = "55c4c88966a912ddb365e2d73a4969e700fc458f"
+# commits based on v20.10.7
+SRCREV_moby = "013d6655bb0f4c86bcd9d48372ef67afd0ded65e"
+SRCREV_libnetwork = "64b7a4574d1426139437d20e81c0b6d391130ec8"
+SRCREV_cli = "e9b8231d6a57b6a5a5efd96504ace70a78dc6e5d"
 SRC_URI = "\
 	git://github.com/moby/moby.git;branch=20.10;name=moby \
 	git://github.com/moby/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork \
 	git://github.com/docker/cli;branch=20.10;name=cli;destsuffix=git/cli \
 	file://0001-libnetwork-use-GO-instead-of-go.patch \
-	file://0001-cli-use-go-cross-compiler.patch \
+	file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
 	file://0001-dynbinary-use-go-cross-compiler.patch \
 	file://dockerd-daemon-use-default-system-config-when-none-i.patch \
 	file://cli-config-support-default-system-config.patch \
@@ -63,7 +63,7 @@ GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
-DOCKER_VERSION = "20.10.5"
+DOCKER_VERSION = "20.10.7"
 PV = "${DOCKER_VERSION}"
 
 PACKAGES =+ "${PN}-contrib"

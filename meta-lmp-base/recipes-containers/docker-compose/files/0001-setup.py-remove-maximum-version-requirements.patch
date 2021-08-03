@@ -1,4 +1,4 @@
-From 1d358acd46c9ca71d848fca8c2d677414257f247 Mon Sep 17 00:00:00 2001
+From e3aca6421e003d03d119e69bf3d6b30bb5c662c9 Mon Sep 17 00:00:00 2001
 From: Chen Qi <Qi.Chen@windriver.com>
 Date: Fri, 22 Nov 2019 09:24:58 +0800
 Subject: [PATCH] setup.py: remove maximum version requirements
@@ -11,54 +11,47 @@ Upstream-Status: Inappropriate [OE Specific]
 Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
 Signed-off-by: Ming Liu <liu.ming50@gmail.com>
 ---
- setup.py |   26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ setup.py | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/setup.py b/setup.py
-index 110441dc..eef28254 100644
---- a/setup.py
-+++ b/setup.py
-@@ -30,18 +30,18 @@ def find_version(*file_paths):
+Index: docker-compose-1.29.1/setup.py
+===================================================================
+--- docker-compose-1.29.1.orig/setup.py
++++ docker-compose-1.29.1/setup.py
+@@ -25,16 +25,21 @@
  
  
  install_requires = [
--    'cached-property >= 1.2.0, < 2',
 -    'docopt >= 0.6.1, < 1',
 -    'PyYAML >= 3.10, < 6',
 -    'requests >= 2.20.0, < 3',
 -    'texttable >= 0.9.0, < 2',
--    'websocket-client >= 0.32.0, < 1',
--    'distro >= 1.5.0, < 2',
--    'docker[ssh] >= 3.7.0, < 5',
--    'dockerpty >= 0.4.1, < 1',
--    'six >= 1.3.0, < 2',
--    'jsonschema >= 2.5.1, < 4',
--    'python-dotenv >= 0.13.0, < 1',
-+    'cached-property >= 1.2.0',
 +    'docopt >= 0.6.1',
 +    'PyYAML >= 3.10',
 +    'requests >= 2.20.0',
 +    'texttable >= 0.9.0',
+     'websocket-client >= 0.32.0, < 1',
+     'distro >= 1.5.0, < 2',
+-    'docker[ssh] >= 5',
++    'docker[ssh] >= 4.4.0, < 5',
+     'dockerpty >= 0.4.1, < 1',
+     'jsonschema >= 2.5.1, < 4',
+-    'python-dotenv >= 0.13.0, < 1',
 +    'websocket-client >= 0.32.0',
 +    'distro >= 1.5.0',
-+    'docker[ssh] >= 3.7.0',
++    'docker[ssh] >= 5',
 +    'dockerpty >= 0.4.1',
-+    'six >= 1.3.0',
 +    'jsonschema >= 2.5.1',
 +    'python-dotenv >= 0.13.0',
  ]
  
  
-@@ -61,7 +61,7 @@ extras_require = {
-     ':python_version < "3.3"': ['backports.shutil_get_terminal_size == 1.0.0',
-                                 'ipaddress >= 1.0.16, < 2'],
+@@ -51,7 +56,7 @@
+     ':python_version < "3.5"': ['backports.ssl_match_hostname >= 3.5, < 4'],
+     ':python_version < "3.8"': ['cached-property >= 1.2.0, < 2'],
      ':sys_platform == "win32"': ['colorama >= 0.4, < 1'],
 -    'socks': ['PySocks >= 1.5.6, != 1.5.7, < 2'],
 +    'socks': ['PySocks >= 1.5.6, != 1.5.7'],
      'tests': tests_require,
  }
  
- 
--- 
-2.25.0
-

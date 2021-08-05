@@ -1,0 +1,20 @@
+uuu_version 1.2.39
+
+SDPS: boot -f imx-boot-mfgtool
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+
+FB: ucmd setenv fastboot_dev mmc
+FB: ucmd setenv mmcdev ${emmc_dev}
+FB: ucmd mmc dev ${emmc_dev} 1; mmc erase 0 0x2000
+FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
+FB: flash bootloader ../imx-boot-@@MACHINE@@
+FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
+FB: flash bootloader_s ../imx-boot-@@MACHINE@@
+FB: flash bootloader2_s ../u-boot-@@MACHINE@@.itb
+# No sit.bin for imx8mp: offset is defined in fuses
+FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
+FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0
+FB: done

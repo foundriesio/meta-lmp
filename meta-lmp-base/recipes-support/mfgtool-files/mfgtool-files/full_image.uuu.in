@@ -9,7 +9,7 @@ uuu_version 1.0.1
 #FB: ucmd setenv fastboot_buffer ${initrd_addr}
 #FB: download -f fitImage-@@MACHINE@@-mfgtool
 #FB: acmd run mfgtool_args
-#FB: acmd bootm ${initrd_addr}#conf@${fdt_file}
+#FB: acmd bootm ${initrd_addr}#conf-${fdt_file}
 
 # Wait for eMMC
 #FBK: ucmd while [ ! -e /dev/mmcblk*boot0 ]; do sleep 1; echo "wait for /dev/mmcblk*boot* appear"; done;

@@ -18,12 +18,12 @@ FB: ucmd setenv fastboot_buffer ${initrd_addr}
 FB: download -f fitImage-imx7ulpea-ucom-mfgtool
 # Apply OP-TEE overlay (provided by the OP-TEE OS)
 FB: ucmd setenv optee_ovl 0x65000000
-FB: ucmd imxtract ${initrd_addr}#conf@imx7ulpea-ucom-kit_v2.dtb fdt@imx7ulpea-ucom-kit_v2.dtb ${fdt_addr}
+FB: ucmd imxtract ${initrd_addr}#conf-imx7ulpea-ucom-kit_v2.dtb fdt-imx7ulpea-ucom-kit_v2.dtb ${fdt_addr}
 FB: ucmd fdt addr ${fdt_addr}
 FB: ucmd fdt resize 0x1000
 FB: ucmd fdt apply ${optee_ovl}
 FB: acmd run mfgtool_args
-FB: acmd bootm ${initrd_addr}#conf@imx7ulpea-ucom-kit_v2.dtb ${initrd_addr}:ramdisk@1 ${fdt_addr}
+FB: acmd bootm ${initrd_addr}#conf-imx7ulpea-ucom-kit_v2.dtb ${initrd_addr}:ramdisk-1 ${fdt_addr}
 
 # Wait for emmc
 FBK: ucmd while [ ! -e /dev/mmcblk*boot0 ]; do sleep 1; echo "wait for /dev/mmcblk*boot* appear"; done;

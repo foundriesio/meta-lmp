@@ -1,0 +1,7 @@
+devnum=2
+devtype=mmc
+bootcmd_args=setenv bootargs console=tty1 console=${console} root=/dev/mmcblk2p2 rootfstype=ext4 rootwait rw
+bootcmd_dtb=fatload ${devtype} ${devnum}:1 ${fdt_addr} ${fdt_file}
+bootcmd_load_k=fatload ${devtype} ${devnum}:1 ${loadaddr} ${image}
+bootcmd_run=booti ${loadaddr} - ${fdt_addr}
+bootcmd=run bootcmd_args; run bootcmd_dtb; run bootcmd_load_k; run bootcmd_run

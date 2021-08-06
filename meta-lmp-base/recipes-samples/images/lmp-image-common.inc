@@ -53,7 +53,7 @@ configure_rootfs_nss_altfiles () {
         # Defaults which can later be replaced by the user
         if [ "$type" = "hosts" ]; then
             cat ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
-        elif [ "$type" = "pwd" ]; then
+        elif [ "$type" = "pwd" ] || [ "$type" = "spwd" ]; then
             grep "^${LMP_USER}:" ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
         elif [ "$type" = "grp" ]; then
             for gmember in ${ETC_GROUP_MEMBERS}; do

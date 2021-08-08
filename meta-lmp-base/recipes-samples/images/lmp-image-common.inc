@@ -29,6 +29,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     networkmanager \
     resize-helper \
     sudo \
+    zram \
 "
 
 fakeroot do_populate_rootfs_common_src () {

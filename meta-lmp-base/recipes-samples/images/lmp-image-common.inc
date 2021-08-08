@@ -31,6 +31,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     pam-plugin-mkhomedir \
     resize-helper \
     sudo \
+    zram \
 "
 
 # Configure NSS ALTFILES based on NSS_ALT_TYPES

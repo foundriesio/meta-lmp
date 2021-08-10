@@ -10,6 +10,9 @@ KERNEL_REPO ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
 LINUX_VERSION ?= "5.4.y"
 KERNEL_BRANCH ?= "imx_5.4.70_2.3.0"
 
+# Drop features that are appended by other layers (not required here)
+KERNEL_FEATURES_remove = "cfg/fs/vfat.scc"
+
 require recipes-kernel/linux/linux-lmp-dev.bb
 
 # lzop is commonly used by mfgtool-based kernel

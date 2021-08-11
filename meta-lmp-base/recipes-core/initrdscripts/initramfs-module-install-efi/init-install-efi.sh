@@ -242,7 +242,9 @@ echo "Preparing boot partition..."
 EFIDIR="/boot/EFI/BOOT"
 mkdir -p $EFIDIR
 # Copy the efi loader
-cp /run/media/$1/EFI/BOOT/*.efi $EFIDIR
+efiloader=`basename /run/media/$1/EFI/BOOT/boot*.efi`
+cp /run/media/$1/EFI/BOOT/${efiloader} $EFIDIR
+
 # Generate boot grub.cfg
 cat << EOF > $EFIDIR/grub.cfg
 search.fs_uuid ${rootfs_uuid} root
@@ -251,6 +253,19 @@ EOF
 
 # Make sure startup.nsh is also available at the boot partition
 cp /run/media/$1/startup.nsh /boot
+
+# Set default EFI boot entry
+BOOTLABEL="LmP"
+if [ -d /sys/firmware/efi/efivars ]; then
+    # Delete old LmP entry
+    bootnum=`efibootmgr | grep "^Boot[0-9]" | grep "${BOOTLABEL}$" | sed -e "s|Boot||" -e "s|\*.*||"`
+    if [ -n "$bootnum" ]; then
+        efibootmgr -b $bootnum -B
+    fi
+
+    # Add new LmP entry
+    efibootmgr -c -d ${device} -p 1 -w -L ${BOOTLABEL} -l "\EFI\BOOT\\${efiloader}"
+fi
 
 umount /tgt_root
 umount /boot

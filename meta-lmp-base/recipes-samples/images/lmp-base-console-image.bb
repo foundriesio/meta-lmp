@@ -12,6 +12,7 @@ require lmp-feature-softhsm.inc
 require lmp-feature-jobserv.inc
 
 require ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'lmp-feature-optee.inc', '', d)}
+require ${@bb.utils.contains('MACHINE_FEATURES', 'efi', 'lmp-feature-efi.inc', '', d)}
 
 IMAGE_FEATURES += "ssh-server-openssh"
 

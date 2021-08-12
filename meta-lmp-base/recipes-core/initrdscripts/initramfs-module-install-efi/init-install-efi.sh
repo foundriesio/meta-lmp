@@ -164,37 +164,54 @@ done
 bootfs=${device}${part_prefix}1
 rootfs=${device}${part_prefix}2
 
-echo "*****************"
-echo "Boot partition size:   $boot_size MB ($bootfs)"
-echo "Rootfs partition size: $rootfs_size MB ($rootfs)"
-echo "*****************"
-echo "Deleting partition table on ${device} ..."
-dd if=/dev/zero of=${device} bs=512 count=35
-
-echo "Creating new partition table on ${device} ..."
-parted ${device} mklabel gpt
-
-echo "Creating boot partition on $bootfs"
-parted ${device} mkpart boot fat32 0% $boot_size
-parted ${device} set 1 boot on
-
-echo "Creating rootfs partition on $rootfs"
-parted ${device} mkpart root ext4 $rootfs_start 100%
-
+echo
+echo "Current partition table available on ${device}:"
+echo
 parted ${device} print
 
-echo "Waiting for device nodes..."
-C=0
-while [ $C -ne 2 ] && [ ! -e $bootfs  -o ! -e $rootfs ]; do
-    C=$(( C + 1 ))
-    sleep 1
+# Get user choice for partition table
+while true; do
+    echo "Erase and recreate partition table for device ${device}? (y / n): "
+    read answer
+    if [ "$answer" = "y" ]; then
+        echo "Deleting partition table on ${device} ..."
+        dd if=/dev/zero of=${device} bs=512 count=35
+
+        echo "*****************"
+        echo "Boot partition size:   $boot_size MB ($bootfs)"
+        echo "Rootfs partition size: $rootfs_size MB ($rootfs)"
+        echo "*****************"
+
+        echo "Creating new partition table on ${device} ..."
+        parted ${device} mklabel gpt
+
+        echo "Creating boot partition on $bootfs"
+        parted ${device} mkpart boot fat32 0% $boot_size
+        parted ${device} set 1 boot on
+
+        echo "Creating rootfs partition on $rootfs"
+        parted ${device} mkpart root ext4 $rootfs_start 100%
+
+        parted ${device} print
+
+        echo "Waiting for device nodes..."
+        C=0
+        while [ $C -ne 2 ] && [ ! -e $bootfs  -o ! -e $rootfs ]; do
+            C=$(( C + 1 ))
+            sleep 1
+        done
+        break
+    elif [ "$answer" = "n" ]; then
+        echo "Not erasing current partition table for device ${device}, assuming ${bootfs} as boot/ESP and ${rootfs} as rootfs."
+        break
+    fi
 done
 
 echo "Formatting $bootfs to vfat..."
-mkfs.vfat $bootfs
+mkfs.vfat -F 32 -n boot $bootfs
 
 echo "Formatting $rootfs to ext4..."
-mkfs.ext4 $rootfs
+mkfs.ext4 -F $rootfs
 
 mkdir /tgt_root
 mkdir /src_root

@@ -21,4 +21,5 @@ do_install () {
     install -m 0755 ${S}/fiovb/host/fiovb ${D}${bindir}/fiovb
     ln -sf fiovb ${D}${bindir}/fiovb_printenv
     ln -sf fiovb ${D}${bindir}/fiovb_setenv
+    ln -sf fiovb ${D}${bindir}/fiovb_delenv
 }

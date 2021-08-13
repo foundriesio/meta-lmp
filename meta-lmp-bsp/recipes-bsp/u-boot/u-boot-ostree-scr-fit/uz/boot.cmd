@@ -8,7 +8,7 @@ setenv devtype mmc
 setenv devnum 1
 
 setenv loadaddr 0x10000000
-setenv fdt_addr 0x1f000000
+setenv fdt_addr 0x40000000
 setenv optee_ovl_addr 0x22000000
 
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'

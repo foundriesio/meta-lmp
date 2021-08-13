@@ -23,10 +23,8 @@ PREFERRED_PROVIDER_u-boot-default-script_sota = "u-boot-ostree-scr-fit"
 SPL_BINARY ?= "spl/boot.bin"
 UBOOT_MACHINE ?= "xilinx_zynqmp_virt_defconfig"
 UBOOT_CLASSES = "uboot-fitimage"
-UBOOTFDT_LOADADDRESS = "0x00100000"
-UBOOT_ENTRYPOINT  = "0x00080000"
-UBOOT_DTB_LOADADDRESS = "0x1f000000"
-UBOOT_RD_LOADADDRESS = "0x20000000"
+UBOOT_ENTRYPOINT  = "0x18000000"
+UBOOT_DTB_LOADADDRESS = "0x40000000"
 
 EFI_PROVIDER ?= "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'grub-efi', '', d)}"
 

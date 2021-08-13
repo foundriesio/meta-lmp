@@ -321,6 +321,9 @@ SOTA_CLIENT_FEATURES_append_imx8mm-lpddr4-evk = " ubootenv"
 MACHINE_FEATURES_remove_imx8mm-lpddr4-evk = "qca9377 qca6174"
 UBOOT_MACHINE_imx8mm-lpddr4-evk = "imx8mm_evk_config"
 BOOTSCR_LOAD_ADDR_imx8mm-lpddr4-evk = "0x44800000"
+## iMX8MM EVK with secure boot support
+SOTA_CLIENT_FEATURES_remove_sota_imx8mm-lpddr4-evk-sec = "ubootenv"
+SOTA_EXTRA_CLIENT_FEATURES_append_sota_imx8mm-lpddr4-evk-sec = " fiovb"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"

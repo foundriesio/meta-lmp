@@ -1,0 +1,20 @@
+uuu_version 1.2.39
+
+SDP: boot -f imx-boot-mfgtool.signed
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+
+FB: ucmd fuse prog -y 6 0 0xEA2F0B50
+FB: ucmd fuse prog -y 6 1 0x871167F7
+FB: ucmd fuse prog -y 6 2 0xF5CECF5D
+FB: ucmd fuse prog -y 6 3 0x364727C3
+FB: ucmd fuse prog -y 7 0 0x8DD52832
+FB: ucmd fuse prog -y 7 1 0xF158F65F
+FB: ucmd fuse prog -y 7 2 0xA71BBE78
+FB: ucmd fuse prog -y 7 3 0xA3AD024A
+
+FB: acmd reset
+
+FB: DONE

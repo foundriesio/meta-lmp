@@ -1,0 +1,23 @@
+uuu_version 1.2.39
+
+SDP: boot -f imx-boot-mfgtool.signed
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+
+FB: ucmd if mmc dev 2; then setenv fiohab_dev 2; else setenv fiohab_dev 1; fi;
+
+FB: ucmd setenv srk_0 0xEA2F0B50
+FB: ucmd setenv srk_1 0x871167F7
+FB: ucmd setenv srk_2 0xF5CECF5D
+FB: ucmd setenv srk_3 0x364727C3
+FB: ucmd setenv srk_4 0x8DD52832
+FB: ucmd setenv srk_5 0xF158F65F
+FB: ucmd setenv srk_6 0xA71BBE78
+FB: ucmd setenv srk_7 0xA3AD024A
+
+FB[-t 1000]: ucmd if fiohab_close; then echo Platform Secured; else echo Error, Can Not Secure the Platform; sleep 2; fi
+FB: acmd reset
+
+FB: DONE

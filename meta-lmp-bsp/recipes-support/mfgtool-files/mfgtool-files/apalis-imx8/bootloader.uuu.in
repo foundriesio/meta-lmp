@@ -7,9 +7,22 @@ CFG: FB: -vid 0x0525 -pid 0x402F
 CFG: FB: -vid 0x0525 -pid 0x4030
 CFG: FB: -vid 0x0525 -pid 0x4031
 
+SDPU: delay 1000
+SDPU: write -f u-boot-mfgtool.itb
+SDPU: jump
+
+# These commands will be run when use SPL and will be skipped if no spl
+# if (SPL support SDPV)
+# {
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+# }
+
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev 0
 FB: ucmd mmc dev ${mmcdev} 1; mmc erase 0 0x3FFE
 FB: flash bootloader ../imx-boot-@@MACHINE@@
+FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: ucmd mmc partconf 0 0 1 0
 FB: done

@@ -2,6 +2,7 @@ OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE_imx8qm-mek = "imx-mx8qmmek"
+OPTEEMACHINE_apalis-imx8 = "imx-mx8qmmek"
 OPTEEMACHINE_imx7ulpea-ucom = "imx-mx7ulpeaucom"
 OPTEEMACHINE_imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE_imx8mm-lpddr4-evk = "imx-mx8mmevk"
@@ -48,6 +49,10 @@ EXTRA_OEMAKE_append_imx8mm-lpddr4-evk-sec = " \
 "
 EXTRA_OEMAKE_append_imx8qm-mek = " \
     CFG_NXP_CAAM=n CFG_RNG_PTA=y \
+    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
+"
+EXTRA_OEMAKE_append_apalis-imx8 = " \
+    CFG_NXP_CAAM=n CFG_RNG_PTA=y CFG_UART_BASE=0x5a070000 \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
 "
 EXTRA_OEMAKE_append_uz = " \

@@ -21,7 +21,7 @@ setenv bootcmd_set_rollback 'if test ! "${rollback}" = "1"; then setenv rollback
 setenv bootostree 'run bootcmd_load_f; run bootcmd_tee_ovy; run bootcmd_run'
 setenv altbootcmd 'run bootcmd_otenv; run bootcmd_set_rollback; if test -n "${kernel_image2}"; then run bootcmd_rollbackenv; fi; run bootostree; reset'
 
-if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; fi
+if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; saveenv; fi
 
 if test "${rollback}" = "1"; then run altbootcmd; else run bootcmd_otenv; run bootostree; if test ! "${upgrade_available}" = "1"; then setenv upgrade_available 1; saveenv; fi; reset; fi
 

@@ -41,6 +41,11 @@ EXTRA_OEMAKE_append_imx8mm-lpddr4-evk = " \
     CFG_NXP_CAAM=y CFG_RNG_PTA=y \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
 "
+EXTRA_OEMAKE_append_imx8mm-lpddr4-evk-sec = " \
+    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
+    CFG_EARLY_TA=y \
+    CFG_IN_TREE_EARLY_TAS=fiovb/22250a54-0bf1-48fe-8002-7b20f1c9c9b1 \
+"
 EXTRA_OEMAKE_append_imx8qm-mek = " \
     CFG_NXP_CAAM=n CFG_RNG_PTA=y \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \

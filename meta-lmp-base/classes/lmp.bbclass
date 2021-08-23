@@ -45,7 +45,11 @@ IMAGE_CMD_ostree_append () {
 run_fiotool_cmd () {
 	if [ -n "${SOTA_PACKED_CREDENTIALS}" ]; then
                 if [ -e "${SOTA_PACKED_CREDENTIALS}" ]; then
-                        "${1}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}"
+			if [ "${OSTREE_API_VERSION}" = "v2" ]; then
+				"${1}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}" -api-version "${OSTREE_API_VERSION}" -cor-id "${GARAGE_TARGET_NAME}-${GARAGE_TARGET_VERSION}"
+			else
+				"${1}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}"
+			fi
                 else
                         bbwarn "SOTA_PACKED_CREDENTIALS file does not exist."
                 fi

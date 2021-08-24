@@ -1,19 +1,21 @@
-From d2c47a973f354ffd505bb4e809c59e57b543726d Mon Sep 17 00:00:00 2001
-From: Chen Qi <Qi.Chen@windriver.com>
-Date: Tue, 6 Aug 2019 19:01:45 +0800
+From 0fe50d2ca4517f5e3070585040f35ace413acd44 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Tue, 24 Aug 2021 11:38:23 -0400
 Subject: [PATCH] Makefile: respect GOBUILDFLAGS for runc and remove recvtty
  from static
 
 Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+[bva: refreshed for release 1.0.2]
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
 ---
  Makefile | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Index: git/src/import/Makefile
-===================================================================
---- git.orig/src/import/Makefile
-+++ git/src/import/Makefile
-@@ -25,7 +25,7 @@
+diff --git a/src/import/Makefile b/src/import/Makefile
+index efbddf0d..4b174c80 100644
+--- a/src/import/Makefile
++++ b/src/import/Makefile
+@@ -24,7 +24,7 @@ ifeq ($(shell $(GO) env GOOS),linux)
  		endif
  	endif
  endif
@@ -21,8 +23,8 @@ Index: git/src/import/Makefile
 +GO_BUILD := $(GO) build $(GOBUILDFLAGS) -trimpath $(MOD_VENDOR) $(GO_BUILDMODE) $(EXTRA_FLAGS) -tags "$(BUILDTAGS)" \
  	-ldflags "-X main.gitCommit=$(COMMIT) -X main.version=$(VERSION) $(EXTRA_LDFLAGS)"
  GO_BUILD_STATIC := CGO_ENABLED=1 $(GO) build -trimpath $(MOD_VENDOR) $(EXTRA_FLAGS) -tags "$(BUILDTAGS) netgo osusergo" \
- 	-ldflags "-w -extldflags -static -X main.gitCommit=$(COMMIT) -X main.version=$(VERSION) $(EXTRA_LDFLAGS)"
-@@ -42,7 +42,6 @@
+ 	-ldflags "-extldflags -static -X main.gitCommit=$(COMMIT) -X main.version=$(VERSION) $(EXTRA_LDFLAGS)"
+@@ -41,7 +41,6 @@ recvtty:
  
  static:
  	$(GO_BUILD_STATIC) -o runc .
@@ -30,3 +32,6 @@ Index: git/src/import/Makefile
  
  release:
  	script/release.sh -r release/$(VERSION) -v $(VERSION)
+-- 
+2.19.1
+

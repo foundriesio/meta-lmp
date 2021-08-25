@@ -11,6 +11,10 @@ SRC_URI = "git://git.toradex.com/linux-toradex.git;protocol=git;branch=${KBRANCH
     ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \
 "
 
+SRC_URI_append_apalis-imx8 = " \
+    file://0001-FIO-internal-Revert-ARM-dts-apalis-imx8-disable-HDMI.patch \
+"
+
 KMETA = "kernel-meta"
 
 include recipes-kernel/linux/linux-lmp.inc

@@ -40,7 +40,7 @@ OSTREE_KERNEL_ARGS_raspberrypi3 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0
 OSTREE_KERNEL_ARGS_raspberrypi-cm3 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS_raspberrypi4 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 ## U-Boot entrypoints for rpi
-UBOOT_ENTRYPOINT_rpi = "0x00008000"
+UBOOT_ENTRYPOINT_rpi = "0x00200000"
 UBOOT_DTB_LOADADDRESS_rpi = "0x02600000"
 UBOOT_DTBO_LOADADDRESS_rpi = "0x026d0000"
 ## Rpi 4/CM4

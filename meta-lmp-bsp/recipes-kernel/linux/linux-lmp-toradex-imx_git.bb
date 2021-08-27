@@ -13,6 +13,7 @@ SRC_URI = "git://git.toradex.com/linux-toradex.git;protocol=git;branch=${KBRANCH
 
 SRC_URI_append_apalis-imx8 = " \
     file://0001-FIO-internal-Revert-ARM-dts-apalis-imx8-disable-HDMI.patch \
+    file://0001-FIO-internal-arm64-dts-apalis-imx8-ixora-v1.2-enable.patch \
 "
 
 KMETA = "kernel-meta"

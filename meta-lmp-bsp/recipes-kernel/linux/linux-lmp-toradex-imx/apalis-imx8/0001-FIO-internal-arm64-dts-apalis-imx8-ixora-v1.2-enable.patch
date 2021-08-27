@@ -1,0 +1,93 @@
+From 01172065c44ca007769664d85b36a4020a97dcbc Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Fri, 27 Aug 2021 16:15:21 +0300
+Subject: [PATCH] [FIO internal] arm64: dts: apalis-imx8-ixora-v1.2: enable
+ HDMI interface
+
+FIO BSP doesn't support overlays so far, while Toradex moved enabling
+all display/touch interfaces to overlays, disabling them in the main
+device trees.
+Support of Ixora v1.2 board was added with already disabled HDMI interface.
+Re-enable HDMI on Apalis-iMX8 + Ixora v1.2 for LmP images.
+
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ arch/arm/boot/dts/imx6q-apalis-ixora-v1.2.dts | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.2.dts b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.2.dts
+index b087f051f3dc..190904ce35e7 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.2.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.2.dts
+@@ -358,3 +358,67 @@
+ 		>;
+ 	};
+ };
++
++/* Block of HDMI enabling */
++/* Apalis HDMI1 */
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_lpcg_apb {
++	status = "okay";
++};
++
++&hdmi_lpcg_apb_mux_csr {
++	status = "okay";
++};
++
++&hdmi_lpcg_apb_mux_ctrl {
++	status = "okay";
++};
++
++&hdmi_lpcg_gpio_ipg {
++	status = "okay";
++};
++
++&hdmi_lpcg_i2c0 {
++	status = "okay";
++};
++
++&hdmi_lpcg_i2s {
++	status = "okay";
++};
++
++&hdmi_lpcg_lis_ipg {
++	status = "okay";
++};
++
++&hdmi_lpcg_msi_hclk {
++	status = "okay";
++};
++
++&hdmi_lpcg_phy {
++	status = "okay";
++};
++
++&hdmi_lpcg_pwm_ipg {
++	status = "okay";
++};
++
++&hdmi_lpcg_pxl {
++	status = "okay";
++};
++
++/* Apalis I2C2 (DDC) */
++&i2c0 {
++	status = "okay";
++};
++
++&irqsteer_hdmi {
++	status = "okay";
++};
++
++&sound_hdmi {
++	status = "okay";
++};
++
+-- 
+2.31.1
+

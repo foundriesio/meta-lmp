@@ -69,7 +69,6 @@ MIRRORS =+ "\
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/recipes-kernel/linux/linux-yocto_4.%.bbappend \
-    /meta-updater/recipes-support/boost/boost_1.72.0.bbappend \
 "
 
 # Mask Toradex specific recipes that containates other socs

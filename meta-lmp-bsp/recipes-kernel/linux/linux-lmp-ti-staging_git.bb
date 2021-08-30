@@ -17,6 +17,10 @@ SRC_URI = "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git;protocol=git;bra
     ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \
 "
 
+SRC_URI_append_am64xx-evm = " \
+    file://0001-arm64-dts-ti-k3-am642-sk-Enable-WLAN-connected-to-SD.patch \
+"
+
 KMETA = "kernel-meta"
 
 do_kernel_metadata_prepend() {

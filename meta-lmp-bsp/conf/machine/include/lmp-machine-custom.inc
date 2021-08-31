@@ -91,6 +91,10 @@ IMAGE_CLASSES_append_corstone700 = " image-types-wicnopt"
 IMAGE_FSTYPES_append_corstone700 = " wic.nopt"
 ## Remove udev/e2fsck due size restrictions (max 2 mb)
 PACKAGE_INSTALL_remove_pn-initramfs-ostree-lmp-image_corstone700 = "initramfs-module-udev udev e2fsprogs-e2fsck"
+## Corstone700-MPS3 does not have support for VFP and NEON
+TUNE_FEATURES_tune-cortexa32_remove_corstone700-mps3 = "callconvention-hard neon"
+PACKAGE_EXTRA_ARCHS_tune-cortexa32_remove_corstone700-mps3 = "cortexa32hf-neon"
+PACKAGE_EXTRA_ARCHS_tune-cortexa32-crypto_remove_corstone700-mps3 = "cortexa32hf-neon cortexa32hf-neon-crypto"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm64 = "u-boot-fio"

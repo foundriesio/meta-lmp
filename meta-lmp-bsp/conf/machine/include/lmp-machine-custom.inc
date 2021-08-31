@@ -132,7 +132,7 @@ QB_OPT_APPEND_qemuarm = "-no-acpi -bios ${DEPLOY_DIR_IMAGE}/u-boot.bin -d unimp"
 OSTREE_BOOTLOADER_generic-arm64 ?= "grub"
 OSTREE_KERNEL_ARGS_generic-arm64 ?= "console=ttyAMA0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 MACHINE_FEATURES_append_generic-arm64 = " acpi pci usbhost"
-WKS_FILE_generic-arm64_sota ?= "efidisk-sota.wks"
+WKS_FILE_generic-arm64_sota ?= "image-efi-installer.wks.in"
 WKS_FILE_DEPENDS_append_generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 APPEND_generic-arm64_append = " console=ttyAMA0,115200"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES

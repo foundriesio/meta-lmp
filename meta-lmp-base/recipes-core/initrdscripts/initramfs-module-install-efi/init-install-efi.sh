@@ -195,6 +195,7 @@ while true; do
         parted ${device} print
 
         echo "Waiting for device nodes..."
+        sleep 1
         C=0
         while [ $C -ne 2 ] && [ ! -e $bootfs  -o ! -e $rootfs ]; do
             C=$(( C + 1 ))

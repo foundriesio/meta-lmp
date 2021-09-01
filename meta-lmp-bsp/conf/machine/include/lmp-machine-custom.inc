@@ -141,7 +141,7 @@ WKS_FILE_generic-arm64_sota ?= "image-efi-installer.wks.in"
 WKS_FILE_DEPENDS_append_generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 APPEND_generic-arm64_append = " console=ttyAMA0,115200"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
-IMAGE_BOOT_FILES_generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
+IMAGE_BOOT_FILES_generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
 # ARM N1SDP
 OSTREE_BOOTLOADER_n1sdp ?= "grub"

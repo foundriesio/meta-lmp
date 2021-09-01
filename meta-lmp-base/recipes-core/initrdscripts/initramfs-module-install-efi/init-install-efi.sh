@@ -270,7 +270,9 @@ configfile /boot/loader/grub.cfg
 EOF
 
 # Make sure startup.nsh is also available at the boot partition
-cp /run/media/$1/startup.nsh /boot
+if [ -f /run/media/$1/startup.nsh ]; then
+    cp /run/media/$1/startup.nsh /boot
+fi
 
 # Set default EFI boot entry
 BOOTLABEL="LmP"

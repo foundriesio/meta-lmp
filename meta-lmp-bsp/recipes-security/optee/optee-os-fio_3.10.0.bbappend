@@ -3,6 +3,7 @@ OPTEEMACHINE_apalis-imx8 = "imx-mx8qmmek"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE_imx7ulpea-ucom = "imx-mx7ulpeaucom"
 OPTEEMACHINE_imx8mm-lpddr4-evk = "imx-mx8mmevk"
+OPTEEMACHINE_imx8mp-lpddr4-evk = "imx-mx8mpevk"
 OPTEEMACHINE_imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE_imx8qm-mek = "imx-mx8qmmek"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
@@ -46,6 +47,9 @@ EXTRA_OEMAKE_append_imx7ulpea-ucom = " \
     CFG_DRAM_BASE=0x60000000 CFG_NS_ENTRY_ADDR=0x67800000 \
     CFG_TZDRAM_START=0x9e000000 CFG_OVERLAY_ADDR=0x65000000 \
     CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS=1 CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS=1 \
+"
+EXTRA_OEMAKE_append_imx8mp-lpddr4-evk = " \
+    CFG_DDR_SIZE=0x18000000 \
 "
 EXTRA_OEMAKE_append_imx8qm-mek = " \
     CFG_NXP_CAAM=n CFG_RNG_PTA=y \

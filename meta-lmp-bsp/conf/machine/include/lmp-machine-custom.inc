@@ -445,6 +445,7 @@ KERNEL_CLASSES_sota_am64xx-evm = " kernel-lmp-fitimage "
 IMAGE_BOOT_FILES_append_am64xx-evm = " boot.scr uEnv.txt"
 UBOOT_ENTRYPOINT_am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS_am64xx-evm = "0x82000000"
+UBOOT_DTB_LOADADDRESS_am64xx-evm = "0x88000000"
 
 # Nvidia Tegra
 DISTRO_FEATURES_append_tegra = " opengl"

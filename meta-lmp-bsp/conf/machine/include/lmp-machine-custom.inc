@@ -431,6 +431,7 @@ USE_XSCT_TARBALL_zynqmp = "1"
 KERNEL_BUILTIN_WIREGUARD_uz = "1"
 
 # TI AM64x
+MACHINE_FEATURES_append_am64xx-evm = " optee"
 KERNEL_BUILTIN_WIREGUARD_am64xx-evm = "1"
 PREFERRED_PROVIDER_virtual/kernel_am64xx-evm ?= "linux-lmp-ti-staging"
 PREFERRED_PROVIDER_u-boot-fw-utils_am64xx-evm = "libubootenv"

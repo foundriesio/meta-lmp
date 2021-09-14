@@ -82,7 +82,7 @@ WKS_FILE_freedom-u540 = "sdimage-freedom-u540-spl.wks"
 WKS_FILE_freedom-u540_sota = "sdimage-freedom-u540-spl-sota.wks"
 
 # ARM Development Boards
-PREFERRED_PROVIDER_virtual/kernel_corstone700 = "linux-lmp"
+PREFERRED_PROVIDER_virtual/kernel_corstone700 = "linux-lmp-lts"
 PREFERRED_PROVIDER_virtual/bootloader_corstone700 = "u-boot"
 PREFERRED_PROVIDER_u-boot_corstone700 = "u-boot"
 KERNEL_IMAGETYPE_corstone700 = "xipImage"

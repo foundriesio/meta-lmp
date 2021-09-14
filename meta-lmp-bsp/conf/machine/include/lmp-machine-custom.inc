@@ -144,6 +144,7 @@ APPEND_generic-arm64_append = " console=ttyAMA0,115200"
 IMAGE_BOOT_FILES_generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
 # ARM N1SDP
+PREFERRED_PROVIDER_virtual/kernel_n1sdp = "linux-lmp-lts"
 OSTREE_BOOTLOADER_n1sdp ?= "grub"
 OSTREE_KERNEL_ARGS_n1sdp ?= "earlycon=pl011,0x2A400000 console=ttyAMA0,115200 acpi=force ${OSTREE_KERNEL_ARGS_COMMON}"
 MACHINE_FEATURES_append_n1sdp = " acpi pci usbhost"

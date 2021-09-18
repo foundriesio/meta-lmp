@@ -33,11 +33,14 @@ EXTRA_OEMAKE += " \
     O=${B} \
 "
 
-CFLAGS[unexport] = "1"
+#CFLAGS[unexport] = "1"
 LDFLAGS[unexport] = "1"
 CPPFLAGS[unexport] = "1"
 AS[unexport] = "1"
 LD[unexport] = "1"
+
+
+CFLAGS += "-Wno-error=stringop-overflow="
 
 do_configure[noexec] = "1"
 

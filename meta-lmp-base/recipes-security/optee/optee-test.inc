@@ -21,6 +21,7 @@ EXTRA_OEMAKE += "TA_DEV_KIT_DIR=${TA_DEV_KIT_DIR} \
                  OPTEE_OPENSSL_EXPORT=${STAGING_INCDIR} \
                  O=${B} \
                "
+CFLAGS += "-Wno-error=maybe-uninitialized"
 
 do_compile() {
     cd ${S}

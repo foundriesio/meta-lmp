@@ -66,8 +66,6 @@ S = "${WORKDIR}/git"
 DOCKER_VERSION = "20.10.10"
 PV = "${DOCKER_VERSION}"
 
-PACKAGES =+ "${PN}-contrib"
-
 DOCKER_PKG="github.com/docker/docker"
 # in order to exclude devicemapper and btrfs - https://github.com/docker/docker/issues/14056
 BUILD_TAGS = "exclude_graphdriver_btrfs exclude_graphdriver_devicemapper"

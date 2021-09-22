@@ -12,6 +12,7 @@ Restart=always
 ExecStartPre=/usr/bin/mkdir -p /run/aktualizr
 Environment="TMPDIR=/run/aktualizr"
 Environment="COMPOSE_HTTP_TIMEOUT=@@COMPOSE_HTTP_TIMEOUT@@"
+Environment="REGISTRY_AUTH_FILE=@@DOCKER_CRED_HELPER_CFG@@"
 ExecStart=/usr/bin/aktualizr-lite daemon
 
 [Install]

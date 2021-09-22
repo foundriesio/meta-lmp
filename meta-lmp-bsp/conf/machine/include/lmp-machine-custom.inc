@@ -115,6 +115,13 @@ PREFERRED_VERSION_optee-test_qemuarm64-secureboot = "3.12.0"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM_qemuarm64-secureboot = "-m 1057"
 QB_DRIVE_TYPE_qemuarm64-secureboot = "/dev/vdb"
+## EBBR / SystemReady
+KERNEL_IMAGETYPE_qemuarm64-secureboot-ebbr ?= "Image"
+KERNEL_CLASSES_qemuarm64-secureboot-ebbr ?= ""
+EFI_PROVIDER_qemuarm64-secureboot-ebbr ?= "grub-efi"
+OSTREE_BOOTLOADER_qemuarm64-secureboot-ebbr ?= "grub"
+IMAGE_BOOT_FILES_qemuarm64-secureboot-ebbr = ""
+WKS_FILE_qemuarm64-secureboot-ebbr_sota ?= "efidisk-sota.wks"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader_qemuarm = "u-boot-fio"

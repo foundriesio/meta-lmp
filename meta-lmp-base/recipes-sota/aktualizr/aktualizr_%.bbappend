@@ -26,6 +26,7 @@ SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE_${PN}-lite = "aktualizr-lite.service"
 
 COMPOSE_HTTP_TIMEOUT ?= "60"
+DOCKER_CRED_HELPER_CFG ?= "${libdir}/docker/config.json"
 
 # Workaround as aktualizr is a submodule of aktualizr-lite
 do_configure_prepend_lmp() {
@@ -36,7 +37,9 @@ do_configure_prepend_lmp() {
 }
 
 do_compile_append_lmp() {
-    sed -e 's/@@COMPOSE_HTTP_TIMEOUT@@/${COMPOSE_HTTP_TIMEOUT}/' ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
+    sed -e 's|@@COMPOSE_HTTP_TIMEOUT@@|${COMPOSE_HTTP_TIMEOUT}|g' \
+        -e 's|@@DOCKER_CRED_HELPER_CFG@@|${DOCKER_CRED_HELPER_CFG}|g' \
+        ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
 }
 
 do_install_prepend_lmp() {

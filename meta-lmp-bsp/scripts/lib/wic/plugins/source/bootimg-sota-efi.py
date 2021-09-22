@@ -193,7 +193,7 @@ class BootimgSotaEFIPlugin(SourcePlugin):
 
         label = part.label if part.label else "efi"
 
-        dosfs_cmd = "mkdosfs -n %s -i %s -C %s %d" % \
+        dosfs_cmd = "mkfs.vfat -F 32 -n %s -i %s -C %s %d" % \
                     (label, part.fsuuid, bootimg, blocks)
         exec_native_cmd(dosfs_cmd, native_sysroot)
 

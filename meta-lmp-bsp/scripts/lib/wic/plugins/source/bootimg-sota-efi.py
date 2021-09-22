@@ -209,3 +209,15 @@ class BootimgSotaEFIPlugin(SourcePlugin):
 
         part.size = int(bootimg_size)
         part.source_file = bootimg
+
+    @classmethod
+    def do_install_disk(cls, disk, disk_name, creator, workdir, oe_builddir,
+                        bootimg_dir, kernel_dir, native_sysroot):
+        """
+        Called after all partitions have been prepared and assembled into a
+        disk image.  In this case, we set boot flag for GPT.
+        """
+        full_path = creator._full_path(workdir, disk_name, "direct")
+        if creator.ptable_format == 'gpt':
+            exec_native_cmd("parted -s %s set 1 boot on" % \
+                            full_path, native_sysroot)

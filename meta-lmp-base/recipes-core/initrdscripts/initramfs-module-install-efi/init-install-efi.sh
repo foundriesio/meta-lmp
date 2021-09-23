@@ -285,11 +285,11 @@ if [ -d /sys/firmware/efi/efivars ]; then
     # Delete old LmP entry
     bootnum=`efibootmgr | grep "^Boot[0-9]" | grep "${BOOTLABEL}$" | sed -e "s|Boot||" -e "s|\*.*||"`
     if [ -n "$bootnum" ]; then
-        efibootmgr -b $bootnum -B
+        efibootmgr -b $bootnum -B || true
     fi
 
     # Add new LmP entry
-    efibootmgr -c -d ${device} -p 1 -w -L ${BOOTLABEL} -l "\EFI\BOOT\\${efiloader}"
+    efibootmgr -c -d ${device} -p 1 -w -L ${BOOTLABEL} -l "\EFI\BOOT\\${efiloader}" || true
 fi
 
 umount /tgt_root

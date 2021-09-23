@@ -193,6 +193,7 @@ while true; do
         echo "Creating boot partition on $bootfs"
         parted ${device} mkpart boot fat32 0% $boot_size
         parted ${device} set 1 boot on
+        format_boot="y"
 
         echo "Creating rootfs partition on $rootfs"
         parted ${device} mkpart root ext4 $rootfs_start 100%
@@ -209,12 +210,20 @@ while true; do
         break
     elif [ "$answer" = "n" ]; then
         echo "Not erasing current partition table for device ${device}, assuming ${bootfs} as boot/ESP and ${rootfs} as rootfs."
+        echo
+        echo "Format ${bootfs} (ESP) partition? (n - default / y): "
+        read answer
+        if [ "$answer" = "y" ]; then
+            format_boot="y"
+        fi
         break
     fi
 done
 
-echo "Formatting $bootfs to vfat..."
-mkfs.vfat -F 32 -n boot $bootfs
+if [ "$format_boot" = "y" ]; then
+    echo "Formatting $bootfs to vfat..."
+    mkfs.vfat -F 32 -n boot $bootfs
+fi
 
 echo "Formatting $rootfs to ext4..."
 mkfs.ext4 -F $rootfs

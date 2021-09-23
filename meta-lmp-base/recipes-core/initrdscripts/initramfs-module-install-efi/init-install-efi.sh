@@ -40,6 +40,9 @@ devices="$devices $mmc_devices"
 
 for device in $devices; do
     case $device in
+        mtdblock*)
+            # skip mtd device
+            ;;
         loop*)
             # skip loop device
             ;;

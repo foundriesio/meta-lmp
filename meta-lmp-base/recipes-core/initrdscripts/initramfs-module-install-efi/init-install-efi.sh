@@ -157,12 +157,14 @@ if [ ! "${device#/dev/mmcblk}" = "${device}" ] || \
 fi
 
 # USB devices also require rootwait
-find /dev/disk/by-id/ -name usb* | while read usbdev; do
-    if readlink $usbdev | grep -q $TARGET_DEVICE_NAME; then
-        rootwait="rootwait"
-        break
-    fi
-done
+if [ -d /dev/disk/by-id ]; then
+    find /dev/disk/by-id/ -name usb* | while read usbdev; do
+        if readlink $usbdev | grep -q $TARGET_DEVICE_NAME; then
+            rootwait="rootwait"
+            break
+        fi
+    done
+fi
 
 bootfs=${device}${part_prefix}1
 rootfs=${device}${part_prefix}2

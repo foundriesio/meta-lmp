@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BRANCH_lmp = "master"
-SRCREV_lmp = "5e2f6da2c1ad02ea87fa32564d9b37d9771a4ec3"
+SRCREV_lmp = "d2232e2c0373ccd53917615452b22d549277ad35"
 
 SRC_URI_lmp = "gitsm://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH};name=aktualizr \
     file://aktualizr.service \
@@ -66,5 +66,5 @@ FILES_${PN}-lite-lib = "${nonarch_libdir}/lib${PN}_lite.so"
 FILES_${PN}-lite-dev = "${includedir}/${PN}-lite"
 
 # Force same RDEPENDS, packageconfig rdepends common to both
-RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr}"
-RDEPENDS_${PN}-lite-lib = "${RDEPENDS_aktualizr}"
+RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr} skopeo"
+RDEPENDS_${PN}-lite-lib = "${RDEPENDS_aktualizr} skopeo"

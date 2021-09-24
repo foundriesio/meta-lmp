@@ -353,7 +353,6 @@ KMACHINE_imx8mm-lpddr4-evk = "imx8mmevk"
 OSTREE_KERNEL_ARGS_imx8mm-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
 PREFERRED_PROVIDER_virtual/dtb_imx8mm-lpddr4-evk ?= "lmp-device-tree"
 SOTA_CLIENT_FEATURES_append_imx8mm-lpddr4-evk = " ubootenv"
-MACHINE_FEATURES_remove_imx8mm-lpddr4-evk = "qca9377 qca6174"
 UBOOT_MACHINE_imx8mm-lpddr4-evk = "imx8mm_evk_config"
 BOOTSCR_LOAD_ADDR_imx8mm-lpddr4-evk = "0x44800000"
 ## iMX8MM EVK with secure boot support

@@ -1,5 +1,8 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
+# lf-5.10.52-2.1.0
+SRCREV = "bb4957067d4b96a6ee197a333425948e409e990d"
+
 PROVIDES += "virtual/trusted-firmware-a"
 RPROVIDES_${PN} += "virtual/trusted-firmware-a"
 

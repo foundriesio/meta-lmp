@@ -59,6 +59,7 @@ FILES_${PN}-lite = "${bindir}/aktualizr-lite"
 
 # Force same RDEPENDS, packageconfig rdepends common to both
 RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr}"
+RDEPENDS_${PN}-lite-lib = "${RDEPENDS_aktualizr}"
 
 FILES_${PN}-lite += "${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf"
 

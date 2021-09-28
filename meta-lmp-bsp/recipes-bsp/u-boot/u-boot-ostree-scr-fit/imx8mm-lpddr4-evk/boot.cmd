@@ -9,7 +9,7 @@ setenv rootpart 2
 
 # Boot image files
 setenv fdt_file_final freescale_${fdt_file}
-setenv fit_addr ${initrd_addr}
+setenv fit_addr 0x43800000
 
 # Boot firmware updates
 setenv bootloader 42

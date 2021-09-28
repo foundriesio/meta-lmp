@@ -59,7 +59,7 @@ run_fiotool_cmd () {
 }
 
 do_image_ostreepush[depends] += "ostreeuploader-native:do_populate_sysroot"
-IMAGE_CMD_ostreepush_prepend_lmp () {
+IMAGE_CMD_ostreepush_prepend () {
 	if [ "${USE_FIOTOOLS}" = "1" ]; then
 		run_fiotool_cmd "fiopush"
 		# force return so garage-push called from meta-updater's IMAGE_CMD_ostreepush is not executed
@@ -68,7 +68,7 @@ IMAGE_CMD_ostreepush_prepend_lmp () {
 }
 
 do_image_garagecheck[depends] += "ostreeuploader-native:do_populate_sysroot"
-IMAGE_CMD_garagecheck_prepend_lmp () {
+IMAGE_CMD_garagecheck_prepend () {
 	if [ "${USE_FIOTOOLS}" = "1" ]; then
 		run_fiotool_cmd "fiocheck"
 		# force return so garage-check called from meta-updater's IMAGE_CMD_garagecheck is not executed

@@ -345,6 +345,7 @@ PREFERRED_PROVIDER_virtual/kernel_mx8mm ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE_mx8mm = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE_sota_mx8mm = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS_mx8mm = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio_mx8mm ?= "2021.04"
 ## iMX8MM EVK
 KERNEL_DEVICETREE_append_imx8mm-lpddr4-evk = " freescale/imx8mm-evkb.dtb"
 KMACHINE_imx8mm-lpddr4-evk = "imx8mmevk"

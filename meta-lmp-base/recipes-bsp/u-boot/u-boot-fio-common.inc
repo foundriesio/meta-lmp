@@ -10,8 +10,7 @@ DEPENDS += "flex-native bison-native bc-native dtc-native python3-setuptools-nat
 
 SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH} \
     file://fw_env.config \
-    file://lmp.cfg \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
 "
 # LMP base requires a different u-boot configuration fragment
 SRC_URI_append_lmp-base = " file://lmp-base.cfg "

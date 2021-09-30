@@ -357,6 +357,14 @@ BOOTSCR_LOAD_ADDR_imx8mm-lpddr4-evk = "0x44800000"
 ## iMX8MM EVK with secure boot support
 SOTA_CLIENT_FEATURES_remove_sota_imx8mm-lpddr4-evk-sec = "ubootenv"
 SOTA_EXTRA_CLIENT_FEATURES_append_sota_imx8mm-lpddr4-evk-sec = " fiovb"
+## iMX8MM EVK with EBBR / SystemReady
+UBOOT_SIGN_ENABLE_sota_imx8mm-lpddr4-evk-ebbr = ""
+KERNEL_IMAGETYPE_sota_imx8mm-lpddr4-evk-ebbr ?= "Image"
+KERNEL_CLASSES_sota_imx8mm-lpddr4-evk-ebbr ?= ""
+EFI_PROVIDER_imx8mm-lpddr4-evk-ebbr ?= "grub-efi"
+OSTREE_BOOTLOADER_imx8mm-lpddr4-evk-ebbr ?= "grub"
+IMAGE_EFI_BOOT_FILES_sota_imx8mm-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
+WKS_FILE_sota_imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks"
 
 # iMX8MP
 UBOOT_SIGN_ENABLE_sota_mx8mp = "1"

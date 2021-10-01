@@ -53,15 +53,15 @@ do_install_append_lmp() {
     install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
 }
 
-PACKAGES += "${PN}-get ${PN}-lite ${PN}-lite-lib"
-FILES_${PN}-get = "${bindir}/aktualizr-get"
-FILES_${PN}-lite = "${bindir}/aktualizr-lite"
+PACKAGES += "${PN}-get ${PN}-lite ${PN}-lite-lib ${PN}-lite-dev"
+FILES_${PN}-get = "${bindir}/${PN}-get"
+FILES_${PN}-lite = " \
+                    ${bindir}/${PN}-lite \
+                    ${nonarch_libdir}/tmpfiles.d/${PN}-lite.conf \
+                    "
+FILES_${PN}-lite-lib = "${nonarch_libdir}/lib${PN}_lite.so"
+FILES_${PN}-lite-dev = "${includedir}/${PN}-lite"
 
 # Force same RDEPENDS, packageconfig rdepends common to both
 RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr}"
 RDEPENDS_${PN}-lite-lib = "${RDEPENDS_aktualizr}"
-
-FILES_${PN}-lite += "${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf"
-
-FILES_${PN}-lite-lib = "${libdir}/libaktualizr_lite.so"
-FILES_${PN}-dev += "${includedir}/${PN}-lite"

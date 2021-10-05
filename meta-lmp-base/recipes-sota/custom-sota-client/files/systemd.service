@@ -1,0 +1,15 @@
+[Unit]
+Description=Custom SOTA Client
+After=network.target boot-complete.target
+Requires=boot-complete.target
+ConditionPathExists=|/var/sota/sota.toml
+
+[Service]
+RestartSec=180
+Restart=always
+ExecStartPre=/usr/bin/mkdir -p /run/aktualizr
+Environment="TMPDIR=/run/aktualizr"
+ExecStart=/usr/bin/custom-sota-client
+
+[Install]
+WantedBy=multi-user.target

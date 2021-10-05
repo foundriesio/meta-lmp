@@ -1,6 +1,9 @@
 # Provided by meta-lmp-bsp or any other compatible BSP layer
 include conf/machine/include/lmp-machine-custom.inc
 
+# Allow customizations in partner layers
+include conf/machine/include/lmp-partner-custom.inc
+
 # Allow customizations per factory level
 include conf/machine/include/lmp-factory-custom.inc
 

@@ -18,6 +18,10 @@ EXTRA_OEMAKE_append_imx = " \
 EXTRA_OEMAKE_append_mx8m = " \
     CFG_NXP_CAAM=y CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
 "
+EXTRA_OEMAKE_append_mx8qm = " \
+    CFG_NXP_CAAM=n CFG_RNG_PTA=y \
+    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
+"
 
 # Machine Settings
 EXTRA_OEMAKE_append_apalis-imx6 = " \
@@ -27,8 +31,7 @@ EXTRA_OEMAKE_append_apalis-imx6 = " \
     CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS=1 CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS=1 \
 "
 EXTRA_OEMAKE_append_apalis-imx8 = " \
-    CFG_NXP_CAAM=n CFG_RNG_PTA=y CFG_UART_BASE=0x5a070000 \
-    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
+    CFG_UART_BASE=0x5a070000 \
 "
 EXTRA_OEMAKE_append_imx6ullevk = " \
     CFG_NS_ENTRY_ADDR=0x87800000 CFG_IMX_WDOG_EXT_RESET=y \
@@ -42,10 +45,6 @@ EXTRA_OEMAKE_append_imx7ulpea-ucom = " \
 "
 EXTRA_OEMAKE_append_imx8mp-lpddr4-evk = " \
     CFG_DDR_SIZE=0x18000000 \
-"
-EXTRA_OEMAKE_append_imx8qm-mek = " \
-    CFG_NXP_CAAM=n CFG_RNG_PTA=y \
-    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
 "
 
 # Extra Settings for Secure Machines

@@ -58,6 +58,7 @@ IMAGE_BOOT_FILES_sota += "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'syst
 
 # Boot firmware updates
 LMP_BOOT_FIRMWARE_FILES_sota = "boot.bin u-boot.itb"
+BOOTSCR_LOAD_ADDR_sota = "0x21000000"
 
 # Not building for QEMU standard Xinix build
 EXTRA_IMAGEDEPENDS_remove = "qemu-devicetrees"

@@ -78,3 +78,22 @@ IMAGE_CMD_garagecheck_prepend () {
 		return
 	fi
 }
+
+### Utilities
+
+def make_efi_dtb_boot_files(d):
+    # Generate IMAGE_EFI_BOOT_FILES entries for device tree files listed in
+    # KERNEL_DEVICETREE, to be available at the ESP/dtb folder (for u-boot).
+    # Use only the basename for dtb files:
+    alldtbs = d.getVar('KERNEL_DEVICETREE')
+
+    # DTBs may be built out of kernel with devicetree.bbclass
+    if not alldtbs:
+        return ''
+
+    def transform(dtb):
+        if not (dtb.endswith('dtb') or dtb.endswith('dtbo')):
+            bb.error("KERNEL_DEVICETREE entry %s is not a .dtb or .dtbo file." % (dtb) )
+        return os.path.basename(dtb) + ';dtb/' + os.path.basename(dtb)
+
+    return ' '.join([transform(dtb) for dtb in alldtbs.split() if dtb])

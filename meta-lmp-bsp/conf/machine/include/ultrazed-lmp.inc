@@ -44,6 +44,7 @@ PREFERRED_PROVIDER_virtual/trusted-firmware-a ?= "arm-trusted-firmware"
 EXTRA_IMAGEDEPENDS += " \
     virtual/bootloader \
     virtual/pmu-firmware \
+    virtual/boot-bin \
     virtual/trusted-firmware-a \
     ${@bb.utils.contains('OSTREE_BOOTLOADER', 'grub', 'grub-efi', '', d)} \
 "

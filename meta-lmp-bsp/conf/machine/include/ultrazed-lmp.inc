@@ -56,5 +56,8 @@ IMAGE_BOOT_FILES = "${@get_default_image_boot_files(d)} boot.bin boot.scr uEnv.t
 IMAGE_BOOT_FILES_sota = "boot.bin u-boot.itb"
 IMAGE_BOOT_FILES_sota += "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'system-top.dtb', 'boot.itb', d)}"
 
+# Boot firmware updates
+LMP_BOOT_FIRMWARE_FILES_sota = "boot.bin u-boot.itb"
+
 # Not building for QEMU standard Xinix build
 EXTRA_IMAGEDEPENDS_remove = "qemu-devicetrees"

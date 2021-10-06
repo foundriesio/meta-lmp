@@ -6,23 +6,29 @@ echo "Using ${fdt_file}"
 setenv bootlimit 3
 setenv devtype mmc
 setenv devnum 1
+setenv bootpart 1
+setenv rootpart 2
 
 setenv loadaddr 0x10000000
 setenv fdt_addr 0x40000000
 setenv optee_ovl_addr 0x22000000
+setenv fdt_file_final ${fdt_file}
+setenv fit_addr ${ramdisk_addr_r}
 
-setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
-setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${loadaddr} "/boot"${kernel_image}'
-setenv bootcmd_tee_ovy 'imxtract ${loadaddr}#conf@@FIT_NODE_SEPARATOR@@${fdtfile} fdt@@FIT_NODE_SEPARATOR@@${fdt_file} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}'
-setenv bootcmd_run 'bootm ${loadaddr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file} ${loadaddr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file} ${fdt_addr}'
-setenv bootcmd_rollbackenv 'setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}'
-setenv bootcmd_set_rollback 'if test ! "${rollback}" = "1"; then setenv rollback 1; setenv upgrade_available 0; saveenv; fi'
-setenv bootostree 'run bootcmd_load_f; run bootcmd_tee_ovy; run bootcmd_run'
-setenv altbootcmd 'run bootcmd_otenv; run bootcmd_set_rollback; if test -n "${kernel_image2}"; then run bootcmd_rollbackenv; fi; run bootostree; reset'
+setenv bootloader_image "boot.bin"
+setenv bootloader_s_image ${bootloader_image}
+setenv bootloader2_image "u-boot.itb"
+setenv bootloader2_s_image ${bootloader2_image}
 
-if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; saveenv; fi
+setenv update_primary_image 'echo "${fio_msg} writing ${image_path} ..."; mmc dev ${devnum} && fatwrite mmc ${devnum}:${bootpart} ${loadaddr} boot0001.bin ${filesize}';
+setenv update_secondary_image 'echo "${fio_msg} writing ${image_path} ..."; mmc dev ${devnum} && fatwrite mmc ${devnum}:${bootpart} ${loadaddr} boot0002.bin ${filesize}';
 
-if test "${rollback}" = "1"; then run altbootcmd; else run bootcmd_otenv; run bootostree; if test ! "${upgrade_available}" = "1"; then setenv upgrade_available 1; saveenv; fi; reset; fi
+setenv update_primary_image2 'echo "${fio_msg} writing ${image_path} ..."; mmc dev ${devnum} && fatwrite mmc ${devnum}:${bootpart} ${loadaddr} u-boot0001.itb ${filesize}';
+setenv update_secondary_image2 'echo "${fio_msg} writing ${image_path} ..."; mmc dev ${devnum} && fatwrite mmc ${devnum}:${bootpart} ${loadaddr} u-boot0002.itb ${filesize}';
 
-reset
+setenv check_board_closed "is_boot_authenticated"
+setenv check_secondary_boot "multi_boot"
+setenv set_primary_boot "multi_boot 1"
+setenv set_secondary_boot "multi_boot 2"
+
+@@INCLUDE_COMMON@@

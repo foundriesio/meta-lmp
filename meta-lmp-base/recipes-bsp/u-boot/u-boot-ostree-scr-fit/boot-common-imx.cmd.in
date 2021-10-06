@@ -1,0 +1,10 @@
+if test -z "${check_board_closed}"; then setenv check_board_closed "imx_is_closed"; fi;
+if test -z "${check_secondary_boot}"; then setenv check_secondary_boot "imx_secondary_boot"; fi;
+if test -z "${set_primary_boot}"; then setenv set_primary_boot "imx_secondary_boot 0"; fi;
+if test -z "${set_secondary_boot}"; then setenv set_secondary_boot "imx_secondary_boot 1"; fi;
+setenv update_image 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} ${uboot_hwpart} && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
+
+if test -z "${update_primary_image}"; then setenv update_primary_image "run update_image"; fi;
+if test -z "${update_secondary_image}"; then setenv update_secondary_image "run update_image"; fi;
+if test -z "${update_primary_image2}"; then setenv update_primary_image2 "run update_image"; fi;
+if test -z "${update_secondary_image2}"; then setenv update_secondary_image2 "run update_image"; fi;

@@ -12,18 +12,17 @@ setenv saveenv_mmc 'if test -z "${fiovb_rpmb}"; then saveenv; fi;'
 
 # Boot firmware update helpers
 setenv rollback_setup 'if test -n "${fiovb_rpmb}"; then fiovb write_pvalue rollback 1; fiovb write_pvalue upgrade_available 0; fiovb write_pvalue bootupgrade_available 0; else setenv rollback 1; setenv upgrade_available 0; setenv bootupgrade_available 0; setenv fiovb.rollback "${rollback}"; setenv fiovb.upgrade_available "${upgrade_available}"; setenv fiovb.bootupgrade_available "${bootupgrade_available}"; fi;'
-setenv load_image 'if ext4load ${devtype} ${devnum}:2 ${loadaddr} ${image_path}; then echo "${fio_msg} loaded ${image_path}"; else "${fio_msg} error occured while loading ${image_path}, scheduling rollback after reset ..."; run rollback_setup; run saveenv_mmc; imx_secondary_boot 0; reset; fi;'
+setenv load_image 'if ext4load ${devtype} ${devnum}:2 ${loadaddr} ${image_path}; then echo "${fio_msg} loaded ${image_path}"; else "${fio_msg} error occured while loading ${image_path}, scheduling rollback after reset ..."; run rollback_setup; run saveenv_mmc; run set_primary_boot; reset; fi;'
 setenv set_blkcnt 'setexpr blkcnt ${filesize} + 0x1ff && setexpr blkcnt ${blkcnt} / 0x200'
-setenv update_image 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} ${uboot_hwpart} && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 
 # Import uEnv.txt
 run bootcmd_otenv
 # Get deployment sysroot absolute path
 run bootcmd_getroot
 # Check state of SECONDARY_BOOT bit
-imx_secondary_boot
+run check_secondary_boot
 # Check if board is on closed state
-imx_is_closed
+run check_board_closed
 
 # Device what storage we should use for update-related vars
 # If board is closed and has eMMC - use RPMB
@@ -87,18 +86,18 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 			run saveenv_mmc
 		else
 			if test "${fiovb.bootupgrade_available}" = "1"; then
-				imx_secondary_boot 1;
+				run set_secondary_boot;
 				echo "${fio_msg} updating secondary boot images from ${ostree_root} ..."
 
 				setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_s_image}"
 				setenv start_blk "${bootloader_s}"
 				run load_image
-				run update_image
+				run update_secondary_image
 
 				setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_s_image}"
 				setenv start_blk "${bootloader2_s}"
 				run load_image
-				run update_image
+				run update_secondary_image2
 
 				run saveenv_mmc
 				echo "${fio_msg} doing warm reset to boot into secondary boot path..."
@@ -115,12 +114,12 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_image}"
 		setenv start_blk "${bootloader}"
 		run load_image
-		run update_image
+		run update_primary_image
 
 		setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_image}"
 		setenv start_blk "${bootloader2}"
 		run load_image
-		run update_image
+		run update_primary_image2
 
 		run bootcmd_bootenv
 		if test -n "${fiovb_rpmb}"; then
@@ -133,7 +132,7 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 
 		run saveenv_mmc
 		echo "${fio_msg} reset ..."
-		imx_secondary_boot 0
+		run set_primary_boot
 		reset
 	fi
 else
@@ -157,7 +156,7 @@ run bootcmd_tee_ovy
 # primary path after running reboot cmd (this is needed for boards without
 # software POR reset support, like Apalis iMX6)
 echo "${fiovb_msg} Forcing secondary boot to 0 after reboot"
-imx_secondary_boot 0
+run set_primary_boot
 
 run bootcmd_run
 

@@ -54,7 +54,7 @@ WKS_FILE = "sdimage-bootpart.wks"
 WKS_FILE_sota = "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'sdimage-mbr-efi-sota.wks', 'sdimage-sota.wks', d)}"
 IMAGE_BOOT_FILES = "${@get_default_image_boot_files(d)} boot.bin boot.scr uEnv.txt system-top.dtb bitstream.bit.bin"
 IMAGE_BOOT_FILES_sota = "boot.bin;boot0001.bin u-boot.itb;u-boot0001.itb"
-IMAGE_BOOT_FILES_sota += "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'system-top.dtb', 'boot.itb', d)}"
+IMAGE_BOOT_FILES_sota += "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'system-top.dtb', '', d)}"
 
 # Boot firmware updates
 LMP_BOOT_FIRMWARE_FILES_sota = "boot.bin u-boot.itb"

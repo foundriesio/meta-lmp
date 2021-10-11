@@ -1,3 +1,6 @@
+# Branch was forced pushed, drop it so bitbake can look for the tag
+BRANCH = ""
+
 # Align provides with meta-arm
 PROVIDES += "virtual/trusted-firmware-a"
 

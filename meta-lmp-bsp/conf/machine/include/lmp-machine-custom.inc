@@ -323,6 +323,14 @@ MACHINE_FEATURES_remove_imx8mq-evk = "qca6174"
 MACHINE_FEATURES_append_imx8mq-evk = " bcm4356"
 UBOOT_MACHINE_imx8mq-evk ?= "imx8mq_evk_config"
 BOOTSCR_LOAD_ADDR_imx8mq-evk = "0x44800000"
+## iMX8MQ EVK with EBBR / SystemReady
+UBOOT_SIGN_ENABLE_sota_imx8mq-evk-ebbr = ""
+KERNEL_IMAGETYPE_sota_imx8mq-evk-ebbr ?= "Image"
+KERNEL_CLASSES_sota_imx8mq-evk-ebbr ?= ""
+EFI_PROVIDER_imx8mq-evk-ebbr ?= "grub-efi"
+OSTREE_BOOTLOADER_imx8mq-evk-ebbr ?= "grub"
+IMAGE_EFI_BOOT_FILES_sota_imx8mq-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
+WKS_FILE_sota_imx8mq-evk-ebbr ?= "efidisk-sota.wks"
 
 # iMX8MM
 UBOOT_SIGN_ENABLE_sota_mx8mm = "1"

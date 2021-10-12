@@ -25,4 +25,5 @@ setenv bootloader2_image "u-boot.itb"
 setenv bootloader2_s_image ${bootloader2_image}
 setenv uboot_hwpart 1
 
+@@INCLUDE_COMMON_IMX@@
 @@INCLUDE_COMMON@@

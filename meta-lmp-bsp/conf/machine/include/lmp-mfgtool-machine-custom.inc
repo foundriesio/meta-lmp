@@ -31,6 +31,7 @@ KERNEL_CLASSES_mx6ull = " kernel-lmp-fitimage "
 
 # iMX8MQ
 UBOOT_SIGN_ENABLE_mx8mq = "1"
+PREFERRED_VERSION_u-boot-fio-mfgtool_mx8mq ?= "2021.04"
 PREFERRED_PROVIDER_virtual/kernel_mx8mq = "linux-lmp-dev-mfgtool"
 IMX_DEFAULT_BOOTLOADER_mx8mq ?= "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_mx8mq = "u-boot-ostree-scr-fit"

@@ -314,6 +314,7 @@ KERNEL_CLASSES_sota_mx8mq = " kernel-lmp-fitimage "
 PREFERRED_PROVIDER_virtual/kernel_mx8mq ?= "linux-lmp-fslc-imx"
 WKS_FILE_sota_mx8mq = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS_mx8mq = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio_mx8mq ?= "2021.04"
 ## iMX8MQ EVK
 KMACHINE_imx8mq-evk = "imx8mqevk"
 OSTREE_KERNEL_ARGS_imx8mq-evk ?= "console=tty1 console=ttymxc0,115200 earlycon=ec_imx6q,0x30860000,115200 root=/dev/mmcblk0p2 rootfstype=ext4"

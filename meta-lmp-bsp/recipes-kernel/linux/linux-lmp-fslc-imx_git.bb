@@ -12,6 +12,7 @@ SRC_URI = "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
     file://0001-FIO-extras-arm64-dts-imx8mm-evk-use-imx8mm-evkb-for-.patch \
     file://0001-FIO-tonxp-drm-bridge-it6161-add-missing-gpio-consume.patch \
+    file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
 "
 
 KMETA = "kernel-meta"

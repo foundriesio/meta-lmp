@@ -1,0 +1,57 @@
+From b70aac80c227a6469f509b58d76285d2367f2d64 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 13 Oct 2021 19:43:22 -0300
+Subject: [PATCH] arm64: dts: imx8mq: drop cpu-idle-states
+
+This partially reverts commit 30181937c470a5e08c5b94ca416d97fbf7c4293c.
+
+cpu-idle can only work when the workaround is also available (but can
+still have issues based on the upstream thread discussion), so revert as
+a way to make the same dts compatible across multiple kernel versions.
+
+This allows the same 5.10-based device tree to be used for SystemReady.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index 9f15c03b31d42..407c62a59839f 100755
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -108,7 +108,6 @@ A53_0: cpu@0 {
+ 			#cooling-cells = <2>;
+ 			nvmem-cells = <&cpu_speed_grade>;
+ 			nvmem-cell-names = "speed_grade";
+-			cpu-idle-states = <&CPU_SLEEP>;
+ 		};
+ 
+ 		A53_1: cpu@1 {
+@@ -121,7 +120,6 @@ A53_1: cpu@1 {
+ 			next-level-cache = <&A53_L2>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			#cooling-cells = <2>;
+-			cpu-idle-states = <&CPU_SLEEP>;
+ 		};
+ 
+ 		A53_2: cpu@2 {
+@@ -134,7 +132,6 @@ A53_2: cpu@2 {
+ 			next-level-cache = <&A53_L2>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			#cooling-cells = <2>;
+-			cpu-idle-states = <&CPU_SLEEP>;
+ 		};
+ 
+ 		A53_3: cpu@3 {
+@@ -147,7 +144,6 @@ A53_3: cpu@3 {
+ 			next-level-cache = <&A53_L2>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			#cooling-cells = <2>;
+-			cpu-idle-states = <&CPU_SLEEP>;
+ 		};
+ 
+ 		A53_L2: l2-cache0 {
+-- 
+2.33.0
+

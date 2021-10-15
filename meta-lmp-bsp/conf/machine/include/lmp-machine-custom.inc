@@ -397,6 +397,7 @@ PREFERRED_PROVIDER_virtual/kernel_mx8mp ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE_mx8mp = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE_sota_mx8mp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS_mx8mp = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio_mx8mp ?= "2021.04"
 ## iMX8MP EVK
 OSTREE_KERNEL_ARGS_imx8mp-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
 SOTA_CLIENT_FEATURES_append_imx8mp-lpddr4-evk = " ubootenv"

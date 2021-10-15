@@ -41,6 +41,7 @@ KERNEL_CLASSES_mx8mq = " kernel-lmp-fitimage "
 
 # iMX8MPEVK
 UBOOT_SIGN_ENABLE_mx8mp = "1"
+PREFERRED_VERSION_u-boot-fio-mfgtool_mx8mp ?= "2021.04"
 IMX_DEFAULT_BOOTLOADER_mx8mp ?= "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script_mx8mp = "u-boot-ostree-scr"
 IMAGE_BOOT_FILES_mx8mp  = "imx-boot u-boot.itb boot.itb"

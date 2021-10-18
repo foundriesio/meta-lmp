@@ -1,0 +1,11 @@
+[Unit]
+Description=Check and fix an image&layer store of the docker daemon
+Before=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/fio-docker-fsck -fix-store
+
+[Install]
+WantedBy=multi-user.target

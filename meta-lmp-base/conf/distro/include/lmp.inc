@@ -124,4 +124,7 @@ ERROR_QA:append = " ${WARN_TO_ERROR_QA}"
 ERROR_QA:remove = "version-going-backwards"
 
 LMP_USER ?= "fio"
-LMP_PASSWORD ?= "fio"
+# LMP_PASSWORD is a hassed password. To generate the hash use the following command on a host machine
+# mkpasswd -m sha512crypt
+# When copy and pasting the hash, remember to escape any $ character as in the following example
+LMP_PASSWORD ?= "\$6\$OxIhuUvtdFqmUyLv\$gnwD.Qz53y.hvkLc5LyClP8MSRMtG8VZHz.qg/OvRep93ls.2CGzYvINCOrdXYU4yi1q394gWXqixRxO9yCSU/"

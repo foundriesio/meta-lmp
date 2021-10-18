@@ -1,0 +1,75 @@
+From 14cb4453d05cd2a66efecbd1288bd2c7a7ff19a6 Mon Sep 17 00:00:00 2001
+From: Mike Sul <mike.sul@foundries.io>
+Date: Mon, 18 Oct 2021 12:19:14 +0300
+Subject: [PATCH] overlay2: fsync layer metadata files
+
+Fsync `link` and `lower` layer files just after write to make sure their
+content is actually stored on a persistent storage. It helps to overcome
+the issue that occurs when image layers download/extraction is
+interrupted by a power cut.
+Docker daemon can recover if there the interrupted layer is "broken",
+but it cannot recover if there are two or more lower to the interrupted
+layers are "broken". The given fix makes sure that the lower layers that
+are fully downloaded and extracted are consistent even if the current
+top layer is broken.
+
+Signed-off-by: Mike Sul <mike.sul@foundries.io>
+---
+ daemon/graphdriver/overlay2/overlay.go | 30 ++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/src/import/daemon/graphdriver/overlay2/overlay.go b/src/import/daemon/graphdriver/overlay2/overlay.go
+index 36a921a018..6127f64936 100644
+--- a/src/import/daemon/graphdriver/overlay2/overlay.go
++++ b/src/import/daemon/graphdriver/overlay2/overlay.go
+@@ -387,6 +387,7 @@ func (d *Driver) create(id, parent string, opts *graphdriver.CreateOpts) (retErr
+ 	if err := ioutil.WriteFile(path.Join(dir, "link"), []byte(lid), 0644); err != nil {
+ 		return err
+ 	}
++	fsync(path.Join(dir, "link"))
+ 
+ 	// if no parent directory, done
+ 	if parent == "" {
+@@ -409,6 +410,7 @@ func (d *Driver) create(id, parent string, opts *graphdriver.CreateOpts) (retErr
+ 		if err := ioutil.WriteFile(path.Join(dir, lowerFile), []byte(lower), 0666); err != nil {
+ 			return err
+ 		}
++		fsync(path.Join(dir, lowerFile))
+ 	}
+ 
+ 	return nil
+@@ -736,3 +738,31 @@ func (d *Driver) Diff(id, parent string) (io.ReadCloser, error) {
+ func (d *Driver) Changes(id, parent string) ([]archive.Change, error) {
+ 	return d.naiveDiff.Changes(id, parent)
+ }
++
++
++// Foundries.io patch to fsync changes
++func fsync(path string) {
++	f, err := os.Open(path)
++	if err != nil {
++		logger.Warnf(">>> FIO: failed to open file for fsyncing; file: %s, err: %s", path, err.Error())
++		return
++	}
++	if f == nil {
++		logger.Warnf(">>> FIO: failed to open file for fsyncing; file: %s, err: nil file descriptor", path)
++		return
++	}
++
++	defer func() {
++		err := f.Close()
++		if err != nil {
++			logger.Warnf(">>> FIO: failed to close a file opened for fsyncing; file: %s, err: %s", path, err.Error())
++		}
++	}()
++
++	err = f.Sync()
++	if err == nil {
++		logger.Infof(">>> FIO: fsync %s", path)
++	} else {
++		logger.Infof(">>> FIO: failed to fsync %s, err: %s", path, err.Error())
++	}
++}
+-- 
+2.17.1
+

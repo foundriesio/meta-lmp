@@ -50,6 +50,7 @@ SRC_URI = "\
 	file://increase_containerd_timeouts.patch \
 	file://dockerd-daemon-reload-image-store-on-a-hup-signal.patch \
 	file://0001-registry-increase-TLS-and-connection-timeouts.patch \
+	file://0001-overlay2-fsync-layer-metadata-files.patch \
 	"
 
 require recipes-containers/docker/docker.inc

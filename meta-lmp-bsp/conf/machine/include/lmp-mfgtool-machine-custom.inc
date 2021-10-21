@@ -18,6 +18,7 @@ PREFERRED_VERSION_u-boot-fio-mfgtool_imx7ulpea-ucom ?= "2021.04"
 
 # iMX6ULL
 UBOOT_SIGN_ENABLE_mx6ull = "1"
+PREFERRED_VERSION_u-boot-fio-mfgtool_mx6ull ?= "2021.04"
 PREFERRED_PROVIDER_virtual/kernel_mx6ull = "linux-lmp-dev-mfgtool"
 KERNEL_REPO_mx6ull ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
 LINUX_VERSION_mx6ull ?= "5.4.y"

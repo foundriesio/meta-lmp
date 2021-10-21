@@ -271,10 +271,10 @@ do_deploy_prepend() {
 
 	if [ -n "${UBOOT_CONFIG}" ]; then
 		for config in ${UBOOT_MACHINE}; do
-			i=$(expr $i + 1);
+			machine_idx=$(expr $machine_idx + 1);
 			for type in ${UBOOT_CONFIG}; do
-				j=$(expr $j + 1);
-				if [ $j -eq $i ]; then
+				type_idx=$(expr $type_idx + 1);
+				if [ $type_idx -eq $machine_idx ]; then
 					cd ${B}/${config}
 					UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`
 					uboot_fitimage_assemble "${UBOOT_ITB_BINARY}" "${UBOOT_LOAD_ADDR}" "${OPTEE_LOAD_ADDR}" "${ATF_LOAD_ADDR}" "${SPL_FPGA_LOAD_ADDR}" "${BOOTSCR_LOAD_ADDR}"
@@ -304,9 +304,9 @@ do_deploy_prepend() {
 					fi
 				fi
 			done
-			unset j
+			unset type_idx
 		done
-		unset i
+		unset machine_idx
 	else
 		cd ${B}
 		UBOOT_LOAD_ADDR=`grep 'define CONFIG_SYS_TEXT_BASE' u-boot.cfg | cut -d' ' -f 3`

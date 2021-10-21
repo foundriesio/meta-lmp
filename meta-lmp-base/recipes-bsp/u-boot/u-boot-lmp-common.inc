@@ -4,10 +4,10 @@
 do_deploy_append() {
     if [ -n "${UBOOT_CONFIG}" ]; then
         for config in ${UBOOT_MACHINE}; do
-            i=$(expr $i + 1);
+            machine_idx=$(expr $machine_idx + 1);
             for type in ${UBOOT_CONFIG}; do
-                j=$(expr $j + 1);
-                if [ $j -eq $i ]; then
+                type_idx=$(expr $type_idx + 1);
+                if [ $type_idx -eq $machine_idx ]; then
                     install -D -m 644 ${B}/${config}/.config ${DEPLOYDIR}/${PN}-config-${MACHINE}-${type}-${PV}-${PR}
                     cd ${DEPLOYDIR}
                     ln -sf ${PN}-config-${MACHINE}-${type}-${PV}-${PR} ${PN}-config-${MACHINE}-${type}
@@ -21,9 +21,9 @@ do_deploy_append() {
                     fi
                 fi
             done
-            unset j
+            unset type_idx
         done
-        unset i
+        unset machine_idx
     else
         install -D -m 644 ${B}/.config ${DEPLOYDIR}/${PN}-config-${MACHINE}-${PV}-${PR}
         cd ${DEPLOYDIR}

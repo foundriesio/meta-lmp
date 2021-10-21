@@ -403,6 +403,14 @@ OSTREE_KERNEL_ARGS_imx8mp-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 ear
 SOTA_CLIENT_FEATURES_append_imx8mp-lpddr4-evk = " ubootenv"
 UBOOT_MACHINE_imx8mp-lpddr4-evk = "imx8mp_evk_config"
 BOOTSCR_LOAD_ADDR_imx8mp-lpddr4-evk = "0x44800000"
+## iMX8MP EVK with EBBR / SystemReady
+UBOOT_SIGN_ENABLE_sota_imx8mp-lpddr4-evk-ebbr = ""
+KERNEL_IMAGETYPE_sota_imx8mp-lpddr4-evk-ebbr ?= "Image"
+KERNEL_CLASSES_sota_imx8mp-lpddr4-evk-ebbr ?= ""
+EFI_PROVIDER_imx8mp-lpddr4-evk-ebbr ?= "grub-efi"
+OSTREE_BOOTLOADER_imx8mp-lpddr4-evk-ebbr ?= "grub"
+IMAGE_EFI_BOOT_FILES_sota_imx8mp-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
+WKS_FILE_sota_imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel_stm32mp1common ?= "linux-lmp-stm32"

@@ -7,10 +7,10 @@ do_deploy_append_mx8() {
     # Deploy u-boot-nodtb.bin and XX.dtb for mkimage to generate boot binary
     if [ -n "${UBOOT_CONFIG}" ]; then
         for config in ${UBOOT_MACHINE}; do
-            i=$(expr $i + 1);
+            machine_idx=$(expr $machine_idx + 1);
             for type in ${UBOOT_CONFIG}; do
-                j=$(expr $j + 1);
-                if [ $j -eq $i ]; then
+                type_idx=$(expr $type_idx + 1);
+                if [ $type_id -eq $machine_idx ]; then
                     install -d ${DEPLOYDIR}/${BOOT_TOOLS}
                     # When sign is enabled the final DTB should be copied from deploy dir
                     if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then
@@ -22,9 +22,9 @@ do_deploy_append_mx8() {
                     install -m 0644 ${B}/${config}/u-boot-nodtb.bin ${DEPLOYDIR}/${BOOT_TOOLS}/u-boot-nodtb.bin-${MACHINE}-${UBOOT_CONFIG}
                 fi
             done
-            unset  j
+            unset type_idx
         done
-        unset  i
+        unset machine_idx
     else
         install -d ${DEPLOYDIR}/${BOOT_TOOLS}
         # When sign is enabled the final DTB should be copied from deploy dir

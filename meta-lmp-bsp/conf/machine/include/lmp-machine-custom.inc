@@ -223,6 +223,7 @@ IMAGE_BOOT_FILES_mx6ull = " boot.scr uEnv.txt zImage ${@make_dtb_boot_files(d)}"
 KERNEL_IMAGETYPE_sota_mx6ull = "fitImage"
 KERNEL_CLASSES_sota_mx6ull = " kernel-lmp-fitimage "
 WKS_FILE_mx6ull_sota = "sdimage-imx6-spl-fit-sota.wks"
+PREFERRED_VERSION_u-boot-fio_mx6ull ?= "2021.04"
 # iMX6ULL EVK
 SOTA_CLIENT_FEATURES_append_imx6ullevk = " ubootenv"
 UBOOT_MACHINE_imx6ullevk = "mx6ull_14x14_evk_defconfig"

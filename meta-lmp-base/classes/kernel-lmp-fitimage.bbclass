@@ -302,14 +302,14 @@ fitimage_emit_section_config() {
 	fi
 
 	if [ -n "${loadable_id}" ]; then
-		i=0
+		loadable_counter=0
 		for LOADABLE in ${loadable_id}; do
 			if [ -e ${DEPLOY_DIR_IMAGE}/${LOADABLE} ]; then
-				i=`expr ${i} + 1`
+				loadable_counter=`expr ${loadable_counter} + 1`
 				if [ -z "${loadable_line}" ]; then
 					conf_desc="${conf_desc}${sep}loadables"
 				fi
-				loadable_line="${loadable_line}loadable_${i} = \"loadable${FIT_NODE_SEPARATOR}${LOADABLE}\"; "
+				loadable_line="${loadable_line}loadable_${loadable_counter} = \"loadable${FIT_NODE_SEPARATOR}${LOADABLE}\"; "
 			fi
 		done
 	fi
@@ -373,11 +373,11 @@ EOF
 		fi
 
 		if [ -n "${loadable_id}" ]; then
-			i=0
+			loadable_counter=0
 			for LOADABLE in ${loadable_id}; do
 				if [ -e ${DEPLOY_DIR_IMAGE}/${LOADABLE} ]; then
-					i=`expr ${i} + 1`
-					sign_line="${sign_line}${sep}\"loadable_${i}\""
+					loadable_counter=`expr ${loadable_counter} + 1`
+					sign_line="${sign_line}${sep}\"loadable_${loadable_counter}\""
 				fi
 			done
 		fi

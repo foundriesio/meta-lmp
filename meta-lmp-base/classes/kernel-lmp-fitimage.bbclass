@@ -609,16 +609,17 @@ fitimage_assemble() {
 	# no dtb present than select the default configuation to be based on
 	# the kernelcount.
 	if [ -n "${DTBS}" ]; then
-		i=1
+		dtb_idx=1
 		for DTB in ${DTBS}; do
 			dtb_ext=${DTB##*.}
 			if [ "${dtb_ext}" = "dtbo" ]; then
-				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "" "" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "" "" "`expr ${dtb_idx} = ${dtbcount}`"
 			else
-				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "`expr ${i} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "`expr ${dtb_idx} = ${dtbcount}`"
 			fi
-			i=`expr ${i} + 1`
+			dtb_idx=`expr ${dtb_idx} + 1`
 		done
+        unset dtb_idx
 	else
 		defaultconfigcount=1
 		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "${defaultconfigcount}"

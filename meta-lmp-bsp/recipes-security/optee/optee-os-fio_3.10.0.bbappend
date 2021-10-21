@@ -51,8 +51,9 @@ EXTRA_OEMAKE_append_imx7ulpea-ucom = " \
     CFG_TZDRAM_START=0x9e000000 CFG_OVERLAY_ADDR=0x65000000 \
     CFG_OVERLAY_RESERVED_MEMORY_ADDRESS_CELLS=1 CFG_OVERLAY_RESERVED_MEMORY_SIZE_CELLS=1 \
 "
+# TODO: fix support for DYN_SHM (xtest fails with SHM enabled)
 EXTRA_OEMAKE_append_imx8mp-lpddr4-evk = " \
-    CFG_DDR_SIZE=0x18000000 \
+    CFG_TZDRAM_START=0x56000000 CFG_CORE_DYN_SHM=n \
 "
 
 # Extra Settings for Secure Machines

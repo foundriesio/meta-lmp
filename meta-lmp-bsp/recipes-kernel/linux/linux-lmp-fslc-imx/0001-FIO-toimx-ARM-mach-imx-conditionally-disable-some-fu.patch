@@ -1,0 +1,70 @@
+From 2bd2adafa27fcadcf93b2c827ec87d12f94f5b06 Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Sun, 17 Oct 2021 19:02:08 +0300
+Subject: [PATCH] [FIO toimx] ARM: mach-imx: conditionally disable some
+ functions from busfreq-imx
+
+In case CONFIG_HAVE_IMX_BUSFREQ is not set, there are mocks for some
+functions from busfreq-imx declared. It fails kernel building with an
+error [1].
+Disable duplicated functions from busfreq-imx fixes this issue.
+
+[1]
+...
+| arch/arm/mach-imx/busfreq-imx.c:821:6: error: redefinition of 'request_bus_freq'
+|   821 | void request_bus_freq(enum bus_freq_mode mode)
+|       |      ^~~~~~~~~~~~~~~~
+| In file included from arch/arm/mach-imx/busfreq-imx.c:23:
+| include/linux/busfreq-imx.h:58:20: note: previous definition of 'request_bus_freq' was here
+|    58 | static inline void request_bus_freq(enum bus_freq_mode mode)
+|       |                    ^~~~~~~~~~~~~~~~
+...
+
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ arch/arm/mach-imx/busfreq-imx.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/mach-imx/busfreq-imx.c b/arch/arm/mach-imx/busfreq-imx.c
+index 434c6b0ac09c..5cb86c41a319 100644
+--- a/arch/arm/mach-imx/busfreq-imx.c
++++ b/arch/arm/mach-imx/busfreq-imx.c
+@@ -180,6 +180,8 @@ static int busfreq_notify(enum busfreq_event event)
+ 	return notifier_to_errno(ret);
+ }
+ 
++#if defined(CONFIG_HAVE_IMX_BUSFREQ)
++
+ int register_busfreq_notifier(struct notifier_block *nb)
+ {
+ 	return raw_notifier_chain_register(&busfreq_notifier_chain, nb);
+@@ -192,6 +194,8 @@ int unregister_busfreq_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL(unregister_busfreq_notifier);
+ 
++#endif /* CONFIG_HAVE_IMX_BUSFREQ */
++
+ static struct clk *origin_step_parent;
+ 
+ /*
+@@ -818,6 +822,7 @@ static int set_high_bus_freq(int high_bus_freq)
+ 	return 0;
+ }
+ 
++#if defined(CONFIG_HAVE_IMX_BUSFREQ)
+ void request_bus_freq(enum bus_freq_mode mode)
+ {
+ 	mutex_lock(&bus_freq_mutex);
+@@ -949,6 +954,8 @@ int get_bus_freq_mode(void)
+ }
+ EXPORT_SYMBOL(get_bus_freq_mode);
+ 
++#endif /* CONFIG_HAVE_IMX_BUSFREQ */
++
+ static struct map_desc ddr_iram_io_desc __initdata = {
+ 	/* .virtual and .pfn are run-time assigned */
+ 	.length		= SZ_1M,
+-- 
+2.31.1
+

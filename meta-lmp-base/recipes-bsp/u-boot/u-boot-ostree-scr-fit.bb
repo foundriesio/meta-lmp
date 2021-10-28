@@ -9,6 +9,7 @@ DEPENDS = "dtc-native u-boot-mkimage-native"
 SRC_URI = "file://boot.cmd \
 	file://boot-common.cmd.in \
 	file://boot-common-imx.cmd.in \
+	file://boot-common-alternative.cmd.in \
 	file://boot.its.in \
 "
 
@@ -29,6 +30,8 @@ do_compile() {
 	sed -e '/@@INCLUDE_COMMON_IMX@@/ {' -e 'r ${S}/boot-common-imx.cmd.in' -e 'd' -e '}' \
 			"${S}/boot.cmd" > boot.cmd.in
 	sed -i -e '/@@INCLUDE_COMMON@@/ {' -e 'r ${S}/boot-common.cmd.in' -e 'd' -e '}' \
+			boot.cmd.in
+	sed -i -e '/@@INCLUDE_COMMON_ALTERNATIVE@@/ {' -e 'r ${S}/boot-common-alternative.cmd.in' -e 'd' -e '}' \
 			boot.cmd.in
 	sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
 			boot.cmd.in > boot.cmd

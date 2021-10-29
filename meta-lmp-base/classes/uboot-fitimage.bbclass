@@ -28,6 +28,7 @@ BOOTSCR_SUPPORT = "${@bb.utils.contains('PREFERRED_PROVIDER_u-boot-default-scrip
 # FPGA loading via SPL
 SPL_FPGA_BINARY ?= ""
 SPL_FPGA_LOAD_ADDR ?= ""
+SPL_FPGA_COMPATIBLE ?= "u-boot,fpga-legacy"
 
 do_compile[depends] += " ${@'virtual/optee-os:do_deploy' if d.getVar('OPTEE_SUPPORT') == 'true' else ''}"
 do_compile[depends] += " ${@'virtual/trusted-firmware-a:do_deploy' if d.getVar('ATF_SUPPORT') == 'true' else ''}"
@@ -201,7 +202,7 @@ EOF
 			arch = "${UBOOT_ARCH}";
 			compression = "none";
 			load = <${fpgaloadaddr}>;
-			compatible = "u-boot,fpga-legacy";
+			compatible = "${SPL_FPGA_COMPATIBLE}";
 			hash-1 {
 				algo = "${FIT_HASH_ALG}";
 			};

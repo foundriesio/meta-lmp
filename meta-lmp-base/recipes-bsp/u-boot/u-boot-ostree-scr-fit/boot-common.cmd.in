@@ -151,6 +151,9 @@ setenv bootcmd_rollback 'if test -n "${kernel_image2}" && test "${fiovb.is_secon
 run bootcmd_rollback
 run bootcmd_load_f
 run bootcmd_tee_ovy
+if test -n "${bootcmd_load_fw}"; then
+	run bootcmd_load_fw
+fi
 
 # If we are validating secondary boot path, Linux should force reboot back to
 # primary path after running reboot cmd (this is needed for boards without

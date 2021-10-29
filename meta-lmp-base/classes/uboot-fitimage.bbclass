@@ -80,7 +80,6 @@ uboot_fitimage_assemble() {
 	fit_description="U-Boot/SPL fitImage for ${MACHINE}"
 
 	# lines for the config block
-	fpga_line=""
 	loadables_line=""
 	sign_line="sign-images = \"firmware\", \"fdt\""
 
@@ -107,15 +106,18 @@ uboot_fitimage_assemble() {
 		fi
 	fi
 
+	if [ -n "${SPL_FPGA_BINARY}" ]; then
+		if [ -n "${config_loadables}" ]; then
+			config_loadables="${config_loadables}, \"fpga\"";
+		else
+			config_loadables='"fpga"';
+		fi
+	fi
+
 	# Make sure loadables get signed if any is available
 	if [ -n "${config_loadables}" ]; then
 		loadables_line="loadables = ${config_loadables};"
 		sign_line="${sign_line}, \"loadables\""
-	fi
-
-	if [ -n "${SPL_FPGA_BINARY}" ]; then
-		fpga_line="fpga = \"fpga\";"
-		sign_line="${sign_line}, \"fpga\""
 	fi
 
 	# u-boot dtb location depends on sign enable
@@ -199,6 +201,7 @@ EOF
 			arch = "${UBOOT_ARCH}";
 			compression = "none";
 			load = <${fpgaloadaddr}>;
+			compatible = "u-boot,fpga-legacy";
 			hash-1 {
 				algo = "${FIT_HASH_ALG}";
 			};
@@ -231,7 +234,6 @@ EOF
 			description = "${fit_description}";
 			firmware = "${config_firmware}";
 			${loadables_line}
-			${fpga_line}
 			fdt = "ubootfdt";
 			signature {
 				algo = "${FIT_HASH_ALG},rsa2048";

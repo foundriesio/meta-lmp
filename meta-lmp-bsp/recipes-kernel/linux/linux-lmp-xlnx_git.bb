@@ -5,9 +5,6 @@ KBRANCH = "xlnx_v5.10.y"
 SRCREV_machine = "89956e6024b38cce4a3411a4e4de8d0abc0bbc76"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
-# make sure bitstream is deployed for fit-image generation
-do_compile[depends] += "bitstream-extraction:do_deploy"
-
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 SRC_URI = "git://github.com/foundriesio/linux.git;protocol=https;branch=${KBRANCH};name=machine; \

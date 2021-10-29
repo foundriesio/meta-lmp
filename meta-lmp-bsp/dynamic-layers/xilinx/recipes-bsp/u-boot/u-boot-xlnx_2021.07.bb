@@ -20,7 +20,7 @@ HAS_PLATFORM_INIT ?= " \
 		"
 
 # add pmu-firmware and fpga bitstream (loading FPGA from SPL) dependancies
-do_compile[depends] += "virtual/pmu-firmware:do_deploy bitstream-extraction:do_deploy"
+do_compile[depends] += "virtual/pmu-firmware:do_deploy virtual/bitstream:do_deploy"
 
 SRC_URI_append = " \
     file://fw_env.config \

@@ -1,0 +1,2 @@
+# Allow EFUSE access, used by OP-TEE
+YAML_COMPILER_FLAGS_uz = " -DENABLE_EFUSE_ACCESS"

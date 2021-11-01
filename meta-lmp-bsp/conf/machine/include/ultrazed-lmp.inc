@@ -13,6 +13,8 @@ MACHINE_FEATURES = "rtc ext2 ext3 vfat usbhost optee"
 
 EXTRA_IMAGEDEPENDS += "libyaml-native python3-cython-native python3-pyyaml-native"
 
+PREFERRED_PROVIDER_virtual/bitstream ?= "bitstream-extraction"
+
 PREFERRED_PROVIDER_u-boot-fw-utils = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils = "libubootenv"
 SOTA_CLIENT_FEATURES_append = " ubootenv"
@@ -42,6 +44,7 @@ PREFERRED_PROVIDER_virtual/dtb ?= "device-tree"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a ?= "arm-trusted-firmware"
 
 EXTRA_IMAGEDEPENDS += " \
+    virtual/bitstream \
     virtual/bootloader \
     virtual/pmu-firmware \
     virtual/boot-bin \

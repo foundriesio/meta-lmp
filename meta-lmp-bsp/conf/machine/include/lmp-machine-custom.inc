@@ -429,6 +429,10 @@ WKS_FILE_sota_stm32mp1-disco = "sdimage-stm32mp157c-dk2-trusted-sota.wks.in"
 # Xilinx
 USE_XSCT_TARBALL_zynqmp = "1"
 KERNEL_BUILTIN_WIREGUARD_uz = "1"
+## Avnet UltraZed with secure boot support
+UBOOT_SIGN_ENABLE_sota_uz3eg-iocc-sec = "1"
+SOTA_CLIENT_FEATURES_remove_sota_uz3eg-iocc-sec = "ubootenv"
+SOTA_EXTRA_CLIENT_FEATURES_append_sota_uz3eg-iocc-sec = " fiovb"
 
 # TI AM64x
 MACHINE_FEATURES_append_am64xx-evm = " optee"

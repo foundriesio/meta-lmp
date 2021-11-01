@@ -15,6 +15,7 @@ EXTRA_IMAGEDEPENDS += "libyaml-native python3-cython-native python3-pyyaml-nativ
 
 PREFERRED_PROVIDER_virtual/bitstream ?= "bitstream-extraction"
 
+PREFERRED_PROVIDER_u-boot = "u-boot-xlnx"
 PREFERRED_PROVIDER_u-boot-fw-utils = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils = "libubootenv"
 SOTA_CLIENT_FEATURES_append = " ubootenv"

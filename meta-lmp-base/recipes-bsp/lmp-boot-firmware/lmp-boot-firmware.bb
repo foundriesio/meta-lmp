@@ -55,7 +55,6 @@ do_install() {
 }
 do_install[depends] = "${@bb.utils.contains('WKS_FILE_DEPENDS', 'virtual/bootloader', 'virtual/bootloader:do_deploy', '', d)}"
 do_install[depends] += "${@bb.utils.contains('WKS_FILE_DEPENDS', 'imx-boot', 'imx-boot:do_deploy', '', d)}"
-do_install[depends] += "${@bb.utils.contains('EXTRA_IMAGEDEPENDS', 'virtual/boot-bin', 'virtual/boot-bin:do_deploy', '', d)}"
 
 do_deploy() {
     if [ -n "${LMP_BOOT_FIRMWARE_FILES}" ]; then

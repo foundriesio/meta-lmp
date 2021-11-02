@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=815ca599c9df247a0c7f619bab
 inherit pkgconfig cmake systemd
 
 SRC_URI = "\
-    git://github.com/foundriesio/aktualizr-lite;branch=${BRANCH} \
+    git://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH} \
     file://systemd.service \
 "
 

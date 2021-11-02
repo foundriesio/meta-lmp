@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-3-Clause;md5=550794465ba0ec
 
 DEPENDS = "virtual/optee-os optee-client"
 
-SRC_URI = "git://github.com/foundriesio/optee-se050-pkcs11-import.git;branch=main"
+SRC_URI = "git://github.com/foundriesio/optee-se050-pkcs11-import.git;protocol=https;branch=main"
 SRCREV = "575c71c4c5cb7b7273232e55b776f6ce984b4e67"
 
 S = "${WORKDIR}/git"

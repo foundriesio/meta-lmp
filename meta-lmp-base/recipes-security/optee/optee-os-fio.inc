@@ -17,7 +17,7 @@ DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyel
 DEPENDS_append_toolchain-clang = " compiler-rt"
 
 SRCBRANCH ?= "master"
-SRC_URI = "git://github.com/foundriesio/optee_os.git;branch=${SRCBRANCH}"
+SRC_URI = "git://github.com/foundriesio/optee_os.git;protocol=https;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

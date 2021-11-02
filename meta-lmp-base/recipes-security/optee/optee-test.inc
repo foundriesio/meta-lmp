@@ -10,7 +10,7 @@ require optee.inc
 
 DEPENDS = "optee-client virtual/optee-os python3-pycryptodomex-native python3-pycrypto-native openssl"
 
-SRC_URI = "git://github.com/OP-TEE/optee_test.git"
+SRC_URI = "git://github.com/OP-TEE/optee_test.git;protocol=https"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

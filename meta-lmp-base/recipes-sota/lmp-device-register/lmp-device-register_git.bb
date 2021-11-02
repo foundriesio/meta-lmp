@@ -6,7 +6,7 @@ DEPENDS = "boost curl glib-2.0"
 
 SRCREV = "dd8fe0a9741ef05951b3fb213fb64f5896001726"
 
-SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https"
+SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https;branch=master"
 
 # Defaults to the public factory
 LMP_DEVICE_REGISTER_TAG ?= "master"

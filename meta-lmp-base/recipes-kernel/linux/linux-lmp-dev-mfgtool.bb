@@ -7,5 +7,5 @@ require recipes-kernel/linux/linux-lmp-dev.bb
 # lzop is commonly used by mfgtool-based kernel
 DEPENDS += "lzop-native"
 
-SRC_URI = "${KERNEL_REPO};branch=${KERNEL_BRANCH};name=machine;"
+SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANCH};name=machine;"
 KMETA = ""

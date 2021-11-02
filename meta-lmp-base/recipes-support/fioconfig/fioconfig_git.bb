@@ -5,7 +5,8 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d274dedb13"
 
 GO_IMPORT = "github.com/foundriesio/fioconfig"
-SRC_URI = "git://${GO_IMPORT} \
+GO_IMPORT_PROTO ?= "https"
+SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO} \
 	file://fioconfig.service \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \

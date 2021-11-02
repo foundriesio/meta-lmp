@@ -9,7 +9,7 @@ require optee.inc
 
 DEPENDS = "python3-pycryptodomex-native python3-pycrypto-native virtual/optee-os optee-client"
 
-SRC_URI = "git://github.com/foundriesio/optee-sks.git"
+SRC_URI = "git://github.com/foundriesio/optee-sks.git;protocol=https"
 SRCREV = "c5e0ae747c84b496585c4de7e4bded025e24959b"
 
 S = "${WORKDIR}/git"

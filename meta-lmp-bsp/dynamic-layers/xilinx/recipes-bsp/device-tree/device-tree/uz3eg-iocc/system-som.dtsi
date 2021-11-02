@@ -62,6 +62,13 @@
 			clock-latency-ns = <500000>;
 		};
 	};
+
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
+	};
 };
 
 &gpio {

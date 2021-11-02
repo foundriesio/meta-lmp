@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=69663ab153298557a59c67a60a743e5b"
 inherit systemd
 
 SRC_URI = " \
-    git://github.com/OP-TEE/optee_client.git \
+    git://github.com/OP-TEE/optee_client.git;protocol=https \
     file://tee-supplicant.service \
 "
 

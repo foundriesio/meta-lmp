@@ -7,7 +7,7 @@ inherit python3native
 
 DEPENDS = "optee-client virtual/optee-os python3-pycrypto-native"
 
-SRC_URI = "git://github.com/foundriesio/optee-fiovb.git"
+SRC_URI = "git://github.com/foundriesio/optee-fiovb.git;protocol=https"
 
 PV = "0.1"
 SRCREV = "829d30d98be554ffad943f44ecf197224abc9ec2"

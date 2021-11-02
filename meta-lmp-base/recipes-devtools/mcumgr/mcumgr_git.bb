@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 GO_IMPORT = "github.com/apache/mynewt-mcumgr-cli/mcumgr"
-SRC_URI = "git://github.com/apache/mynewt-mcumgr-cli;protocol=https"
+SRC_URI = "git://github.com/apache/mynewt-mcumgr-cli;protocol=https;branch=master"
 SRCREV = "0ba791a8d336bc751598be36099998439184b033"
 
 UPSTREAM_CHECK_COMMITS = "1"

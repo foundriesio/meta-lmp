@@ -5,10 +5,16 @@ echo "Using freescale_${fdt_file}"
 # Default boot type and device
 setenv bootlimit 3
 setenv devtype mmc
-setenv devnum ${mmcdev}
+setenv devnum 0
+setenv bootpart 1
+setenv rootpart 2
 setenv hdmi_image hdmitxfw.bin
 setenv m4_0_image core0_m4_image.bin
 setenv m4_1_image core1_m4_image.bin
+
+# Boot image files
+setenv fit_addr ${ramdisk_addr_r}
+setenv fdt_file_final freescale_${fdt_file}
 
 setenv bootcmd_boot_hdmi 'hdp load ${loadaddr}'
 setenv bootcmd_boot_m4_0 'dcache flush; bootaux ${loadaddr} 0'
@@ -16,17 +22,26 @@ setenv bootcmd_boot_m4_1 'dcache flush; bootaux ${loadaddr} 1'
 setenv bootcmd_load_hdmi 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file} loadable@@FIT_NODE_SEPARATOR@@${hdmi_image} ${loadaddr}; then run bootcmd_boot_hdmi; fi'
 setenv bootcmd_load_m4_0 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file} loadable@@FIT_NODE_SEPARATOR@@${m4_0_image} ${loadaddr}; then run bootcmd_boot_m4_0; fi;'
 setenv bootcmd_load_m4_1 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file} loadable@@FIT_NODE_SEPARATOR@@${m4_1_image} ${loadaddr}; then run bootcmd_boot_m4_1; fi;'
-setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
-setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${ramdisk_addr_r} "/boot"${kernel_image}'
-setenv bootcmd_run 'bootm ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file}'
-setenv bootcmd_rollbackenv 'setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}'
-setenv bootcmd_set_rollback 'if test ! "${rollback}" = "1"; then setenv rollback 1; setenv upgrade_available 0; saveenv; fi'
-setenv bootostree 'run bootcmd_load_f; run bootcmd_load_hdmi; run bootcmd_load_m4_0; run bootcmd_load_m4_1; run bootcmd_run'
-setenv altbootcmd 'run bootcmd_otenv; run bootcmd_set_rollback; if test -n "${kernel_image2}"; then run bootcmd_rollbackenv; fi; run bootostree; reset'
+setenv bootcmd_load_fw 'run bootcmd_load_hdmi; run bootcmd_load_m4_0; run bootcmd_load_m4_1;'
 
-if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; fi
+# Boot firmware updates
+setenv bootloader 0
+setenv bootloader2 400
+setenv bootloader_s ${bootloader}
+setenv bootloader2_s ${bootloader2}
+setenv bootloader_image "imx-boot"
+setenv bootloader_s_image ${bootloader_image}
+setenv bootloader2_image "u-boot.itb"
+setenv bootloader2_s_image ${bootloader2_image}
 
-if test "${rollback}" = "1"; then run altbootcmd; else run bootcmd_otenv; run bootostree; if test ! "${upgrade_available}" = "1"; then setenv upgrade_available 1; saveenv; fi; reset; fi
+setenv update_image_boot0 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} 1 && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
+setenv update_image_boot1 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} 2 && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 
-reset
+setenv backup_boot0 'echo "${fio_msg} backing up primary boot image set ..."; run set_blkcnt && mmc dev ${devnum} 1 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 2 && mmc write ${loadaddr} 0x0 0x3FFE'
+setenv restore_boot0 'echo "${fio_msg} restore primary boot image set ..."; run set_blkcnt && mmc dev ${devnum} 2 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 1 && mmc write ${loadaddr} 0x0 0x3FFE'
+
+setenv update_primary_image "run update_image_boot0"
+setenv update_primary_image2 "run update_image_boot0"
+
+@@INCLUDE_COMMON_IMX@@
+@@INCLUDE_COMMON_ALTERNATIVE@@

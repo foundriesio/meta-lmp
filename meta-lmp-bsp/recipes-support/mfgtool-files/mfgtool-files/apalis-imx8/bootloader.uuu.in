@@ -21,7 +21,7 @@ SDPV: jump
 
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd setenv mmcdev 0
-FB: ucmd mmc dev ${mmcdev} 1; mmc erase 0 0x3FFE
+FB: ucmd mmc dev ${mmcdev} 1; mmc erase 0 0x3C00
 FB: flash bootloader ../imx-boot-@@MACHINE@@
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: ucmd mmc partconf 0 0 1 0

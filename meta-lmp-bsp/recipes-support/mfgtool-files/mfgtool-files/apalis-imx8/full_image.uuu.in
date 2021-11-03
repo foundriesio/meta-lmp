@@ -24,6 +24,8 @@ FB: ucmd setenv mmcdev 0
 FB: ucmd mmc dev ${mmcdev} 1; mmc erase 0 0x3C00
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: flash bootloader ../imx-boot-@@MACHINE@@
+FB: flash bootloader_s ../imx-boot-@@MACHINE@@
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
+FB: flash bootloader2_s ../u-boot-@@MACHINE@@.itb
 FB: ucmd mmc partconf 0 0 1 0
 FB: done

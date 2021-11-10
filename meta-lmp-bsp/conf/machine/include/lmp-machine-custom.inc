@@ -261,7 +261,7 @@ SOTA_EXTRA_CLIENT_FEATURES_append_sota_apalis-imx6-sec = " fiovb"
 # iMX8QM
 SOTA_CLIENT_FEATURES_append_mx8qm = " ubootenv"
 IMAGE_BOOT_FILES_mx8qm = "imx-boot u-boot.itb hdmitxfw.bin ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
-IMAGE_BOOT_FILES_sota_mx8qm = "imx-boot u-boot.itb boot.itb"
+IMAGE_BOOT_FILES_sota_mx8qm = "imx-boot u-boot.itb"
 LMP_BOOT_FIRMWARE_FILES_mx8qm = "imx-boot u-boot.itb"
 BOOTSCR_LOAD_ADDR_mx8qm = "0x83100000"
 KERNEL_IMAGETYPE_sota_mx8qm = "fitImage"

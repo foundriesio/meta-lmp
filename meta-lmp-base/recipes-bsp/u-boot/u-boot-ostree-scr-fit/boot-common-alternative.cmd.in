@@ -84,6 +84,14 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 
 			run rollback_setup
 			run saveenv_mmc
+
+			# check if boot firmware was also updated so we need
+			# to restore it and boot old firmware after reset
+			# and continue rollback process
+			if test "${fiovb.bootupgrade_available}" = "1"; then
+				run restore_boot0
+				reset
+			fi
 		else
 			if test "${fiovb.bootupgrade_available}" = "1"; then
 				run backup_boot0
@@ -98,21 +106,27 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 				setenv start_blk "${bootloader2_s}"
 				run load_image
 				run update_primary_image2
-				run bootcmd_bootenv
-				if test -n "${fiovb_rpmb}"; then
-					fiovb write_pvalue bootupgrade_available 0;
-					fiovb write_pvalue bootfirmware_version ${bootfirmware_version};
-				else
-					setenv bootupgrade_available 0;
-					setenv bootfirmware_version ${bootfirmware_version};
-				fi
 
-				run saveenv_mmc
 				echo "${fio_msg} doing reset to boot newly updated images..."
 				reset
 			fi;
 		fi
 	fi
+	# That means that ak-lite confirmed succesfull boot, so we can now reset
+	# fiovb.bootupgrade_available variable
+	if test "${fiovb.bootupgrade_available}" = "1" && test "${fiovb.upgrade_available}" = "0"; then
+		echo "${fio_msg} finishing boot firmware update..."
+		run bootcmd_bootenv
+		if test -n "${fiovb_rpmb}"; then
+			fiovb write_pvalue bootupgrade_available 0;
+			fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
+		else
+			setenv bootupgrade_available 0;
+			setenv bootfirmware_version "${bootfirmware_version}";
+		fi
+		run saveenv_mmc
+	fi
+
 else
 	# Save fiovb.is_secondary_boot state for allowing userspace
 	# to easily identify the boot mode via environment
@@ -127,8 +141,14 @@ setenv bootcmd_run 'if test -n ${optee_ovl_addr}; then bootm ${fit_addr}#conf@@F
 setenv bootcmd_rollback 'if test -n "${kernel_image2}" && test "${fiovb.rollback}" = "1"; then setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}; fi;'
 
 # Handle the case if we booted secondary boot image set,
-# which means that the primary set is broken
+# which means that the primary set is broken (for example, boot0 is corrupted)
 if test "${fiovb.is_secondary_boot}" = "1"; then
+	# and it became corrupted after update, which means
+	# that we should rollback also
+	if test "${fiovb.bootupgrade_available}" = "1"; then
+			run rollback_setup
+			run saveenv_mmc
+	fi
 	run restore_boot0
 	reset
 fi

@@ -7,6 +7,7 @@ DESCRIPTION = "containerd is a daemon to control runC, built for performance and
 
 SRCREV = "5b46e404f6b9f661a205e28d59c982d3634148f8"
 SRC_URI = "git://github.com/containerd/containerd;protocol=https;branch=release/1.4 \
+           file://0001-build-use-oe-provided-GO-and-flags.patch \
            file://0001-Add-build-option-GODEBUG-1.patch \
           "
 

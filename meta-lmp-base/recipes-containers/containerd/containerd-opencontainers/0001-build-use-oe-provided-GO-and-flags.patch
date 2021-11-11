@@ -1,0 +1,70 @@
+From 408e8b526d490af817a64b7220e8e2c3789de58f Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Sun, 10 Feb 2019 23:46:06 +0000
+Subject: [PATCH] build: use oe provided GO and flags
+
+We want to use the go compiler as defined in the oe-enviroment, not the
+generic call to 'go'. Without changing this, we'll get things like cgo
+errors and invalid flag combos.
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+Index: git/src/import/Makefile
+===================================================================
+--- git.orig/src/import/Makefile	2020-10-12 07:36:18.775820388 -0700
++++ git/src/import/Makefile	2020-10-12 08:00:05.134151221 -0700
+@@ -163,19 +163,19 @@
+ 
+ build: ## build the go packages
+ 	@echo "$(WHALE) $@"
+-	@go build ${DEBUG_GO_GCFLAGS} ${GO_GCFLAGS} ${GO_BUILD_FLAGS} ${EXTRA_FLAGS} ${GO_LDFLAGS} ${PACKAGES}
++	@$(GO) build ${DEBUG_GO_GCFLAGS} ${GO_GCFLAGS} ${GO_BUILD_FLAGS} ${EXTRA_FLAGS} ${GO_LDFLAGS} ${PACKAGES}
+ 
+ test: ## run tests, except integration tests and tests that require root
+ 	@echo "$(WHALE) $@"
+-	@go test ${TESTFLAGS} $(filter-out ${INTEGRATION_PACKAGE},${PACKAGES})
++	@$(GO) test ${TESTFLAGS} $(filter-out ${INTEGRATION_PACKAGE},${PACKAGES})
+ 
+ root-test: ## run tests, except integration tests
+ 	@echo "$(WHALE) $@"
+-	@go test ${TESTFLAGS} $(filter-out ${INTEGRATION_PACKAGE},${TEST_REQUIRES_ROOT_PACKAGES}) -test.root
++	@$(GO) test ${TESTFLAGS} $(filter-out ${INTEGRATION_PACKAGE},${TEST_REQUIRES_ROOT_PACKAGES}) -test.root
+ 
+ integration: ## run integration tests
+ 	@echo "$(WHALE) $@"
+-	@go test ${TESTFLAGS} -test.root -parallel ${TESTFLAGS_PARALLEL}
++	@$(GO) test ${TESTFLAGS} -test.root -parallel ${TESTFLAGS_PARALLEL}
+ 
+ benchmark: ## run benchmarks tests
+ 	@echo "$(WHALE) $@"
+@@ -185,7 +185,7 @@
+ 
+ define BUILD_BINARY =
+ @echo "$(WHALE) $@"
+-@go build ${DEBUG_GO_GCFLAGS} ${GO_GCFLAGS} ${GO_BUILD_FLAGS} -o $@ ${GO_LDFLAGS} ${GO_TAGS}  ./$<
++@$(GO) build ${DEBUG_GO_GCFLAGS} ${GO_GCFLAGS} ${GO_BUILD_FLAGS} -o $@ ${GO_LDFLAGS} ${GO_TAGS}  ./$<
+ endef
+ 
+ # Build a binary from a cmd.
+@@ -194,15 +194,15 @@
+ 
+ bin/containerd-shim: cmd/containerd-shim FORCE # set !cgo and omit pie for a static shim build: https://github.com/golang/go/issues/17789#issuecomment-258542220
+ 	@echo "$(WHALE) bin/containerd-shim"
+-	@CGO_ENABLED=${SHIM_CGO_ENABLED} go build ${GO_BUILD_FLAGS} -o bin/containerd-shim ${SHIM_GO_LDFLAGS} ${GO_TAGS} ./cmd/containerd-shim
++	@CGO_ENABLED=${SHIM_CGO_ENABLED} $(GO) build -a -pkgdir dontusecurrentpkgs ${GO_BUILD_FLAGS} -o bin/containerd-shim ${SHIM_GO_LDFLAGS} ${GO_TAGS} ./cmd/containerd-shim
+ 
+ bin/containerd-shim-runc-v1: cmd/containerd-shim-runc-v1 FORCE # set !cgo and omit pie for a static shim build: https://github.com/golang/go/issues/17789#issuecomment-258542220
+ 	@echo "$(WHALE) bin/containerd-shim-runc-v1"
+-	@CGO_ENABLED=${SHIM_CGO_ENABLED} go build ${GO_BUILD_FLAGS} -o bin/containerd-shim-runc-v1 ${SHIM_GO_LDFLAGS} ${GO_TAGS} ./cmd/containerd-shim-runc-v1
++	@CGO_ENABLED=${SHIM_CGO_ENABLED} $(GO) build -a -pkgdir dontusecurrentpkgs ${GO_BUILD_FLAGS} -o bin/containerd-shim-runc-v1 ${SHIM_GO_LDFLAGS} ${GO_TAGS} ./cmd/containerd-shim-runc-v1
+ 
+ bin/containerd-shim-runc-v2: cmd/containerd-shim-runc-v2 FORCE # set !cgo and omit pie for a static shim build: https://github.com/golang/go/issues/17789#issuecomment-258542220
+ 	@echo "$(WHALE) bin/containerd-shim-runc-v2"
+-	@CGO_ENABLED=${SHIM_CGO_ENABLED} go build ${GO_BUILD_FLAGS} -o bin/containerd-shim-runc-v2 ${SHIM_GO_LDFLAGS} ${GO_TAGS} ./cmd/containerd-shim-runc-v2
++	@CGO_ENABLED=${SHIM_CGO_ENABLED} $(GO) build -a -pkgdir dontusecurrentpkgs ${GO_BUILD_FLAGS} -o bin/containerd-shim-runc-v2 ${SHIM_GO_LDFLAGS} ${GO_TAGS} ./cmd/containerd-shim-runc-v2
+ 
+ binaries: $(BINARIES) ## build binaries
+ 	@echo "$(WHALE) $@"

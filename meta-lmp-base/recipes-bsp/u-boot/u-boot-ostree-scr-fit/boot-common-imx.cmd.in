@@ -8,3 +8,5 @@ if test -z "${update_primary_image}"; then setenv update_primary_image "run upda
 if test -z "${update_secondary_image}"; then setenv update_secondary_image "run update_image"; fi;
 if test -z "${update_primary_image2}"; then setenv update_primary_image2 "run update_image"; fi;
 if test -z "${update_secondary_image2}"; then setenv update_secondary_image2 "run update_image"; fi;
+
+if test -z "${do_reboot}"; then setenv do_reboot "reset"; fi;

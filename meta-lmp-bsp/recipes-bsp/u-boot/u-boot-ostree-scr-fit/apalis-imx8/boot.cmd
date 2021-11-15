@@ -43,5 +43,7 @@ setenv restore_boot0 'echo "${fio_msg} restore primary boot image set ..."; run 
 setenv update_primary_image "run update_image_boot0"
 setenv update_primary_image2 "run update_image_boot0"
 
+setenv do_reboot "reboot"
+
 @@INCLUDE_COMMON_IMX@@
 @@INCLUDE_COMMON_ALTERNATIVE@@

@@ -17,6 +17,7 @@ SRC_URI_append_libc-musl = " \
     file://utils.c-disable-tilde-as-it-is-not-supported-by-musl.patch \
 "
 
+PACKAGECONFIG[sota-tools] = "-DBUILD_SOTA_TOOLS=ON ${GARAGE_SIGN_OPS},-DBUILD_SOTA_TOOLS=OFF,glib-2.0 ostree,"
 PACKAGECONFIG += "${@bb.utils.filter('SOTA_EXTRA_CLIENT_FEATURES', 'fiovb', d)} libfyaml"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
@@ -64,6 +65,10 @@ FILES_${PN}-lite = " \
                     "
 FILES_${PN}-lite-lib = "${nonarch_libdir}/lib${PN}_lite.so"
 FILES_${PN}-lite-dev = "${includedir}/${PN}-lite"
+FILES_${PN}-dev = " \
+                   ${libdir}/pkgconfig/aktualizr.pc \
+                   ${includedir}/libaktualizr \
+                  "
 
 # Force same RDEPENDS, packageconfig rdepends common to both
 RDEPENDS_${PN}-lite = "${RDEPENDS_aktualizr} skopeo"

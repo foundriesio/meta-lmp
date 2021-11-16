@@ -16,6 +16,7 @@ list:x:38:38:Mailing List Manager:/var/list:/bin/sh
 irc:x:39:39:ircd:/var/run/ircd:/bin/sh
 gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
 weston:x:63:63::/home/weston:/bin/false
+pulse:x:171:171:PulseAudio System Daemon:/var/run/pulse:/sbin/nologin
 nm-openvpn:x:975:975::/home/nm-openvpn:/bin/sh
 mosquitto:x:976:976::/home/mosquitto:/bin/false
 dhcpcd:x:977:977::/var/lib/dhcpcd:/bin/false

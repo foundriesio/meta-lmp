@@ -38,6 +38,7 @@ else
 	if test -z "${upgrade_available}"; then setenv upgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_available}"; then setenv bootupgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_primary_updated}"; then setenv bootupgrade_primary_updated 0; setenv envsave 1; fi
+	if test -z "${debug}"; then setenv debug 0; setenv envsave 1; fi
 	if test -z "${bootfirmware_version}"; then run bootcmd_bootenv; setenv envsave 1; fi
 	# Call saveenv if not yet set (e.g. first boot after clean flash)
 	if test "${envsave}" = "1"; then setenv envsave; run saveenv_mmc; fi
@@ -47,6 +48,26 @@ else
 	setenv fiovb.upgrade_available "${upgrade_available}"
 	setenv fiovb.bootupgrade_available "${bootupgrade_available}"
 	setenv fiovb.bootupgrade_primary_updated "${bootupgrade_primary_updated}"
+	setenv fiovb.debug "${debug}"
+fi
+
+if test -n "${fiovb.debug}"; then
+	echo "${fio_msg} ################ Debug info ###############"
+	echo "${fio_msg} State machine variables:"
+	echo "${fio_msg} fiovb.bootcount = ${fiovb.bootcount}"
+	echo "${fio_msg} fiovb.rollback = ${fiovb.rollback}"
+	echo "${fio_msg} fiovb.upgrade_available = ${fiovb.upgrade_available}"
+	echo "${fio_msg} fiovb.bootupgrade_available = ${fiovb.bootupgrade_available}"
+	echo "${fio_msg} fiovb.bootupgrade_primary_updated = ${fiovb.bootupgrade_primary_updated}"
+	echo "${fio_msg} bootfirmware_version = ${bootfirmware_version}"
+	echo "${fio_msg}"
+	echo "${fio_msg} Other variables:"
+	echo "${fio_msg} ostree root path = ${ostree_root}"
+	echo "${fio_msg} primary boot image offset = ${bootloader}"
+	echo "${fio_msg} primary FIT offset = ${bootloader2}"
+	echo "${fio_msg} secondary boot image offset = ${bootloader_s}"
+	echo "${fio_msg} secondary FIT offset = ${bootloader2_s}"
+	echo "${fio_msg} ###########################################"
 fi
 
 # Handle boot firmware updates
@@ -67,6 +88,8 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		if test ! $? -eq 0; then fiovb write_pvalue bootupgrade_primary_updated 0; fi
 		fiovb read_pvalue bootfirmware_version 128
 		if test ! $? -eq 0; then run bootcmd_bootenv; fiovb write_pvalue bootfirmware_version "${bootfirmware_version}"; fi
+		fiovb read_pvalue debug 4
+		if test ! $? -eq 0; then fiovb write_pvalue debug 0; fi
 	fi
 
 	# Only update bootcount when upgrade_available is set and boot mode is

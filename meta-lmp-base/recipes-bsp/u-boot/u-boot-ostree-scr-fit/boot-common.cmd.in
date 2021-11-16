@@ -62,7 +62,7 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		fiovb read_pvalue bootupgrade_available 4
 		if test ! $? -eq 0; then fiovb write_pvalue bootupgrade_available 0; fi
 		fiovb read_pvalue bootfirmware_version 128
-		if test ! $? -eq 0; then run bootcmd_bootenv; fiovb write_pvalue bootfirmware_version ${bootfirmware_version}; fi
+		if test ! $? -eq 0; then run bootcmd_bootenv; fiovb write_pvalue bootfirmware_version "${bootfirmware_version}"; fi
 	fi
 
 	# Only update bootcount when upgrade_available is set and boot mode is
@@ -124,10 +124,10 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		run bootcmd_bootenv
 		if test -n "${fiovb_rpmb}"; then
 			fiovb write_pvalue bootupgrade_available 0;
-			fiovb write_pvalue bootfirmware_version ${bootfirmware_version};
+			fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
 		else
 			setenv bootupgrade_available 0;
-			setenv bootfirmware_version ${bootfirmware_version};
+			setenv bootfirmware_version "${bootfirmware_version}";
 		fi
 
 		run saveenv_mmc
@@ -146,7 +146,7 @@ fi
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:${rootpart} ${fit_addr} "/boot"${kernel_image}'
 setenv bootcmd_tee_ovy 'if test -n ${optee_ovl_addr}; then imxtract ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final} fdt@@FIT_NODE_SEPARATOR@@${fdt_file_final} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}; fi'
 setenv bootcmd_run 'if test -n ${optee_ovl_addr}; then bootm ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final} ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final} ${fdt_addr}; else echo "${fio_msg} loading ${fdt_file_final}"; bootm ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final}; fi'
-setenv bootcmd_rollback 'if test -n "${kernel_image2}" && test "${fiovb.is_secondary_boot}" = "0" && test "${fiovb.rollback}" = "1"; then setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}; fi;'
+setenv bootcmd_rollback 'if test -n "${kernel_image2}" && test "${fiovb.is_secondary_boot}" = "0" && test "${fiovb.rollback}" = "1"; then setenv kernel_image "${kernel_image2}"; setenv bootargs "${bootargs2}"; fi;'
 
 run bootcmd_rollback
 run bootcmd_load_f

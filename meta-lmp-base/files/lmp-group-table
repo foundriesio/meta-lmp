@@ -49,6 +49,9 @@ wayland:x:64:
 shutdown:x:70:
 nobody:*:99:
 users:x:100:
+pulse:x:171:
+pulse-access:x:973:
+pulse-rt:x:974:
 nm-openvpn:x:975:
 mosquitto:x:976:
 dhcpcd:x:977:

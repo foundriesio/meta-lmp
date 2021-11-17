@@ -51,7 +51,7 @@ else
 	setenv fiovb.debug "${debug}"
 fi
 
-if test -n "${fiovb.debug}"; then
+if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} ################ Debug info ###############"
 	echo "${fio_msg} State machine variables:"
 	echo "${fio_msg} fiovb.bootcount = ${fiovb.bootcount}"

@@ -13,6 +13,7 @@ OPTEEMACHINE_uz = "zynqmp-zcu102"
 EXTRA_OEMAKE_append_imx = " \
     CFG_CAAM_DBG=0x001 \
     CFG_SCTLR_ALIGNMENT_CHECK=n \
+    CFG_DTB_MAX_SIZE=0x11000 \
 "
 
 # SoC Settings

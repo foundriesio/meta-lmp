@@ -14,6 +14,7 @@ UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
 IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE_imx7ulpea-ucom = "fitImage"
 KERNEL_CLASSES_imx7ulpea-ucom = " kernel-lmp-fitimage "
+PREFERRED_VERSION_u-boot-fio-mfgtool_imx7ulpea-ucom ?= "2021.04"
 
 # iMX6ULL
 UBOOT_SIGN_ENABLE_mx6ull = "1"

@@ -437,6 +437,9 @@ PREFERRED_VERSION_optee-test_uz3eg-iocc = "3.15.0"
 UBOOT_SIGN_ENABLE_sota_uz3eg-iocc-sec = "1"
 SOTA_CLIENT_FEATURES_remove_sota_uz3eg-iocc-sec = "ubootenv"
 SOTA_EXTRA_CLIENT_FEATURES_append_sota_uz3eg-iocc-sec = " fiovb"
+## Avnet UltraZed with secure boot support and EBBR
+UBOOT_SPL_SIGN_ENABLE_sota_uz3eg-iocc-ebbr-sec = "1"
+UBOOT_SIGN_ENABLE_sota_uz3eg-iocc-ebbr-sec = "0"
 
 # TI AM64x
 MACHINE_FEATURES_append_am64xx-evm = " optee"

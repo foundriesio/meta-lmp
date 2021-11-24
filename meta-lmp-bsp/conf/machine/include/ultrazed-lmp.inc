@@ -1,6 +1,6 @@
 # Avnet UltraZed Generic Settings
 
-MACHINEOVERRIDES = "uz:uz3eg:${MACHINE}"
+MACHINEOVERRIDES =. "uz:uz3eg:"
 
 XILINX_VER_MAIN ?= "2021.1"
 

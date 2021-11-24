@@ -59,7 +59,7 @@ WKS_FILE_sota = "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'sdimage-mbr-e
 WKS_FILE_DEPENDS_append = " virtual/bootloader"
 IMAGE_BOOT_FILES = "${@get_default_image_boot_files(d)} boot.bin boot.scr uEnv.txt system-top.dtb bitstream.bit.bin"
 IMAGE_BOOT_FILES_sota = "boot.bin;boot0001.bin u-boot.itb;u-boot0001.itb boot.bin;boot0002.bin u-boot.itb;u-boot0002.itb"
-IMAGE_BOOT_FILES_sota += "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'system-top.dtb', '', d)}"
+IMAGE_BOOT_FILES_sota_append = " ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'system-top.dtb', '', d)}"
 
 # Boot firmware updates
 LMP_BOOT_FIRMWARE_FILES_sota = "boot.bin u-boot.itb"

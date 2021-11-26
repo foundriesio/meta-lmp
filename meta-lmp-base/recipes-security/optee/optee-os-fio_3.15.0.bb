@@ -1,7 +1,7 @@
 require optee-os-fio.inc
 
 PV = "3.15.0+git"
-SRCREV = "56918f1a8939fd1426f8a34c1d213f5f6707e8f5"
+SRCREV = "bc4d6d7ebf6ba98c75f7f8cf6ef24353c5a30786"
 SRCBRANCH = "3.15+fio"
 
 ALLOW_EMPTY_${PN}-ta-pkcs11 = "1"

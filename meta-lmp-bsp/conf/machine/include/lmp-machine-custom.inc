@@ -202,6 +202,7 @@ BOOTSCR_LOAD_ADDR_imx7ulpea-ucom = "0x60800000"
 UBOOT_MACHINE_imx7ulpea-ucom = "mx7ulp_com_defconfig"
 UBOOT_CONFIG_imx7ulpea-ucom = ""
 PREFERRED_VERSION_u-boot-fio_imx7ulpea-ucom ?= "2021.04"
+KERNEL_BUILTIN_WIREGUARD_imx7ulpea-ucom = "1"
 
 # iMX6ULL
 UBOOT_SIGN_ENABLE_sota_mx6ull = "1"

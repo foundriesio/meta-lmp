@@ -201,6 +201,7 @@ PREFERRED_VERSION_optee-os-fio_imx7ulpea-ucom = "3.10.0+git"
 PREFERRED_VERSION_optee-client_imx7ulpea-ucom = "3.10.0"
 PREFERRED_VERSION_optee-examples_imx7ulpea-ucom = "3.10.0"
 PREFERRED_VERSION_optee-test_imx7ulpea-ucom = "3.10.0"
+KERNEL_BUILTIN_WIREGUARD_imx7ulpea-ucom = "1"
 
 # iMX6UL
 UBOOT_SIGN_ENABLE_sota_mx6ul = "1"

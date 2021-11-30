@@ -483,9 +483,9 @@ OSTREE_BOOTLOADER_tegra194 = "syslinux"
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
-PREFERRED_VERSION_optee-client_mx8 = "3.10.0"
-PREFERRED_VERSION_optee-examples_mx8 = "3.10.0"
-PREFERRED_VERSION_optee-test_mx8 = "3.10.0"
+PREFERRED_VERSION_optee-client_mx8 = "3.15.0"
+PREFERRED_VERSION_optee-examples_mx8 = "3.15.0"
+PREFERRED_VERSION_optee-test_mx8 = "3.15.0"
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_remove_imx = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

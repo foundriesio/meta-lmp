@@ -33,6 +33,11 @@ EXTRA_OEMAKE_append_qemuarm64 = " \
     CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
 "
 
+# Additional Settings for SE05X
+EXTRA_OEMAKE_append_imx8mm-lpddr4-evk = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
+"
+
 # Extra Settings for Secure Machines
 EXTRA_OEMAKE_append_uz3eg-iocc-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \

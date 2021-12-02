@@ -2,11 +2,11 @@ SUMMARY = "Produces a Manufacturing Tool compatible Linux Kernel"
 DESCRIPTION = "Linux Kernel recipe that produces a Manufacturing Tool \
 compatible Linux Kernel to be used in updater environment"
 
-# Use NXP BSP by default
-KERNEL_REPO ?= "git://source.codeaurora.org/external/imx/linux-imx.git"
+# Use Freescale kernel by default
+KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_REPO_PROTOCOL ?= "https"
-LINUX_VERSION ?= "5.10.35"
-KERNEL_BRANCH ?= "lf-5.10.y"
+LINUX_VERSION ?= "5.10.80"
+KERNEL_BRANCH ?= "5.10-2.1.x-imx"
 
 # Drop features that are appended by other layers (not required here)
 KERNEL_FEATURES_remove = "cfg/fs/vfat.scc"

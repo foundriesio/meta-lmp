@@ -1,0 +1,40 @@
+uuu_version 1.3.102
+
+SDPS: boot -f imx-boot-mfgtool.signed
+CFG: FB: -vid 0x0525 -pid 0x4000
+CFG: FB: -vid 0x0525 -pid 0x4025
+CFG: FB: -vid 0x0525 -pid 0x402F
+CFG: FB: -vid 0x0525 -pid 0x4030
+CFG: FB: -vid 0x0525 -pid 0x4031
+
+SDPU: delay 1000
+SDPU: write -f u-boot-mfgtool.itb
+SDPU: jump
+
+# These commands will be run when use SPL and will be skipped if no spl
+# if (SPL support SDPV)
+# {
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+# }
+
+FB: ucmd fuse prog -y 0 722 0x7E90F8D6
+FB: ucmd fuse prog -y 0 723 0xE1020512
+FB: ucmd fuse prog -y 0 724 0x4FF77EB2
+FB: ucmd fuse prog -y 0 725 0x1D964702
+FB: ucmd fuse prog -y 0 726 0x5ED61C06
+FB: ucmd fuse prog -y 0 727 0x14139AB9
+FB: ucmd fuse prog -y 0 728 0x0A57872C
+FB: ucmd fuse prog -y 0 729 0xF367F432
+FB: ucmd fuse prog -y 0 730 0xE8153815
+FB: ucmd fuse prog -y 0 731 0xA804967A
+FB: ucmd fuse prog -y 0 732 0xDC14638B
+FB: ucmd fuse prog -y 0 733 0xB3A914F7
+FB: ucmd fuse prog -y 0 734 0x211FD529
+FB: ucmd fuse prog -y 0 735 0x8273EBD2
+FB: ucmd fuse prog -y 0 736 0x6E0B791C
+FB: ucmd fuse prog -y 0 737 0x6A558134
+
+FB: acmd reset
+fb: done

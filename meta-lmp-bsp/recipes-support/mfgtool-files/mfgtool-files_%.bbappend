@@ -12,6 +12,12 @@ SRC_URI_append_apalis-imx6-sec = " \
     file://readme.md \
 "
 
+SRC_URI_append_apalis-imx8-sec = " \
+    file://fuse.uuu \
+    file://close.uuu \
+    file://readme.md \
+"
+
 SRC_URI_append_imx8mm-lpddr4-evk-sec = " \
     file://fuse.uuu \
     file://close.uuu \
@@ -78,6 +84,18 @@ do_compile_append_apalis-imx6-sec() {
 }
 
 do_deploy_prepend_apalis-imx6-sec() {
+    install -d ${DEPLOYDIR}/${PN}
+    install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
+    install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu
+    install -m 0644 ${WORKDIR}/readme.md ${DEPLOYDIR}/${PN}/readme.md
+}
+
+do_compile_append_apalis-imx8-sec() {
+    sed -i 's/imx-boot.*/&.signed/g' bootloader.uuu
+    sed -i 's/imx-boot.*/&.signed/g' full_image.uuu
+}
+
+do_deploy_prepend_apalis-imx8-sec() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
     install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu

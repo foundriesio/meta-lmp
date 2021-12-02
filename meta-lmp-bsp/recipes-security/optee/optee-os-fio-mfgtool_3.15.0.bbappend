@@ -25,6 +25,8 @@ EXTRA_OEMAKE_append_apalis-imx6 = " \
 "
 EXTRA_OEMAKE_append_apalis-imx8 = " \
     CFG_UART_BASE=0x5a070000 \
+    CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
+    CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_RNG_PTA=y \
 "
 EXTRA_OEMAKE_append_imx6ulevk = " \
     CFG_NS_ENTRY_ADDR=0x87800000 CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
@@ -55,6 +57,11 @@ EXTRA_OEMAKE_append_imx8mm-lpddr4-evk = " \
 # Extra Settings for Secure Machines
 EXTRA_OEMAKE_append_apalis-imx6-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
+    CFG_EARLY_TA=y \
+    CFG_IN_TREE_EARLY_TAS=fiovb/22250a54-0bf1-48fe-8002-7b20f1c9c9b1 \
+"
+EXTRA_OEMAKE_append_apalis-imx8-sec = " \
+    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=0 CFG_RPMB_WRITE_KEY=y \
     CFG_EARLY_TA=y \
     CFG_IN_TREE_EARLY_TAS=fiovb/22250a54-0bf1-48fe-8002-7b20f1c9c9b1 \
 "

@@ -326,6 +326,10 @@ UBOOT_CONFIG_apalis-imx8 = ""
 UBOOT_SUFFIX_apalis-imx8 = "bin"
 UBOOT_MACHINE_apalis-imx8 = "apalis-imx8_defconfig"
 
+# Toradex Apalis iMX8 with secure boot support
+SOTA_CLIENT_FEATURES_remove_sota_apalis-imx8-sec = "ubootenv"
+SOTA_EXTRA_CLIENT_FEATURES_append_sota_apalis-imx8-sec = " fiovb"
+
 # iMX8MQ
 UBOOT_SIGN_ENABLE_sota_mx8mq = "1"
 IMX_DEFAULT_BOOTLOADER_mx8mq ?= "u-boot-fio"

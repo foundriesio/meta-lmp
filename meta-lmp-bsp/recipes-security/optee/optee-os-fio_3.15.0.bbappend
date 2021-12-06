@@ -51,6 +51,9 @@ EXTRA_OEMAKE_append_qemuarm64 = " \
 "
 
 # Additional Settings for SE05X
+EXTRA_OEMAKE_append_imx6ullevk = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=1', '', d)} \
+"
 EXTRA_OEMAKE_append_imx8mm-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
 "

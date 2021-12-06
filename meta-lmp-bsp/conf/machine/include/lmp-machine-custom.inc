@@ -202,6 +202,10 @@ UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
 BOOTSCR_LOAD_ADDR_imx7ulpea-ucom = "0x60800000"
 UBOOT_MACHINE_imx7ulpea-ucom = "mx7ulp_com_defconfig"
 UBOOT_CONFIG_imx7ulpea-ucom = ""
+PREFERRED_VERSION_optee-os-fio_imx7ulpea-ucom = "3.10.0+git"
+PREFERRED_VERSION_optee-client_imx7ulpea-ucom = "3.10.0"
+PREFERRED_VERSION_optee-examples_imx7ulpea-ucom = "3.10.0"
+PREFERRED_VERSION_optee-test_imx7ulpea-ucom = "3.10.0"
 
 # iMX6ULL
 UBOOT_SIGN_ENABLE_sota_mx6ull = "1"
@@ -254,6 +258,10 @@ WKS_FILE_apalis-imx6 = "sdimage-imx6dq-spl-fit.wks"
 WKS_FILES_sota_apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
 MACHINE_FEATURES_append_apalis-imx6 = " optee"
 BOOTSCR_LOAD_ADDR_apalis-imx6 = "0x15000000"
+PREFERRED_VERSION_optee-os-fio_apalis-imx6 = "3.10.0+git"
+PREFERRED_VERSION_optee-client_apalis-imx6 = "3.10.0"
+PREFERRED_VERSION_optee-examples_apalis-imx6 = "3.10.0"
+PREFERRED_VERSION_optee-test_apalis-imx6 = "3.10.0"
 
 # Toradex Apalis iMX6 with secure boot support
 SOTA_CLIENT_FEATURES_remove_sota_apalis-imx6-sec = "ubootenv"

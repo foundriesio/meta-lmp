@@ -18,5 +18,3 @@ do_install_append() {
 }
 
 FILES_${PN} += "${libdir}/tee-supplicant/plugins/"
-
-DEFAULT_PREFERENCE = "-1"

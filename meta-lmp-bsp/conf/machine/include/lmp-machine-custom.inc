@@ -175,6 +175,7 @@ OSTREE_KERNEL_ARGS_mx6 ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_A
 OSTREE_KERNEL_ARGS_mx6ull ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS_mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
+MACHINE_FIRMWARE_append = " ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8987', 'linux-firmware-nxp89xx', '', d)}"
 
 # Toradex Colibri iMX7 eMMC
 PREFERRED_PROVIDER_u-boot-default-script_colibri-imx7-emmc = "u-boot-ostree-scr"

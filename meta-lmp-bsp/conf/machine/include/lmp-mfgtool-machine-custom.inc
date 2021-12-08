@@ -14,6 +14,10 @@ UBOOT_CLASSES_imx7ulpea-ucom = "uboot-fitimage"
 IMAGE_BOOT_FILES_imx7ulpea-ucom = "boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE_imx7ulpea-ucom = "fitImage"
 KERNEL_CLASSES_imx7ulpea-ucom = " kernel-lmp-fitimage "
+PREFERRED_VERSION_optee-os-fio-mfgtool_imx7ulpea-ucom = "3.10.0+git"
+PREFERRED_VERSION_optee-client_imx7ulpea-ucom = "3.10.0"
+PREFERRED_VERSION_optee-examples_imx7ulpea-ucom = "3.10.0"
+PREFERRED_VERSION_optee-test_imx7ulpea-ucom = "3.10.0"
 
 # iMX6ULL
 UBOOT_SIGN_ENABLE_mx6ull = "1"
@@ -66,6 +70,10 @@ UBOOT_CLASSES_apalis-imx6 = "uboot-fitimage"
 IMAGE_BOOT_FILES_apalis-imx6 = "boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE_apalis-imx6 = "fitImage"
 KERNEL_CLASSES_apalis-imx6 = " kernel-lmp-fitimage "
+PREFERRED_VERSION_optee-os-fio-mfgtool_apalis-imx6 = "3.10.0+git"
+PREFERRED_VERSION_optee-client_apalis-imx6 = "3.10.0"
+PREFERRED_VERSION_optee-examples_apalis-imx6 = "3.10.0"
+PREFERRED_VERSION_optee-test_apalis-imx6 = "3.10.0"
 
 # iMX8QM-MEK and Apalis-iMX8
 IMX_DEFAULT_BOOTLOADER_mx8qm ?= "u-boot-fio-mfgtool"

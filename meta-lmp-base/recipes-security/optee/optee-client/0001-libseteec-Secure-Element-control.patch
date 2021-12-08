@@ -1,0 +1,620 @@
+From f4f54e5a76641fda22a49f00294771f948cd4c92 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Wed, 3 Nov 2021 12:28:47 +0100
+Subject: [PATCH] libseteec: Secure Element control
+
+When a Secure Element -supported by OP-TEE- enables SCP03, the
+encryption keys could have been derived from the HUK and therefore not
+known to the normal world.
+
+In such circumstances, APDU frames will need to be routed to the
+secure world for encryption before sending them to the SE and then
+decrypted when processing the response.
+
+Secure Elements supporting SCP03 are shipped with predefined keys
+stored in persistent memory and documented in their data sheets.
+
+This library provides an interface to enable SCP03 using those
+non-secure keys. It also provides an interface to rotate these default
+keys and derive board unique new ones before enabling the SCP03
+session.
+
+A working scenario currently in OP-TEE is the NXP SE050/SE051 device
+(both have been tested)
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+Acked-by: Jerome Forissier <jerome@forissier.org>
+Reviewed-by: Etienne Carriere <etienne.carriere@linaro.org>
+---
+ CMakeLists.txt                   |   1 +
+ Makefile                         |  16 +++-
+ libseteec/CMakeLists.txt         |  72 +++++++++++++++
+ libseteec/Makefile               |  71 +++++++++++++++
+ libseteec/include/CMakeLists.txt |   7 ++
+ libseteec/include/se_tee.h       |  90 +++++++++++++++++++
+ libseteec/src/pta_apdu.h         |  47 ++++++++++
+ libseteec/src/pta_scp03.h        |  31 +++++++
+ libseteec/src/se.c               | 149 +++++++++++++++++++++++++++++++
+ 9 files changed, 481 insertions(+), 3 deletions(-)
+ create mode 100644 libseteec/CMakeLists.txt
+ create mode 100644 libseteec/Makefile
+ create mode 100644 libseteec/include/CMakeLists.txt
+ create mode 100644 libseteec/include/se_tee.h
+ create mode 100644 libseteec/src/pta_apdu.h
+ create mode 100644 libseteec/src/pta_scp03.h
+ create mode 100644 libseteec/src/se.c
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dc621f2..a3d1f0d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -37,3 +37,4 @@ add_subdirectory (libteec)
+ add_subdirectory (tee-supplicant)
+ add_subdirectory (public)
+ add_subdirectory (libckteec)
++add_subdirectory (libseteec)
+diff --git a/Makefile b/Makefile
+index 01deec7..d7aa316 100644
+--- a/Makefile
++++ b/Makefile
+@@ -16,7 +16,7 @@ SBINDIR ?= /usr/sbin
+ LIBDIR ?= /usr/lib
+ INCLUDEDIR ?= /usr/include
+ 
+-.PHONY: all build build-libteec build-libckteec install copy_export \
++.PHONY: all build build-libteec build-libckteec build-libseteec install copy_export \
+ 	clean cscope clean-cscope \
+ 	checkpatch-pre-req checkpatch-modified-patch checkpatch-modified-file \
+ 	checkpatch-last-commit-patch checkpatch-last-commit-file \
+@@ -34,15 +34,19 @@ build-tee-supplicant: build-libteec
+ 	@echo "Building tee-supplicant"
+ 	$(MAKE) --directory=tee-supplicant  --no-print-directory --no-builtin-variables CFG_TEE_SUPP_LOG_LEVEL=$(CFG_TEE_SUPP_LOG_LEVEL)
+ 
+-build: build-libteec build-tee-supplicant build-libckteec
++build: build-libteec build-tee-supplicant build-libckteec build-libseteec
+ 
+ build-libckteec: build-libteec
+ 	@echo "Building libckteec.so"
+ 	@$(MAKE) --directory=libckteec --no-print-directory --no-builtin-variables
+ 
++build-libseteec: build-libteec
++	@echo "Building libseteec.so"
++	@$(MAKE) --directory=libseteec --no-print-directory --no-builtin-variables
++
+ install: copy_export
+ 
+-clean: clean-libteec clean-tee-supplicant clean-cscope clean-libckteec
++clean: clean-libteec clean-tee-supplicant clean-cscope clean-libckteec clean-libseteec
+ 
+ clean-libteec:
+ 	@$(MAKE) --directory=libteec --no-print-directory clean
+@@ -53,6 +57,9 @@ clean-tee-supplicant:
+ clean-libckteec:
+ 	@$(MAKE) --directory=libckteec --no-print-directory clean
+ 
++clean-libseteec:
++	@$(MAKE) --directory=libseteec --no-print-directory clean
++
+ cscope:
+ 	@echo "  CSCOPE"
+ 	${VPREFIX}find ${CURDIR} -name "*.[chsS]" > cscope.files
+@@ -137,3 +144,6 @@ copy_export: build
+ 	cp libckteec/include/*.h $(DESTDIR)$(INCLUDEDIR)
+ 	cp -a ${O}/libckteec/libckteec.so* $(DESTDIR)$(LIBDIR)
+ 	cp -a ${O}/libckteec/libckteec.a $(DESTDIR)$(LIBDIR)
++	cp libseteec/include/*.h $(DESTDIR)$(INCLUDEDIR)
++	cp -a ${O}/libseteec/libseteec.so* $(DESTDIR)$(LIBDIR)
++	cp -a ${O}/libseteec/libseteec.a $(DESTDIR)$(LIBDIR)
+diff --git a/libseteec/CMakeLists.txt b/libseteec/CMakeLists.txt
+new file mode 100644
+index 0000000..73e5bc1
+--- /dev/null
++++ b/libseteec/CMakeLists.txt
+@@ -0,0 +1,72 @@
++project(seteec C)
++
++set(MAJOR_VERSION 0)
++set(MINOR_VERSION 1)
++set(PATCH_VERSION 0)
++
++set(PROJECT_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
++
++################################################################################
++# Packages
++################################################################################
++find_package(Threads REQUIRED)
++if(NOT THREADS_FOUND)
++	message(FATAL_ERROR "Threads not found")
++endif()
++
++include(GNUInstallDirs)
++
++################################################################################
++# Source files
++################################################################################
++set (SRC
++	src/se.c
++)
++
++################################################################################
++# Built library
++################################################################################
++add_library (seteec ${SRC})
++
++set_target_properties (seteec PROPERTIES
++	VERSION ${PROJECT_VERSION}
++	SOVERSION ${MAJOR_VERSION}
++)
++
++################################################################################
++# Flags always set
++################################################################################
++target_compile_definitions (seteec
++	PRIVATE -D_GNU_SOURCE
++	PRIVATE -DBINARY_PREFIX="LT"
++)
++
++################################################################################
++# Optional flags
++################################################################################
++
++################################################################################
++# Public and private header and library dependencies
++################################################################################
++target_include_directories(seteec
++	PUBLIC include
++	PRIVATE src
++)
++
++target_include_directories(teec
++	PUBLIC include
++)
++
++target_link_libraries (seteec
++	PRIVATE pthread
++	PRIVATE teec
++)
++
++################################################################################
++# Install targets
++################################################################################
++install (TARGETS seteec
++	DESTINATION ${CMAKE_INSTALL_LIBDIR}
++)
++
++add_subdirectory(include)
+diff --git a/libseteec/Makefile b/libseteec/Makefile
+new file mode 100644
+index 0000000..8384d5b
+--- /dev/null
++++ b/libseteec/Makefile
+@@ -0,0 +1,71 @@
++include ../flags.mk
++include ../config.mk
++
++OUT_DIR := $(OO)/libseteec
++
++.PHONY: all libseteec clean
++
++all: libseteec
++install: libseteec
++
++LIB_NAME	:= libseteec
++MAJOR_VERSION	:= 0
++MINOR_VERSION	:= 1
++PATCH_VERSION	:= 0
++
++LIB_MAJOR		:= $(LIB_NAME).so.$(MAJOR_VERSION)
++LIB_MAJ_MIN		:= $(LIB_NAME).so.$(MAJOR_VERSION).$(MINOR_VERSION)
++LIB_MAJ_MIN_PAT		:= $(LIB_NAME).so.$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION)
++LIBSETEEC_SO_LIBRARY	:= $(LIB_MAJ_MIN_PAT)
++LIBSETEEC_AR_LIBRARY	:= $(LIB_NAME).a
++
++LIBSETEEC_SRC_DIR	:= src
++
++LIBSETEEC_SRCS	= se.c
++
++LIBSETEEC_INCLUDES	= ${CURDIR}/include
++LIBSETEEC_INCLUDES 	+= ${CURDIR}/../public
++
++LIBSETEEC_CFLAGS	:= $(addprefix -I, $(LIBSETEEC_INCLUDES)) \
++			$(CFLAGS) -D_GNU_SOURCE -fPIC
++
++LIBSETEEC_LFLAGS	:= $(LDFLAGS) -L$(OUT_DIR)/../libteec -lteec -lpthread
++
++LIBSETEEC_OBJ_DIR	:= $(OUT_DIR)
++LIBSETEEC_OBJS		:= $(patsubst %.c,$(LIBSETEEC_OBJ_DIR)/%.o, $(LIBSETEEC_SRCS))
++
++$(LIBSETEEC_OBJ_DIR)/%.o: ${LIBSETEEC_SRC_DIR}/%.c
++	$(VPREFIX)mkdir -p $(LIBSETEEC_OBJ_DIR)
++	@echo "  CC      $<"
++	$(VPREFIX)$(CC) $(LIBSETEEC_CFLAGS) -c $< -o $@
++
++libseteec: $(OUT_DIR)/$(LIBSETEEC_SO_LIBRARY)
++
++$(OUT_DIR)/$(LIBSETEEC_SO_LIBRARY): $(LIBSETEEC_OBJS)
++	@echo "  LINK    $@"
++	$(VPREFIX)$(CC) -shared -Wl,-soname,$(LIB_MAJOR) -o $@ $+ $(LIBSETEEC_LFLAGS)
++	@echo ""
++
++libseteec: $(OUT_DIR)/$(LIBSETEEC_AR_LIBRARY)
++
++$(OUT_DIR)/$(LIBSETEEC_AR_LIBRARY): $(LIBSETEEC_OBJS)
++	@echo "  AR      $@"
++	$(VPREFIX)$(AR) rcs $@ $+
++
++libseteec:
++	$(VPREFIX)ln -sf $(LIB_MAJ_MIN_PAT) $(OUT_DIR)/$(LIB_MAJ_MIN)
++	$(VPREFIX)ln -sf $(LIB_MAJ_MIN) $(OUT_DIR)/$(LIB_MAJOR)
++	$(VPREFIX)ln -sf $(LIB_MAJOR) $(OUT_DIR)/$(LIB_NAME).so
++
++################################################################################
++# Cleaning up configuration
++################################################################################
++clean:
++	$(RM) $(LIBSETEEC_OBJS)
++	$(RM) $(OUT_DIR)/$(LIB_MAJ_MIN_PAT)
++	$(RM) $(OUT_DIR)/$(LIB_MAJ_MIN)
++	$(RM) $(OUT_DIR)/$(LIB_MAJOR)
++	$(RM) $(OUT_DIR)/$(LIBSETEEC_SO_LIBRARY)
++	$(RM) $(OUT_DIR)/$(LIBSETEEC_AR_LIBRARY)
++	$(call rmdir,$(OUT_DIR))
++
+diff --git a/libseteec/include/CMakeLists.txt b/libseteec/include/CMakeLists.txt
+new file mode 100644
+index 0000000..9241574
+--- /dev/null
++++ b/libseteec/include/CMakeLists.txt
+@@ -0,0 +1,7 @@
++project (libseteec-headers C)
++
++FILE(GLOB INSTALL_HEADERS "*.h")
++
++add_library(${PROJECT_NAME} INTERFACE)
++
++install (FILES ${INSTALL_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+diff --git a/libseteec/include/se_tee.h b/libseteec/include/se_tee.h
+new file mode 100644
+index 0000000..4da2342
+--- /dev/null
++++ b/libseteec/include/se_tee.h
+@@ -0,0 +1,90 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/*
++ * Copyright (c) 2021, Foundries.io
++ * Jorge Ramirez-Ortiz <jorge@foundries.io>
++ */
++
++#ifndef SE_TEE_H
++#define SE_TEE_H
++
++#include <unistd.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++typedef unsigned long SE_ULONG;
++typedef SE_ULONG SE_RV;
++
++/* Values for type SR_RV */
++#define SER_OK					0x0000
++#define SER_CANT_OPEN_SESSION			0x0001
++#define SER_ERROR_GENERIC			0x0002
++
++/*
++ * Type identifier for the APDU message as described by Smart Card Standard ISO7816-4
++ * about ADPU message bodies decoding convention:
++ *
++ * https://cardwerk.com/smart-card-standard-iso7816-4-section-5-basic-organizations/#chap5_3_2
++ */
++enum se_apdu_type {
++	SE_APDU_NO_HINT,
++	SE_APDU_CASE_1,
++	SE_APDU_CASE_2,
++	SE_APDU_CASE_2E,
++	SE_APDU_CASE_3,
++	SE_APDU_CASE_3E,
++	SE_APDU_CASE_4,
++	SE_APDU_CASE_4E,
++};
++
++/**
++ * se_apdu_request() - Send an APDU message and get response.
++ *
++ * @param type		Type of the APDU command.
++ * @param hdr		Pointer to APDU message header.
++ * @param hdr_len	Byte length of message header @hdr.
++ * @param src		Pointer to APDU message payload.
++ * @param src_len	Byte length of message payload @src.
++ * @param dst		Pointer to APDU message reponse buffer.
++ * @param dst_len	Byte length of reponse buffer @dst.
++ *
++ * @return SER_CANT_OPEN_SESSION	Error opening the TEE session.
++ * @return SER_ERROR_GENERIC		Error unspecified.
++ * @return SER_OK			On success.
++ */
++SE_RV se_apdu_request(enum se_apdu_type type,
++		    unsigned char *hdr, size_t hdr_len,
++		    unsigned char *src, size_t src_len,
++		    unsigned char *dst, size_t *dst_len);
++
++/**
++ * se_scp03_enable() - Enable the SCP03 protocol using the keys active in the
++ * Secure Element.
++ *
++ * Enables the SCP03 session with the Secure Element.
++ *
++ * @return SER_CANT_OPEN_SESSION	Error opening the TEE session.
++ * @return SER_ERROR_GENERIC		Error unspecified.
++ * @return SER_OK			On success.
++ */
++SE_RV se_scp03_enable(void);
++
++/**
++ * se_scp03_rotate_keys_and_enable() - Attempt to replace the active SCP03 keys
++ * and enable the SCP03 session.
++ *
++ * Generates secure keys for the board and writes them in the Secure Element non
++ * volatile memory. Then re-enables the session.
++ *
++ * @return SER_CANT_OPEN_SESSION	Error opening the TEE session.
++ * @return SER_ERROR_GENERIC		Error unspecified.
++ * @return SER_OK			On success.
++ */
++SE_RV se_scp03_rotate_keys_and_enable(void);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /*SE_TEE_H*/
+diff --git a/libseteec/src/pta_apdu.h b/libseteec/src/pta_apdu.h
+new file mode 100644
+index 0000000..8fed78f
+--- /dev/null
++++ b/libseteec/src/pta_apdu.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: BSD-3-Clause */
++/*
++ * Copyright (C) 2021, Foundries Limited
++ * Author: Jorge Ramirez <jorge@foundries.io>
++ */
++
++#ifndef __PTA_APDU_H
++#define __PTA_APDU_H
++
++#define PTA_APDU_UUID { 0x3f3eb880, 0x3639, 0x11ec, \
++			{ 0x9b, 0x9d, 0x0f, 0x3f, 0xc9, 0x46, 0x8f, 0x50 } }
++
++/*
++ * ADPU based communication with the Secure Element
++ *
++ * [in]  value[0].a           Use APDU TXRX hints: PTA_APDU_TXRX_CASE_*
++ * [in]  memref[1].buffer     APDU header.
++ * [in]  memref[1].size       APDU header length.
++ * [in]  memref[2].buffer     request (APDU raw frame).
++ * [in]  memref[2].size       request length.
++ * [out] memref[3].buffer     response (APDU raw frame).
++ * [out] memref[3].size       response length.
++ *
++ * Result:
++ * TEE_SUCCESS - Invoke command success
++ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
++ * TEE_ERROR_NOT_IMPLEMENTED - Invoke command not implemented
++ * TEE_ERROR_GENERIC - Invoke command failure
++ */
++#define PTA_CMD_TXRX_APDU_RAW_FRAME		0
++
++/*
++ * Type identifier for the APDU message as described by Smart Card Standard
++ * ISO7816-4 about ADPU message bodies decoding convention:
++ *
++ * https://cardwerk.com/smart-card-standard-iso7816-4-section-5-basic-organizations/#chap5_3_2
++ */
++#define PTA_APDU_TXRX_CASE_NO_HINT	0
++#define PTA_APDU_TXRX_CASE_1		1
++#define PTA_APDU_TXRX_CASE_2		2
++#define PTA_APDU_TXRX_CASE_2E		3
++#define PTA_APDU_TXRX_CASE_3		4
++#define PTA_APDU_TXRX_CASE_3E		5
++#define PTA_APDU_TXRX_CASE_4		6
++#define PTA_APDU_TXRX_CASE_4E		7
++
++#endif /* __PTA_APDU_H */
+diff --git a/libseteec/src/pta_scp03.h b/libseteec/src/pta_scp03.h
+new file mode 100644
+index 0000000..393ca56
+--- /dev/null
++++ b/libseteec/src/pta_scp03.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: BSD-3-Clause */
++/*
++ * Copyright (C) 2020, Foundries Limited
++ */
++
++#ifndef __PTA_SCP03_H
++#define __PTA_SCP03_H
++
++#define PTA_SCP03_UUID { 0xbe0e5821, 0xe718, 0x4f77, \
++			{ 0xab, 0x3e, 0x8e, 0x6c, 0x73, 0xa9, 0xc7, 0x35 } }
++
++/*
++ * Enable SCP03 support on the SE
++ *
++ * [in]     value[0].a    Use session keys PTA_SCP03_SESSION_*
++ *
++ * Result:
++ * TEE_SUCCESS - Invoke command success
++ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
++ * TEE_ERROR_NOT_IMPLEMENTED - Invoke command not implemented
++ * TEE_ERROR_GENERIC - Invoke command failure
++ */
++#define PTA_CMD_ENABLE_SCP03		0
++
++/* Enable the session using the current keys in the Secure Element */
++#define PTA_SCP03_SESSION_CURRENT_KEYS	0
++
++/* Enable the session after replacing the current keys in the Secure Element */
++#define PTA_SCP03_SESSION_ROTATE_KEYS	1
++
++#endif /* __PTA_SCP03_H */
+diff --git a/libseteec/src/se.c b/libseteec/src/se.c
+new file mode 100644
+index 0000000..4f6be5a
+--- /dev/null
++++ b/libseteec/src/se.c
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: BSD-2-Clause
++/*
++ * Copyright (c) 2021, Foundries.io Ltd
++ */
++
++#ifndef BINARY_PREFIX
++#define BINARY_PREFIX "seteec"
++#endif
++
++#include <errno.h>
++#include <inttypes.h>
++#include <pthread.h>
++#include <se_tee.h>
++#include <signal.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/types.h>
++#include <tee_client_api.h>
++#include <teec_trace.h>
++
++#include "pta_apdu.h"
++#include "pta_scp03.h"
++
++struct ta_context {
++	pthread_mutex_t lock;
++	TEEC_Context context;
++	TEEC_Session session;
++	TEEC_UUID uuid;
++	bool open;
++};
++
++static struct ta_context apdu_ta_ctx = {
++	.lock = PTHREAD_MUTEX_INITIALIZER,
++	.uuid = PTA_APDU_UUID,
++};
++
++static struct ta_context scp03_ta_ctx = {
++	.lock = PTHREAD_MUTEX_INITIALIZER,
++	.uuid = PTA_SCP03_UUID,
++};
++
++static bool open_session(struct ta_context *ctx)
++{
++	TEEC_Result res = TEEC_SUCCESS;
++
++	if (pthread_mutex_lock(&ctx->lock))
++		return false;
++
++	if (!ctx->open) {
++		res = TEEC_InitializeContext(NULL, &ctx->context);
++		if (!res) {
++			res = TEEC_OpenSession(&ctx->context, &ctx->session,
++					       &ctx->uuid, TEEC_LOGIN_PUBLIC,
++					       NULL, NULL, NULL);
++			if (!res)
++				ctx->open = true;
++		}
++	}
++
++	return !pthread_mutex_unlock(&ctx->lock) && !res;
++}
++
++static SE_RV do_scp03(uint32_t cmd)
++{
++	TEEC_Operation op = { 0 };
++
++	if (!open_session(&scp03_ta_ctx))
++		return SER_CANT_OPEN_SESSION;
++
++	op.paramTypes = TEEC_PARAM_TYPES(TEEC_VALUE_INPUT, 0, 0, 0);
++	op.params[0].value.a = cmd;
++
++	if (TEEC_InvokeCommand(&scp03_ta_ctx.session,
++			       PTA_CMD_ENABLE_SCP03, &op, NULL))
++		return SER_ERROR_GENERIC;
++
++	return SER_OK;
++}
++
++SE_RV se_scp03_enable(void)
++{
++	return do_scp03(PTA_SCP03_SESSION_CURRENT_KEYS);
++}
++
++SE_RV se_scp03_rotate_keys_and_enable(void)
++{
++	return do_scp03(PTA_SCP03_SESSION_ROTATE_KEYS);
++}
++
++SE_RV se_apdu_request(enum se_apdu_type apdu_type,
++		      unsigned char *hdr, size_t hdr_len,
++		      unsigned char *src, size_t src_len,
++		      unsigned char *dst, size_t *dst_len)
++{
++	uint32_t type = PTA_APDU_TXRX_CASE_NO_HINT;
++	TEEC_Operation op = { 0 };
++
++	switch (apdu_type) {
++	case SE_APDU_NO_HINT:
++		type = PTA_APDU_TXRX_CASE_NO_HINT;
++		break;
++	case SE_APDU_CASE_1:
++		type = PTA_APDU_TXRX_CASE_1;
++		break;
++	case SE_APDU_CASE_2:
++		type = PTA_APDU_TXRX_CASE_2;
++		break;
++	case SE_APDU_CASE_2E:
++		type = PTA_APDU_TXRX_CASE_2E;
++		break;
++	case SE_APDU_CASE_3:
++		type = PTA_APDU_TXRX_CASE_3;
++		break;
++	case SE_APDU_CASE_3E:
++		type = PTA_APDU_TXRX_CASE_3E;
++		break;
++	case SE_APDU_CASE_4:
++		type = PTA_APDU_TXRX_CASE_4;
++		break;
++	case SE_APDU_CASE_4E:
++		type = PTA_APDU_TXRX_CASE_4E;
++		break;
++	default:
++		return SER_ERROR_GENERIC;
++	}
++
++	if (!open_session(&apdu_ta_ctx))
++		return SER_CANT_OPEN_SESSION;
++
++	op.paramTypes = TEEC_PARAM_TYPES(TEEC_VALUE_INPUT,
++					 TEEC_MEMREF_TEMP_INPUT,
++					 TEEC_MEMREF_TEMP_INPUT,
++					 TEEC_MEMREF_TEMP_OUTPUT);
++	op.params[0].value.a = type;
++	op.params[1].tmpref.buffer = hdr;
++	op.params[1].tmpref.size = hdr_len;
++	op.params[2].tmpref.buffer = src;
++	op.params[2].tmpref.size = src_len;
++	op.params[3].tmpref.buffer = dst;
++	op.params[3].tmpref.size = *dst_len;
++
++	if (TEEC_InvokeCommand(&apdu_ta_ctx.session,
++			       PTA_CMD_TXRX_APDU_RAW_FRAME, &op, NULL))
++		return SER_ERROR_GENERIC;
++
++	*dst_len = op.params[3].tmpref.size;
++
++	return SER_OK;
++}
+-- 
+2.33.0
+

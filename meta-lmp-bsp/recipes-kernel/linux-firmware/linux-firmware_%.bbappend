@@ -9,8 +9,6 @@
 # A code from meta-imx layer is used as a reference:
 # https://source.codeaurora.org/external/imx/meta-imx/tree/meta-bsp/recipes-kernel/linux-firmware/linux-firmware_%25.bbappend?h=hardknott-5.10.52-2.1.0
 #
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-
 SRC_URI_append = "\
     https://git.ti.com/ti-bt/service-packs/blobs/raw/31a43dc1248a6c19bb886006f8c167e2fd21cb78/initscripts/TIInit_11.8.32.bts;name=TIInit_11.8.32 \
 "
@@ -31,7 +29,6 @@ SRC_URI[wl18xx-conf.md5sum] = "e0db09a1dea22b1fbcb1a5d9aa168215"
 SRC_URI[wl18xx-conf.sha256sum] = "e68e9a37995ab782faa41971704f24fd597d5abf16c47463708e90f8f080d335"
 
 do_install_append() {
-    install -d ${D}${sysconfdir}/firmware
     cp ${WORKDIR}/TIInit_11.8.32.bts ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
 }
 
@@ -50,8 +47,11 @@ do_install_append_imx () {
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/txpwrlimit_cfg_8987.conf  ${D}${nonarch_base_libdir}/firmware/nxp
 }
 
-PACKAGES =+ " ${PN}-nxp89xx"
+PACKAGES =+ "${PN}-nxp89xx"
 
 FILES_${PN}-nxp89xx = " \
-       ${nonarch_base_libdir}/firmware/nxp/* \
+       ${nonarch_base_libdir}/firmware/nxp/ed_mac_ctrl_V3_8987.conf \
+       ${nonarch_base_libdir}/firmware/nxp/sdiouart8987_combo_v0.bin \
+       ${nonarch_base_libdir}/firmware/nxp/txpwrlimit_cfg_8987.conf \
+       ${nonarch_base_libdir}/firmware/nxp/wifi_mod_para.conf \
 "

@@ -5,10 +5,12 @@ SRC_URI_append_lmp-wayland = " \
     file://background.jpg \
     file://weston.env \
     file://weston.service.patch \
+    file://tmpfiles.conf \
 "
 
 FILES_${PN}_append_lmp-wayland = " \
     ${datadir}/weston \
+    ${nonarch_libdir}/tmpfiles.d/weston.conf \
 "
 
 INI_UNCOMMENT_ASSIGNMENTS = " \
@@ -25,9 +27,11 @@ uncomment() {
 do_install_append_lmp-wayland() {
     install -d ${D}${datadir}/weston/backgrounds
     install -d ${D}${datadir}/weston/icon
+    install -d ${D}${nonarch_libdir}/tmpfiles.d
 
     install -m 0644 ${WORKDIR}/utilities-terminal.png ${D}${datadir}/weston/icon/utilities-terminal.png
     install -m 0644 ${WORKDIR}/background.jpg ${D}${datadir}/weston/backgrounds/background.jpg
+    install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/weston.conf
 
     for assignment in ${INI_UNCOMMENT_ASSIGNMENTS}; do
         uncomment "$assignment" ${D}${sysconfdir}/xdg/weston/weston.ini

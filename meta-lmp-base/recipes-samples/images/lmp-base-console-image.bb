@@ -13,6 +13,7 @@ require lmp-feature-softhsm.inc
 require lmp-feature-jobserv.inc
 
 require ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'lmp-feature-optee.inc', '', d)}
+require ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'lmp-feature-se05x.inc', '', d)}
 require ${@bb.utils.contains('MACHINE_FEATURES', 'tpm2', 'lmp-feature-tpm2.inc', '', d)}
 require ${@bb.utils.contains('MACHINE_FEATURES', 'efi', 'lmp-feature-efi.inc', '', d)}
 require ${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'lmp-feature-ima.inc', '', d)}

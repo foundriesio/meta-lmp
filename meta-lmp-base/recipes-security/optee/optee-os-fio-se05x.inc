@@ -8,17 +8,25 @@ LIC_FILES_CHKSUM_append = " \
 SRC_URI_append = " \
     git://github.com/foundriesio/plug-and-trust.git;protocol=https;branch=optee_lib;name=plug-and-trust;destsuffix=git/plug-and-trust \
 "
-SRCREV_plug-and-trust ?= "227b9bdb1887e59da28ef9b6494d49fec0a5f9c8"
+SRCREV_plug-and-trust ?= "63ef731fa40ceab71d377c6db774bb98fa243105"
 
 # Not an issue as OP-TEE OS is not yet being built with cmake
 inherit cmake
 
 OECMAKE_SOURCEPATH = "${S}/plug-and-trust/optee_lib"
 
-EXTRA_OECMAKE = "-DOPTEE_TREE=${S}"
-
 # To be replaced based on the actual board OEFID
 SE05X_OEFID ?= "0xA1F4"
+
+python () {
+    oefid = d.getVar("SE05X_OEFID")
+    if oefid in ["0xA565", "0xA564"]:
+        d.setVar('SE05X_VER', "06_00")
+    else:
+        d.setVar('SE05X_VER', "03_XX")
+}
+
+EXTRA_OECMAKE = "-DOPTEE_TREE=${S} -DSE05X_Ver=${SE05X_VER}"
 
 # Used by OP-TEE OS
 EXTRA_OEMAKE_append = " \
@@ -26,6 +34,7 @@ EXTRA_OEMAKE_append = " \
     CFG_STACK_THREAD_EXTRA=8192 \
     CFG_STACK_TMP_EXTRA=8192 \
     CFG_NXP_SE05X=y \
+    CFG_CORE_SE05X_VER=${SE05X_VER} \
     CFG_CORE_SE05X_DISPLAY_INFO=1 \
     CFG_CORE_SE05X_SCP03_EARLY=y \
     CFG_CORE_SE05X_OEFID=${SE05X_OEFID} \

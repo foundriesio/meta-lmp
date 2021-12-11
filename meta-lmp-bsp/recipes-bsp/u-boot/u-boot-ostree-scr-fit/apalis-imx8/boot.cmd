@@ -37,8 +37,8 @@ setenv bootloader2_s_image ${bootloader2_image}
 setenv update_image_boot0 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} 1 && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 setenv update_image_boot1 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} 2 && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 
-setenv backup_boot0 'echo "${fio_msg} backing up primary boot image set ..."; run set_blkcnt && mmc dev ${devnum} 1 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 2 && mmc write ${loadaddr} 0x0 0x3FFE'
-setenv restore_boot0 'echo "${fio_msg} restore primary boot image set ..."; run set_blkcnt && mmc dev ${devnum} 2 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 1 && mmc write ${loadaddr} 0x0 0x3FFE'
+setenv backup_boot0 'echo "${fio_msg} backing up primary boot image set ..."; mmc dev ${devnum} 1 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 2 && mmc write ${loadaddr} 0x0 0x3FFE'
+setenv restore_boot0 'echo "${fio_msg} restore primary boot image set ..."; mmc dev ${devnum} 2 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 1 && mmc write ${loadaddr} 0x0 0x3FFE'
 
 setenv update_primary_image "run update_image_boot0"
 setenv update_primary_image2 "run update_image_boot0"

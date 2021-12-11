@@ -13,9 +13,18 @@ S = "${WORKDIR}/git"
 
 EL2GO_HOSTNAME ?= "DEFAULTHOSTNAME"
 
+# Similar to optee-os-fio-se05x.inc
+python () {
+    oefid = d.getVar("SE05X_OEFID", "0xA1F4")
+    if oefid in ["0xA565", "0xA564"]:
+        d.setVar('SE05X_VER', "06_00")
+    else:
+        d.setVar('SE05X_VER', "03_XX")
+}
+
 EXTRA_OECMAKE += "\
     -DWithSharedLIB=ON -DCMAKE_BUILD_TYPE=Debug -DHost=iMXLinux -DHostCrypto=OPENSSL \
-    -DSMCOM=T1oI2C -DSE05X_Auth=None -DApplet=SE05X_C -DSE05X_Ver=03_XX \
+    -DSMCOM=T1oI2C -DSE05X_Auth=None -DApplet=SE05X_C -DSE05X_Ver=${SE05X_VER} \
     -DOPENSSL_INSTALL_PREFIX=${WORKDIR}/recipe-sysroot/usr \
     -DOPENSSL_ROOT_DIR=${WORKDIR}/recipe-sysroot/usr \
     -DPAHO_ENABLE_TESTING=FALSE -DPAHO_ENABLE_CPACK=FALSE -DPAHO_WITH_SSL=TRUE \
@@ -36,6 +45,7 @@ FILES_${PN} += "\
     ${libdir}/libse05x.so \
     ${libdir}/libsmCom.so \
     ${libdir}/libSSS_APIs.so \
+    ${libdir}/libSEMS_LITE_AGENT_APIs.so \
     ${libdir}/libsssapisw.so \
     ${libdir}/libsss_engine.so \
 "

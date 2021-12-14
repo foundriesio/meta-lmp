@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 SRC_URI = "git://github.com/foundriesio/plug-and-trust-seteec;branch=main;protocol=https"
-SRCREV = "e6d4a8d81a09a980ab95a9e82a0551076a6a3e52"
+SRCREV = "a8034cf24968f4d23ca98fc9edc037b7372b0777"
 
 DEPENDS = "openssl optee-client"
 

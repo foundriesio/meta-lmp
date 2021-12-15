@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM_append = " \
 SRC_URI_append = " \
     git://github.com/foundriesio/plug-and-trust.git;protocol=https;branch=optee_lib;name=plug-and-trust;destsuffix=git/plug-and-trust \
 "
-SRCREV_plug-and-trust ?= "63ef731fa40ceab71d377c6db774bb98fa243105"
+SRCREV_plug-and-trust ?= "44b36fd1dd7e179dfc83cb98958fd0cc008a0686"
 
 # Not an issue as OP-TEE OS is not yet being built with cmake
 inherit cmake

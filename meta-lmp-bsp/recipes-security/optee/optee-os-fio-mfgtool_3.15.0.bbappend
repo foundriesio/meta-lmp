@@ -1,5 +1,6 @@
 OPTEEMACHINE_apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE_apalis-imx8 = "imx-mx8qmmek"
+OPTEEMACHINE_imx6ulevk = "imx-mx6ulevk"
 OPTEEMACHINE_imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE_imx7ulpea-ucom = "imx-mx7ulpevk"
 OPTEEMACHINE_imx8mm-lpddr4-evk = "imx-mx8mmevk"
@@ -24,6 +25,11 @@ EXTRA_OEMAKE_append_apalis-imx6 = " \
 "
 EXTRA_OEMAKE_append_apalis-imx8 = " \
     CFG_UART_BASE=0x5a070000 \
+"
+EXTRA_OEMAKE_append_imx6ulevk = " \
+    CFG_NS_ENTRY_ADDR=0x87800000 CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
+    CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_RNG_PTA=y \
+    CFG_TZDRAM_START=0x9e000000 CFG_DT=y CFG_OVERLAY_ADDR=0x86000000 \
 "
 EXTRA_OEMAKE_append_imx6ullevk = " \
     CFG_NS_ENTRY_ADDR=0x87800000 CFG_TZDRAM_START=0x9e000000 \

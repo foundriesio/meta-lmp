@@ -9,3 +9,12 @@ SUPPORT_URL = "https://support.foundries.io/"
 LMP_MACHINE = "${MACHINE}"
 LMP_FACTORY = "${LMP_DEVICE_FACTORY}"
 LMP_FACTORY_TAG = "${LMP_DEVICE_REGISTER_TAG}"
+
+inherit deploy
+
+do_deploy () {
+    install -d ${DEPLOYDIR}
+    install -m 0644 os-release ${DEPLOYDIR}
+}
+
+addtask do_deploy after do_install

@@ -18,6 +18,7 @@ SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANC
     file://0001-FIO-tonxp-drm-bridge-it6161-add-missing-gpio-consume.patch \
     file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
     file://0001-FIO-temphack-ARM-mach-imx-conditionally-disable-some.patch \
+    file://0001-FIO-tonxp-gpio-fix-enabling-GPIO_VF610.patch \
 "
 
 KMETA = "kernel-meta"

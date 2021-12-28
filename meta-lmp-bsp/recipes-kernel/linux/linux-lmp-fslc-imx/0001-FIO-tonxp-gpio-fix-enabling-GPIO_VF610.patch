@@ -1,0 +1,54 @@
+From c061a9e05dfbe31a0ef190d1af9cd88caf3bd424 Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Tue, 28 Dec 2021 21:02:45 +0200
+Subject: [PATCH] [FIO tonxp] gpio: fix enabling GPIO_VF610
+
+The driver gpio-vf610 is used for Vybrid VF610 and i.MX7ULP SoCs only.
+It was defined as enabled by default, so removing dependency of
+SOC_VF610 mistakenly enables this driver for all MXC-family SoCs.
+Keep enabling this driver only for SOC_VF610 and SOC_IMX7ULP
+
+Fixes: 5bb96ccd5bab ("LF-2590 gpio: vf610: remove the dependency on SOC_VF610")
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ arch/arm/mach-imx/Kconfig | 2 ++
+ drivers/gpio/Kconfig      | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 38b9ef46af92..3e3d92f384e6 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -271,6 +271,7 @@ config SOC_IMX7ULP
+ 	select PINCTRL_IMX7ULP
+ 	select SOC_IMX7D_CA7 if ARCH_MULTI_V7
+ 	select SOC_IMX7D_CM4 if ARM_SINGLE_ARMV7M
++	select GPIO_VF610
+ 	help
+ 	  This enables support for Freescale i.MX7 Ultra Low Power processor.
+ 
+@@ -278,6 +279,7 @@ config SOC_VF610
+ 	bool "Vybrid Family VF610 support"
+ 	select ARM_GIC if ARCH_MULTI_V7
+ 	select PINCTRL_VF610
++	select GPIO_VF610
+ 
+ 	help
+ 	  This enables support for Freescale Vybrid VF610 processor.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 374539e6e12a..b72c30e3ae17 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -640,7 +640,7 @@ config GPIO_UNIPHIER
+ 	  Say yes here to support UniPhier GPIOs.
+ 
+ config GPIO_VF610
+-	def_bool y
++	bool "Vybrid VF610/i.MX7ULP GPIO chip"
+ 	depends on ARCH_MXC
+ 	select GPIOLIB_IRQCHIP
+ 	help
+-- 
+2.33.1
+

@@ -1,0 +1,41 @@
+From 73d43ee3a152082c24cc0831f17bc0a118f7f8ff Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 4 Jan 2022 19:44:15 -0300
+Subject: [PATCH] 85-nm-unmanaged.rules: do not manage docker bridges
+
+Bring back the changes done by
+https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/15
+by forcing docker bridges to be unmanaged by network-manager.
+
+This is because while they are normal externally managed bridges (and
+the cause of the revert of the original change), they can be disabled
+and won't be enabled automatically while turning network off and on via
+nmcli.
+
+This should be raised with upstream as a bug for finding out a proper
+fix.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ data/85-nm-unmanaged.rules | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/data/85-nm-unmanaged.rules b/data/85-nm-unmanaged.rules
+index edc4ddbe79..7ad85dd0b5 100644
+--- a/data/85-nm-unmanaged.rules
++++ b/data/85-nm-unmanaged.rules
+@@ -26,6 +26,9 @@ ATTR{address}=="00:1c:42:*", ENV{INTERFACE}=="vnic[0-9]*", ENV{NM_UNMANAGED}="1"
+ # in another net namespace and managed by libvirt, Docker or the like.
+ ENV{ID_NET_DRIVER}=="veth", ENV{NM_UNMANAGED}="1"
+ 
++# Docker bridges. Managed by docker daemon.
++ATTR{address}=="02:42:*", ENV{INTERFACE}=="docker[0-9]*|br-*", ENV{NM_UNMANAGED}="1"
++
+ # USB gadget device. Unmanage by default, since whatever created it
+ # might want to set it up itself (e.g. activate an ipv4.method=shared
+ # connection).
+-- 
+2.34.1
+

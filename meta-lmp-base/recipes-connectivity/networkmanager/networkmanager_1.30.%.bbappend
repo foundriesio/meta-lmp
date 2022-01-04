@@ -8,4 +8,5 @@ PACKAGECONFIG[firewalld-zone] = "--enable-firewalld-zone,--disable-firewalld-zon
 
 SRC_URI += " \
 	file://0001-Add-client-build-support-for-editline-libedit.patch \
+	file://0001-85-nm-unmanaged.rules-do-not-manage-docker-bridges.patch \
 "

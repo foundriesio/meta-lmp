@@ -3,7 +3,7 @@ UBOOT_VERSION = "v2021.07"
 UBRANCH = "xilinx-v2021.07-bsp"
 UBOOTURI = "git://github.com/foundriesio/u-boot.git;protocol=https"
 
-SRCREV = "05532d557e4a515612c0eaa810f4b6c1097f29b9"
+SRCREV = "10802ec9d3947e0c194fb96cfa7862d908661e28"
 
 include recipes-bsp/u-boot/u-boot-xlnx.inc
 include recipes-bsp/u-boot/u-boot-spl-zynq-init.inc

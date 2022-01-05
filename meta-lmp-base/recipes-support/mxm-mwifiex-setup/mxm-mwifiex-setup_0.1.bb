@@ -11,14 +11,12 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
 do_install() {
-	install -d ${D}${libdir}/modules-load.d
-	install -m 0644 ${WORKDIR}/modules-load-moal.conf ${D}${libdir}/modules-load.d/moal.conf
+	install -d ${D}${sysconfdir}/modules-load.d
+	install -m 0644 ${WORKDIR}/modules-load-moal.conf ${D}${sysconfdir}/modules-load.d/moal.conf
 
-	install -d ${D}${libdir}/modprobe.d
-	install -m 0644 ${WORKDIR}/modprobe-moal.conf ${D}${libdir}/modprobe.d/moal.conf
+	install -d ${D}${sysconfdir}/modprobe.d
+	install -m 0644 ${WORKDIR}/modprobe-moal.conf ${D}${sysconfdir}/modprobe.d/moal.conf
 }
 
-FILES_${PN} += "${libdir}/modules-load.d/moal.conf ${libdir}/modprobe.d/moal.conf"
+FILES_${PN} += "${sysconfdir}/modules-load.d/moal.conf ${sysconfdir}/modprobe.d/moal.conf"

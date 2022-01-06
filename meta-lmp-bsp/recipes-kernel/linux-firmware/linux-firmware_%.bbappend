@@ -14,7 +14,7 @@ SRC_URI:append = "\
 "
 IMX_FIRMWARE_BRANCH ?= "lf-5.10.52_2.1.0"
 SRC_URI:append:imx = "\
-    git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware \
+    git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware;rev=${IMX_FIRMWARE_BRANCH} \
 "
 SRCREV:imx-firmware ?= "6d7f77b83164b08334806c4aa2034bc1f7da7b7d"
 

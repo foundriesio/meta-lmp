@@ -544,7 +544,7 @@ OSTREE_KERNEL_ARGS_sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_
 
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
-PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"
+PREFERRED_VERSION_u-boot-fio_imx ?= "2021.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
 PREFERRED_VERSION_optee-client_mx8 = "3.15.0"
 PREFERRED_VERSION_optee-examples_mx8 = "3.15.0"

@@ -528,6 +528,20 @@ OSTREE_DEPLOY_DEVICETREE_tegra194 = "1"
 OSTREE_KERNEL_ARGS_tegra194 ?= "\${cbootargs} ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_BOOTLOADER_tegra194 = "syslinux"
 
+# Allwinner (sun8i)
+PREFERRED_PROVIDER_virtual/bootloader_sun8i = "u-boot-fio"
+PREFERRED_PROVIDER_u-boot_sun8i = "u-boot-fio"
+UBOOT_ENTRYPOINT_sun8i = "0x42000000"
+WKS_FILE_DEPENDS_append_sun8i = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script_sun8i = "u-boot-ostree-scr-fit"
+IMAGE_BOOT_FILES_sun8i = "boot.itb"
+KERNEL_IMAGETYPE_sun8i = "fitImage"
+KERNEL_CLASSES_sun8i = " kernel-lmp-fitimage "
+WKS_FILES_sota_sun8i = "sdimage-sunxi-sota.wks.in"
+IMAGE_FSTYPES_remove_sun8i = "sunxi-sdimg"
+SOTA_CLIENT_FEATURES_append_sun8i = " ubootenv"
+OSTREE_KERNEL_ARGS_sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
+
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio_imx ?= "2020.04"

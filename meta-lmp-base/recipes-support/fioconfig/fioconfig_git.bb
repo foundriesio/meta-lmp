@@ -34,8 +34,8 @@ do_install_append() {
 }
 
 # We need aktualizr because we uses its device gateway connectivity and keys,
-# and networkmanager-nmcli for wireguard support
-RDEPENDS_${PN} = "${SOTA_CLIENT} networkmanager-nmcli"
+# and networkmanager-nmtui for wireguard support
+RDEPENDS_${PN} = "${SOTA_CLIENT} networkmanager-nmtui"
 
 FILES_${PN} += " \
 	${systemd_unitdir}/system/fioconfig.service \

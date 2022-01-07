@@ -1,0 +1,18 @@
+# short-description: Create OTA-enabled SD card image with a boot partition
+# long-description: Creates a partitioned SD card image with OSTree
+# physical sysroot as a payload, compatible with Allwinner ARM (32-bit) SoCs.
+#
+# The disk layout used is:
+#  - --------------------------- -------------- --------------
+# | | u-boot-sunxi-with-spl.bin |     boot     |    rootfs    |
+#  - --------------------------- -------------- --------------
+# ^ ^                           ^              ^              ^
+# | |                           |              |              |
+# 0 |                         2MiB  ${SUNXI_BOOT_SPACE}MiB  ${SUNXI_BOOT_SPACE}MiB + rootfs + IMAGE_EXTRA_SPACE
+#   8KiB
+#
+part u-boot --source rawcopy --sourceparams="file=${SPL_BINARY}" --ondisk mmcblk0 --no-table --align 8
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 2048 --size ${SUNXI_BOOT_SPACE}
+part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 2048
+
+bootloader --ptable msdos

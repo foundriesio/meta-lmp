@@ -20,8 +20,7 @@ PREFERRED_RPROVIDER_u-boot-fw-utils ?= "libubootenv"
 PREFERRED_PROVIDER_zlib ?= "zlib"
 PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
-PREFERRED_PROVIDER_virtual/docker ?= "docker-ce"
-PREFERRED_PROVIDER_virtual/docker_riscv64 ?= "docker-moby"
+PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 PREFERRED_PROVIDER_virtual/runc = "runc-opencontainers"
 
 # Default distro features for LMP (can be extended by the user if needed)
@@ -31,8 +30,7 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
 DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
 
 # Extended packageconfig options for LMP
-PACKAGECONFIG_append_pn-docker-ce = " seccomp"
-PACKAGECONFIG_append_pn-runc-docker = " seccomp"
+PACKAGECONFIG_append_pn-docker-moby = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG_remove_pn-runc-opencontainers = "static"
 PACKAGECONFIG_append_pn-systemd = " journal-upload resolved seccomp serial-getty-generator"

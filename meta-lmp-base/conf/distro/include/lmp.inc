@@ -22,6 +22,7 @@ PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_PROVIDER_virtual/docker ?= "docker-ce"
 PREFERRED_PROVIDER_virtual/docker_riscv64 ?= "docker-moby"
+PREFERRED_PROVIDER_virtual/runc = "runc-opencontainers"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"
@@ -33,7 +34,7 @@ DISTRO_FEATURES_append = " pam usrmerge virtualization ptest"
 PACKAGECONFIG_append_pn-docker-ce = " seccomp"
 PACKAGECONFIG_append_pn-runc-docker = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
-PACKAGECONFIG_remove_pn-runc-docker = "static"
+PACKAGECONFIG_remove_pn-runc-opencontainers = "static"
 PACKAGECONFIG_append_pn-systemd = " journal-upload resolved seccomp serial-getty-generator"
 PACKAGECONFIG_remove_pn-systemd = "networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"

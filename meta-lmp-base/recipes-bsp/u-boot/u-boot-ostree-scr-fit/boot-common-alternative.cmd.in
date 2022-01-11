@@ -122,7 +122,7 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 
 		else
 			# we haven't updated primary boot image yet
-			if test "${fiovb.bootupgrade_available}" = "1" && test "${bootupgrade_primary_updated}" = "0"; then
+			if test "${fiovb.bootupgrade_available}" = "1" && test "${fiovb.bootupgrade_primary_updated}" = "0"; then
 				run backup_boot0
 				echo "${fio_msg} updating primary boot images from ${ostree_root} ..."
 

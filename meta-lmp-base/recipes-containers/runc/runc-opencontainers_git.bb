@@ -1,4 +1,4 @@
-include recipes-containers/runc/runc.inc
+include runc.inc
 
 SRCREV = "86d83333d765f4535e4898d6778388dab715eb7c"
 SRC_URI = " \

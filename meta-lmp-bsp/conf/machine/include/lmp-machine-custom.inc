@@ -349,7 +349,7 @@ KERNEL_IMAGETYPE_sota_mx8mq = "fitImage"
 KERNEL_CLASSES_sota_mx8mq = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel_mx8mq ?= "linux-lmp-fslc-imx"
-WKS_FILE_sota_mx8mq = "sdimage-imx8-spl-sota.wks.in"
+WKS_FILE_sota_mx8mq = "sdimage-imx8mq-spl-sota.wks.in"
 IMXBOOT_TARGETS_mx8mq = "flash_evk_spl"
 ## iMX8MQ EVK
 KMACHINE_imx8mq-evk = "imx8mqevk"

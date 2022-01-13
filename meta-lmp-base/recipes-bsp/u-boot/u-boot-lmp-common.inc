@@ -18,6 +18,7 @@ do_deploy_append() {
                         ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} ${PN}-sit.bin-${MACHINE}-${type}
                         ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} sit-${MACHINE}-${type}.bin
                         ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} ${PN}-sit.bin-${type}
+                        ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} sit.bin
                     fi
                 fi
             done
@@ -35,6 +36,7 @@ do_deploy_append() {
             ln -sf ${PN}-sit.bin-${MACHINE}-${PV}-${PR} ${PN}-sit.bin-${MACHINE}
             ln -sf ${PN}-sit.bin-${MACHINE}-${PV}-${PR} sit-${MACHINE}.bin
             ln -sf ${PN}-sit.bin-${MACHINE}-${PV}-${PR} ${PN}-sit.bin
+            ln -sf ${PN}-sit.bin-${MACHINE}-${PV}-${PR} sit.bin
         fi
     fi
 }

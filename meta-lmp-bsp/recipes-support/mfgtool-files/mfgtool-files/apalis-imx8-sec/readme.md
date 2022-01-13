@@ -1,6 +1,6 @@
 # How to enable secure boot for apalis-imx8
 
-Download and extract CST from nxp.com.
+Download and extract CST from nxp.com: https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_CST_TOOL_NEW&appType=file2&location=null&DOWNLOAD_ID=null
 
 Start exporting the needed variables
 
@@ -10,7 +10,7 @@ Start exporting the needed variables
 
 Download the `lmp-tools`
 
-   git clone lmp-tools
+   git clone https://github.com/foundriesio/lmp-tools.git
    cd lmp-tools/security/imx_ahab
 
 Sign the MFGTool SPL file

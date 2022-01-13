@@ -314,7 +314,7 @@ UBOOT_DTB_LOADADDRESS_mx8qm = "0x83000000"
 UBOOT_SIGN_ENABLE_sota_mx8qm = "1"
 ## iMX8QM MEK
 OSTREE_KERNEL_ARGS_imx8qm-mek ?= "pci=nomsi console=ttyLP0,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"
-PREFERRED_PROVIDER_virtual/kernel_imx8qm-mek ?= "linux-imx"
+PREFERRED_PROVIDER_virtual/kernel_imx8qm-mek ?= "linux-lmp-fslc-imx"
 KERNEL_DANGLING_FEATURES_WARN_ONLY_imx8qm-mek ?= "1"
 UBOOT_CONFIG_imx8qm-mek = ""
 UBOOT_SUFFIX_imx8qm-mek = "bin"

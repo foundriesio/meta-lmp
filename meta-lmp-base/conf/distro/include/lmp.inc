@@ -103,7 +103,6 @@ BBMASK += " \
 "
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \
-    /meta-xilinx/meta-xilinx-bsp/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
     /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \
     /meta-xilinx/meta-xilinx-standalone/recipes-core/newlib/newlib_3.%.bbappend \
     /meta-xilinx/meta-xilinx-standalone/recipes-core/newlib/libgloss_3.%.bbappend \

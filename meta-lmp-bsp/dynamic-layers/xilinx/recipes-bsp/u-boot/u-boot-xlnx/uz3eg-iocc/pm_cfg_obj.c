@@ -3,6 +3,7 @@
 * SPDX-License-Identifier: MIT
 ******************************************************************************/
 
+
 #include "xil_types.h"
 #include "pm_defs.h"
 
@@ -37,7 +38,8 @@
 
 
 
-    const u32 XPm_ConfigObject[] __attribute__((used, section(".sys_cfg_data"))) = {
+    const u32 XPm_ConfigObject[] __attribute__((used, section(".sys_cfg_data"))) =
+{
 	/**********************************************************************/
 	/* HEADER */
 	1,	/* Number of remaining words in the header */
@@ -179,7 +181,7 @@
 
 	NODE_I2C_0,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
-	0U, /* IPI Mask */
+	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_1_MASK, /* IPI Mask */
 
 	NODE_I2C_1,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
@@ -187,7 +189,7 @@
 
 	NODE_SD_0,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
-	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_1_MASK, /* IPI Mask */
+	0U, /* IPI Mask */
 
 	NODE_SD_1,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
@@ -223,7 +225,7 @@
 
 	NODE_CAN_1,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
-	0U, /* IPI Mask */
+	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_1_MASK, /* IPI Mask */
 
 	NODE_EXTERN,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
@@ -251,7 +253,7 @@
 
 	NODE_PCIE,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
-	0U, /* IPI Mask */
+	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK | PM_CONFIG_IPI_PSU_CORTEXR5_1_MASK, /* IPI Mask */
 
 	NODE_PCAP,
 	PM_SLAVE_FLAG_IS_SHAREABLE,
@@ -278,7 +280,7 @@
 
 /* Prealloc for psu_cortexa53_0 */
 	PM_CONFIG_IPI_PSU_CORTEXA53_0_MASK,
-	11,
+	12,
 	NODE_DDR,
 	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
@@ -305,6 +307,11 @@
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
 
 	NODE_OCM_BANK_3,
+	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
+	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
+	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
+
+	NODE_I2C_0,
 	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
@@ -337,7 +344,7 @@
 
 	/* Prealloc for psu_cortexr5_0 */
 	PM_CONFIG_IPI_PSU_CORTEXR5_0_MASK,
-	13,
+	14,
 	NODE_TCM_0_A,
 	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
@@ -369,6 +376,11 @@
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
 
 	NODE_OCM_BANK_3,
+	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
+	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
+	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
+
+	NODE_I2C_0,
 	PM_MASTER_USING_SLAVE_MASK, /* Master is using Slave */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Current Requirements */
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
@@ -423,7 +435,6 @@
 	PM_CAP_ACCESS | PM_CAP_CONTEXT, /* Default Requirements */
 
 
-	
 	/**********************************************************************/
 	/* POWER SECTION */
 
@@ -582,6 +593,10 @@
 	/**********************************************************************/
 	/* GPO SECTION */
 	PM_CONFIG_GPO_SECTION_ID,		/* GPO Section ID */
+	PM_CONFIG_GPO1_BIT_2_MASK |
+	PM_CONFIG_GPO1_MIO_PIN_34_MAP |
+	PM_CONFIG_GPO1_MIO_PIN_35_MAP |
+	PM_CONFIG_GPO1_MIO_PIN_36_MAP |
+	PM_CONFIG_GPO1_MIO_PIN_37_MAP |
 	0,					/* State of GPO pins */
 };
-

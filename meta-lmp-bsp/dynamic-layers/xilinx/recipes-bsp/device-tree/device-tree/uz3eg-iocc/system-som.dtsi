@@ -83,7 +83,9 @@
 	num-cs = <2>;
 	xlnx,fb-clk = <0x1>;
 	flash0: flash@0 {
-		compatible = "micron,m25p80";
+		/* The Flash described below doesn't match our board ("micron,n25qu256a"), but is needed */
+		/* so the Flash MTD partitions are correctly identified in /proc/mtd */
+		compatible = "micron,m25p80","jedec,spi-nor"; /* 32MB */
 		#address-cells = <1>;
 		#size-cells = <1>;
 		reg = <0x0>;

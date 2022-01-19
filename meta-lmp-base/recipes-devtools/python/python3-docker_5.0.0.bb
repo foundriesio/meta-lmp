@@ -8,7 +8,7 @@ SRC_URI[sha256sum] = "3e8bc47534e0ca9331d72c32f2881bb13b93ded0bcdeab3c833fb7cf61
 
 DEPENDS += "${PYTHON_PN}-pip-native"
 
-RDEPENDS_${PN} += " \
+RDEPENDS:${PN} += " \
         ${PYTHON_PN}-misc \
         ${PYTHON_PN}-six \
         ${PYTHON_PN}-docker-pycreds \

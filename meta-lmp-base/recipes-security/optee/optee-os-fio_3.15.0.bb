@@ -7,4 +7,4 @@ PV = "3.15.0+git"
 SRCREV = "a7a29315eda296aaddd2ed9c0286146231b534c1"
 SRCBRANCH = "3.15+fio"
 
-ALLOW_EMPTY_${PN}-ta-pkcs11 = "1"
+ALLOW_EMPTY:${PN}-ta-pkcs11 = "1"

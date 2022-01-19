@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31
 
 inherit allarch
 
-RDEPENDS_${PN} += "udev e2fsprogs-resize2fs e2fsprogs-e2fsck gptfdisk parted"
+RDEPENDS:${PN} += "udev e2fsprogs-resize2fs e2fsprogs-e2fsck gptfdisk parted"
 
 SRC_URI = "file://mfgtool-resize-helper \
 "

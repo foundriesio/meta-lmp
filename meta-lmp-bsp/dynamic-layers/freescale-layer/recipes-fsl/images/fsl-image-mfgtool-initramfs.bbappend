@@ -1,6 +1,6 @@
 # LMP specifics
-IMAGE_FSTYPES_lmp = "cpio.gz"
-DEPENDS_remove = "u-boot-mfgtool linux-mfgtool"
-DEPENDS_append = " virtual/bootloader virtual/kernel"
+IMAGE_FSTYPES:lmp = "cpio.gz"
+DEPENDS:remove = "u-boot-mfgtool linux-mfgtool"
+DEPENDS:append = " virtual/bootloader virtual/kernel"
 
 inherit nopackages

@@ -14,12 +14,12 @@ sota_fstab_update() {
 	fi
 }
 
-ROOTFS_POSTPROCESS_COMMAND_append_sota = " sota_fstab_update; "
+ROOTFS_POSTPROCESS_COMMAND:append:sota = " sota_fstab_update; "
 
 # Support initial customized target via GARAGE_CUSTOMIZE_TARGET
 # This is set by our CI scripts and allows the initial target to populated by
 # the build process so it can be incorporated at the first aktualizr-lite run
-IMAGE_CMD_ota_append () {
+IMAGE_CMD:ota:append () {
 	if [ -n "${GARAGE_CUSTOMIZE_TARGET}" ]; then
 		bbplain "Running command(${GARAGE_CUSTOMIZE_TARGET}) to customize target"
 		${GARAGE_CUSTOMIZE_TARGET} \
@@ -29,7 +29,7 @@ IMAGE_CMD_ota_append () {
 }
 
 # LMP specific cleanups after the main ostree image from meta-updater
-IMAGE_CMD_ostree_append () {
+IMAGE_CMD:ostree:append () {
 	# No need for var/local as the entire var is bind-mounted
 	rm -rf var/local
 
@@ -62,19 +62,19 @@ run_fiotool_cmd () {
 }
 
 do_image_ostreepush[depends] += "ostreeuploader-native:do_populate_sysroot"
-IMAGE_CMD_ostreepush_prepend () {
+IMAGE_CMD:ostreepush:prepend () {
 	if [ "${USE_FIOTOOLS}" = "1" ]; then
 		run_fiotool_cmd "fiopush"
-		# force return so garage-push called from meta-updater's IMAGE_CMD_ostreepush is not executed
+		# force return so garage-push called from meta-updater's IMAGE_CMD:ostreepush is not executed
 		return
 	fi
 }
 
 do_image_garagecheck[depends] += "ostreeuploader-native:do_populate_sysroot"
-IMAGE_CMD_garagecheck_prepend () {
+IMAGE_CMD:garagecheck:prepend () {
 	if [ "${USE_FIOTOOLS}" = "1" ]; then
 		run_fiotool_cmd "fiocheck"
-		# force return so garage-check called from meta-updater's IMAGE_CMD_garagecheck is not executed
+		# force return so garage-check called from meta-updater's IMAGE_CMD:garagecheck is not executed
 		return
 	fi
 }

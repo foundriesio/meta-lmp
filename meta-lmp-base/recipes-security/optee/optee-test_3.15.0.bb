@@ -6,15 +6,15 @@ EXTRA_OEMAKE += " \
     CFG_PKCS11_TA=y \
 "
 
-do_compile_append() {
+do_compile:append() {
     oe_runmake test_plugin
 }
 
-do_install_append() {
+do_install:append() {
     # install path should match the value set in optee-client/tee-supplicant
     # default CFG_TEE_PLUGIN_LOAD_PATH is /usr/lib/tee-supplicant/plugins/
     mkdir -p ${D}${libdir}/tee-supplicant/plugins
     install -D -p -m0444 ${B}/supp_plugin/*.plugin ${D}${libdir}/tee-supplicant/plugins/
 }
 
-FILES_${PN} += "${libdir}/tee-supplicant/plugins/"
+FILES:${PN} += "${libdir}/tee-supplicant/plugins/"

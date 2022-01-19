@@ -23,4 +23,4 @@ def arm_tune_handler(d):
         tune = d.getVar('DEFAULTTUNE')
     return tune
 
-DEFAULTTUNE_lmp := "${@arm_tune_handler(d)}"
+DEFAULTTUNE:lmp := "${@arm_tune_handler(d)}"

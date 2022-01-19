@@ -15,4 +15,4 @@ do_install() {
         install -m 0644 ${WORKDIR}/config.json ${D}${libdir}/docker/config.json
 }
 
-FILES_${PN} += "${libdir}/docker"
+FILES:${PN} += "${libdir}/docker"

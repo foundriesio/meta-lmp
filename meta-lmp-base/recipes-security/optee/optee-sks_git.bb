@@ -46,4 +46,4 @@ do_install () {
     cp -R --no-dereference --preserve=mode,links -v ${B}/libsks/libsks.so ${D}${libdir}
 }
 
-FILES_${PN} += "${nonarch_base_libdir}/optee_armtz/"
+FILES:${PN} += "${nonarch_base_libdir}/optee_armtz/"

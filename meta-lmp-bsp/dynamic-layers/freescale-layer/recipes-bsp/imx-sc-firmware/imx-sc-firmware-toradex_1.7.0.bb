@@ -17,13 +17,13 @@ SRCREV_use-head-next = "${AUTOREV}"
 S = "${WORKDIR}/git"
 
 PROVIDES = "imx-sc-firmware"
-RREPLACES_${PN} = "imx-sc-firmware"
-RPROVIDES_${PN} = "imx-sc-firmware"
-RCONFLICTS_${PN} = "imx-sc-firmware"
+RREPLACES:${PN} = "imx-sc-firmware"
+RPROVIDES:${PN} = "imx-sc-firmware"
+RCONFLICTS:${PN} = "imx-sc-firmware"
 
 BOARD_TYPE ?= "unknown"
-SC_FIRMWARE_NAME_mx8qm = "mx8qm-${BOARD_TYPE}-scfw-tcm.bin"
-SC_FIRMWARE_NAME_mx8qxp = "mx8qx-${BOARD_TYPE}-scfw-tcm.bin"
+SC_FIRMWARE_NAME:mx8qm = "mx8qm-${BOARD_TYPE}-scfw-tcm.bin"
+SC_FIRMWARE_NAME:mx8qxp = "mx8qx-${BOARD_TYPE}-scfw-tcm.bin"
 symlink_name = "scfw_tcm.bin"
 
 BOOT_TOOLS = "imx-boot-tools"
@@ -43,4 +43,3 @@ INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 COMPATIBLE_MACHINE = "(apalis-imx8.*|colibri-imx8.*)"
-

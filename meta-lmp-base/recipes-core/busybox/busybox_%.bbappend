@@ -1,6 +1,6 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_lmp = " \
+SRC_URI:append:lmp = " \
     file://less.cfg \
     file://shell.cfg \
     file://utils.cfg \
@@ -8,7 +8,7 @@ SRC_URI_append_lmp = " \
 "
 
 # Remove syslog as it is not required with systemd
-SRC_URI_remove = "file://syslog.cfg"
+SRC_URI:remove = "file://syslog.cfg"
 
 busybox_cfg_variable() {
     CONF_SED_SCRIPT="$CONF_SED_SCRIPT /^CONFIG_$1[ =]/d;"
@@ -19,7 +19,7 @@ busybox_cfg_variable() {
     fi
 }
 
-do_prepare_config_append() {
+do_prepare_config:append() {
     CONF_SED_SCRIPT=""
 
     # No need for klogd as that is provided by systemd

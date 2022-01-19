@@ -148,9 +148,9 @@ do_install() {
 	install -m 0755 ${S}/src/import/contrib/check-config.sh ${D}${datadir}/docker/
 }
 
-FILES_${PN} += "${systemd_unitdir}/system/* ${sysconfdir}/docker"
+FILES:${PN} += "${systemd_unitdir}/system/* ${sysconfdir}/docker"
 
-FILES_${PN}-contrib += "${datadir}/docker/check-config.sh"
-RDEPENDS_${PN}-contrib += "bash"
+FILES:${PN}-contrib += "${datadir}/docker/check-config.sh"
+RDEPENDS:${PN}-contrib += "bash"
 
 CVE_PRODUCT = "docker"

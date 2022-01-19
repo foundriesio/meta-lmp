@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31
 
 inherit allarch systemd
 
-RDEPENDS_${PN} += "e2fsprogs-resize2fs gptfdisk parted util-linux-findmnt"
+RDEPENDS:${PN} += "e2fsprogs-resize2fs gptfdisk parted util-linux-findmnt"
 
 SRC_URI = "file://resize-helper \
     file://resize-helper.service \
@@ -23,5 +23,5 @@ do_install () {
 	install -m 0644 ${S}/resize-helper.service ${D}${systemd_system_unitdir}
 }
 
-SYSTEMD_SERVICE_${PN} = "resize-helper.service"
-SYSTEMD_AUTO_ENABLE_${PN} = "enable"
+SYSTEMD_SERVICE:${PN} = "resize-helper.service"
+SYSTEMD_AUTO_ENABLE:${PN} = "enable"

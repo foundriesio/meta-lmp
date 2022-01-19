@@ -9,7 +9,7 @@ LINUX_VERSION ?= "5.10.80"
 KERNEL_BRANCH ?= "5.10-2.1.x-imx"
 
 # Drop features that are appended by other layers (not required here)
-KERNEL_FEATURES_remove = "cfg/fs/vfat.scc"
+KERNEL_FEATURES:remove = "cfg/fs/vfat.scc"
 
 require recipes-kernel/linux/linux-lmp-dev.bb
 

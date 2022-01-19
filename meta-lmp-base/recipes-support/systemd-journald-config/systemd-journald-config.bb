@@ -16,4 +16,4 @@ do_install() {
     install -m 0644 ${S}/forward-console.conf ${D}${systemd_unitdir}/journald.conf.d/10-forward-console.conf
 }
 
-FILES_${PN} = "${systemd_unitdir}/journald.conf.d"
+FILES:${PN} = "${systemd_unitdir}/journald.conf.d"

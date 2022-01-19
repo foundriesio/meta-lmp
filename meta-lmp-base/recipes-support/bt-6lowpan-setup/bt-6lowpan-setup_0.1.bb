@@ -33,4 +33,4 @@ do_install() {
 	install -m 0644 ${WORKDIR}/modules-6lowpan.conf ${D}${libdir}/modules-load.d/6lowpan.conf
 }
 
-FILES_${PN} += "${libdir}/modules-load.d"
+FILES:${PN} += "${libdir}/modules-load.d"

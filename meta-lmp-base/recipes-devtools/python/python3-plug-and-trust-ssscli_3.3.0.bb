@@ -10,7 +10,7 @@ S = "${WORKDIR}/git/src"
 
 inherit setuptools3
 
-RDEPENDS_${PN} += "plug-and-trust-seteec \
+RDEPENDS:${PN} += "plug-and-trust-seteec \
     ${PYTHON_PN}-click \
     ${PYTHON_PN}-func-timeout \
 "

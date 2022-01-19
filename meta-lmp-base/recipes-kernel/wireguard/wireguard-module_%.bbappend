@@ -6,5 +6,5 @@ python __anonymous() {
     if pprovider != "linux-lmp" and pprovider != "linux-lmp-lts" and pprovider != "linux-lmp-rt" \
             and pprovider != "linux-lmp-dev" and pprovider != "linux-lmp-fslc-imx" \
             and d.getVar("KERNEL_BUILTIN_WIREGUARD") != "1":
-        d.appendVar("RPROVIDES_" + pn, "kernel-module-wireguard")
+        d.appendVar("RPROVIDES:" + pn, "kernel-module-wireguard")
 }

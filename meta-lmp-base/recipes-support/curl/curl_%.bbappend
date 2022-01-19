@@ -1,3 +1,3 @@
-EXTRA_OECONF_append_sota = " \
+EXTRA_OECONF:append:sota = " \
     --with-ca-path=${sysconfdir}/ssl/certs \
 "

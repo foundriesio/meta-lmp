@@ -14,7 +14,7 @@ PROVIDES = "virtual/optee-os"
 
 DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyelftools-native"
 
-DEPENDS_append_toolchain-clang = " compiler-rt"
+DEPENDS:append:toolchain-clang = " compiler-rt"
 
 SRCBRANCH ?= "master"
 SRC_URI = "git://github.com/foundriesio/optee_os.git;protocol=https;branch=${SRCBRANCH}"
@@ -80,11 +80,11 @@ SYSROOT_DIRS += "${nonarch_base_libdir}/firmware"
 
 PACKAGES += "${PN}-ta-pkcs11 ${PN}-ta"
 
-FILES_${PN} = "${nonarch_base_libdir}/firmware/"
-FILES_${PN}-ta = "${nonarch_base_libdir}/optee_armtz"
-FILES_${PN}-ta-pkcs11 = "${nonarch_base_libdir}/optee_armtz/fd02c9da-306c-48c7-a49c-bbd827ae86ee.ta"
-FILES_${PN}-dev = "${includedir}/optee/"
+FILES:${PN} = "${nonarch_base_libdir}/firmware/"
+FILES:${PN}-ta = "${nonarch_base_libdir}/optee_armtz"
+FILES:${PN}-ta-pkcs11 = "${nonarch_base_libdir}/optee_armtz/fd02c9da-306c-48c7-a49c-bbd827ae86ee.ta"
+FILES:${PN}-dev = "${includedir}/optee/"
 
-INSANE_SKIP_${PN}-dev = "staticdev"
+INSANE_SKIP:${PN}-dev = "staticdev"
 
 INHIBIT_PACKAGE_STRIP = "1"

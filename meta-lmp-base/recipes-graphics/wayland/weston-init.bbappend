@@ -1,6 +1,6 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_lmp-wayland = " \
+SRC_URI:append:lmp-wayland = " \
     file://utilities-terminal.png \
     file://background.jpg \
     file://weston.env \
@@ -8,7 +8,7 @@ SRC_URI_append_lmp-wayland = " \
     file://tmpfiles.conf \
 "
 
-FILES_${PN}_append_lmp-wayland = " \
+FILES:${PN}:append:lmp-wayland = " \
     ${datadir}/weston \
     ${nonarch_libdir}/tmpfiles.d/weston.conf \
 "
@@ -24,7 +24,7 @@ uncomment() {
     sed -i -e 's,^#'"$1"','"$1"',g' $2
 }
 
-do_install_append_lmp-wayland() {
+do_install:append:lmp-wayland() {
     install -d ${D}${datadir}/weston/backgrounds
     install -d ${D}${datadir}/weston/icon
     install -d ${D}${nonarch_libdir}/tmpfiles.d

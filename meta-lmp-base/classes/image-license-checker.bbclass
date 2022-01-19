@@ -91,7 +91,7 @@ def license_expr_for_installed_package(d, inst_package):
         inst_package)
 
     package = package_name_for_installed_package(d, inst_package)
-    keys_in_file = ["LICENSE", "LICENSE_{}".format(package)]
+    keys_in_file = ["LICENSE", "LICENSE:{}".format(package)]
     return license_expr_from_file(file, keys_in_file)
 
 
@@ -134,7 +134,7 @@ python check_rootfs_licenses() {
     if bad_packages:
         bb.fatal("Packages have blacklisted licenses: {}".format(", ".join(bad_packages)))
 }
-ROOTFS_POSTPROCESS_COMMAND_prepend = "check_rootfs_licenses; "
+ROOTFS_POSTPROCESS_COMMAND:prepend = "check_rootfs_licenses; "
 
 
 python check_deploy_licenses() {
@@ -153,4 +153,4 @@ python check_deploy_licenses() {
     if bad_recipes:
         bb.fatal("Deployed image dependencies have blacklisted licenses: {}".format(", ".join(bad_recipes)))
 }
-IMAGE_POSTPROCESS_COMMAND_prepend = "check_deploy_licenses; "
+IMAGE_POSTPROCESS_COMMAND:prepend = "check_deploy_licenses; "

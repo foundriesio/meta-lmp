@@ -21,4 +21,4 @@ do_install() {
 	install -m 0644 ${WORKDIR}/modprobe-moal.conf ${D}${libdir}/modprobe.d/moal.conf
 }
 
-FILES_${PN} += "${libdir}/modules-load.d/moal.conf ${libdir}/modprobe.d/moal.conf"
+FILES:${PN} += "${libdir}/modules-load.d/moal.conf ${libdir}/modprobe.d/moal.conf"

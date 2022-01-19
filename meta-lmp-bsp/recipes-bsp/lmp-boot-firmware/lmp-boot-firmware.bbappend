@@ -1,5 +1,5 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-PROVIDES_uz3eg-iocc-sec = "virtual/boot-bin"
-PV_uz3eg-iocc-sec = "3"
-SRC_URI_uz3eg-iocc-sec = "file://boot.bin"
+PROVIDES:uz3eg-iocc-sec = "virtual/boot-bin"
+PV:uz3eg-iocc-sec = "3"
+SRC_URI:uz3eg-iocc-sec = "file://boot.bin"

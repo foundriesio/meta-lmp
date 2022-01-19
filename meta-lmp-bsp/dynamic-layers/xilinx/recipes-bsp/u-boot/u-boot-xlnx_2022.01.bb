@@ -24,21 +24,21 @@ HAS_PLATFORM_INIT ?= " \
 # add pmu-firmware and fpga bitstream (loading FPGA from SPL) dependancies
 do_compile[depends] += "virtual/pmu-firmware:do_deploy virtual/bitstream:do_deploy"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://fw_env.config \
     ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
 "
 
 # LMP base requires a different u-boot configuration fragment
-SRC_URI_append_lmp-base = " file://lmp-base.cfg "
-SRC_URI_remove_lmp-base = "file://lmp.cfg"
+SRC_URI:append:lmp-base = " file://lmp-base.cfg "
+SRC_URI:remove:lmp-base = "file://lmp.cfg"
 
-SRC_URI_append_uz = " \
+SRC_URI:append:uz = " \
     file://pm_cfg_obj.c \
 "
 
 # copy platform files to u-boot source dir
-do_configure_prepend() {
+do_configure:prepend() {
     if [ -n "${PLATFORM_INIT_DIR}" ]; then
         for i in ${PLATFORM_INIT_FILES}; do
             cp ${PLATFORM_INIT_STAGE_DIR}/$i ${S}/
@@ -47,7 +47,7 @@ do_configure_prepend() {
 }
 
 # generate and configure u-boot to use pm_cfg_obj.bin
-do_compile_prepend_uz() {
+do_compile:prepend:uz() {
     ${PYTHON} ${S}/tools/zynqmp_pm_cfg_obj_convert.py ${WORKDIR}/pm_cfg_obj.c ${S}/pm_cfg_obj.bin
     echo "CONFIG_ZYNQMP_SPL_PM_CFG_OBJ_FILE=\"${S}/pm_cfg_obj.bin\"" >> ${B}/.config
 }

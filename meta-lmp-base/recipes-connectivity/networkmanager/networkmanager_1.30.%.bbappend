@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 # Depend on libedit as it has a more friendly license than readline (GPLv3)
 DEPENDS += "libedit"

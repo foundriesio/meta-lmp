@@ -18,4 +18,4 @@ do_install() {
 	install -m 0755 ${S}/pkcs11-se050-import ${D}${bindir}
 }
 
-RDEPENDS_${PN} = "opensc"
+RDEPENDS:${PN} = "opensc"

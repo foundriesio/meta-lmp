@@ -9,7 +9,7 @@ SRC_URI = " \
 
 inherit systemd
 
-SYSTEMD_SERVICE_${PN} = "compose-apps-early-start.service"
+SYSTEMD_SERVICE:${PN} = "compose-apps-early-start.service"
 
 do_install() {
 	install -d ${D}${systemd_system_unitdir}

@@ -15,7 +15,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod dos2unix
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${datadir}/${BPN}/fusemaps
     for fusemap in ${S}/src/${GO_IMPORT}/fusemaps/*.yaml; do
         install -m 0644 ${fusemap} ${D}${datadir}/${BPN}/fusemaps

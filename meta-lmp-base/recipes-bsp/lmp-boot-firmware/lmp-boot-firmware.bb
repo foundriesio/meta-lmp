@@ -66,5 +66,5 @@ do_deploy() {
 }
 addtask deploy after do_install
 
-ALLOW_EMPTY_${PN} = "1"
-FILES_${PN} = "${nonarch_base_libdir}/firmware"
+ALLOW_EMPTY:${PN} = "1"
+FILES:${PN} = "${nonarch_base_libdir}/firmware"

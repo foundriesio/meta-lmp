@@ -20,7 +20,7 @@ CONTAINERD_VERSION = "v1.4.12"
 EXTRA_OEMAKE += "GODEBUG=1"
 
 PROVIDES += "virtual/containerd"
-RPROVIDES_${PN} = "virtual/containerd"
+RPROVIDES:${PN} = "virtual/containerd"
 
 S = "${WORKDIR}/git"
 
@@ -33,7 +33,7 @@ GO_IMPORT = "import"
 
 CONTAINERD_PKG="github.com/containerd/containerd"
 
-INSANE_SKIP_${PN} += "ldflags"
+INSANE_SKIP:${PN} += "ldflags"
 
 do_configure[noexec] = "1"
 
@@ -86,7 +86,7 @@ do_compile() {
 
 inherit systemd
 SYSTEMD_PACKAGES = "${@bb.utils.contains('DISTRO_FEATURES','systemd','${PN}','',d)}"
-SYSTEMD_SERVICE_${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','containerd.service','',d)}"
+SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','containerd.service','',d)}"
 
 do_install() {
 	mkdir -p ${D}/${bindir}
@@ -111,12 +111,12 @@ do_install() {
 	fi
 }
 
-FILES_${PN} += "${systemd_system_unitdir}/*"
+FILES:${PN} += "${systemd_system_unitdir}/*"
 
-INSANE_SKIP_${PN} += "ldflags already-stripped"
+INSANE_SKIP:${PN} += "ldflags already-stripped"
 
 COMPATIBLE_HOST = "^(?!(qemu)?mips).*"
 
-RDEPENDS_${BPN} += " virtual/runc"
+RDEPENDS:${BPN} += " virtual/runc"
 
 CVE_PRODUCT = "containerd"

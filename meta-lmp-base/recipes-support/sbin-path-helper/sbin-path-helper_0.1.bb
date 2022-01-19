@@ -16,4 +16,4 @@ do_install () {
 	install -m 0644 ${WORKDIR}/path-sbin.sh ${D}${sysconfdir}/profile.d/path-sbin.sh
 }
 
-FILES_${PN} += "${sysconfdir}/profile.d/path-sbin.sh"
+FILES:${PN} += "${sysconfdir}/profile.d/path-sbin.sh"

@@ -1,6 +1,6 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_am64xx-evm = " \
+SRC_URI:append:am64xx-evm = " \
     file://0001-am64xx-sk-set-bootm-len-to-64.patch \
     file://fw_env.config \
     file://lmp.cfg \

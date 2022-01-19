@@ -1,11 +1,11 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_lmp = " \
+SRC_URI:append:lmp = " \
 	file://ptest-lmp-runner.sh \
 "
 
-do_install_append_lmp() {
+do_install:append:lmp() {
 	install -D -m 0755 ${WORKDIR}/ptest-lmp-runner.sh ${D}${bindir}/ptest-lmp-runner
 }
 
-FILES_${PN}_append_lmp = " ${bindir}/ptest-lmp-runner"
+FILES:${PN}:append:lmp = " ${bindir}/ptest-lmp-runner"

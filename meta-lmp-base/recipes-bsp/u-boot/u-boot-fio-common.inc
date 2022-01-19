@@ -13,8 +13,8 @@ SRC_URI = "git://github.com/foundriesio/u-boot.git;protocol=https;branch=${SRCBR
     ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
 "
 # LMP base requires a different u-boot configuration fragment
-SRC_URI_append_lmp-base = " file://lmp-base.cfg "
-SRC_URI_remove_lmp-base = "file://lmp.cfg"
+SRC_URI:append:lmp-base = " file://lmp-base.cfg "
+SRC_URI:remove:lmp-base = "file://lmp.cfg"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
@@ -29,7 +29,7 @@ inherit ${UBOOT_CLASSES} fio-u-boot-localversion
 
 PROVIDES += "u-boot"
 
-do_compile_append() {
+do_compile:append() {
     cat << EOF > sit_template
 #! /usr/bin/perl -w
 use strict;

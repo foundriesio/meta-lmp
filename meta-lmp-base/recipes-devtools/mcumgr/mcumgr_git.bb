@@ -23,5 +23,5 @@ do_compile() {
 	chmod u+w -R ${B}
 }
 
-RDEPENDS_${PN}-dev += "bash"
-RDEPENDS_${PN}-staticdev += "bash"
+RDEPENDS:${PN}-dev += "bash"
+RDEPENDS:${PN}-staticdev += "bash"

@@ -1,5 +1,5 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_corstone700-mps3 = " \
+SRC_URI:append:corstone700-mps3 = " \
     file://0001-corstone700-update-bootargs-and-initrd-address.patch \
 "

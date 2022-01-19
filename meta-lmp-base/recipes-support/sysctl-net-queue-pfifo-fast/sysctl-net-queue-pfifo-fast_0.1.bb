@@ -15,4 +15,4 @@ do_install () {
 	install -m 0644 ${WORKDIR}/sysctl-net-queuing.conf ${D}${libdir}/sysctl.d/90-net-queuing.conf
 }
 
-FILES_${PN} += "${libdir}/sysctl.d/90-net-queuing.conf"
+FILES:${PN} += "${libdir}/sysctl.d/90-net-queuing.conf"

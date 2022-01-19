@@ -1,3 +1,3 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-RDEPENDS_${PN} += "efibootmgr"
+RDEPENDS:${PN} += "efibootmgr"

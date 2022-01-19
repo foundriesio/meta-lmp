@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 inherit allarch
 
-RDEPENDS_${PN} = "aktualizr-get"
+RDEPENDS:${PN} = "aktualizr-get"
 
 SRC_URI = "file://docker-credential-fio-helper"
 S = "${WORKDIR}"

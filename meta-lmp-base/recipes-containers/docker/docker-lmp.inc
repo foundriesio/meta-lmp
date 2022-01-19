@@ -1,6 +1,6 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://daemon.json.in \
     file://docker.service \
 "
@@ -9,15 +9,15 @@ DOCKER_MAX_CONCURRENT_DOWNLOADS ?= "3"
 DOCKER_MAX_DOWNLOAD_ATTEMPTS ?= "5"
 
 # Prefer docker.service instead of docker.socket as this is a critical service
-SYSTEMD_SERVICE_${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','docker.service','',d)}"
+SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','docker.service','',d)}"
 
-do_install_prepend() {
+do_install:prepend() {
     sed -e 's/@@MAX_CONCURRENT_DOWNLOADS@@/${DOCKER_MAX_CONCURRENT_DOWNLOADS}/' \
         -e 's/@@MAX_DOWNLOAD_ATTEMPTS@@/${DOCKER_MAX_DOWNLOAD_ATTEMPTS}/' \
         ${WORKDIR}/daemon.json.in > ${WORKDIR}/daemon.json
 }
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${libdir}/docker
     install -m 0644 ${WORKDIR}/daemon.json ${D}${libdir}/docker/
 
@@ -29,5 +29,5 @@ do_install_append() {
 
 # pigz takes advantage of both multiple CPUs and multiple CPU cores for higher
 # compression and decompression speed, and also set at the official packages
-RDEPENDS_${PN} += "pigz"
-FILES_${PN} += "${libdir}/docker"
+RDEPENDS:${PN} += "pigz"
+FILES:${PN} += "${libdir}/docker"

@@ -14,7 +14,7 @@ SRC_URI += "file://0001-setup.py-remove-maximum-version-requirements.patch \
 
 DEPENDS += "${PYTHON_PN}-fastentrypoints-native"
 
-RDEPENDS_${PN} = "\
+RDEPENDS:${PN} = "\
     ${PYTHON_PN}-cached-property \
     ${PYTHON_PN}-certifi \
     ${PYTHON_PN}-chardet \

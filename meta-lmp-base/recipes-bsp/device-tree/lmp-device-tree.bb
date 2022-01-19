@@ -11,5 +11,5 @@ PROVIDES = "virtual/dtb"
 
 # Device tree and overlays to be provided by the BSP layer
 # E.g.:
-# SRC_URI_append_board = "file://overlays_board.dts"
+# SRC_URI:append:board = "file://overlays_board.dts"
 # COMPATIBLE_MACHINE_board = ".*"

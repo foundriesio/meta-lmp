@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 inherit allarch systemd
 
-RDEPENDS_${PN} = "systemd"
+RDEPENDS:${PN} = "systemd"
 
 SRC_URI = "file://lmp-auto-hostname.service.in \
     file://lmp-update-hostname.sh \
@@ -17,8 +17,8 @@ LMP_HOSTNAME_MACHINE ?= "${MACHINE}"
 LMP_HOSTNAME_MODE ?= "serial"
 LMP_HOSTNAME_NETDEVICE ?= ""
 
-SYSTEMD_SERVICE_${PN} = "lmp-auto-hostname.service"
-SYSTEMD_AUTO_ENABLE_${PN} = "enable"
+SYSTEMD_SERVICE:${PN} = "lmp-auto-hostname.service"
+SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
 do_compile() {
 	sed -e 's/@@LMP_HOSTNAME_MACHINE@@/${LMP_HOSTNAME_MACHINE}/' \

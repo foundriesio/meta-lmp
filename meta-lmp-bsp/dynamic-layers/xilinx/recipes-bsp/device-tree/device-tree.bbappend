@@ -1,7 +1,7 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 # From xilinx-k26-starterkit-2021.1/project-spec/dts_dir
-EXTRA_DT_FILES_kv260 = " \
+EXTRA_DT_FILES:kv260 = " \
 	zynqmp-sck-kv-g-dp.dts \
 	zynqmp-sck-kv-g-rev1.dts \
 	zynqmp-sck-kv-g-revA.dts \
@@ -12,22 +12,22 @@ EXTRA_DT_FILES_kv260 = " \
 
 inherit xilinx-platform-init
 
-PROVIDES_append_zynqmp = " virtual/xilinx-platform-init"
+PROVIDES:append:zynqmp = " virtual/xilinx-platform-init"
 
-SRC_URI_append_uz = " \
+SRC_URI:append:uz = " \
         file://system-som.dtsi \
         file://system-board.dtsi \
         file://system-conf.dtsi \
 "
-COMPATIBLE_MACHINE_zynqmp = ".*"
+COMPATIBLE_MACHINE:zynqmp = ".*"
 
-do_configure_append_uz () {
+do_configure:append:uz () {
         echo '/include/ "system-som.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
         echo '/include/ "system-board.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
         echo '/include/ "system-conf.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
 }
 
-do_install_append_zynqmp () {
+do_install:append:zynqmp () {
 	install -d ${D}${PLATFORM_INIT_DIR}
 	for i in ${PLATFORM_INIT_FILES}; do
 		install -m 0644 ${B}/device-tree/$i ${D}${PLATFORM_INIT_DIR}/
@@ -44,5 +44,5 @@ dtb_sysroot_preprocess () {
 	fi
 }
 
-PACKAGES_append_zynqmp = " ${PN}-platform-init"
-FILES_${PN}-platform-init = "${PLATFORM_INIT_DIR}/*"
+PACKAGES:append:zynqmp = " ${PN}-platform-init"
+FILES:${PN}-platform-init = "${PLATFORM_INIT_DIR}/*"

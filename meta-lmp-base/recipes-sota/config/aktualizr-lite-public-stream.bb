@@ -24,4 +24,4 @@ do_install() {
 	install -m 0644 ${WORKDIR}/10-lite-public-stream.toml ${D}${libdir}/sota/conf.d/10-lite-public-stream.toml
 }
 
-FILES_${PN} += "${libdir}/sota/conf.d/10-lite-public-stream.toml"
+FILES:${PN} += "${libdir}/sota/conf.d/10-lite-public-stream.toml"

@@ -21,10 +21,10 @@ inherit go-mod systemd
 GO_LDFLAGS = '-tags vpn -ldflags="-X ${GO_IMPORT}/internal.Commit=${SRCREV} ${GO_RPATH} ${GO_LINKMODE} -extldflags '${GO_EXTLDFLAGS}'"'
 
 SYSTEMD_PACKAGES += "${PN}"
-SYSTEMD_SERVICE_${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"
+SYSTEMD_SERVICE:${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"
 
 
-do_install_append() {
+do_install:append() {
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/fioconfig.service ${D}${systemd_system_unitdir}/
 	install -m 0644 ${WORKDIR}/fioconfig.path ${D}${systemd_system_unitdir}/
@@ -36,9 +36,9 @@ do_install_append() {
 
 # We need aktualizr because we uses its device gateway connectivity and keys,
 # and networkmanager-nmcli for wireguard support
-RDEPENDS_${PN} = "${SOTA_CLIENT} networkmanager-nmcli"
+RDEPENDS:${PN} = "${SOTA_CLIENT} networkmanager-nmcli"
 
-FILES_${PN} += " \
+FILES:${PN} += " \
 	${systemd_unitdir}/system/fioconfig.service \
 	${systemd_unitdir}/system/fioconfig.path \
 	${systemd_unitdir}/system/fioconfig-extract.service \

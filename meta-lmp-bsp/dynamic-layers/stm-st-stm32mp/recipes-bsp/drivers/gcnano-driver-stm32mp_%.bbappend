@@ -1,11 +1,11 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://galcore.rules \
 "
 
 # Based on linux-stm32mp.inc
-do_install_append() {
+do_install:append() {
     install -d ${D}/${sysconfdir}/modprobe.d
     echo "blacklist etnaviv" > ${D}/${sysconfdir}/modprobe.d/gcnano.conf
 
@@ -13,4 +13,4 @@ do_install_append() {
     install -m 0644 ${WORKDIR}/galcore.rules ${D}${nonarch_base_libdir}/udev/rules.d/80-galcore.rules
 }
 
-FILES_${PN} += "${sysconfdir}/modprobe.d ${nonarch_base_libdir}/udev/rules.d"
+FILES:${PN} += "${sysconfdir}/modprobe.d ${nonarch_base_libdir}/udev/rules.d"

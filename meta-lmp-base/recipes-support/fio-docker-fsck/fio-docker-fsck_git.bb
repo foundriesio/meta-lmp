@@ -15,11 +15,11 @@ SRCBRANCH = "main"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
-SYSTEMD_SERVICE_${PN} = "fio-docker-fsck.service"
+SYSTEMD_SERVICE:${PN} = "fio-docker-fsck.service"
 
 inherit go-mod systemd
 
-do_install_append() {
+do_install:append() {
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/fio-docker-fsck.service ${D}${systemd_system_unitdir}/
 }

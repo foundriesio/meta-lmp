@@ -33,4 +33,4 @@ do_install() {
     chown -R root:root ${D}
 }
 
-SYSTEMD_SERVICE_${PN} = "tee-supplicant.service"
+SYSTEMD_SERVICE:${PN} = "tee-supplicant.service"

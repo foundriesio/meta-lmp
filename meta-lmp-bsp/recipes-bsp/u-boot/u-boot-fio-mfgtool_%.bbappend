@@ -1,9 +1,9 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-BOOT_TOOLS_mx8 = "imx-boot-tools"
+BOOT_TOOLS:mx8 = "imx-boot-tools"
 
 # From u-boot-imx/meta-freescale
-do_deploy_append_mx8() {
+do_deploy:append:mx8() {
     # Deploy u-boot-nodtb.bin and XX.dtb for mkimage to generate boot binary
     if [ -n "${UBOOT_CONFIG}" ]; then
         for config in ${UBOOT_MACHINE}; do

@@ -1,4 +1,4 @@
 # Machine specific configuration
 
 # QEMU
-KERNEL_FEATURES_remove_qemuall = "features/kernel-sample/kernel-sample.scc"
+KERNEL_FEATURES:remove:qemuall = "features/kernel-sample/kernel-sample.scc"

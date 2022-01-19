@@ -13,8 +13,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 # Allow build time customizations by the user
 DOCKER_PRUNE_ONCALENDAR ?= "daily"
 
-SYSTEMD_SERVICE_${PN} = "docker-auto-prune.timer"
-SYSTEMD_AUTO_ENABLE_${PN} = "enable"
+SYSTEMD_SERVICE:${PN} = "docker-auto-prune.timer"
+SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
 do_compile() {
 	sed -e 's/@@DOCKER_PRUNE_ONCALENDAR@@/${DOCKER_PRUNE_ONCALENDAR}/' \
@@ -27,4 +27,4 @@ do_install() {
 	install -m 0644 ${B}/docker-auto-prune.timer ${D}${systemd_system_unitdir}
 }
 
-FILES_${PN} += "${systemd_system_unitdir}/docker-auto-prune.service"
+FILES:${PN} += "${systemd_system_unitdir}/docker-auto-prune.service"

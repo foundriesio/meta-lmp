@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 # Based on the original recipe but changed for LmP (done to avoid changing via removal)
 ## NOTE: This list will have to be reviewed / updated on every systemd recipe update from OE-Core
@@ -45,7 +45,7 @@ EXTRA_OEMESON += ' \
 	-Dntp-servers="${DEF_FALLBACK_NTP_SERVERS}" \
 '
 
-SRC_URI_append = " \
+SRC_URI:append = " \
 	file://0001-cgroup-Simplify-cg_get_path_and_check.patch \
 	file://0002-core-Make-user-instance-aware-of-delegated-cgroup-co.patch \
 	file://0003-Revert-Silence-cgroups-v1-read-only-filesystem-warni.patch \
@@ -55,9 +55,9 @@ SRC_URI_append = " \
 "
 
 # /var in lmp is expected to be rw, so drop volatile-binds service files
-RDEPENDS_${PN}_remove = "volatile-binds"
+RDEPENDS:${PN}:remove = "volatile-binds"
 
-do_install_append() {
+do_install:append() {
 	# prefer nonarch_libdir instead of sysconfdir as this is a core configuration file
 	mv ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
 	if [ ${@ oe.types.boolean('${VOLATILE_LOG_DIR}') } = True ]; then

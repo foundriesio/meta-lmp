@@ -1,1 +1,1 @@
-PACKAGECONFIG_append_stm32mpcommon = " ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', 'gallium', '', d)}"
+PACKAGECONFIG:append:stm32mpcommon = " ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', 'gallium', '', d)}"

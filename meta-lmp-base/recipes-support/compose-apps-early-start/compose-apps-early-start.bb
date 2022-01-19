@@ -11,7 +11,7 @@ SRC_URI = " \
 
 inherit systemd
 
-SYSTEMD_SERVICE_${PN} = "compose-apps-early-start.service"
+SYSTEMD_SERVICE:${PN} = "compose-apps-early-start.service"
 
 do_install() {
 	install -d ${D}${systemd_system_unitdir}
@@ -22,4 +22,4 @@ do_install() {
 	install -m 0755 ${WORKDIR}/compose-apps-early-start-recovery ${D}${bindir}/
 }
 
-FILES_${PN} += "${systemd_system_unitdir}/*.service"
+FILES:${PN} += "${systemd_system_unitdir}/*.service"

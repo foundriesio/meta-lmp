@@ -22,7 +22,7 @@ S = "${WORKDIR}/git"
 
 inherit cmake
 
-RDEPENDS_${PN} += "openssl-bin ${SOTA_CLIENT}"
+RDEPENDS:${PN} += "openssl-bin ${SOTA_CLIENT}"
 
 EXTRA_OECMAKE += "\
     -DGIT_COMMIT=${SRCREV} \

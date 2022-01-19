@@ -263,7 +263,7 @@ uboot_fitimage_sign() {
 }
 
 # Needs to happen after concat_dtb, which is a do_deploy prefuncs
-do_deploy_prepend() {
+do_deploy:prepend() {
 	if ${OPTEE_SUPPORT}; then
 		OPTEE_LOAD_ADDR=`cat ${DEPLOY_DIR_IMAGE}/optee/tee-init_load_addr.txt`
 	fi

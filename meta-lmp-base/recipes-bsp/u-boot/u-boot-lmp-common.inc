@@ -1,7 +1,7 @@
 # Common include for all LMP u-boot recipes
 
 # Also deploy u-boot config used during build
-do_deploy_append() {
+do_deploy:append() {
     if [ -n "${UBOOT_CONFIG}" ]; then
         for config in ${UBOOT_MACHINE}; do
             machine_idx=$(expr $machine_idx + 1);

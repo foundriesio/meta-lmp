@@ -15,4 +15,4 @@ do_install () {
 	install -m 0644 ${WORKDIR}/sysctl-panic.conf ${D}${libdir}/sysctl.d/60-panic.conf
 }
 
-FILES_${PN} += "${libdir}/sysctl.d/60-panic.conf"
+FILES:${PN} += "${libdir}/sysctl.d/60-panic.conf"

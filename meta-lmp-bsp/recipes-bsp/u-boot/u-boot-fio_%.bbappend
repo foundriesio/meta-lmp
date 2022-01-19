@@ -1,9 +1,9 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-BOOT_TOOLS_mx8 = "imx-boot-tools"
+BOOT_TOOLS:mx8 = "imx-boot-tools"
 
 # From u-boot-imx/meta-freescale
-do_deploy_append_mx8() {
+do_deploy:append:mx8() {
     # Deploy u-boot-nodtb.bin and XX.dtb for mkimage to generate boot binary
     if [ -n "${UBOOT_CONFIG}" ]; then
         for config in ${UBOOT_MACHINE}; do
@@ -41,8 +41,8 @@ do_deploy_append_mx8() {
     fi
 }
 
-DEPENDS_append_freedom-u540 = " opensbi"
+DEPENDS:append:freedom-u540 = " opensbi"
 
-do_compile_prepend_freedom-u540() {
+do_compile:prepend:freedom-u540() {
     export OPENSBI=${RECIPE_SYSROOT}/share/opensbi/lp64/sifive/fu540/firmware/fw_dynamic.bin
 }

@@ -18,9 +18,9 @@ OSTREE_PENDING_REBOOT_CHECK_MINUTES ?= "5"
 
 PACKAGES += "${PN}-timer"
 SYSTEMD_PACKAGES = "${PN} ${PN}-timer"
-SYSTEMD_SERVICE_${PN} = "ostree-pending-reboot.service"
-SYSTEMD_SERVICE_${PN}-timer = "ostree-pending-reboot.timer"
-SYSTEMD_AUTO_ENABLE_${PN}-timer = "enable"
+SYSTEMD_SERVICE:${PN} = "ostree-pending-reboot.service"
+SYSTEMD_SERVICE:${PN}-timer = "ostree-pending-reboot.timer"
+SYSTEMD_AUTO_ENABLE:${PN}-timer = "enable"
 
 do_compile() {
 	sed -e 's/@@OSTREE_PENDING_REBOOT_CHECK_MINUTES@@/${OSTREE_PENDING_REBOOT_CHECK_MINUTES}/' \
@@ -33,6 +33,6 @@ do_install () {
 	install -m 0644 ${B}/ostree-pending-reboot.timer ${D}${systemd_system_unitdir}
 }
 
-FILES_${PN} += "${systemd_system_unitdir}/ostree-pending-reboot.service"
-FILES_${PN} += "${systemd_system_unitdir}/ostree-pending-reboot.timer"
-FILES_${PN} += "${systemd_unitdir}/system-preset"
+FILES:${PN} += "${systemd_system_unitdir}/ostree-pending-reboot.service"
+FILES:${PN} += "${systemd_system_unitdir}/ostree-pending-reboot.timer"
+FILES:${PN} += "${systemd_unitdir}/system-preset"

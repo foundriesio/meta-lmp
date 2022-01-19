@@ -1,1 +1,1 @@
-SYSTEMD_AUTO_ENABLE_lmp = "disable"
+SYSTEMD_AUTO_ENABLE:lmp = "disable"

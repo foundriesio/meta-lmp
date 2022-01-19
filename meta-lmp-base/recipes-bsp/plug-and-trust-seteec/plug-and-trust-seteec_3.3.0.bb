@@ -31,12 +31,12 @@ EXTRA_OECMAKE += "\
     -DWithSETEEC=ON -DEL2GO_HOSTNAME="${EL2GO_HOSTNAME}" \
 "
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${sysconfdir}/ssl
     install -m 0644 ${S}/nxp_iot_agent/ex/src/openssl_conf_v111.cnf ${D}${sysconfdir}/ssl/openssl_conf_sss.cnf
 }
 
-FILES_${PN} += "\
+FILES:${PN} += "\
     ${libdir}/liba7x_utils.so \
     ${libdir}/libex_common.so \
     ${libdir}/libmwlog.so \
@@ -49,4 +49,4 @@ FILES_${PN} += "\
     ${libdir}/libsssapisw.so \
     ${libdir}/libsss_engine.so \
 "
-FILES_${PN}-dev = "${includedir} ${libdir}/libpaho*.so ${libdir}/cmake ${datadir}/cmake ${datadir}/se05x"
+FILES:${PN}-dev = "${includedir} ${libdir}/libpaho*.so ${libdir}/cmake ${datadir}/cmake ${datadir}/se05x"

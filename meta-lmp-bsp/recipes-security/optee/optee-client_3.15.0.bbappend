@@ -1,4 +1,4 @@
 # Enable RPMB emulation on qemuarm64 to easy testing
-EXTRA_OEMAKE_append_qemuarm64 = " \
+EXTRA_OEMAKE:append:qemuarm64 = " \
     RPMB_EMU=1 \
 "

@@ -18,11 +18,11 @@ S = "${WORKDIR}/git/examples/custom-client-cxx"
 DEPENDS = "jsoncpp boost aktualizr"
 
 SYSTEMD_PACKAGES += "${PN}"
-SYSTEMD_SERVICE_${PN} = "${PN}.service"
+SYSTEMD_SERVICE:${PN} = "${PN}.service"
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/systemd.service ${D}${systemd_system_unitdir}/${PN}.service
 }
 
-FILES_${PN} += "${systemd_unitdir}/system/${PN}.service"
+FILES:${PN} += "${systemd_unitdir}/system/${PN}.service"

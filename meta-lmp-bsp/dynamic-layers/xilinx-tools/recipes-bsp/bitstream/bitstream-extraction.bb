@@ -52,4 +52,4 @@ do_deploy() {
 
 addtask do_deploy after do_install
 
-FILES_${PN} += "${nonarch_base_libdir}/firmware"
+FILES:${PN} += "${nonarch_base_libdir}/firmware"

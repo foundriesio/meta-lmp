@@ -31,18 +31,18 @@ PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "9-2019-q4-major"
 INIT_MANAGER = "systemd"
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
-DISTRO_FEATURES_append = " pam usrmerge seccomp virtualization ptest"
+DISTRO_FEATURES:append = " pam usrmerge seccomp virtualization ptest"
 
 # Default IMA policy (tcb)
 IMA_POLICY ?= "ima-policy-tcb"
 
 # Extended packageconfig options for LMP
-PACKAGECONFIG_append_pn-docker-ce = " seccomp"
-PACKAGECONFIG_append_pn-docker-moby = " seccomp"
+PACKAGECONFIG:append:pn-docker-ce = " seccomp"
+PACKAGECONFIG:append:pn-docker-moby = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
-PACKAGECONFIG_remove_pn-runc-opencontainers = "static"
-PACKAGECONFIG_append_pn-qemu-native = " libusb"
-PACKAGECONFIG_append_pn-networkmanager = " nss"
+PACKAGECONFIG:remove:pn-runc-opencontainers = "static"
+PACKAGECONFIG:append:pn-qemu-native = " libusb"
+PACKAGECONFIG:append:pn-networkmanager = " nss"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"
@@ -57,7 +57,7 @@ USERADD_ERROR_DYNAMIC = "error"
 
 # Default image formats
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
-IMAGE_FSTYPES_remove = "tar.gz tar.bz2"
+IMAGE_FSTYPES:remove = "tar.gz tar.bz2"
 
 # No Ostree tarball by default (prefer ota instead)
 BUILD_OSTREE_TARBALL ?= "0"
@@ -117,9 +117,9 @@ USE_XSCT_TARBALL = "0"
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \
                     installed-vs-shipped ldflags pn-overrides rpaths staticdev \
                     unknown-configure-option useless-rpaths"
-WARN_QA_remove = "${WARN_TO_ERROR_QA}"
-ERROR_QA_append = " ${WARN_TO_ERROR_QA}"
-ERROR_QA_remove = "version-going-backwards"
+WARN_QA:remove = "${WARN_TO_ERROR_QA}"
+ERROR_QA:append = " ${WARN_TO_ERROR_QA}"
+ERROR_QA:remove = "version-going-backwards"
 
 LMP_USER ?= "fio"
 LMP_PASSWORD ?= "fio"

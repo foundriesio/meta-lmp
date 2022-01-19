@@ -2,7 +2,7 @@ SUMMARY = "A systemd oneshot helper to auto register a device"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-RDEPENDS_${PN} += "lmp-device-register"
+RDEPENDS:${PN} += "lmp-device-register"
 
 SRC_URI = " \
 	file://lmp-device-auto-register.service \
@@ -12,7 +12,7 @@ SRC_URI = " \
 
 inherit systemd
 
-SYSTEMD_SERVICE_${PN} = "lmp-device-auto-register.service"
+SYSTEMD_SERVICE:${PN} = "lmp-device-auto-register.service"
 
 do_install() {
 	install -d ${D}${systemd_system_unitdir}

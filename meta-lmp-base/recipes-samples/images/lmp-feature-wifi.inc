@@ -1,5 +1,5 @@
 # Wifi packages
-MACHINE_FIRMWARE_append = " ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8987', 'linux-firmware-nxp89xx', '', d)}"
+MACHINE_FIRMWARE:append = " ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8987', 'linux-firmware-nxp89xx', '', d)}"
 
 CORE_IMAGE_BASE_INSTALL += " \
     hostapd \

@@ -1,10 +1,10 @@
 OPTEEMACHINE ?= "${MACHINE}"
-OPTEEMACHINE_aarch64_qemuall ?= "vexpress-qemu_armv8a"
+OPTEEMACHINE:aarch64:qemuall ?= "vexpress-qemu_armv8a"
 
 OPTEE_ARCH = "null"
-OPTEE_ARCH_armv7a = "arm32"
-OPTEE_ARCH_armv7ve = "arm32"
-OPTEE_ARCH_aarch64 = "arm64"
+OPTEE_ARCH:armv7a = "arm32"
+OPTEE_ARCH:armv7ve = "arm32"
+OPTEE_ARCH:aarch64 = "arm64"
 OPTEE_CORE = "${@d.getVar('OPTEE_ARCH').upper()}"
 
 OPTEE_COMPILER = "${@d.getVar('TOOLCHAIN') or 'gcc'}"

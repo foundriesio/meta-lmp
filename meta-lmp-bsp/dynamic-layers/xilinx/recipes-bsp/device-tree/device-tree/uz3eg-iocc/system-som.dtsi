@@ -63,6 +63,22 @@
 		};
 	};
 
+	reserved-memory {
+		#size-cells = <2>;
+		#address-cells = <2>;
+		ranges;
+
+		optee_core@7e000000 {
+			reg = <0x00 0x7fc00000 0x00 0x400000>;
+			no-map;
+		};
+
+		optee_shm@7fc00000 {
+			reg = <0x00 0x7e000000 0x00 0x1c00000>;
+			no-map;
+		};
+	};
+
 	firmware {
 		optee {
 			compatible = "linaro,optee-tz";

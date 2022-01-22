@@ -20,7 +20,21 @@ setenv bootloader_s_image ${bootloader_image}
 setenv bootloader2_image "u-boot.itb"
 setenv bootloader2_s_image ${bootloader2_image}
 
+setenv check_board_closed "is_boot_authenticated"
+setenv check_secondary_boot "multi_boot"
+
 if test "${modeboot}" = "qspiboot"; then
+	# Use SD for open boards, and eMMC for closed
+	run check_board_closed
+
+	if test -n "${board_is_closed}"; then
+		# Use eMMC for further loading/booting Linux FIT image
+		setenv devnum 0
+	else
+		# Use SD for further loading/booting Linux FIT image
+		setenv devnum 1
+	fi
+
 	setenv qspi_bootloader_offset 0x0
 	setenv qspi_bootloader_s_offset 0x60000
 
@@ -61,8 +75,5 @@ setenv update_primary_image 'echo "${fio_msg} writing ${image_path} ..."; setenv
 setenv update_secondary_image 'echo "${fio_msg} writing ${image_path} ..."; setenv run_update "${update_cmd} ${bootloader_s_image_update} ${filesize}"; run run_update'
 setenv update_primary_image2 'echo "${fio_msg} writing ${image_path} ..."; setenv run_update "${update_cmd} ${bootloader2_image_update} ${filesize}"; run run_update'
 setenv update_secondary_image2 'echo "${fio_msg} writing ${image_path} ..."; setenv run_update "${update_cmd} ${bootloader2_s_image_update} ${filesize}"; run run_update'
-
-setenv check_board_closed "is_boot_authenticated"
-setenv check_secondary_boot "multi_boot"
 
 @@INCLUDE_COMMON@@

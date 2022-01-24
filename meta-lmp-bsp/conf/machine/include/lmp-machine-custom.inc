@@ -255,6 +255,7 @@ WKS_FILE_mx6ull:sota = "sdimage-imx6-spl-fit-sota.wks"
 SOTA_CLIENT_FEATURES:append:imx6ullevk = " ubootenv"
 UBOOT_MACHINE:imx6ullevk = "mx6ull_14x14_evk_defconfig"
 KERNEL_DEVICETREE:imx6ullevk = "imx6ull-14x14-evk.dtb"
+KERNEL_DEVICETREE:remove:imx6ullevk = "imx6ull-14x14-evk-btwifi-oob.dtb"
 BOOTSCR_LOAD_ADDR:imx6ullevk = "0x85000000"
 
 # Toradex Apalis iMX6

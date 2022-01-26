@@ -72,5 +72,6 @@ systemd-bus-proxy:x:991:
 systemd-timesync:x:992:
 systemd-resolve:x:993:
 systemd-journal:x:994:
+systemd-network:x:995:
 fio:x:1000:
 nogroup:x:65534:

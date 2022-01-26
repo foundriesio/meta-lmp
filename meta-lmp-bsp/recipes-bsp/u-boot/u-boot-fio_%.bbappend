@@ -10,7 +10,7 @@ do_deploy_append_mx8() {
             machine_idx=$(expr $machine_idx + 1);
             for type in ${UBOOT_CONFIG}; do
                 type_idx=$(expr $type_idx + 1);
-                if [ $type_id -eq $machine_idx ]; then
+                if [ $type_idx -eq $machine_idx ]; then
                     install -d ${DEPLOYDIR}/${BOOT_TOOLS}
                     # When sign is enabled the final DTB should be copied from deploy dir
                     if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then

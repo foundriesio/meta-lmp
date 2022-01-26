@@ -1,5 +1,43 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+# Based on the original recipe but changed for LmP (done to avoid changing via removal)
+## NOTE: This list will have to be reviewed / updated on every systemd recipe update from OE-Core
+PACKAGECONFIG ?= " \
+    ${@bb.utils.filter('DISTRO_FEATURES', 'acl audit efi ldconfig pam selinux smack usrmerge polkit', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'rfkill', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xkbcommon', '', d)} \
+    backlight \
+    binfmt \
+    gshadow \
+    hibernate \
+    hostnamed \
+    idn \
+    ima \
+    journal-upload \
+    kmod \
+    localed \
+    logind \
+    machined \
+    myhostname \
+    nss \
+    nss-mymachines \
+    nss-resolve \
+    quotacheck \
+    randomseed \
+    resolved \
+    seccomp \
+    serial-getty-generator \
+    set-time-epoch \
+    sysusers \
+    sysvinit \
+    timedated \
+    timesyncd \
+    userdb \
+    utmp \
+    vconsole \
+    xz \
+"
+
 ALTERNATIVE_PRIORITY[resolv-conf] = "300"
 
 DEF_FALLBACK_NTP_SERVERS ?= "time1.google.com time2.google.com time3.google.com time4.google.com time.cloudflare.com"

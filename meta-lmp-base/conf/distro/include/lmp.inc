@@ -41,8 +41,6 @@ PACKAGECONFIG_append_pn-docker-ce = " seccomp"
 PACKAGECONFIG_append_pn-docker-moby = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG_remove_pn-runc-opencontainers = "static"
-PACKAGECONFIG_append_pn-systemd = " journal-upload resolved seccomp serial-getty-generator"
-PACKAGECONFIG_remove_pn-systemd = "networkd"
 PACKAGECONFIG_append_pn-qemu-native = " libusb"
 PACKAGECONFIG_append_pn-networkmanager = " nss"
 

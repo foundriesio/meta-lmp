@@ -30,6 +30,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     nss-altfiles \
     pam-plugin-mkhomedir \
     resize-helper \
+    mtd-utils \
     sudo \
     zram \
 "

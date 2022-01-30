@@ -33,7 +33,7 @@ SRC_URI_append = " \
 SRC_URI_append_lmp-base = " file://lmp-base.cfg "
 SRC_URI_remove_lmp-base = "file://lmp.cfg"
 
-SRC_URI_append_uz = " \
+SRC_URI_append_zynqmp = " \
     file://pm_cfg_obj.c \
 "
 
@@ -47,7 +47,7 @@ do_configure_prepend() {
 }
 
 # generate and configure u-boot to use pm_cfg_obj.bin
-do_compile_prepend_uz() {
+do_compile_prepend_zynqmp() {
     ${PYTHON} ${S}/tools/zynqmp_pm_cfg_obj_convert.py ${WORKDIR}/pm_cfg_obj.c ${S}/pm_cfg_obj.bin
     echo "CONFIG_ZYNQMP_SPL_PM_CFG_OBJ_FILE=\"${S}/pm_cfg_obj.bin\"" >> ${B}/.config
 }

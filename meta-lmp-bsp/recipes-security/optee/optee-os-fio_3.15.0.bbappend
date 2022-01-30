@@ -8,7 +8,7 @@ OPTEEMACHINE_imx8mp-lpddr4-evk = "imx-mx8mpevk"
 OPTEEMACHINE_imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE_imx8qm-mek = "imx-mx8qmmek"
 OPTEEMACHINE_qemuarm64 = "vexpress-qemu_armv8a"
-OPTEEMACHINE_uz = "zynqmp-zcu102"
+OPTEEMACHINE_zynqmp = "zynqmp-zcu102"
 
 # SoC Settings
 EXTRA_OEMAKE_append_mx8m = " \
@@ -19,7 +19,7 @@ EXTRA_OEMAKE_append_mx8m = " \
 EXTRA_OEMAKE_append_mx8qm = " \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
 "
-EXTRA_OEMAKE_append_uz = " \
+EXTRA_OEMAKE_append_zynqmp = " \
     CFG_TZDRAM_START=0x7e000000 CFG_TZDRAM_SIZE=0x1c00000 \
     CFG_SHMEM_START=0x7fc00000 CFG_SHMEM_SIZE=0x400000 \
     CFG_DT=y CFG_GENERATE_DTB_OVERLAY=y CFG_DT_ADDR=0x22000000 \

@@ -5,7 +5,7 @@ SRC_URI = "git://git.zx2c4.com/wireguard-tools;protocol=https;branch=master"
 
 inherit bash-completion systemd pkgconfig
 
-DEPENDS += "wireguard-module libmnl"
+DEPENDS += "libmnl"
 
 do_install () {
     oe_runmake DESTDIR="${D}" PREFIX="${prefix}" SYSCONFDIR="${sysconfdir}" \

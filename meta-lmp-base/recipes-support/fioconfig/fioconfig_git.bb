@@ -6,12 +6,12 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d2
 
 GO_IMPORT = "github.com/foundriesio/fioconfig"
 GO_IMPORT_PROTO ?= "https"
-SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=master \
+SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=main \
 	file://fioconfig.service \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \
 "
-SRCREV = "8687ad01cf015376b57a6efc1c9f317aba2f0db0"
+SRCREV = "260a72eeafbb597b6b40240017129c2b198416eb"
 
 UPSTREAM_CHECK_COMMITS = "1"
 

@@ -73,5 +73,7 @@ systemd-timesync:x:992:
 systemd-resolve:x:993:
 systemd-journal:x:994:
 systemd-network:x:995:
+systemd-journal-gateway:x:996:
+systemd-journal-remote:x:997:
 fio:x:1000:
 nogroup:x:65534:

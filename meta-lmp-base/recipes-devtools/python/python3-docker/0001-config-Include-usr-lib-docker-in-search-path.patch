@@ -1,25 +1,43 @@
-From 742156db38a81d17155870a9614e52f37fa90d1e Mon Sep 17 00:00:00 2001
+From 5cc92a628e326a4232cd54d5eb284dd922d49a9b Mon Sep 17 00:00:00 2001
 From: Andy Doan <andy@foundries.io>
-Date: Wed, 16 Oct 2019 13:47:30 -0500
-Subject: [PATCH] config: Include /usr/lib/docker in search path
+Date: Thu, 10 Feb 2022 14:23:19 -0600
+Subject: [PATCH] config: Extend from base config if possible
+
+This allows us to define a read-only factory managed configuration that
+an be extended by the usual docker config files.
 
 Signed-off-by: Andy Doan <andy@foundries.io>
 ---
- docker/utils/config.py | 1 +
- 1 file changed, 1 insertion(+)
+ docker/utils/config.py | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/docker/utils/config.py b/docker/utils/config.py
-index 82a0e2a..d382f52 100644
+index 82a0e2a5..2bf413cf 100644
 --- a/docker/utils/config.py
 +++ b/docker/utils/config.py
-@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
+@@ -51,12 +51,20 @@ def home_dir():
+ def load_general_config(config_path=None):
+     config_file = find_config_file(config_path)
  
- def find_config_file(config_path=None):
-     paths = list(filter(None, [
-+        '/usr/lib/docker/config.json', # 0
-         config_path,  # 1
-         config_path_from_environment(),  # 2
-         os.path.join(home_dir(), DOCKER_CONFIG_FILENAME),  # 3
++    config = {}
++    try:
++        with open("/usr/lib/docker/config.json") as f:
++            config = json.load(f)
++    except FileNotFoundError:
++        pass
++
+     if not config_file:
+-        return {}
++        return config
+ 
+     try:
+         with open(config_file) as f:
+-            return json.load(f)
++            config.update(json.load(f))
++            return config
+     except (IOError, ValueError) as e:
+         # In the case of a legacy `.dockercfg` file, we won't
+         # be able to load any JSON data.
 -- 
-2.23.0
+2.34.1
 

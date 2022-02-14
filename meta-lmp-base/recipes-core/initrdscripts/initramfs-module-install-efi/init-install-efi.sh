@@ -138,7 +138,7 @@ if [ ! -e /etc/mtab ] && [ -e /proc/mounts ]; then
     ln -sf /proc/mounts /etc/mtab
 fi
 
-disk_size=$(parted ${device} unit mb print | grep '^Disk .*: .*MB' | cut -d" " -f 3 | sed -e "s/MB//")
+disk_size=$(parted -s ${device} unit mb print | grep '^Disk .*: .*MB' | cut -d" " -f 3 | sed -e "s/MB//")
 
 rootfs_size=$((disk_size-boot_size))
 
@@ -172,7 +172,7 @@ rootfs=${device}${part_prefix}2
 echo
 echo "Current partition table available on ${device}:"
 echo
-parted ${device} print
+parted -s ${device} print
 
 # Get user choice for partition table
 while true; do
@@ -188,17 +188,17 @@ while true; do
         echo "*****************"
 
         echo "Creating new partition table on ${device} ..."
-        parted ${device} mklabel gpt
+        parted -s ${device} mklabel gpt
 
         echo "Creating boot partition on $bootfs"
-        parted ${device} mkpart boot fat32 0% $boot_size
-        parted ${device} set 1 boot on
+        parted -s ${device} mkpart boot fat32 0% $boot_size
+        parted -s ${device} set 1 boot on
         format_boot="y"
 
         echo "Creating rootfs partition on $rootfs"
-        parted ${device} mkpart root ext4 $rootfs_start 100%
+        parted -s ${device} mkpart root ext4 $rootfs_start 100%
 
-        parted ${device} print
+        parted -s ${device} print
 
         echo "Waiting for device nodes..."
         sleep 1

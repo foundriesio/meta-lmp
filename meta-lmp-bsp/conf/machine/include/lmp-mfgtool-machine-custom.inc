@@ -1,6 +1,3 @@
-## iMX targets should use the u-boot release based on the NXP BSP
-PREFERRED_VERSION_u-boot-fio-mfgtool_imx ?= "2021.04"
-
 # Embedded Artists i.MX7ULP COM
 UBOOT_SIGN_ENABLE_imx7ulpea-ucom = "1"
 PREFERRED_PROVIDER_virtual/kernel_imx7ulpea-ucom = "linux-lmp-dev-mfgtool"

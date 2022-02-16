@@ -1,4 +1,5 @@
-echo "Using freescale_${fdtfile}"
+setenv fdt_file_final freescale_imx8mq-evk.dtb
+echo "Using ${fdt_file_final}"
 
 # Default boot type and device
 setenv bootlimit 3
@@ -7,7 +8,6 @@ setenv devnum ${emmc_dev}
 setenv bootpart 1
 setenv rootpart 2
 
-setenv fdt_file_final freescale_${fdtfile}
 setenv fit_addr 0x43800000
 
 # Boot firmware updates

@@ -80,7 +80,6 @@ do_deploy:prepend:apalis-imx6() {
 
 do_compile:append:apalis-imx6-sec() {
     sed -i 's/SPL.*/&.signed/g' bootloader.uuu
-    sed -i 's/SPL.*/&.signed/g' full_image.uuu
 }
 
 do_deploy:prepend:apalis-imx6-sec() {
@@ -92,7 +91,6 @@ do_deploy:prepend:apalis-imx6-sec() {
 
 do_compile:append:apalis-imx8-sec() {
     sed -i 's/imx-boot.*/&.signed/g' bootloader.uuu
-    sed -i 's/imx-boot.*/&.signed/g' full_image.uuu
 }
 
 do_deploy:prepend:apalis-imx8-sec() {
@@ -104,7 +102,6 @@ do_deploy:prepend:apalis-imx8-sec() {
 
 do_compile:append:imx8mm-lpddr4-evk-sec() {
     sed -i 's/imx-boot.*/&.signed/g' bootloader.uuu
-    sed -i 's/imx-boot.*/&.signed/g' full_image.uuu
 }
 
 do_deploy:prepend:imx8mm-lpddr4-evk-sec() {

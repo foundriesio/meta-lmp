@@ -8,7 +8,7 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
 DEPENDS += "flex-native bison-native bc-native dtc-native"
 
-SRCREV = "954fb028d9afc04cfb4e50d0755fe21a6f3cd417"
+SRCREV = "9f1c14e1a23f4a2829593bed52a6eae394634d2a"
 SRCBRANCH = "2019.10+fio"
 
 SRC_URI = "git://github.com/foundriesio/u-boot.git;branch=${SRCBRANCH} \

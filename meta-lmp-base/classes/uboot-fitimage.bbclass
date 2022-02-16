@@ -4,8 +4,8 @@
 inherit kernel-arch
 
 # Share same key as used by U-Boot by default
-UBOOT_SPL_SIGN_ENABLE ?= "${UBOOT_SIGN_ENABLE}"
-UBOOT_SPL_SIGN_KEYNAME ?= "${UBOOT_SIGN_KEYNAME}"
+UBOOT_SPL_SIGN_ENABLE ??= "${UBOOT_SIGN_ENABLE}"
+UBOOT_SPL_SIGN_KEYNAME ??= "${UBOOT_SIGN_KEYNAME}"
 
 # Default value for deployment filenames
 UBOOT_SPL_DTB_IMAGE ?= "${SPL_BINARYNAME}-${MACHINE}-${PV}-${PR}.dtb"

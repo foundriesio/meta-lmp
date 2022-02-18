@@ -258,7 +258,10 @@ EOF
 # $1 ... .itb filename
 uboot_fitimage_sign() {
 	if [ "x${UBOOT_SPL_SIGN_ENABLE}" = "x1" ]; then
-		tools/mkimage -F -k "${UBOOT_SIGN_KEYDIR}" -K spl/u-boot-spl.dtb -r ${1}
+		if [ ! -f "${UBOOT_SPL_SIGN_KEYDIR}/${UBOOT_SPL_SIGN_KEYNAME}.crt"  -o  ! -f "${UBOOT_SPL_SIGN_KEYDIR}/${UBOOT_SPL_SIGN_KEYNAME}.key" ]; then
+			bbfatal "UBOOT_SPL_SIGN_KEYDIR or UBOOT_SPL_SIGN_KEYNAME is invalid"
+		fi
+		tools/mkimage -F -k "${UBOOT_SPL_SIGN_KEYDIR}" -K spl/u-boot-spl.dtb -r ${1}
 	fi
 	cat spl/u-boot-spl-nodtb.bin spl/u-boot-spl.dtb > ${SPL_BINARY}
 }

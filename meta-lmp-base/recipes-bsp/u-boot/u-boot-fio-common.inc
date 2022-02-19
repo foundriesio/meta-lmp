@@ -68,3 +68,30 @@ EOF
         fi
     fi
 }
+
+# Dunfell branch of openembedded-core doesn't deploy dtb files to be
+# signed if UBOOT_SIGN_ENABLE is enabled. Deploy dtb file here.
+do_deploy_prepend() {
+    install -d ${DEPLOY_DIR_IMAGE}
+	if [ -n "${UBOOT_CONFIG}" ]; then
+		for config in ${UBOOT_MACHINE}; do
+			i=$(expr $i + 1);
+			for type in ${UBOOT_CONFIG}; do
+				j=$(expr $j + 1);
+				if [ $j -eq $i ]; then
+					cd ${B}/${config}
+					if [ -f u-boot.dtb ]; then
+						install -m 644 u-boot.dtb ${DEPLOY_DIR_IMAGE}/u-boot-${MACHINE}-${type}-${PV}-${PR}.dtb
+					fi
+				fi
+			done
+			unset j
+		done
+		unset i
+	else
+		cd ${B}
+		if [ -f u-boot.dtb ]; then
+			install -m 644 u-boot.dtb ${DEPLOY_DIR_IMAGE}/u-boot-${MACHINE}-${PV}-${PR}.dtb
+		fi
+    fi
+}

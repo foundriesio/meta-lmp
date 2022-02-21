@@ -1,4 +1,5 @@
 # iMX6ULL
+UBOOT_SIGN_ENABLE_mx6ull = "1"
 PREFERRED_PROVIDER_virtual/kernel_mx6ull = "linux-lmp-dev-mfgtool"
 PREFERRED_PROVIDER_virtual/bootloader_mx6ull = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot_mx6ull = "u-boot-fio-mfgtool"

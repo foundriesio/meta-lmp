@@ -1,0 +1,107 @@
+From 7923cf1c0ecda7ab3865ef432d669b3e0694486e Mon Sep 17 00:00:00 2001
+From: Yann Dirson <yann@blade-group.com>
+Date: Mon, 12 Apr 2021 17:54:30 +0200
+Subject: [PATCH 1/1] Use LDFLAGS for host binaries
+
+Distributions bring their own sets of LDFLAGS, and some fail when
+binaries do not match their expectation after ignoring those flags.
+
+Eg. for yocto:
+
+ ERROR: optee-examples-3.12.0+gitAUTOINC+9a755dcf4d-r0 do_package_qa: QA Issue: File /usr/bin/optee_example_secure_storage in package optee-examples doesn't have GNU_HASH (didn't pass LDFLAGS?)
+ File /usr/bin/optee_example_acipher in package optee-examples doesn't have GNU_HASH (didn't pass LDFLAGS?)
+ ...
+
+Signed-off-by: Yann Dirson <yann@blade-group.com>
+Reviewed-by: Jerome Forissier <jerome@forissier.org>
+Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+---
+ acipher/host/Makefile        | 2 +-
+ aes/host/Makefile            | 2 +-
+ hello_world/host/Makefile    | 2 +-
+ hotp/host/Makefile           | 2 +-
+ random/host/Makefile         | 2 +-
+ secure_storage/host/Makefile | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/acipher/host/Makefile b/acipher/host/Makefile
+index 8f4bc8a..a030541 100644
+--- a/acipher/host/Makefile
++++ b/acipher/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_acipher
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) $(LDFLAGS) -o $@ $< $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/aes/host/Makefile b/aes/host/Makefile
+index dfeb4e8..bb6008f 100644
+--- a/aes/host/Makefile
++++ b/aes/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_aes
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) $(LDFLAGS) -o $@ $< $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/hello_world/host/Makefile b/hello_world/host/Makefile
+index c4c8239..de960b8 100644
+--- a/hello_world/host/Makefile
++++ b/hello_world/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_hello_world
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) $(LDFLAGS) -o $@ $< $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/hotp/host/Makefile b/hotp/host/Makefile
+index cb7fd19..ef6d960 100644
+--- a/hotp/host/Makefile
++++ b/hotp/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_hotp
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) $(LDFLAGS) -o $@ $< $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/random/host/Makefile b/random/host/Makefile
+index fd407d9..749acea 100644
+--- a/random/host/Makefile
++++ b/random/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_random
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) $(LDFLAGS) -o $@ $< $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+diff --git a/secure_storage/host/Makefile b/secure_storage/host/Makefile
+index 29bfb87..d44d15b 100644
+--- a/secure_storage/host/Makefile
++++ b/secure_storage/host/Makefile
+@@ -18,7 +18,7 @@ BINARY = optee_example_secure_storage
+ all: $(BINARY)
+ 
+ $(BINARY): $(OBJS)
+-	$(CC) -o $@ $< $(LDADD)
++	$(CC) $(LDFLAGS) -o $@ $< $(LDADD)
+ 
+ .PHONY: clean
+ clean:
+-- 
+2.35.1
+

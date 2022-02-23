@@ -138,7 +138,12 @@ if [ ! -e /etc/mtab ] && [ -e /proc/mounts ]; then
     ln -sf /proc/mounts /etc/mtab
 fi
 
-disk_size=$(parted -s ${device} unit mb print | grep '^Disk .*: .*MB' | cut -d" " -f 3 | sed -e "s/MB//")
+disk_info=$(parted -s ${device} unit mb print 2>&1 || true)
+if echo ${disk_info} | grep -q "unrecognised disk label"; then
+	echo "No valid disk label found, creating one"
+	parted -s ${device} -- mklabel gpt
+fi
+disk_size=$(echo ${disk_info} | grep '^Disk .*: .*MB' | cut -d" " -f 3 | sed -e "s/MB//")
 
 rootfs_size=$((disk_size-boot_size))
 

@@ -20,7 +20,7 @@ CONTAINERD_VERSION = "v1.4.12"
 EXTRA_OEMAKE += "GODEBUG=1"
 
 PROVIDES += "virtual/containerd"
-RPROVIDES:${PN} = "virtual/containerd"
+RPROVIDES:${PN} = "virtual-containerd"
 
 S = "${WORKDIR}/git"
 
@@ -117,6 +117,6 @@ INSANE_SKIP:${PN} += "ldflags already-stripped"
 
 COMPATIBLE_HOST = "^(?!(qemu)?mips).*"
 
-RDEPENDS:${BPN} += " virtual/runc"
+RDEPENDS:${BPN} += " virtual-runc"
 
 CVE_PRODUCT = "containerd"

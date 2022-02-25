@@ -6,6 +6,8 @@ DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os'
 SRCBRANCH = "lf-5.10.52_2.1.0"
 SRCREV = "1112c88470f339dc631e2a7117087f416af6d6b5"
 
+SRC_URI:remove = " file://0001-mkimage_fit_atf-fix-fit-generator-node-naming.patch"
+
 # TODO: Need to figure out why this is breaking mfgtool builds on mx8mp
 # For now only apply the patch to mx8mm and mx8mq
 SRC_URI:append:mx8mm = " \

@@ -1,0 +1,44 @@
+From 7fb7864f4d3b71da90c3b0a29a0079fe27d4e124 Mon Sep 17 00:00:00 2001
+From: Clement Faure <clement.faure@nxp.com>
+Date: Thu, 8 Oct 2020 15:29:51 +0200
+Subject: [PATCH] xtest: remove compilation of regression_7000.c
+
+Remove the compilation of regression_7000.c in Makefile and Android.mk
+since this file has been previously deleted.
+
+Fixes: f93ac56 ("regression: remove 7000 series ")
+Signed-off-by: Clement Faure <clement.faure@nxp.com>
+Acked-by: Jerome Forissier <jerome@forissier.org>
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+---
+ Android.mk          | 1 -
+ host/xtest/Makefile | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/Android.mk b/Android.mk
+index f891872..ebf58d6 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -49,7 +49,6 @@ srcs +=	adbg/src/adbg_case.c \
+ 	regression_4100.c \
+ 	regression_5000.c \
+ 	regression_6000.c \
+-	regression_7000.c \
+ 	regression_8000.c \
+ 	regression_8100.c \
+ 	sha_perf.c \
+diff --git a/host/xtest/Makefile b/host/xtest/Makefile
+index 3c206b0..14a2613 100644
+--- a/host/xtest/Makefile
++++ b/host/xtest/Makefile
+@@ -74,7 +74,6 @@ srcs +=	adbg/src/adbg_case.c \
+ 	regression_4100.c \
+ 	regression_5000.c \
+ 	regression_6000.c \
+-	regression_7000.c \
+ 	regression_8000.c \
+ 	regression_8100.c \
+ 	sha_perf.c \
+-- 
+2.32.0
+

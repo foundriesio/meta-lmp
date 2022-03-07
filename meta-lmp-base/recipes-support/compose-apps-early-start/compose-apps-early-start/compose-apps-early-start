@@ -1,5 +1,19 @@
 #!/bin/sh -e
 
+function start_compose_app() {
+	app=$1
+	cd /var/sota/compose-apps/${app}
+
+	echo "Starting app ${app}"
+	ret=0
+	docker-compose up -d || ret=${?}
+	if [ ${ret} -ne 0 ] ; then
+		echo "Failed to start app ${app}, trying compose down / up"
+		docker-compose down
+		docker-compose up -d
+	fi
+}
+
 if [ -f /var/lmp/default-apps ] ; then
 	if [ -d /var/sota/compose-apps ] ; then
 		for x in $(ls /var/sota/compose-apps) ; do
@@ -12,12 +26,8 @@ if [ -f /var/lmp/default-apps ] ; then
 fi
 
 if [ -d /var/sota/compose-apps ] ; then
-	cd /var/sota/compose-apps
-	for x in `ls` ; do
-		cd $x
-		echo "Starting $x"
-		docker-compose up -d
-		cd ../
+	for app in `ls /var/sota/compose-apps` ; do
+		start_compose_app ${app}
 	done
 else
 	echo "No apps defined"

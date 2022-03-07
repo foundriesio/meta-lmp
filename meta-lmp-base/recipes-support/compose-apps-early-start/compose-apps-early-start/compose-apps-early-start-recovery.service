@@ -1,0 +1,6 @@
+[Unit]
+Description=Recovery for compose-apps-early-start.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/compose-apps-early-start-recovery

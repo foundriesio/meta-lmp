@@ -3,12 +3,15 @@ Description=Ensure apps are configured and running as early as possible
 Wants=docker.service
 After=docker.service
 Before=lmp-device-auto-register.service
+StartLimitBurst=2
+OnFailure=compose-apps-early-start-recovery.service
 ConditionPathExists=!/var/sota/sql.db
 
 [Service]
 Type=oneshot
 RemainAfterExit=true
 ExecStart=/usr/bin/compose-apps-early-start
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

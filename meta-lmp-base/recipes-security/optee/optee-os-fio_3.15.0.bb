@@ -4,7 +4,7 @@ require ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'optee-os-fio-se05x.in
 require optee-os-fio.inc
 
 PV = "3.15.0+git"
-SRCREV = "21f130afcc4328040b4548029ec2e116dc52e126"
+SRCREV = "bf6c3463abd7dfdff0e3f726b25bca34a9064a45"
 SRCBRANCH = "3.15+fio"
 
 ALLOW_EMPTY_${PN}-ta-pkcs11 = "1"

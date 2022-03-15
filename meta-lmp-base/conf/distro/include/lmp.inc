@@ -21,6 +21,7 @@ PREFERRED_PROVIDER_zlib ?= "zlib"
 PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
 PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
+PREFERRED_PROVIDER_qemu-helper-native ?= "qemu-helper-native"
 PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
 PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 

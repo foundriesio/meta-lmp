@@ -6,10 +6,10 @@ to the default config search path.
 Upstream-Status: Inappropriate [lmp specific]
 
 diff --git a/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go b/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
-index cf82ee86..2fcad4f7 100644
+index c82a9e1a..552f9431 100644
 --- a/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
 +++ b/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
-@@ -37,6 +37,7 @@ var (
+@@ -41,6 +41,7 @@ var (
  	defaultPerUIDPathFormat = filepath.FromSlash("/run/containers/%d/auth.json")
  	xdgConfigHomePath       = filepath.FromSlash("containers/auth.json")
  	xdgRuntimeDirPath       = filepath.FromSlash("containers/auth.json")
@@ -17,8 +17,8 @@ index cf82ee86..2fcad4f7 100644
  	dockerHomePath          = filepath.FromSlash(".docker/config.json")
  	dockerLegacyHomePath    = ".dockercfg"
  	nonLinuxAuthFilePath    = filepath.FromSlash(".config/containers/auth.json")
-@@ -142,6 +143,8 @@ func getAuthFilePaths(sys *types.SystemContext) []authPath {
- 		xdgCfgHome = filepath.Join(homedir.Get(), ".config")
+@@ -215,6 +216,8 @@ func getAuthFilePaths(sys *types.SystemContext, homeDir string) []authPath {
+ 		xdgCfgHome = filepath.Join(homeDir, ".config")
  	}
  	paths = append(paths, authPath{path: filepath.Join(xdgCfgHome, xdgConfigHomePath), legacyFormat: false})
 +	// LmP: Load values from system config by default

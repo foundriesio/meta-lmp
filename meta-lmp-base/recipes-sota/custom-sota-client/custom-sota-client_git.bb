@@ -25,4 +25,4 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/systemd.service ${D}${systemd_system_unitdir}/${PN}.service
 }
 
-FILES:${PN} += "${systemd_unitdir}/system/${PN}.service"
+FILES:${PN} += "${systemd_system_unitdir}/${PN}.service"

@@ -39,8 +39,8 @@ do_install:append() {
 RDEPENDS:${PN} = "${SOTA_CLIENT} networkmanager-nmcli"
 
 FILES:${PN} += " \
-	${systemd_unitdir}/system/fioconfig.service \
-	${systemd_unitdir}/system/fioconfig.path \
-	${systemd_unitdir}/system/fioconfig-extract.service \
+	${systemd_system_unitdir}/fioconfig.service \
+	${systemd_system_unitdir}/fioconfig.path \
+	${systemd_system_unitdir}/fioconfig-extract.service \
 	${datadir}/fioconfig/handlers \
 "

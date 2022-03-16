@@ -31,9 +31,9 @@ PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "9-2019-q4-major"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"
-DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi security tpm integrity"
+DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi security tpm integrity seccomp"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
-DISTRO_FEATURES:append = " pam usrmerge seccomp virtualization ptest"
+DISTRO_FEATURES:append = " pam usrmerge virtualization ptest"
 
 # Default IMA policy (tcb)
 IMA_POLICY ?= "ima-policy-tcb"

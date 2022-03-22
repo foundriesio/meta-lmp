@@ -5,17 +5,17 @@ DESCRIPTION = "containerd is a daemon to control runC, built for performance and
                support as well as checkpoint and restore for cloning and live migration of containers."
 
 
-SRCREV = "7b11cfaabd73bb80907dd23182b9347b4245eb5d"
-SRC_URI = "git://github.com/containerd/containerd;protocol=https;branch=release/1.4 \
-           file://0001-build-use-oe-provided-GO-and-flags.patch \
+SRCREV = "2a1d4dbdb2a1030dc5b01e96fb110a9d9f150ecc"
+SRC_URI = "git://github.com/containerd/containerd;branch=release/1.5;protocol=https \
            file://0001-Add-build-option-GODEBUG-1.patch \
+           file://0001-Makefile-allow-GO_BUILD_FLAGS-to-be-externally-speci.patch \
           "
 
 # Apache-2.0 for containerd
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=1269f40c0d099c21a871163984590d89"
 
-CONTAINERD_VERSION = "v1.4.12"
+CONTAINERD_VERSION = "v1.5.10"
 
 EXTRA_OEMAKE += "GODEBUG=1"
 
@@ -78,6 +78,11 @@ do_compile() {
     export CFLAGS="${CFLAGS}"
     export LDFLAGS="${LDFLAGS}"
     export SHIM_CGO_ENABLED="${CGO_ENABLED}"
+    # fixes:
+    # cannot find package runtime/cgo (using -importcfg)
+    #        ... recipe-sysroot-native/usr/lib/aarch64-poky-linux/go/pkg/tool/linux_amd64/link:
+    #        cannot open file : open : no such file or directory
+    export GO_BUILD_FLAGS="-a -pkgdir dontusecurrentpkgs"
     export GO111MODULE=off
 
     cd ${S}/src/import

@@ -23,7 +23,7 @@ PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
 PREFERRED_PROVIDER_qemu-helper-native ?= "qemu-helper-native"
 PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
-PREFERRED_PROVIDER_virtual/docker = "docker-moby"
+PREFERRED_PROVIDER_virtual/docker = "docker-ce"
 
 PREFERRED_VERSION_containerd-opencontainers ?= "v1.4.12+gitAUTOINC+7b11cfaabd"
 PREFERRED_VERSION_gcc-arm-none-eabi ?= "9-2019-q4-major"

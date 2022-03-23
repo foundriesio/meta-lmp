@@ -19,8 +19,12 @@ factory_reset() {
 	msg "Performing factory reset..."
 
 	# Replace /etc/ with /usr/etc (from deployment)
+	## Handle immutable flag (enable by ostree deploy)
+	chattr -i ${ROOTFS_DIR}
 	rm -rf ${ROOTFS_DIR}/etc
 	cp -a ${ROOTFS_DIR}/usr/etc ${ROOTFS_DIR}/
+	chattr +i ${ROOTFS_DIR}
+
 	# TODO: Handle use case when var is provided via a separated partition
 	OSTREE_VAR="${ROOTFS_DIR}/sysroot/ostree/deploy/${OSTREE_DISTRO}/var"
 

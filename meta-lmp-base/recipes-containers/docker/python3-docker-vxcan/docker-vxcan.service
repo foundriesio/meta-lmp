@@ -1,0 +1,16 @@
+[Unit]
+Description=Docker VXCAN plugin
+Before=docker.service
+After=network.target
+
+[Service]
+Type=notify
+UMask=0077
+ExecStartPre=/usr/bin/mkdir -p /run/docker/plugins
+ExecStart=/usr/bin/gunicorn --log-level DEBUG --umask 0077 -b unix:/run/docker/plugins/can4docker.sock can4docker.driver:APPLICATION
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

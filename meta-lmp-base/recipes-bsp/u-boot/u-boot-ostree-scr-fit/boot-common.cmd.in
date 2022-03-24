@@ -19,8 +19,6 @@ setenv set_blkcnt 'setexpr blkcnt ${filesize} + 0x1ff && setexpr blkcnt ${blkcnt
 run bootcmd_otenv
 # Get deployment sysroot absolute path
 run bootcmd_getroot
-# Check state of SECONDARY_BOOT bit
-run check_secondary_boot
 # Check if board is on closed state
 run check_board_closed
 
@@ -46,6 +44,8 @@ if fiovb init ${devnum} && test -n "${board_is_closed}"; then
 	if test ! $? -eq 0; then run bootcmd_bootenv; fiovb write_pvalue bootfirmware_version "${bootfirmware_version}"; fi
 	fiovb read_pvalue debug 4
 	if test ! $? -eq 0; then fiovb write_pvalue debug 0; fi
+	fiovb read_pvalue is_secondary_boot 4
+	if test ! $? -eq 0; then fiovb write_pvalue is_secondary_boot 0; fi
 else
 	echo "${fio_msg} Using ubootenv"
 	# Make sure initial environment is valid
@@ -81,6 +81,22 @@ if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} secondary boot image offset = ${bootloader_s}"
 	echo "${fio_msg} secondary FIT offset = ${bootloader2_s}"
 	echo "${fio_msg} ###########################################"
+fi
+
+setenv fiovb.old_is_secondary_boot ${fiovb.is_secondary_boot}
+# Check state of SECONDARY_BOOT bit
+run check_secondary_boot
+
+# Check if we store correct secondary boot value in ubootenv/fiovb storage
+# if not - we should update it
+if test ! "${fiovb.is_secondary_boot}" = "${fiovb.old_is_secondary_boot}"; then
+	# Save fiovb.is_secondary_boot state for allowing userspace
+	# to easily identify the boot mode via environment
+	if test -z "${fiovb_rpmb}"; then
+		run saveenv_mmc
+	else
+		fiovb write_pvalue is_secondary_boot "${fiovb.is_secondary_boot}";
+	fi
 fi
 
 # Handle boot firmware updates
@@ -154,12 +170,6 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		echo "${fio_msg} reset ..."
 		run set_primary_boot
 		reset
-	fi
-else
-	# Save fiovb.is_secondary_boot state for allowing userspace
-	# to easily identify the boot mode via environment
-	if test -z "${fiovb_rpmb}"; then
-		run saveenv_mmc
 	fi
 fi
 

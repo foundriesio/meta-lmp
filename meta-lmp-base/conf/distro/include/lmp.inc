@@ -25,8 +25,8 @@ PREFERRED_PROVIDER_qemu-helper-native ?= "qemu-helper-native"
 PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
 PREFERRED_PROVIDER_virtual/docker = "docker-ce"
 
-PREFERRED_VERSION_gcc-arm-none-eabi ?= "9-2019-q4-major"
-PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "9-2019-q4-major"
+PREFERRED_VERSION_gcc-arm-none-eabi ?= "10.3-2021.10"
+PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "10.3-2021.10"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"

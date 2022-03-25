@@ -103,6 +103,7 @@ BBMASK += " \
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \
+    /meta-xilinx-tools/recipes-bsp/u-boot/u-boot-xlnx_%.bbappend \
 "
 # meta-st-stm32mp: mask appends that are only compatible with gatesgarth
 BBMASK += " \

@@ -52,6 +52,20 @@ do_compile:prepend:zynqmp() {
     echo "CONFIG_ZYNQMP_SPL_PM_CFG_OBJ_FILE=\"${S}/pm_cfg_obj.bin\"" >> ${B}/.config
 }
 
+# support external dtb providers (previously available via meta-xilinx-tools)
+python __anonymous () {
+    #check if there are any dtb providers
+    providerdtb = d.getVar("PREFERRED_PROVIDER_virtual/dtb")
+    if providerdtb:
+       d.appendVarFlag('do_configure', 'depends', ' virtual/dtb:do_populate_sysroot')
+       if d.getVar("DTB_NAME") is not None:
+            d.setVar('DTB_NAME', d.getVar('BASE_DTS')+ '.dtb')
+}
+BASE_DTS ?= "system-top"
+DTB_PATH ?= "/boot/devicetree"
+DTB_NAME ?= ""
+EXTRA_OEMAKE += "${@'EXT_DTB=${RECIPE_SYSROOT}/${DTB_PATH}/${DTB_NAME}' if (d.getVar('DTB_NAME') != '') else '' }"
+
 # Support additional u-boot classes such as u-boot-fitimage
 UBOOT_CLASSES ?= ""
 LOCALVERSION = "+xlnx"

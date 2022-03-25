@@ -29,8 +29,8 @@ UBOOT_DTB_LOADADDRESS = "0x40000000"
 EFI_PROVIDER ?= "${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'grub-efi', '', d)}"
 
 ATF_BINARY = "arm-trusted-firmware.bin"
-ATF_MEM_BASE = "0xfffe5000"
-ATF_MEM_SIZE = "0x1affe"
+ATF_MEM_BASE = "0xfffe6000"
+ATF_MEM_SIZE = "0x19fff"
 
 SERIAL_CONSOLES ?= "115200;ttyPS0"
 

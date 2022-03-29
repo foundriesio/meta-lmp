@@ -30,7 +30,7 @@ index a368df6..a0e8ba7 100644
  __BEGIN_CDECLS;
  
 diff --git a/bootloader/partner/common/lib/linuxboot/extlinux_boot.c b/bootloader/partner/common/lib/linuxboot/extlinux_boot.c
-index 45ee903..ec1ba58 100644
+index a1e1338..ad45484 100644
 --- a/bootloader/partner/common/lib/linuxboot/extlinux_boot.c
 +++ b/bootloader/partner/common/lib/linuxboot/extlinux_boot.c
 @@ -32,6 +32,7 @@
@@ -41,7 +41,7 @@ index 45ee903..ec1ba58 100644
  #define EXTLINUX_CONF_MAX_SIZE		4096UL
  
  #define SIG_FILE_SIZE_OFFSET		8
-@@ -173,6 +174,11 @@ static tegrabl_error_t parse_conf_file(void *conf_load_addr, struct conf *extlin
+@@ -183,6 +184,11 @@ static tegrabl_error_t parse_conf_file(void *conf_load_addr, struct conf *extlin
  			extract_val(str, key, &extlinux_conf->section[entry]->linux_path);
  			continue;
  		}
@@ -53,7 +53,7 @@ index 45ee903..ec1ba58 100644
  		key = "INITRD";
  		if (!strncmp(key, str, strlen(key))) {
  			extract_val(str, key, &extlinux_conf->section[entry]->initrd_path);
-@@ -183,6 +189,11 @@ static tegrabl_error_t parse_conf_file(void *conf_load_addr, struct conf *extlin
+@@ -193,6 +199,11 @@ static tegrabl_error_t parse_conf_file(void *conf_load_addr, struct conf *extlin
  			extract_val(str, key, &extlinux_conf->section[entry]->dtb_path);
  			continue;
  		}
@@ -65,9 +65,9 @@ index 45ee903..ec1ba58 100644
  		key = "APPEND";
  		if (!strncmp(key, str, strlen(key))) {
  			extract_val(str, key, &extlinux_conf->section[entry]->boot_args);
-@@ -247,8 +258,12 @@ static tegrabl_error_t load_and_parse_conf_file(struct tegrabl_fm_handle *fm_han
- 	file_size = EXTLINUX_CONF_MAX_SIZE;
- 	err = tegrabl_fm_read(fm_handle, EXTLINUX_CONF_PATH, NULL, conf_load_addr, &file_size, NULL);
+@@ -275,8 +286,12 @@ static tegrabl_error_t load_and_parse_conf_file(struct tegrabl_fm_handle *fm_han
+ 							   &file_size,
+ 							   NULL);
  	if (err != TEGRABL_NO_ERROR) {
 -		pr_error("Failed to find/load %s\n", EXTLINUX_CONF_PATH);
 -		goto fail;
@@ -79,8 +79,8 @@ index 45ee903..ec1ba58 100644
 +		}
  	}
  
- 	/* Parse extlinux.conf file */
-@@ -267,9 +282,20 @@ static int display_boot_menu(struct conf * const extlinux_conf)
+ 	if (file_size > EXTLINUX_CONF_MAX_SIZE) {
+@@ -303,9 +318,20 @@ static int display_boot_menu(struct conf * const extlinux_conf)
  	pr_trace("%s(): %u\n", __func__, __LINE__);
  
  	/* Display boot menu */
@@ -103,6 +103,3 @@ index 45ee903..ec1ba58 100644
  	}
  
  	/* Get user input */
--- 
-2.32.0
-

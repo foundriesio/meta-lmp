@@ -13,19 +13,19 @@ TCLIBCAPPEND = ""
 require conf/distro/include/arm-defaults.inc
 require conf/distro/include/security_flags.inc
 
-PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
-PREFERRED_PROVIDER_virtual/optee-os ?= "optee-os-fio"
-PREFERRED_PROVIDER_u-boot-fw-utils ?= "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils ?= "libubootenv"
-PREFERRED_PROVIDER_zlib ?= "zlib"
-PREFERRED_PROVIDER_zlib-native ?= "zlib-native"
-PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
-PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
-PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
+PREFERRED_PROVIDER_virtual/kernel ??= "linux-lmp"
+PREFERRED_PROVIDER_virtual/optee-os ??= "optee-os-fio"
+PREFERRED_PROVIDER_u-boot-fw-utils ??= "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils ??= "libubootenv"
+PREFERRED_PROVIDER_zlib ??= "zlib"
+PREFERRED_PROVIDER_zlib-native ??= "zlib-native"
+PREFERRED_PROVIDER_nativesdk-zlib ??= "nativesdk-zlib"
+PREFERRED_PROVIDER_qemu-native ??= "qemu-native"
+PREFERRED_PROVIDER_nativesdk-qemu ??= "nativesdk-qemu"
 PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 
-PREFERRED_VERSION_gcc-arm-none-eabi ?= "9-2019-q4-major"
-PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "9-2019-q4-major"
+PREFERRED_VERSION_gcc-arm-none-eabi ??= "9-2019-q4-major"
+PREFERRED_VERSION_gcc-arm-none-eabi-native ??= "9-2019-q4-major"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"

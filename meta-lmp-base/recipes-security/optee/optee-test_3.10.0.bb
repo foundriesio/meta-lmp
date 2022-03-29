@@ -1,4 +1,4 @@
-require optee-test.inc
+require optee-test-fio.inc
 
 SRCREV = "30efcbeaf8864d0f2a5c4be593a5411001fab31b"
 

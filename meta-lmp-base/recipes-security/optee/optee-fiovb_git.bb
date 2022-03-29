@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=92d506fc36dda404ceb608cdc34b7a99"
 
 DEPENDS = "optee-client"
 
-require optee.inc
+require optee-fio.inc
 
 SRC_URI = "git://github.com/foundriesio/optee-fiovb.git;protocol=https;branch=master"
 SRCREV = "77f2e70751b3a0585b7306dbf322077260ec6dd9"

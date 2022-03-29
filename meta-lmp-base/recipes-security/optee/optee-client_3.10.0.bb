@@ -1,4 +1,4 @@
-require optee-client.inc
+require optee-client-fio.inc
 
 SRCREV = "e7a4706e08c8fbdd53530868a6ac4937193dd73c"
 

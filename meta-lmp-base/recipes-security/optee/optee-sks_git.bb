@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31
 
 inherit python3native
 
-require optee.inc
+require optee-fio.inc
 
 DEPENDS = "python3-pycryptodomex-native python3-pycrypto-native virtual/optee-os optee-client"
 

@@ -53,6 +53,9 @@ EXTRA_OEMAKE:append:imx6ullevk = " \
 EXTRA_OEMAKE:append:imx8mm-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
 "
+EXTRA_OEMAKE:append:imx8mp-lpddr4-evk = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=4', '', d)} \
+"
 
 # Extra Settings for Secure Machines
 EXTRA_OEMAKE:append:apalis-imx6-sec = " \

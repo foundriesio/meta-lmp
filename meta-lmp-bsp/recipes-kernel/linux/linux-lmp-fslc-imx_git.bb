@@ -20,6 +20,10 @@ SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANC
     file://0001-FIO-temphack-ARM-mach-imx-conditionally-disable-some.patch \
 "
 
+SRC_URI:append:imx8mp-lpddr4-evk = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'file://0001-FIO-internal-arch-arm64-dts-imx8mp-enable-I2C5-bus.patch', '', d)} \
+"
+
 KMETA = "kernel-meta"
 
 include recipes-kernel/linux/linux-lmp.inc

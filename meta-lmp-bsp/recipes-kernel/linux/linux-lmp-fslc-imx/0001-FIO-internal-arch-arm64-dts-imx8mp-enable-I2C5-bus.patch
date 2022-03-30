@@ -1,0 +1,58 @@
+From 56210ffb8d8908fe9ee0eca316a15744eadb2b5a Mon Sep 17 00:00:00 2001
+From: Vanessa Maegima <vanessa.maegima@foundries.io>
+Date: Tue, 29 Mar 2022 15:44:59 -0300
+Subject: [PATCH] [FIO internal] arch: arm64: dts: imx8mp: enable I2C5 bus
+
+Enable I2C5 bus to connect SE050. I2C5 shares pins with flexcan1, so
+disable the latter.
+
+Signed-off-by: Vanessa Maegima <vanessa.maegima@foundries.io>
+---
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 0ece8e524e44..4f51a0165ee7 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -302,7 +302,7 @@ &flexcan1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_flexcan1>;
+ 	xceiver-supply = <&reg_can1_stby>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &flexcan2 {
+@@ -567,6 +567,14 @@ ov5640_mipi_1_ep: endpoint {
+ 	};
+ };
+ 
++&i2c5 {
++	clock-frequency = <100000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c5>;
++	pinctrl-assert-gpios = <&pca6416 2 GPIO_ACTIVE_HIGH>; /* set high to select i2c5 instead of flexcan1 */
++	status = "okay";
++};
++
+ &irqsteer_hdmi {
+ 	status = "okay";
+ };
+@@ -991,6 +999,13 @@ MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA		0x400001c3
+ 		>;
+ 	};
+ 
++	pinctrl_i2c5: i2c5grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SPDIF_TX__I2C5_SCL		0x400001c3
++			MX8MP_IOMUXC_SPDIF_RX__I2C5_SDA		0x400001c3
++		>;
++	};
++
+ 	pinctrl_mipi_dsi_en: mipi_dsi_en {
+ 		fsl,pins = <
+ 			MX8MP_IOMUXC_GPIO1_IO08__GPIO1_IO08	0x16
+-- 
+2.25.1
+

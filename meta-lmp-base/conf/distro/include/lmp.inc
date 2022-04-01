@@ -90,16 +90,6 @@ BBMASK += " \
     /meta-updater/recipes-connectivity/nfs-utils/nfs-utils_%.bbappend \
 "
 
-# meta-arm: mask op-tee as we have our own recipes (until merged in meta-arm)
-BBMASK += " \
-    /meta-arm/meta-arm/recipes-security/optee/optee-test_3.14.0.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-os_3.14.0.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-examples_3.14.0.bb \
-    /meta-arm/meta-arm/recipes-security/optee/optee-client_3.14.0.bb \
-    /meta-arm/meta-arm-bsp/recipes-security/optee/optee-client_3.14.0.bbappend \
-    /meta-arm/meta-arm-bsp/recipes-security/optee/optee-os_3.14.0.bbappend \
-    /meta-arm/meta-arm-bsp/recipes-security/optee/optee-test_3.14.0.bbappend \
-"
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
 BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \

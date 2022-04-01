@@ -6,8 +6,5 @@ PTEST_ENABLED = "0"
 
 SRC_URI += " \
     file://update-default-grub-cfg-header.patch \
-    file://0001-ostree-pull-set-request-timeout.patch \
 "
 
-# gpgme is not required by us, and it brings GPLv3 dependencies
-PACKAGECONFIG:remove = "gpgme"

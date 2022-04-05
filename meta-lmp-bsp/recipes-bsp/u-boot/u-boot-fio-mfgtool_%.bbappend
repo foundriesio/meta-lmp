@@ -40,3 +40,6 @@ do_deploy:append:mx8() {
         ln -sf u-boot-spl.bin-${MACHINE} u-boot-spl.bin-${MACHINE}-
     fi
 }
+
+# disable branch protection to fix SPL size overrun issue
+TOOLCHAIN_OPTIONS:append:mx8mp = ' -mbranch-protection=none'

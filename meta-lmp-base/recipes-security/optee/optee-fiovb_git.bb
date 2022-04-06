@@ -1,6 +1,6 @@
 SUMMARY = "OP-TEE Foundries.IO Verified Boot Client Application"
 HOMEPAGE = "https://github.com/foundriesio/optee-fiovb"
-LICENSE = "GPLv2"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=92d506fc36dda404ceb608cdc34b7a99"
 
 DEPENDS = "optee-client"

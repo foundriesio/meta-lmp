@@ -1,7 +1,7 @@
 DESCRIPTION = "One-Time-Programmable (OTP) fusing tool"
 HOMEPAGE = "https://github.com/f-secure-foundry/crucible"
 SECTION = "devel"
-LICENSE = "GPLv3"
+LICENSE = "GPL-3.0-only"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=f10c6a44a73c48e5edb8daddd89517ba"
 
 GO_IMPORT = "github.com/f-secure-foundry/crucible"

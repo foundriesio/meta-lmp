@@ -2,7 +2,7 @@ DESCRIPTION = "Jool is an Open Source SIIT and NAT64 for Linux"
 SUMMARY = "SIIT and NAT64 for Linux"
 HOMEPAGE = "https://www.jool.mx"
 SECTION = "kernel/network"
-LICENSE = "GPLv2"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://${S}/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 SRC_URI = "git://github.com/NICMx/Jool.git;protocol=https;branch=master"

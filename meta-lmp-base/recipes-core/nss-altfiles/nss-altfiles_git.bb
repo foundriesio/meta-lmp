@@ -1,5 +1,5 @@
 SUMMARY = "NSS module which can read user information from files in an alternative location"
-LICENSE = "LGPL-2.1"
+LICENSE = "LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=fb1949d8d807e528c1673da700aff41f"
 
 # Use upstream used and maintained by Flatcar

@@ -3,7 +3,7 @@ on atusb driver for ATUSB IEEE 802.15.4 dongle."
 SUMMARY = "SoftMAC 802.15.4 kernel driver"
 HOMEPAGE = "https://github.com/foundriesio/wpanusb"
 SECTION = "kernel/network"
-LICENSE = "GPLv2"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0-only;md5=801f80980d171dd6425610833a22dbe6"
 
 SRC_URI = "git://github.com/foundriesio/wpanusb.git;protocol=https;branch=master"

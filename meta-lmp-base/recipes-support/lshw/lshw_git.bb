@@ -5,7 +5,7 @@ configuration, bus speed, etc. on DMI-capable or EFI systems."
 SUMMARY = "Hardware lister"
 HOMEPAGE = "http://ezix.org/project/wiki/HardwareLiSter"
 SECTION = "console/tools"
-LICENSE = "GPLv2+"
+LICENSE = "GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 DEPENDS = "gettext-native pciutils usbutils"

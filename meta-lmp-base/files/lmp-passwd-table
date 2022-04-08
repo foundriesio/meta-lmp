@@ -37,5 +37,6 @@ systemd-resolve:x:993:993::/:/sbin/nologin
 systemd-network:x:995:995::/:/sbin/nologin
 systemd-journal-gateway:x:996:996::/:/sbin/nologin
 systemd-journal-remote:x:997:997::/:/sbin/nologin
+systemd-coredump:x:998:998::/:/sbin/nologin
 fio:x:1000:1000::/home/fio:/bin/sh
 nobody:x:65534:65534:nobody:/nonexistent:/bin/sh

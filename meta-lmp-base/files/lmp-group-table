@@ -75,5 +75,6 @@ systemd-journal:x:994:
 systemd-network:x:995:
 systemd-journal-gateway:x:996:
 systemd-journal-remote:x:997:
+systemd-coredump:x:998:
 fio:x:1000:
 nogroup:x:65534:

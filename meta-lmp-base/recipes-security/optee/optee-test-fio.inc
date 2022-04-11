@@ -2,7 +2,7 @@ SUMMARY = "OP-TEE sanity testsuite"
 DESCRIPTION = "Open Portable Trusted Execution Environment - Test suite"
 HOMEPAGE = "https://www.op-tee.org/"
 
-LICENSE = "BSD & GPL-2.0-only"
+LICENSE = "BSD-2-Clause & GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE.md;md5=daa2bcccc666345ab8940aab1315a4fa"
 
 inherit python3native

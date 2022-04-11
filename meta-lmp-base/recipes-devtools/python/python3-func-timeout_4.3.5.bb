@@ -1,7 +1,7 @@
 SUMMARY = "Support running any existing function with a given timeout"
 HOMEPAGE = "https://github.com/kata198/func_timeout"
 SECTION = "devel/python"
-LICENSE = "LGPL-3.0-only & LGPL-2.0-only"
+LICENSE = "LGPL-3.0-only"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e6a600fd5e1d9cbde2d983680233ad02"
 
 inherit pypi setuptools3

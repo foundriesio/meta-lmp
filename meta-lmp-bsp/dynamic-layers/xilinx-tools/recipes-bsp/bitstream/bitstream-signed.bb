@@ -1,5 +1,4 @@
 DESCRIPTION = "Recipe to deploy a signed bitstream"
-LICENSE = "MIT"
 SECTION = "firmware"
 
 # Proprietary by default, correct license depends on the bistream

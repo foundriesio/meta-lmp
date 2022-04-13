@@ -21,8 +21,8 @@ HAS_PLATFORM_INIT ?= " \
 		xilinx_versal_vc_p_a2197_revA_x_prc_01_revA \
 		"
 
-# add pmu-firmware and fpga bitstream (loading FPGA from SPL) dependancies
-do_compile[depends] += "virtual/pmu-firmware:do_deploy virtual/bitstream:do_deploy"
+# zynqmp: add pmu-firmware and fpga bitstream (loading FPGA from SPL) dependancies
+do_compile[depends] += "${@bb.utils.contains('SOC_FAMILY', 'zynqmp', 'virtual/pmu-firmware:do_deploy virtual/bitstream:do_deploy', '', d)}"
 
 SRC_URI:append = " \
     file://fw_env.config \

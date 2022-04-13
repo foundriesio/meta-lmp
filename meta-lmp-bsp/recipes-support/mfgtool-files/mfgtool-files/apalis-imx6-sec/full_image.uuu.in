@@ -7,11 +7,12 @@ SDPV: write -f u-boot-mfgtool.itb
 SDPV: jump
 
 FB: ucmd setenv fastboot_dev mmc
+FB: ucmd setenv emmc_dev 0
 FB: ucmd setenv mmcdev ${emmc_dev}
 FB: ucmd mmc dev ${emmc_dev} 1; mmc erase 0 0x2000
 
 # Clear fiovb vars
-FB: ucmd fiovb init ${mmc_dev}
+FB: ucmd fiovb init ${emmc_dev}
 FB[-t 50000]: ucmd fiovb write_pvalue bootcount 0
 FB[-t 50000]: ucmd fiovb write_pvalue rollback 0
 FB[-t 50000]: ucmd fiovb write_pvalue upgrade_available 0

@@ -85,6 +85,11 @@ EXTRA_OEMAKE:append:imx8mm-lpddr4-evk-sec = " \
     CFG_EARLY_TA=y \
     CFG_IN_TREE_EARLY_TAS=fiovb/22250a54-0bf1-48fe-8002-7b20f1c9c9b1 \
 "
+EXTRA_OEMAKE:append:imx8mp-lpddr4-evk-sec = " \
+    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
+    CFG_EARLY_TA=y \
+    CFG_IN_TREE_EARLY_TAS=fiovb/22250a54-0bf1-48fe-8002-7b20f1c9c9b1 \
+"
 EXTRA_OEMAKE:append:uz3eg-iocc-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
     CFG_RPMB_FS_DEV_ID=0 CFG_EARLY_TA=y \

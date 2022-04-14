@@ -6,7 +6,7 @@ After=systemd-remount-fs.service systemd-udevd.service
 [Service]
 Type=oneshot
 ExecStartPre=-/bin/udevadm settle
-ExecStart=-/usr/sbin/resize-helper
+ExecStart=/usr/sbin/resize-helper
 ExecStartPost=/bin/systemctl disable resize-helper.service
 
 [Install]

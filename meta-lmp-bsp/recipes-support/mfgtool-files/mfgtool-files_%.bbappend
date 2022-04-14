@@ -27,6 +27,7 @@ SRC_URI:append:imx8mm-lpddr4-evk-sec = " \
 SRC_URI:append:imx8mp-lpddr4-evk-sec = " \
     file://fuse.uuu \
     file://close.uuu \
+    file://readme.md \
 "
 
 # Machine specific dependencies
@@ -124,4 +125,6 @@ do_deploy:prepend:imx8mp-lpddr4-evk-sec() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
     install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu
+    install -m 0644 ${WORKDIR}/readme.md ${DEPLOYDIR}/${PN}/readme.md
+
 }

@@ -23,13 +23,17 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+# must exit on error
+set -e
+set -o pipefail
+
 # we must be root
 [ $(whoami) = "root" ] || { echo "E: You must be root" && exit 1; }
 
 # we must have few tools
 SGDISK=$(which sgdisk) || { echo "E: You must have sgdisk" && exit 1; }
-PARTED=$(which parted) || { echo "E: You must have parted" && exit 1; }
-PARTPROBE=$(which partprobe) || { echo "E: You must have partprobe" && exit 1; }
+FDISK=$(which fdisk) || { echo "E: You must have fdisk" && exit 1; }
+PARTX=$(which partx) || { echo "E: You must have partx" && exit 1; }
 RESIZE2FS=$(which resize2fs) || { echo "E: You must have resize2fs" && exit 1; }
 
 # find root device
@@ -37,7 +41,8 @@ ROOT_DEVICE=$(findmnt --noheadings --output=SOURCE / | cut -d'[' -f1)
 # prune root device (for example UUID)
 ROOT_DEVICE=$(realpath ${ROOT_DEVICE})
 # get the partition number and type
-PART_ENTRY_NUMBER=$(udevadm info --query=property --name=${ROOT_DEVICE} | grep '^ID_PART_ENTRY_NUMBER=' | cut -d'=' -f2)
+INFO=$(udevadm info --query=property --name=${ROOT_DEVICE})
+PART_ENTRY_NUMBER=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NUMBER=' | cut -d'=' -f2)
 
 # in case the root device is not on a partitioned media
 if [ "x$PART_ENTRY_NUMBER" = "x" ]; then
@@ -45,18 +50,27 @@ if [ "x$PART_ENTRY_NUMBER" = "x" ]; then
 	exit 0
 fi
 
-PART_TABLE_TYPE=$(udevadm info --query=property --name=${ROOT_DEVICE} | grep '^ID_PART_TABLE_TYPE=' | cut -d'=' -f2)
+PART_TABLE_TYPE=$(echo "${INFO}" | grep '^ID_PART_TABLE_TYPE=' | cut -d'=' -f2)
 # find the block device
 DEVICE=$(udevadm info --query=path --name=${ROOT_DEVICE} | awk -F'/' '{print $(NF-1)}')
 DEVICE="/dev/${DEVICE}"
 
+SIZE=$(blockdev --getsz ${DEVICE})
+TYPE="p\n"
 if [ "$PART_TABLE_TYPE" = "gpt" ]; then
 	${SGDISK} -e ${DEVICE}
-	${PARTPROBE}
+	SIZE=$(($SIZE - 33)) # the GPT end of disk is 34 sectors
+	TYPE=""
 fi
 
-# 'Yes' is required when partition is already mounted
-echo -e 'Yes\n100%' | ${PARTED} ---pretend-input-tty ${DEVICE} resizepart ${PART_ENTRY_NUMBER} ||
-	echo -e '100%' | ${PARTED} ---pretend-input-tty ${DEVICE} resizepart ${PART_ENTRY_NUMBER}
-${PARTPROBE}
+# Use fdisk to repartition
+# fdisk uses a ram image of the parition table until a write is performed
+# so the sequence is to delete the partition and recreate it at the same
+# starting point but making it the size of the available disk.
+#
+END=$((${SIZE} - 1))
+PARTOF=$(echo "${INFO}" | grep '^ID_PART_ENTRY_OFFSET=' | cut -d'=' -f2)
+echo -e "d\n${PART_ENTRY_NUMBER}\nn\n${TYPE}${PART_ENTRY_NUMBER}\n${PARTOF}\n${END}\nw\n" | ${FDISK} ${DEVICE}
+
+${PARTX} -u ${DEVICE}
 ${RESIZE2FS} "${ROOT_DEVICE}"

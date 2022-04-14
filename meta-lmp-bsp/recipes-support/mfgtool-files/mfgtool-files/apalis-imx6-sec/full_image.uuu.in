@@ -33,6 +33,5 @@ FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: flash bootloader_s ../SPL-@@MACHINE@@.signed
 FB: flash bootloader2_s ../u-boot-@@MACHINE@@.itb
 FB: flash sit ../sit-@@MACHINE@@.bin
-FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
-FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0
+FB: ucmd mmc partconf ${emmc_dev} 1 1 0
 FB: done

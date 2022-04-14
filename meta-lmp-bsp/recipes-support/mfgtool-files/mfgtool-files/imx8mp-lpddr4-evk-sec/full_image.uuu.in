@@ -1,0 +1,31 @@
+uuu_version 1.2.39
+
+SDPS: boot -f imx-boot-mfgtool.signed
+
+SDPV: delay 1000
+SDPV: write -f u-boot-mfgtool.itb
+SDPV: jump
+
+FB: ucmd setenv fastboot_dev mmc
+FB: ucmd setenv mmcdev ${emmc_dev}
+FB: ucmd mmc dev ${emmc_dev} 1; mmc erase 0 0x2000
+
+# Clear fiovb vars
+FB: ucmd imx_is_closed || true
+FB: ucmd if fiovb init ${emmc_dev} && test -n "${board_is_closed}"; then setenv fiovb_rpmb 1; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue bootcount 0; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue rollback 0; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue upgrade_available 0; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue bootupgrade_available 0; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue bootfirmware_version 0; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue debug 0; else true; fi
+
+FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
+FB: flash bootloader ../imx-boot-@@MACHINE@@.signed
+FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
+FB: flash bootloader_s ../imx-boot-@@MACHINE@@.signed
+FB: flash bootloader2_s ../u-boot-@@MACHINE@@.itb
+# No sit.bin for imx8mp: offset is defined in fuses
+FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
+FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0
+FB: done

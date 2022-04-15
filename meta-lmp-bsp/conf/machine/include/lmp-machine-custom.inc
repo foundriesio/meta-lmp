@@ -514,6 +514,7 @@ IMAGE_BOOT_FILES:append:am64xx-evm = " boot.itb"
 UBOOT_ENTRYPOINT:am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am64xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx-evm = "0x88000000"
+EFI_PROVIDER:am64xx-evm = ""
 ## Avoid tmp overlap with am64xx-evm
 TMPDIR:k3r5 = "${TOPDIR}/tmp-k3r5"
 

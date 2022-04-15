@@ -5,14 +5,6 @@ DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os'
 
 SRC_URI:remove = " file://0001-mkimage_fit_atf-fix-fit-generator-node-naming.patch"
 
-# TODO: Need to figure out why this is breaking mfgtool builds on mx8mp
-# For now only apply the patch to mx8mm and mx8mq
-SRC_URI:append:mx8mm = " \
-     file://0001-iMX8M-support-SPL-ddr-sign.patch \
-"
-SRC_URI:append:mx8mq = " \
-     file://0001-iMX8M-support-SPL-ddr-sign.patch \
-"
 SRC_URI:append:mx8m = " \
      file://0002-iMX8M-add-SPL-only-build.patch \
      file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \

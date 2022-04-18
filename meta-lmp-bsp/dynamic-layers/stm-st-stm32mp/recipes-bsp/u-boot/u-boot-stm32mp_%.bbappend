@@ -7,3 +7,6 @@ SRC_URI:append:stm32mp1-eval = " \
 SRC_URI:append:stm32mp1-disco = " \
     file://lmp.cfg \
 "
+
+# Drop work-shared usage, causes build race condition
+STAGING_UBOOT_DIR = "${S}"

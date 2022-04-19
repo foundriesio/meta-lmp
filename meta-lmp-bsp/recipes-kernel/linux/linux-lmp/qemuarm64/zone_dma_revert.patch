@@ -6,6 +6,7 @@ patches in question are:
 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=35ec3d09ff6a49ee90e1bfd09166596f017eb5bb
 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=8eaef922e9381af7b923c4e3c57a632a87101acb
 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=2281df0b0226610e235f49ed75bf6ad57cb04762
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=031495635b4668f94e964e037ca93d0d38bfde58
 
 Upstream-Status: Inappropriate
 Signed-off-by: Jon Mason <jon.mason@arm.com>
@@ -25,7 +26,7 @@ index ee2bdc1b9f5bb..4f1ac36eb74a5 100644
  struct debug_info {
  #ifdef CONFIG_HAVE_HW_BREAKPOINT
 diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 37a81754d9b61..196f8cccb7b3c 100644
+index c59cb2efd5542..196f8cccb7b3c 100644
 --- a/arch/arm64/mm/init.c
 +++ b/arch/arm64/mm/init.c
 @@ -46,6 +46,8 @@
@@ -37,7 +38,7 @@ index 37a81754d9b61..196f8cccb7b3c 100644
  /*
   * We need to be able to catch inadvertent references to memstart_addr
   * that occur (potentially in generic code) before arm64_memblock_init()
-@@ -56,13 +58,13 @@ s64 memstart_addr __ro_after_init = -1;
+@@ -56,39 +58,13 @@ s64 memstart_addr __ro_after_init = -1;
  EXPORT_SYMBOL(memstart_addr);
  
  /*
@@ -46,17 +47,44 @@ index 37a81754d9b61..196f8cccb7b3c 100644
 - * unless restricted on specific platforms (e.g. 30-bit on Raspberry Pi 4).
 - * In such case, ZONE_DMA32 covers the rest of the 32-bit addressable memory,
 - * otherwise it is empty.
+- *
+- * Memory reservation for crash kernel either done early or deferred
+- * depending on DMA memory zones configs (ZONE_DMA) --
+- *
+- * In absence of ZONE_DMA configs arm64_dma_phys_limit initialized
+- * here instead of max_zone_phys().  This lets early reservation of
+- * crash kernel memory which has a dependency on arm64_dma_phys_limit.
+- * Reserving memory early for crash kernel allows linear creation of block
+- * mappings (greater than page-granularity) for all the memory bank rangs.
+- * In this scheme a comparatively quicker boot is observed.
+- *
+- * If ZONE_DMA configs are defined, crash kernel memory reservation
+- * is delayed until DMA zone memory range size initilazation performed in
+- * zone_sizes_init().  The defer is necessary to steer clear of DMA zone
+- * memory range to avoid overlap allocation.  So crash kernel memory boundaries
+- * are not known when mapping all bank memory ranges, which otherwise means
+- * not possible to exclude crash kernel range from creating block mappings
+- * so page-granularity mappings are created for the entire memory range.
+- * Hence a slightly slower boot is observed.
+- *
+- * Note: Page-granularity mapppings are necessary for crash kernel memory
+- * range for shrinking its size via /sys/kernel/kexec_crash_size interface.
 + * We create both ZONE_DMA and ZONE_DMA32. ZONE_DMA covers the first 1G of
 + * memory as some devices, namely the Raspberry Pi 4, have peripherals with
 + * this limited view of the memory. ZONE_DMA32 will cover the rest of the 32
 + * bit addressable memory area.
   */
- phys_addr_t arm64_dma_phys_limit __ro_after_init;
+-#if IS_ENABLED(CONFIG_ZONE_DMA) || IS_ENABLED(CONFIG_ZONE_DMA32)
+-phys_addr_t __ro_after_init arm64_dma_phys_limit;
+-#else
+-phys_addr_t __ro_after_init arm64_dma_phys_limit = PHYS_MASK + 1;
+-#endif
++phys_addr_t arm64_dma_phys_limit __ro_after_init;
 +phys_addr_t arm64_dma32_phys_limit __ro_after_init;
  
  #ifdef CONFIG_KEXEC_CORE
  /*
-@@ -75,7 +77,7 @@ phys_addr_t arm64_dma_phys_limit __ro_after_init;
+@@ -101,7 +77,7 @@ phys_addr_t __ro_after_init arm64_dma_phys_limit = PHYS_MASK + 1;
  static void __init reserve_crashkernel(void)
  {
  	unsigned long long crash_base, crash_size;
@@ -65,7 +93,7 @@ index 37a81754d9b61..196f8cccb7b3c 100644
  	int ret;
  
  	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
-@@ -137,24 +139,15 @@ static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
+@@ -163,21 +139,14 @@ static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
  static void __init zone_sizes_init(unsigned long min, unsigned long max)
  {
  	unsigned long max_zone_pfns[MAX_NR_ZONES]  = {0};
@@ -87,27 +115,26 @@ index 37a81754d9b61..196f8cccb7b3c 100644
 -		arm64_dma_phys_limit = dma32_phys_limit;
 +	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(arm64_dma32_phys_limit);
  #endif
--	if (!arm64_dma_phys_limit)
--		arm64_dma_phys_limit = PHYS_MASK + 1;
  	max_zone_pfns[ZONE_NORMAL] = max;
  
- 	free_area_init(max_zone_pfns);
-@@ -352,7 +345,14 @@ void __init arm64_memblock_init(void)
+@@ -376,10 +345,14 @@ void __init arm64_memblock_init(void)
  
  	early_init_fdt_scan_reserved_mem();
  
+-	if (!IS_ENABLED(CONFIG_ZONE_DMA) && !IS_ENABLED(CONFIG_ZONE_DMA32))
+-		reserve_crashkernel();
 +	if (IS_ENABLED(CONFIG_ZONE_DMA32))
 +		arm64_dma32_phys_limit = max_zone_phys(32);
 +	else
 +		arm64_dma32_phys_limit = PHYS_MASK + 1;
-+
+ 
  	high_memory = __va(memblock_end_of_DRAM() - 1) + 1;
 +
 +	dma_contiguous_reserve(arm64_dma32_phys_limit);
  }
  
  void __init bootmem_init(void)
-@@ -389,11 +389,6 @@ void __init bootmem_init(void)
+@@ -416,17 +389,11 @@ void __init bootmem_init(void)
  	sparse_init();
  	zone_sizes_init(min, max);
  
@@ -119,7 +146,14 @@ index 37a81754d9b61..196f8cccb7b3c 100644
  	/*
  	 * request_standard_resources() depends on crashkernel's memory being
  	 * reserved, so do it here.
-@@ -411,7 +406,7 @@ void __init bootmem_init(void)
+ 	 */
+-	if (IS_ENABLED(CONFIG_ZONE_DMA) || IS_ENABLED(CONFIG_ZONE_DMA32))
+-		reserve_crashkernel();
++	reserve_crashkernel();
+ 
+ 	memblock_dump_all();
+ }
+@@ -439,7 +406,7 @@ void __init bootmem_init(void)
  void __init mem_init(void)
  {
  	if (swiotlb_force == SWIOTLB_FORCE ||
@@ -128,11 +162,68 @@ index 37a81754d9b61..196f8cccb7b3c 100644
  		swiotlb_init(1);
  	else if (!xen_swiotlb_detect())
  		swiotlb_force = SWIOTLB_NO_FORCE;
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 6680689242df3..03aa6bee7daee 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -525,7 +525,7 @@ static void __init map_mem(pgd_t *pgdp)
+ 	 */
+ 	BUILD_BUG_ON(pgd_index(direct_map_end - 1) == pgd_index(direct_map_end));
+ 
+-	if (can_set_direct_map() || IS_ENABLED(CONFIG_KFENCE))
++	if (can_set_direct_map() || crash_mem_map || IS_ENABLED(CONFIG_KFENCE))
+ 		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+ 
+ 	/*
+@@ -536,17 +536,6 @@ static void __init map_mem(pgd_t *pgdp)
+ 	 */
+ 	memblock_mark_nomap(kernel_start, kernel_end - kernel_start);
+ 
+-#ifdef CONFIG_KEXEC_CORE
+-	if (crash_mem_map) {
+-		if (IS_ENABLED(CONFIG_ZONE_DMA) ||
+-		    IS_ENABLED(CONFIG_ZONE_DMA32))
+-			flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+-		else if (crashk_res.end)
+-			memblock_mark_nomap(crashk_res.start,
+-			    resource_size(&crashk_res));
+-	}
+-#endif
+-
+ 	/* map all the memory banks */
+ 	for_each_mem_range(i, &start, &end) {
+ 		if (start >= end)
+@@ -573,25 +562,6 @@ static void __init map_mem(pgd_t *pgdp)
+ 	__map_memblock(pgdp, kernel_start, kernel_end,
+ 		       PAGE_KERNEL, NO_CONT_MAPPINGS);
+ 	memblock_clear_nomap(kernel_start, kernel_end - kernel_start);
+-
+-	/*
+-	 * Use page-level mappings here so that we can shrink the region
+-	 * in page granularity and put back unused memory to buddy system
+-	 * through /sys/kernel/kexec_crash_size interface.
+-	 */
+-#ifdef CONFIG_KEXEC_CORE
+-	if (crash_mem_map &&
+-	    !IS_ENABLED(CONFIG_ZONE_DMA) && !IS_ENABLED(CONFIG_ZONE_DMA32)) {
+-		if (crashk_res.end) {
+-			__map_memblock(pgdp, crashk_res.start,
+-				       crashk_res.end + 1,
+-				       PAGE_KERNEL,
+-				       NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS);
+-			memblock_clear_nomap(crashk_res.start,
+-					     resource_size(&crashk_res));
+-		}
+-	}
+-#endif
+ }
+ 
+ void mark_rodata_ro(void)
 diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 3b23fb775ac45..c5415d162e7d4 100644
+index f2f8f05662deb..e9fcee1c9f6b8 100644
 --- a/drivers/acpi/arm64/iort.c
 +++ b/drivers/acpi/arm64/iort.c
-@@ -1637,58 +1637,3 @@ void __init acpi_iort_init(void)
+@@ -1645,58 +1645,3 @@ void __init acpi_iort_init(void)
  
  	iort_init_platform_devices();
  }

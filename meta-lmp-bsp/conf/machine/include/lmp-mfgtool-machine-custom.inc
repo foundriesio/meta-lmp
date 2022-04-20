@@ -73,10 +73,6 @@ UBOOT_CLASSES:apalis-imx6 = "uboot-fitimage"
 IMAGE_BOOT_FILES:apalis-imx6 = "boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE:apalis-imx6 = "fitImage"
 KERNEL_CLASSES:apalis-imx6 = " kernel-lmp-fitimage "
-PREFERRED_VERSION_optee-os-fio-mfgtool:apalis-imx6 = "3.10.0+git"
-PREFERRED_VERSION_optee-client:apalis-imx6 = "3.10.0"
-PREFERRED_VERSION_optee-examples:apalis-imx6 = "3.10.0"
-PREFERRED_VERSION_optee-test:apalis-imx6 = "3.10.0"
 
 # iMX8QM-MEK and Apalis-iMX8
 IMX_DEFAULT_BOOTLOADER:mx8qm ?= "u-boot-fio-mfgtool"

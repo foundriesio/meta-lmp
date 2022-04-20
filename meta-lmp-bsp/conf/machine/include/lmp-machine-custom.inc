@@ -197,10 +197,6 @@ UBOOT_CLASSES:imx7ulpea-ucom = "uboot-fitimage"
 BOOTSCR_LOAD_ADDR:imx7ulpea-ucom = "0x60800000"
 UBOOT_MACHINE:imx7ulpea-ucom = "mx7ulp_com_defconfig"
 UBOOT_CONFIG:imx7ulpea-ucom = ""
-PREFERRED_VERSION_optee-os-fio:imx7ulpea-ucom = "3.10.0+git"
-PREFERRED_VERSION_optee-client:imx7ulpea-ucom = "3.10.0"
-PREFERRED_VERSION_optee-examples:imx7ulpea-ucom = "3.10.0"
-PREFERRED_VERSION_optee-test:imx7ulpea-ucom = "3.10.0"
 KERNEL_BUILTIN_WIREGUARD:imx7ulpea-ucom = "1"
 
 # iMX6UL

@@ -12,10 +12,6 @@ UBOOT_CLASSES:imx7ulpea-ucom = "uboot-fitimage"
 IMAGE_BOOT_FILES:imx7ulpea-ucom = "boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE:imx7ulpea-ucom = "fitImage"
 KERNEL_CLASSES:imx7ulpea-ucom = " kernel-lmp-fitimage "
-PREFERRED_VERSION_optee-os-fio-mfgtool:imx7ulpea-ucom = "3.10.0+git"
-PREFERRED_VERSION_optee-client:imx7ulpea-ucom = "3.10.0"
-PREFERRED_VERSION_optee-examples:imx7ulpea-ucom = "3.10.0"
-PREFERRED_VERSION_optee-test:imx7ulpea-ucom = "3.10.0"
 
 # iMX6UL
 UBOOT_SIGN_ENABLE:mx6ul = "1"

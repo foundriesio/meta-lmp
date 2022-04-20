@@ -277,10 +277,6 @@ WKS_FILE:apalis-imx6 = "sdimage-imx6dq-spl-fit.wks"
 WKS_FILES:sota:apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
 MACHINE_FEATURES:append:apalis-imx6 = " optee"
 BOOTSCR_LOAD_ADDR:apalis-imx6 = "0x15000000"
-PREFERRED_VERSION_optee-os-fio:apalis-imx6 = "3.10.0+git"
-PREFERRED_VERSION_optee-client:apalis-imx6 = "3.10.0"
-PREFERRED_VERSION_optee-examples:apalis-imx6 = "3.10.0"
-PREFERRED_VERSION_optee-test:apalis-imx6 = "3.10.0"
 
 # Toradex Apalis iMX6 with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:apalis-imx6-sec = "ubootenv"

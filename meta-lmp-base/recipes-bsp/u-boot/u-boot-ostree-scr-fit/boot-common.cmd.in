@@ -152,19 +152,25 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 	# That means that we've validated already boot image over secondary path
 	# So we can update stable primary path with that images
 	if test "${fiovb.bootupgrade_available}" = "1" && test "${fiovb.upgrade_available}" = "0"; then
-		echo "${fio_msg} update primary boot path with validated images ..."
+		if test -z "${custom_apply_stable}"; then
+			echo "${fio_msg} update primary boot path with validated images ..."
 
-		setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_image}"
-		setenv start_blk "${bootloader}"
-		run load_image
-		run update_primary_image
+			setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_image}"
+			setenv start_blk "${bootloader}"
+			run load_image
+			run update_primary_image
 
-		setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_image}"
-		setenv start_blk "${bootloader2}"
-		run load_image
-		run update_primary_image2
+			setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_image}"
+			setenv start_blk "${bootloader2}"
+			run load_image
+			run update_primary_image2
+
+		else
+			run custom_apply_stable
+		fi
 
 		run bootcmd_bootenv
+
 		if test -n "${fiovb_rpmb}"; then
 			fiovb write_pvalue bootupgrade_available 0;
 			fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";

@@ -513,6 +513,7 @@ OSTREE_KERNEL_ARGS:versal ?= "console=ttyAMA0,115200 ${OSTREE_KERNEL_ARGS_COMMON
 KERNEL_IMAGETYPE:sota:versal = "fitImage"
 KERNEL_CLASSES:sota:versal = "kernel-lmp-fitimage"
 IMAGE_BOOT_FILES:sota:versal = "boot.bin boot.itb"
+WKS_FILES:sota:versal = "sdimage-sota.wks"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx-evm = " optee"

@@ -20,7 +20,7 @@ PACKAGECONFIG[production] = "-DPRODUCTION=ON,-DPRODUCTION=OFF,"
 
 S = "${WORKDIR}/git"
 
-inherit cmake
+inherit cmake pkgconfig
 
 RDEPENDS:${PN} += "openssl-bin ${SOTA_CLIENT}"
 

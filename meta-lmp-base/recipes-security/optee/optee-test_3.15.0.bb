@@ -5,6 +5,7 @@ SRCREV = "f88f69eb27beda52998de09cd89a7ee422da00d9"
 EXTRA_OEMAKE += " \
     CFG_PKCS11_TA=y \
 "
+CFLAGS += "-Wno-error=deprecated-declarations"
 
 do_compile:append() {
     oe_runmake test_plugin

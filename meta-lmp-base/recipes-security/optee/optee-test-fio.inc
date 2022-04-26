@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE.md;md5=daa2bcccc666345ab8940aab1315a4fa"
 inherit python3native
 require optee-fio.inc
 
-DEPENDS = "optee-client virtual/optee-os python3-pycryptodomex-native python3-pycrypto-native openssl"
+DEPENDS = "optee-client virtual/optee-os python3-pycryptodomex-native openssl"
 
 SRC_URI = "git://github.com/OP-TEE/optee_test.git;protocol=https;branch=master"
 

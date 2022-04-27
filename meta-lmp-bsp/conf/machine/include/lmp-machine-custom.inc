@@ -403,7 +403,7 @@ OSTREE_BOOTLOADER:imx8mm-lpddr4-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mm-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
 WKS_FILE:sota:imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks"
 # iMX8MM EVKB revision
-MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " nxp8987 mxm-mwifiex-load"
+MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
 
 # iMX8MP
 UBOOT_SIGN_ENABLE:sota:mx8mp = "1"

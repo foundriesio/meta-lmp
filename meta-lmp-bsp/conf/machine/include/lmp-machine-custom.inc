@@ -440,6 +440,8 @@ EFI_PROVIDER:imx8mp-lpddr4-evk-ebbr ?= "grub-efi"
 OSTREE_BOOTLOADER:imx8mp-lpddr4-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mp-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
 WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks"
+# imx8mp comes with an AzureWave CM276MA PCIe Card
+MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp-stm32"

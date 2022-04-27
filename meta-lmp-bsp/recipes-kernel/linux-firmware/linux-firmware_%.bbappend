@@ -45,6 +45,11 @@ do_install:append:imx () {
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/ed_mac_ctrl_V3_8987.conf  ${D}${nonarch_base_libdir}/firmware/nxp
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/sdiouart8987_combo_v0.bin ${D}${nonarch_base_libdir}/firmware/nxp
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8987/txpwrlimit_cfg_8987.conf  ${D}${nonarch_base_libdir}/firmware/nxp
+
+    # Install NXP Connectivity 8997PCIE firmware
+    install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8997/ed_mac_ctrl_V3_8997.conf  ${D}${nonarch_base_libdir}/firmware/nxp
+    install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8997/pcieuart8997_combo_v4.bin ${D}${nonarch_base_libdir}/firmware/nxp
+    install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8997/txpwrlimit_cfg_8997.conf  ${D}${nonarch_base_libdir}/firmware/nxp
 }
 
 PACKAGES =+ "${PN}-nxp89xx"
@@ -53,5 +58,8 @@ FILES:${PN}-nxp89xx = " \
        ${nonarch_base_libdir}/firmware/nxp/ed_mac_ctrl_V3_8987.conf \
        ${nonarch_base_libdir}/firmware/nxp/sdiouart8987_combo_v0.bin \
        ${nonarch_base_libdir}/firmware/nxp/txpwrlimit_cfg_8987.conf \
+       ${nonarch_base_libdir}/firmware/nxp/ed_mac_ctrl_V3_8997.conf \
+       ${nonarch_base_libdir}/firmware/nxp/pcieuart8997_combo_v4.bin \
+       ${nonarch_base_libdir}/firmware/nxp/txpwrlimit_cfg_8997.conf \
        ${nonarch_base_libdir}/firmware/nxp/wifi_mod_para.conf \
 "

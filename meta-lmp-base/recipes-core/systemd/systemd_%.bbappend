@@ -35,6 +35,7 @@ PACKAGECONFIG ?= " \
     utmp \
     vconsole \
     wheel-group \
+    xz \
     zstd \
 "
 

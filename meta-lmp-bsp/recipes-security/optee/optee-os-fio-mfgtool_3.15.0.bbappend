@@ -44,7 +44,7 @@ EXTRA_OEMAKE:append:imx7ulpea-ucom = " \
     CFG_NXP_WORKAROUND_CAAM_LOCKED_BY_HAB=y \
 "
 EXTRA_OEMAKE:append:imx8mp-lpddr4-evk = " \
-    CFG_DDR_SIZE=0x18000000 \
+    CFG_TZDRAM_START=0x56000000 \
 "
 
 # Additional Settings for SE05X

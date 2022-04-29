@@ -56,7 +56,9 @@ configure_rootfs_nss_altfiles () {
         if [ "$type" = "hosts" ]; then
             cat ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
         elif [ "$type" = "pwd" ] || [ "$type" = "spwd" ]; then
-            grep "^${LMP_USER}:" ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file}
+            for pmember in ${ETC_PASSWD_MEMBERS}; do
+                grep "^${pmember}:" ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file} || true
+            done
         elif [ "$type" = "grp" ]; then
             for gmember in ${ETC_GROUP_MEMBERS}; do
                 grep "^${gmember}:" ${IMAGE_ROOTFS}${libdir}/${sysconf_file} >> ${IMAGE_ROOTFS}${sysconfdir}/${sysconf_file} || true

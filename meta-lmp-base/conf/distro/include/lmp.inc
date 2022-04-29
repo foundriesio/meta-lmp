@@ -47,6 +47,8 @@ PACKAGECONFIG:append:pn-networkmanager = " nss"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"
+# Unix users that will be mirrored in /etc/passwd to allow manipulation
+ETC_PASSWD_MEMBERS ?= "${LMP_USER}"
 # Unix groups that will be mirrored in /etc/group to allow manipulation
 ETC_GROUP_MEMBERS ?= "sudo audio video plugdev users docker"
 

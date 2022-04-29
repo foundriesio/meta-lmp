@@ -5,9 +5,7 @@ HOMEPAGE = "https://github.com/linaro-swg/optee_examples"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=cd95ab417e23b94f381dafc453d70c30"
 
-DEPENDS = "optee-client virtual/optee-os python3-pycryptodomex-native"
-
-inherit python3native
+DEPENDS = "optee-client optee-os-tadevkit"
 
 require optee-fio.inc
 
@@ -30,11 +28,15 @@ do_compile[cleandirs] = "${B}"
 do_install () {
     mkdir -p ${D}${nonarch_base_libdir}/optee_armtz
     mkdir -p ${D}${bindir}
+    mkdir -p ${D}${libdir}/tee-supplicant/plugins
     install -D -p -m0755 ${B}/ca/* ${D}${bindir}
     install -D -p -m0444 ${B}/ta/* ${D}${nonarch_base_libdir}/optee_armtz
+    install -D -p -m0444 ${B}/plugins/* ${D}${libdir}/tee-supplicant/plugins
 }
 
-FILES:${PN} += "${nonarch_base_libdir}/optee_armtz/"
+FILES:${PN} += "${nonarch_base_libdir}/optee_armtz/ \
+                ${libdir}/tee-supplicant/plugins/ \
+               "
 
 # Imports machine specific configs from staging to build
 PACKAGE_ARCH = "${MACHINE_ARCH}"

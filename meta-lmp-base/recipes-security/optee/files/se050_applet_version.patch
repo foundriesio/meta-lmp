@@ -1,0 +1,24 @@
+Add CFG_CORE_SE05X_VER to allow configuring the desirable applet
+version, to allow making it fully compatible with newer elements such as
+the ones from the se051 series.
+
+diff -Naur a/core/drivers/crypto/se050/crypto.mk b/core/drivers/crypto/se050/crypto.mk
+--- a/core/drivers/crypto/se050/crypto.mk	2022-05-03 00:00:21.634533730 -0300
++++ b/core/drivers/crypto/se050/crypto.mk	2022-05-03 00:02:32.820359683 -0300
+@@ -13,6 +13,8 @@
+ CFG_CORE_SE05X_SCP03_EARLY ?= y
+ # Deletes all persistent storage from the SE050 at boot
+ CFG_CORE_SE05X_INIT_NVM ?= n
++# Select the SE05X applet version for aligning the built-in features
++CFG_CORE_SE05X_VER ?= 03_XX
+ 
+ # I2C bus baudrate (depends on SoC)
+ CFG_CORE_SE05X_BAUDRATE ?= 3400000
+diff -Naur a/plug-and-trust/cflags.mk b/plug-and-trust/cflags.mk
+--- a/plug-and-trust/cflags.mk	2022-05-03 00:00:21.758535384 -0300
++++ b/plug-and-trust/cflags.mk	2022-05-03 00:01:51.707772206 -0300
+@@ -4,3 +4,4 @@
+ cflags-y += -DT1oI2C_UM11225
+ cflags-y += -DT1oI2C
+ cflags-y += -DSSS_USE_FTR_FILE
++cflags-y += -DSSS_HAVE_SE05X_VER_$(CFG_CORE_SE05X_VER)=1

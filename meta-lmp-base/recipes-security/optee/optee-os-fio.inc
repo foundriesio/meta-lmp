@@ -5,16 +5,20 @@ HOMEPAGE = "https://www.op-tee.org/"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c1f21c4f72f372ef38a5a4aee55ec173"
 
-inherit deploy python3native
+inherit deploy
+
+DEPENDS = "python3-pyelftools-native dtc-native"
+
+DEPENDS:append:toolchain-clang = " compiler-rt"
+
 require optee-fio.inc
+
+# SE05X support
+require ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'optee-os-fio-se05x.inc', '', d)}
 
 CVE_PRODUCT = "linaro:op-tee op-tee:op-tee_os"
 
 PROVIDES = "virtual/optee-os"
-
-DEPENDS = "python3-pycryptodome-native python3-pycryptodomex-native python3-pyelftools-native"
-
-DEPENDS:append:toolchain-clang = " compiler-rt"
 
 SRCBRANCH ?= "master"
 SRC_URI = "git://github.com/foundriesio/optee_os.git;protocol=https;branch=${SRCBRANCH}"
@@ -50,13 +54,7 @@ do_compile[cleandirs] = "${B}"
 do_install() {
     #install core in firmware
     install -d ${D}${nonarch_base_libdir}/firmware/
-    install -m 644 ${B}/core/*.bin ${D}${nonarch_base_libdir}/firmware/
-
-    #install TA devkit
-    install -d ${D}${includedir}/optee/export-user_ta/
-    for f in ${B}/export-ta_${OPTEE_ARCH}/* ; do
-        cp -aR $f ${D}${includedir}/optee/export-user_ta/
-    done
+    install -m 644 ${B}/core/*.bin ${B}/core/tee.elf ${D}${nonarch_base_libdir}/firmware/
 
     # OP-TEE OS TAs
     install -d ${D}${nonarch_base_libdir}/optee_armtz
@@ -78,13 +76,13 @@ addtask deploy before do_build after do_install
 
 SYSROOT_DIRS += "${nonarch_base_libdir}/firmware"
 
-PACKAGES += "${PN}-ta-pkcs11 ${PN}-ta"
+PACKAGES += "${PN}-ta"
 
 FILES:${PN} = "${nonarch_base_libdir}/firmware/"
 FILES:${PN}-ta = "${nonarch_base_libdir}/optee_armtz"
-FILES:${PN}-ta-pkcs11 = "${nonarch_base_libdir}/optee_armtz/fd02c9da-306c-48c7-a49c-bbd827ae86ee.ta"
-FILES:${PN}-dev = "${includedir}/optee/"
 
+# note: "textrel" is not triggered on all archs
+INSANE_SKIP:${PN} = "textrel"
 INSANE_SKIP:${PN}-dev = "staticdev"
 
 INHIBIT_PACKAGE_STRIP = "1"

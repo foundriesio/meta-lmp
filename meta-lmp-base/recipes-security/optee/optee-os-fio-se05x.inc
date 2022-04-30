@@ -7,13 +7,9 @@ LIC_FILES_CHKSUM:append = " \
 
 SRC_URI:append = " \
     git://github.com/foundriesio/plug-and-trust.git;protocol=https;branch=optee_lib;name=plug-and-trust;destsuffix=git/plug-and-trust \
+    file://se050_applet_version.patch \
 "
-SRCREV_plug-and-trust ?= "44b36fd1dd7e179dfc83cb98958fd0cc008a0686"
-
-# Not an issue as OP-TEE OS is not yet being built with cmake
-inherit cmake
-
-OECMAKE_SOURCEPATH = "${S}/plug-and-trust/optee_lib"
+SRCREV_plug-and-trust ?= "5ec5efd9c8a69c143227bd6acdc4cd0664f8fb0f"
 
 # To be replaced based on the actual board OEFID
 SE05X_OEFID ?= "0xA1F4"
@@ -26,11 +22,8 @@ python () {
         d.setVar('SE05X_VER', "03_XX")
 }
 
-EXTRA_OECMAKE = "-DOPTEE_TREE=${S} -DSE05X_Ver=${SE05X_VER}"
-
 # Used by OP-TEE OS
 EXTRA_OEMAKE:append = " \
-    CFG_NUM_THREADS=1 \
     CFG_STACK_THREAD_EXTRA=8192 \
     CFG_STACK_TMP_EXTRA=8192 \
     CFG_NXP_SE05X=y \
@@ -49,32 +42,8 @@ EXTRA_OEMAKE:append = " \
     CFG_NXP_SE05X_DIEID_DRV=y \
     CFG_NXP_SE05X_RNG_DRV=n \
     CFG_NXP_SE05X_PLUG_AND_TRUST=${S}/plug-and-trust \
-    CFG_NXP_SE05X_PLUG_AND_TRUST_LIB=${B}-plug-and-trust/libse050.a \
 "
 # Fix conflicts with CAAM crypto hw drivers
 EXTRA_OEMAKE:remove = " \
     CFG_CRYPTO_DRIVER=y \
 "
-
-# Needed similar cflags as used by OP-TEE internally
-OECMAKE_C_FLAGS:append:aarch64 = " -mstrict-align -mgeneral-regs-only"
-
-# We abuse the main configure task from OP-TEE as it is noexec by default
-python () {
-    d.delVarFlag("do_configure", "noexec")
-}
-do_configure[cleandirs] = "${B}-plug-and-trust"
-do_configure[dirs] = "${B}-plug-and-trust"
-
-do_compile_plug_and_trust:prepend:armv7ve() {
-    # OP-TEE core can only consume soft float-based binaries, so update
-    # build.binja manually as if changed via CFLAGS cmake will fail
-    # when configuring (identifying the compiler abi)
-    sed -i "s/-mfpu=neon -mfloat-abi=hard/-mfloat-abi=soft/g" ${B}-plug-and-trust/build.ninja
-    mkdir -p ${S}/plug-and-trust/optee_lib/glue/include/gnu
-    touch ${S}/plug-and-trust/optee_lib/glue/include/gnu/stubs-soft.h
-}
-do_compile_plug_and_trust() {
-    ${CMAKE_VERBOSE} cmake --build '${B}-plug-and-trust' --target all
-}
-addtask compile_plug_and_trust after do_configure before do_compile

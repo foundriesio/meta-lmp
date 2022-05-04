@@ -564,9 +564,9 @@ OSTREE_KERNEL_ARGS:sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio:imx ?= "2021.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
-PREFERRED_VERSION_optee-client:mx8 = "3.15.0"
-PREFERRED_VERSION_optee-examples:mx8 = "3.15.0"
-PREFERRED_VERSION_optee-test:mx8 = "3.15.0"
+PREFERRED_VERSION_optee-client:mx8 = "3.17.0"
+PREFERRED_VERSION_optee-examples:mx8 = "3.17.0"
+PREFERRED_VERSION_optee-test:mx8 = "3.17.0"
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:imx = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

@@ -3,11 +3,9 @@ HOMEPAGE = "https://github.com/foundriesio/optee-sks"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31daea161b1bc15da69f"
 
-inherit python3native
+DEPENDS = "optee-os-tadevkit optee-client"
 
 require optee-fio.inc
-
-DEPENDS = "python3-pycryptodomex-native virtual/optee-os optee-client"
 
 SRC_URI = "git://github.com/foundriesio/optee-sks.git;protocol=https;branch=master"
 SRCREV = "c5e0ae747c84b496585c4de7e4bded025e24959b"

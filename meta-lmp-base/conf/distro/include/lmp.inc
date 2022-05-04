@@ -43,7 +43,8 @@ PACKAGECONFIG:append:pn-docker-moby = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG:remove:pn-runc-opencontainers = "static"
 PACKAGECONFIG:append:pn-qemu-native = " libusb"
-PACKAGECONFIG:append:pn-networkmanager = " nss"
+PACKAGECONFIG:append:pn-networkmanager = " libedit"
+PACKAGECONFIG:remove:pn-networkmanager = " readline"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"

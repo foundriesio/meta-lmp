@@ -1,12 +1,8 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-# Depend on libedit as it has a more friendly license than readline (GPLv3)
-PACKAGECONFIG[nmcli] = "--with-nmcli=yes,--with-nmcli=no,libedit"
 # Disable firewalld-zone by default, but allow via packageconfig
 PACKAGECONFIG[firewalld-zone] = "--enable-firewalld-zone,--disable-firewalld-zone"
 
 SRC_URI += " \
-	file://0001-Add-client-build-support-for-editline-libedit.patch \
 	file://0001-85-nm-unmanaged.rules-do-not-manage-docker-bridges.patch \
-	file://0001-Extending-client-build-support-for-editline-libedit.patch \
 "

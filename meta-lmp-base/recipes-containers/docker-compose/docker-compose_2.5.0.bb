@@ -12,7 +12,7 @@ SRC_URI = "\
 	file://cli-config-support-default-system-config.patch \
 	"
 
-SRCREV_compose = "8d815ff587d7d5da90835a5007859edb9fafff61"
+SRCREV_compose = "41b3967cb521a7c7254155a70fbafa5f5ae02aad"
 SRCREV_cli = "2b52f62e962783ef39b53d1cb95e1d435b33f3cd"
 
 UPSTREAM_CHECK_COMMITS = "1"

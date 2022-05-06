@@ -456,6 +456,7 @@ IMAGE_CLASSES:remove:stm32mp1common = "image_types-stubi"
 ENABLE_FLASHLAYOUT_CONFIG:stm32mp1common = "0"
 IMAGE_ROOTFS_MAXSIZE:stm32mp1common = ""
 KERNEL_BUILTIN_WIREGUARD:stm32mp1common = "1"
+PREFERRED_PROVIDER_virtual/optee-os:stm32mp1common = "optee-os-fio"
 ## STM32MP1-EVAL
 IMAGE_FSTYPES:remove:stm32mp1-eval = "wic wic.gz wic.bmap"
 EXTRA_IMAGEDEPENDS:append:stm32mp1-eval = "flashlayouts-stm32mp1"

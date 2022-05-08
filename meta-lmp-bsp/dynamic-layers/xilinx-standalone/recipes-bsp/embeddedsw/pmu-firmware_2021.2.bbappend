@@ -1,2 +1,0 @@
-# Allow EFUSE access, used by OP-TEE
-YAML_COMPILER_FLAGS:zynqmp = " -DENABLE_EFUSE_ACCESS"

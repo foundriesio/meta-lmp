@@ -14,7 +14,7 @@ Signed-off-by: Tim Anderson <tim.anderson@foundries.io>
  1 file changed, 30 insertions(+), 27 deletions(-)
 
 diff --git a/fpgautil.c b/fpgautil.c
-index 42344d7..9136d1c 100644
+index 0b77569..c5ea4d6 100644
 --- a/fpgautil.c
 +++ b/fpgautil.c
 @@ -50,6 +50,11 @@
@@ -29,7 +29,7 @@ index 42344d7..9136d1c 100644
  int fpga_getplatform()
  {
          char fpstr[100];
-@@ -306,14 +311,14 @@ int main(int argc, char **argv)
+@@ -329,14 +334,14 @@ int main(int argc, char **argv)
  	}
  
  	if(region != NULL)
@@ -47,18 +47,10 @@ index 42344d7..9136d1c 100644
  	if (rm_overlay) {
  		if (((stat(folder, &sb) == 0) && S_ISDIR(sb.st_mode))) {
  			snprintf(command, sizeof(command), "rmdir %s", folder);
-@@ -327,21 +332,21 @@ int main(int argc, char **argv)
- 			printf("Error: Overlay already exists in the live tree\n\r");
+@@ -351,18 +356,18 @@ int main(int argc, char **argv)
  			return 1;
  		}
--		snprintf(command, sizeof(command), "cp %s /lib/firmware", binfile);
-+		snprintf(command, sizeof(command), "cp %s "LIBPATH FWPATH, binfile);
- 		if (argc < 5) {
- 			printf("\n\r");
- 			printf("%s: For more information run %s -h\n", strerror(22), basename(argv[0]));
- 			return 1;
- 		}
- 		
+ 
 -		if (((stat("/configfs/device-tree/", &sb) == 0) && S_ISDIR(sb.st_mode))) {
 +		if (((stat(CONFIGPATH "/device-tree/", &sb) == 0) && S_ISDIR(sb.st_mode))) {
  		} else {
@@ -67,31 +59,36 @@ index 42344d7..9136d1c 100644
 +			system("mkdir "CONFIGPATH);
 +			system("mount -t configfs configfs "CONFIGPATH);
  		}
--		snprintf(command, sizeof(command), "cp %s /lib/firmware", binfile);
-+		snprintf(command, sizeof(command), "cp %s "LIBPATH FWPATH, binfile);
- 		system(command);
+ 
+ 		if (binfile != NULL) {
+-			snprintf(command, sizeof(command), "cp %s /lib/firmware", binfile);
++			snprintf(command, sizeof(command), "cp %s "LIBPATH FWPATH, binfile);
+ 			system(command);
+ 		}
+ 
 -		snprintf(command, sizeof(command), "cp %s /lib/firmware", overlay);
 +		snprintf(command, sizeof(command), "cp %s "LIBPATH FWPATH, overlay);
  		system(command);
  		tmp = strdup(overlay);
  		while((token = strsep(&tmp, "/"))) {
-@@ -363,13 +368,13 @@ int main(int argc, char **argv)
- 		time = gettime(t0, t1);
+@@ -393,14 +398,14 @@ int main(int argc, char **argv)
+ 		}
  
  		/* Delete Bin file and DTBO file*/
 -		snprintf(command, sizeof(command), "rm /lib/firmware/%s", tmp1);
 +		snprintf(command, sizeof(command), "rm "LIBPATH FWPATH, tmp1);
  		system(command);
- 		tmp = strdup(binfile);
- 		while((token = strsep(&tmp, "/"))) {
- 			tmp1 = token;
+ 		if (binfile != NULL) {
+ 			tmp = strdup(binfile);
+ 			while((token = strsep(&tmp, "/"))) {
+ 				tmp1 = token;
+ 			}
+-			snprintf(command, sizeof(command), "rm /lib/firmware/%s", tmp1);
++			snprintf(command, sizeof(command), "rm "LIBPATH FWPATH, tmp1);
+ 			system(command);
  		}
--		snprintf(command, sizeof(command), "rm /lib/firmware/%s", tmp1);
-+		snprintf(command, sizeof(command), "rm "LIBPATH FWPATH, tmp1);
- 		system(command);
  
- 		/* FPGA state check */
-@@ -384,7 +389,7 @@ int main(int argc, char **argv)
+@@ -418,7 +423,7 @@ int main(int argc, char **argv)
  			printf("%s: For more information run %s -h\n", strerror(22), basename(argv[0]));
  			return 1;
  		}
@@ -100,7 +97,7 @@ index 42344d7..9136d1c 100644
  		system(command);
  		snprintf(command, sizeof(command), "echo %x > /sys/class/fpga_manager/fpga0/flags", flags);
  		system(command);
-@@ -403,7 +408,7 @@ int main(int argc, char **argv)
+@@ -437,7 +442,7 @@ int main(int argc, char **argv)
  		time = gettime(t0, t1);
  
  		/* Delete Bin file and DTBO file*/

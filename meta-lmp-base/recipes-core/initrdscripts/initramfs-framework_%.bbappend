@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += " \
+SRC_URI:append = " \
 	file://ostree \
 	file://ostree_factory_reset \
 	file://run-tmpfs.patch \

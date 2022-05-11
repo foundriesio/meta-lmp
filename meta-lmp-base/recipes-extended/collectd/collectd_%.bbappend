@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI += " \
+SRC_URI:append = " \
 	file://tmpfiles.conf \
 	file://collectd.conf \
 "

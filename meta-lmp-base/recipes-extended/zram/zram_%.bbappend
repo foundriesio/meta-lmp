@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://zram.conf"
+SRC_URI:append = " file://zram.conf"
 
 do_install:append() {
     install -d ${D}${sysconfdir}/default

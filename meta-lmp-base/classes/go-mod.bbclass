@@ -16,6 +16,9 @@ GOBUILDFLAGS:append = " -modcacherw"
 
 inherit go
 
+# Go modules are currently downloaded during build step
+do_compile[network] = "1"
+
 # Export proxies for mod download (done as part of go build/install)
 python do_compile() {
     bb.utils.export_proxies(d)

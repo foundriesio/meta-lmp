@@ -12,7 +12,7 @@ SRCREV = "96f02c8897f89e297dfde88f5ad266163d166168"
 BRANCHARG = "${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"
 SRC_URI = "${REPO};${BRANCHARG}"
 
-SRC_URI += " \
+SRC_URI:append = " \
     file://fru-print.py \
     file://0001-fru.py-Modifying-for-xilinx-specific-specs.patch \
     "

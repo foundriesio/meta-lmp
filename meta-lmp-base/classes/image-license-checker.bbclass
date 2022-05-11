@@ -5,65 +5,65 @@
 # Purpose
 # -------
 # The image-license-checker class is for:
-# * Preventing packages with blacklisted licenses from being used in a rootfs.
-# * Preventing recipes with blacklisted licenses from contributing files to the
+# * Preventing packages with denylisted licenses from being used in a rootfs.
+# * Preventing recipes with denylisted licenses from contributing files to the
 #   non-rootfs part of an image.
 #
 # Unlike the INCOMPATIBLE_LICENSE mechanism, this class works at a rootfs/image
-# level rather than a package level. With this class you can allow blacklisted
+# level rather than a package level. With this class you can allow denylisted
 # licensed packages to be built, but prevent them from being included in images
 # whose recipes inherit from this class.
 #
 # Also unlike the INCOMPATIBLE_LICENSE mechanism, this class doesn't take into
 # account ORs ("|"s) in license expressions. The INCOMPATIBLE_LICENSE mechanism
 # will only prevent a package "package1" with license "lic1 | lic2" to be built
-# when both lic1 and lic2 are blacklisted. That approach doesn't work because a
+# when both lic1 and lic2 are denylisted. That approach doesn't work because a
 # dependent package "package2" might be using "package1" under the terms of a
-# blacklisted license even if "package1" is also available under a different
-# non-blacklisted license.
+# denylisted license even if "package1" is also available under a different
+# non-denylisted license.
 #
 # Usage
 # -----
 # To use this class in a recipe for an image:
-# * If you want to blacklist licenses in the rootfs, set
-#   IMAGE_LICENSE_CHECKER_ROOTFS_BLACKLIST to a space delimited list of SPDX
-#   license names to be blacklisted from the rootfs.
-# * If you want to blacklist licenses in the non-rootfs parts of an image, set
-#   IMAGE_LICENSE_CHECKER_NON_ROOTFS_BLACKLIST to a space delimited list of SPDX
-#   license names to be blacklisted from the non-rootfs parts of the image.
+# * If you want to denylist licenses in the rootfs, set
+#   IMAGE_LICENSE_CHECKER_ROOTFS_DENYLIST to a space delimited list of SPDX
+#   license names to be denylisted from the rootfs.
+# * If you want to denylist licenses in the non-rootfs parts of an image, set
+#   IMAGE_LICENSE_CHECKER_NON_ROOTFS_DENYLIST to a space delimited list of SPDX
+#   license names to be denylisted from the non-rootfs parts of the image.
 # * Add the line "inherit image-license-checker".
 #
 # Example
 # -------
-# IMAGE_LICENSE_CHECKER_ROOTFS_BLACKLIST = "GPL-3.0 LGPL-3.0 AGPL-3.0"
-# IMAGE_LICENSE_CHECKER_NON_ROOTFS_BLACKLIST = "GPL-3.0 LGPL-3.0 AGPL-3.0"
+# IMAGE_LICENSE_CHECKER_ROOTFS_DENYLIST = "GPL-3.0 LGPL-3.0 AGPL-3.0"
+# IMAGE_LICENSE_CHECKER_NON_ROOTFS_DENYLIST = "GPL-3.0 LGPL-3.0 AGPL-3.0"
 # inherit image-license-checker
 #
 
-IMAGE_LICENSE_CHECKER_ROOTFS_BLACKLIST ?= ""
-IMAGE_LICENSE_CHECKER_NON_ROOTFS_BLACKLIST ?= ""
+IMAGE_LICENSE_CHECKER_ROOTFS_DENYLIST ?= ""
+IMAGE_LICENSE_CHECKER_NON_ROOTFS_DENYLIST ?= ""
 
 
-def bad_license(d, license, blacklist):
+def bad_license(d, license, denylist):
     """
-    Check if a license string is blacklisted. The license string will be
+    Check if a license string is denylisted. The license string will be
     canonicalized before the check. This does not deal with license
     expressions, just single licenses, although it does take into account "+"s.
-    I.e. if "GPL-3.0" is in the blacklist then this function will return true
+    I.e. if "GPL-3.0" is in the denylist then this function will return true
     for a license string "GPLv3+".
     """
     return not oe.license.license_ok(
         canonical_license(d, license),
-        blacklist)
+        denylist)
 
 
-def bad_license_expr(d, license_expr, blacklist):
+def bad_license_expr(d, license_expr, denylist):
     """
-    Check if a license expression contains a bad blacklisted license. This does
+    Check if a license expression contains a bad denylisted license. This does
     not take into acount ORs ("|"s) in the license expression.
     """
     licenses = oe.license.list_licenses(license_expr)
-    return any(bad_license(d, license, blacklist) for license in licenses)
+    return any(bad_license(d, license, denylist) for license in licenses)
 
 
 def license_expr_from_file(file, keys):
@@ -120,19 +120,19 @@ def package_name_for_installed_package(d, inst_package):
 
 python check_rootfs_licenses() {
     """
-    Check packages installed on the rootfs for blacklisted licenses.
+    Check packages installed on the rootfs for denylisted licenses.
     """
-    blacklist = d.getVar('IMAGE_LICENSE_CHECKER_ROOTFS_BLACKLIST').split()
+    denylist = d.getVar('IMAGE_LICENSE_CHECKER_ROOTFS_DENYLIST').split()
 
     bad_packages = []
     for inst_package in oe.rootfs.image_list_installed_packages(d):
         license_expr = license_expr_for_installed_package(d, inst_package)
-        if bad_license_expr(d, license_expr, blacklist):
+        if bad_license_expr(d, license_expr, denylist):
             package = package_name_for_installed_package(d, inst_package)
             bad_packages.append("{} ({})".format(package, license_expr))
 
     if bad_packages:
-        bb.fatal("Packages have blacklisted licenses: {}".format(", ".join(bad_packages)))
+        bb.fatal("Packages have denylisted licenses: {}".format(", ".join(bad_packages)))
 }
 ROOTFS_POSTPROCESS_COMMAND:prepend = "check_rootfs_licenses; "
 
@@ -140,17 +140,17 @@ ROOTFS_POSTPROCESS_COMMAND:prepend = "check_rootfs_licenses; "
 python check_deploy_licenses() {
     """
     Check recipes that deploy files used in an image (e.g. U-Boot) for
-    blacklisted licenses.
+    denylisted licenses.
     """
-    blacklist = d.getVar('IMAGE_LICENSE_CHECKER_NON_ROOTFS_BLACKLIST').split()
+    denylist = d.getVar('IMAGE_LICENSE_CHECKER_NON_ROOTFS_DENYLIST').split()
 
     bad_recipes = []
     for recipe in get_deployed_dependencies(d).keys():
         license_expr = license_expr_for_recipe(d, recipe)
-        if bad_license_expr(d, license_expr, blacklist):
+        if bad_license_expr(d, license_expr, denylist):
             bad_recipes.append("{} ({})".format(recipe, license_expr))
 
     if bad_recipes:
-        bb.fatal("Deployed image dependencies have blacklisted licenses: {}".format(", ".join(bad_recipes)))
+        bb.fatal("Deployed image dependencies have denylisted licenses: {}".format(", ".join(bad_recipes)))
 }
 IMAGE_POSTPROCESS_COMMAND:prepend = "check_deploy_licenses; "

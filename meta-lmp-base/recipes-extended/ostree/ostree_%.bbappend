@@ -4,7 +4,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 # building with meta-updater and meta-lmp.
 PTEST_ENABLED = "0"
 
-SRC_URI += " \
+SRC_URI:append = " \
     file://update-default-grub-cfg-header.patch \
 "
-

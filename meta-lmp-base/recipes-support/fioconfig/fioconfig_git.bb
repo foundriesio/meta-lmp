@@ -18,7 +18,8 @@ UPSTREAM_CHECK_COMMITS = "1"
 inherit go-mod systemd
 
 # Extend from go.bbclass to include internal.Commit and tags
-GO_LDFLAGS = '-tags vpn -ldflags="-X ${GO_IMPORT}/internal.Commit=${SRCREV} ${GO_RPATH} ${GO_LINKMODE} -extldflags '${GO_EXTLDFLAGS}'"'
+GO_LDFLAGS += "-tags vpn"
+GO_EXTRA_LDFLAGS = "-X ${GO_IMPORT}/internal.Commit=${SRCREV}"
 
 SYSTEMD_PACKAGES += "${PN}"
 SYSTEMD_SERVICE:${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"

@@ -280,7 +280,6 @@ BOOTSCR_LOAD_ADDR:apalis-imx6 = "0x15000000"
 
 # Toradex Apalis iMX6 with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:apalis-imx6-sec = "ubootenv"
-SOTA_EXTRA_CLIENT_FEATURES:append:sota:apalis-imx6-sec = " fiovb"
 
 # iMX8QM
 SOTA_CLIENT_FEATURES:append:mx8qm = " ubootenv"
@@ -321,7 +320,6 @@ UBOOT_MACHINE:apalis-imx8 = "apalis-imx8_defconfig"
 
 # Toradex Apalis iMX8 with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:apalis-imx8-sec = "ubootenv"
-SOTA_EXTRA_CLIENT_FEATURES:append:sota:apalis-imx8-sec = " fiovb"
 
 # iMX8MQ
 UBOOT_SIGN_ENABLE:sota:mx8mq = "1"
@@ -393,7 +391,6 @@ UBOOT_MACHINE:imx8mm-lpddr4-evk = "imx8mm_evk_config"
 BOOTSCR_LOAD_ADDR:imx8mm-lpddr4-evk = "0x44800000"
 ## iMX8MM EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mm-lpddr4-evk-sec = "ubootenv"
-SOTA_EXTRA_CLIENT_FEATURES:append:sota:imx8mm-lpddr4-evk-sec = " fiovb"
 ## iMX8MM EVK with EBBR / SystemReady
 UBOOT_SIGN_ENABLE:sota:imx8mm-lpddr4-evk-ebbr = ""
 KERNEL_IMAGETYPE:sota:imx8mm-lpddr4-evk-ebbr ?= "Image"
@@ -488,7 +485,6 @@ KERNEL_BUILTIN_WIREGUARD:zynqmp = "1"
 ## Avnet UltraZed with secure boot support
 UBOOT_SIGN_ENABLE:sota:uz3eg-iocc-sec = "1"
 SOTA_CLIENT_FEATURES:remove:sota:uz3eg-iocc-sec = "ubootenv"
-SOTA_EXTRA_CLIENT_FEATURES:append:sota:uz3eg-iocc-sec = " fiovb"
 ## Avnet UltraZed with secure boot support and EBBR
 UBOOT_SPL_SIGN_ENABLE:sota:uz3eg-iocc-ebbr-sec = "1"
 UBOOT_SIGN_ENABLE:sota:uz3eg-iocc-ebbr-sec = "0"

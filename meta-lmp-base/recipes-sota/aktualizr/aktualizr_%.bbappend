@@ -17,7 +17,7 @@ SRC_URI:append:libc-musl = " \
     file://utils.c-disable-tilde-as-it-is-not-supported-by-musl.patch \
 "
 
-PACKAGECONFIG += "${@bb.utils.filter('SOTA_EXTRA_CLIENT_FEATURES', 'fiovb', d)} libfyaml"
+PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"

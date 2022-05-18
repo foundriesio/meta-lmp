@@ -81,21 +81,6 @@ OSTREE_KERNEL_ARGS:freedom-u540 ?= "earlycon=sbi console=ttySIF0 ${OSTREE_KERNEL
 WKS_FILE:freedom-u540 = "sdimage-freedom-u540-spl.wks"
 WKS_FILE:freedom-u540:sota = "sdimage-freedom-u540-spl-sota.wks"
 
-# ARM Development Boards
-PREFERRED_PROVIDER_virtual/kernel:corstone700 = "linux-lmp-lts"
-PREFERRED_PROVIDER_virtual/bootloader:corstone700 = "u-boot"
-PREFERRED_PROVIDER_u-boot:corstone700 = "u-boot"
-KERNEL_IMAGETYPE:corstone700 = "xipImage"
-WKS_FILE:corstone700:sota = "corstone700-sota.wks"
-IMAGE_CLASSES:append:corstone700 = " image-types-wicnopt"
-IMAGE_FSTYPES:append:corstone700 = " wic.nopt"
-## Remove udev/e2fsck due size restrictions (max 2 mb)
-PACKAGE_INSTALL:remove:pn-initramfs-ostree-lmp-image:corstone700 = "initramfs-module-udev udev e2fsprogs-e2fsck"
-## Corstone700-MPS3 does not have support for VFP and NEON
-TUNE_FEATURES:tune-cortexa32:remove:corstone700-mps3 = "callconvention-hard neon"
-PACKAGE_EXTRA_ARCHS:tune-cortexa32:remove:corstone700-mps3 = "cortexa32hf-neon"
-PACKAGE_EXTRA_ARCHS:tune-cortexa32-crypto:remove:corstone700-mps3 = "cortexa32hf-neon cortexa32hf-neon-crypto"
-
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader:qemuarm64 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot:qemuarm64 = "u-boot-fio"

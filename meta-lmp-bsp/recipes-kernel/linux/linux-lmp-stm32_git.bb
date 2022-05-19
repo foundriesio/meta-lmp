@@ -1,8 +1,8 @@
 include recipes-kernel/linux/kmeta-linux-lmp-5.10.y.inc
 
-LINUX_VERSION ?= "5.10.10"
+LINUX_VERSION ?= "5.10.61"
 KBRANCH = "v5.10-stm32mp"
-SRCREV_machine = "ce6891abb1c895d4849e6f784615687341b3dbde"
+SRCREV_machine = "64e6a220537c5cd7e8cc5b723ef09c6341388c98"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
@@ -12,5 +12,7 @@ SRC_URI = "git://github.com/STMicroelectronics/linux.git;protocol=https;branch=$
 "
 
 KMETA = "kernel-meta"
+
+KERNEL_EXTRA_ARGS += "LOADADDR=${ST_KERNEL_LOADADDR}"
 
 include recipes-kernel/linux/linux-lmp.inc

@@ -32,7 +32,7 @@ SRC_URI:append:imx8mp-lpddr4-evk-sec = " \
 
 # Machine specific dependencies
 def get_do_deploy_depends(d):
-    imxboot_families = ['mx8']
+    imxboot_families = ['mx8-nxp-bsp']
     cur_families = (d.getVar('MACHINEOVERRIDES') or '').split(':')
     if any(map(lambda x: x in cur_families, imxboot_families)):
         return "imx-boot:do_deploy"
@@ -40,7 +40,7 @@ def get_do_deploy_depends(d):
 
 do_deploy[depends] += "${@get_do_deploy_depends(d)}"
 
-do_deploy:prepend:mx8() {
+do_deploy:prepend:mx8-nxp-bsp() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool
     install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb
@@ -54,13 +54,13 @@ do_deploy:prepend:imx7ulpea-ucom() {
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE} ${DEPLOYDIR}/${PN}/fitImage-${MACHINE}-mfgtool
 }
 
-do_deploy:prepend:mx6ul() {
+do_deploy:prepend:mx6ul-nxp-bsp() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/SPL ${DEPLOYDIR}/${PN}/SPL-mfgtool
     install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb
 }
 
-do_deploy:prepend:mx6ull() {
+do_deploy:prepend:mx6ull-nxp-bsp() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/SPL ${DEPLOYDIR}/${PN}/SPL-mfgtool
     install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb

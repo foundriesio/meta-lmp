@@ -15,7 +15,7 @@ SRC_URI:append = "\
 SRCREV_TIInit_11.8.32 ?= "31a43dc1248a6c19bb886006f8c167e2fd21cb78"
 
 IMX_FIRMWARE_BRANCH ?= "lf-5.10.52_2.1.0"
-SRC_URI:append:imx = "\
+SRC_URI:append:imx-nxp-bsp = "\
     git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware; \
 "
 SRCREV_imx-firmware ?= "6d7f77b83164b08334806c4aa2034bc1f7da7b7d"
@@ -40,7 +40,7 @@ do_install:append:beaglebone-yocto() {
     cp ${WORKDIR}/wl18xx-conf.bin ${D}${nonarch_base_libdir}/firmware/ti-connectivity/
 }
 
-do_install:append:imx () {
+do_install:append:imx-nxp-bsp () {
     # Install NXP Connectivity
     install -d ${D}${nonarch_base_libdir}/firmware/nxp
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/wifi_mod_para.conf    ${D}${nonarch_base_libdir}/firmware/nxp

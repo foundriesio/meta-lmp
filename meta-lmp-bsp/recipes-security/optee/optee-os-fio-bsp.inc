@@ -11,12 +11,12 @@ OPTEEMACHINE:qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE:zynqmp = "zynqmp-zcu102"
 
 # SoC Settings
-EXTRA_OEMAKE:append:mx8m = " \
+EXTRA_OEMAKE:append:mx8m-nxp-bsp = " \
     CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
     CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_RNG_PTA=y \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
 "
-EXTRA_OEMAKE:append:mx8qm = " \
+EXTRA_OEMAKE:append:mx8qm-nxp-bsp = " \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
 "
 EXTRA_OEMAKE:append:zynqmp = " \

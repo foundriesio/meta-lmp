@@ -5,14 +5,14 @@ DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os'
 
 SRC_URI:remove = " file://0001-mkimage_fit_atf-fix-fit-generator-node-naming.patch"
 
-SRC_URI:append:mx8m = " \
+SRC_URI:append:mx8m-nxp-bsp = " \
      file://0002-iMX8M-add-SPL-only-build.patch \
      file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \
      file://0004-iMX8M-also-create-nohdmi-boot-image.patch \
      file://0001-iMX8M-change-DDR-DMEM-padding.patch \
 "
 
-SRC_URI:append:mx8qm = " \
+SRC_URI:append:mx8qm-nxp-bsp = " \
      file://0001-iMX8QM-add-SPL-only-build.patch \
 "
 
@@ -23,7 +23,7 @@ do_compile[depends] = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os:do_deploy', '', d)} \
 "
 
-do_compile:prepend:mx8() {
+do_compile:prepend:mx8-nxp-bsp() {
     for target in ${IMXBOOT_TARGETS}; do
         if [ "${target}" = "flash_evk_spl" ]; then
             # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have

@@ -22,8 +22,8 @@ RPROVIDES:${PN} = "imx-sc-firmware"
 RCONFLICTS:${PN} = "imx-sc-firmware"
 
 BOARD_TYPE ?= "unknown"
-SC_FIRMWARE_NAME:mx8qm = "mx8qm-${BOARD_TYPE}-scfw-tcm.bin"
-SC_FIRMWARE_NAME:mx8qxp = "mx8qx-${BOARD_TYPE}-scfw-tcm.bin"
+SC_FIRMWARE_NAME:mx8qm-nxp-bsp = "mx8qm-${BOARD_TYPE}-scfw-tcm.bin"
+SC_FIRMWARE_NAME:mx8qxp-nxp-bsp = "mx8qx-${BOARD_TYPE}-scfw-tcm.bin"
 symlink_name = "scfw_tcm.bin"
 
 BOOT_TOOLS = "imx-boot-tools"

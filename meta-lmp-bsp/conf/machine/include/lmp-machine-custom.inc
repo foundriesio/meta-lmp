@@ -441,6 +441,7 @@ ENABLE_FLASHLAYOUT_CONFIG:stm32mp1common = "0"
 IMAGE_ROOTFS_MAXSIZE:stm32mp1common = ""
 KERNEL_BUILTIN_WIREGUARD:stm32mp1common = "1"
 PREFERRED_PROVIDER_virtual/optee-os:stm32mp1common = "optee-os-fio"
+MACHINE_EXTRA_RRECOMMENDS:remove:stm32mp1common = "kernel-imagebootfs"
 ## stm32mp15-eval
 IMAGE_FSTYPES:remove:stm32mp15-eval = "wic wic.gz wic.bmap"
 EXTRA_IMAGEDEPENDS:append:stm32mp15-eval = "flashlayouts-stm32mp1"

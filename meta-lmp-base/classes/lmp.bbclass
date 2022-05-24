@@ -11,6 +11,26 @@ include conf/machine/include/lmp-partner-custom.inc
 # Allow customizations per factory level
 include conf/machine/include/lmp-factory-custom.inc
 
+preload_apps () {
+	if [ "${COMPOSE_APP_TYPE}" = "restorable" ]; then
+		if [ -f "${APP_PRELOADER}" ] && [ -x "${APP_PRELOADER}" ]; then
+			bbplain "Preloading Apps of the given Target: ${GARAGE_TARGET_NAME}-${target_version}"
+
+			REGISTRY_SECRETS_FILE="${APP_PRELOAD_REGISTRY_SECRETS_FILE}" \
+			TARGET_JSON_FILE="${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/import/installed_versions" \
+			APP_SHORTLIST="${APP_SHORTLIST}" \
+			OCI_STORE_PATH="${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/reset-apps" \
+			TOKEN_FILE="${APP_PRELOAD_TOKEN_FILE}" \
+			LOG_FILE="${APP_PRELOAD_LOG_FILE}" \
+				${APP_PRELOADER}
+		else
+			bbwarn "Apps preloading is turned ON, but the specified preloader either doesn't exist or is not executable: ${APP_PRELOADER}"
+		fi
+	else
+		bbwarn "Apps preloading is skipped because the preloader doesn't support the given type of Apps: ${COMPOSE_APP_TYPE}"
+	fi
+}
+
 # Support initial customized target via GARAGE_CUSTOMIZE_TARGET
 # This is set by our CI scripts and allows the initial target to populated by
 # the build process so it can be incorporated at the first aktualizr-lite run
@@ -58,6 +78,10 @@ IMAGE_CMD:ota:append () {
 		rm -rf ${OTA_BOOT}
 		mv ${OTA_SYSROOT}/boot ${OTA_BOOT}
 		mkdir -p ${OTA_SYSROOT}/boot
+	fi
+
+	if [ "${APP_PRELOAD_WITHIN_OE_BUILD}" = "1" ]; then
+		preload_apps
 	fi
 }
 OTA_BOOT = "${WORKDIR}/ota-boot"

@@ -19,6 +19,7 @@ FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue upgrade_a
 FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue bootupgrade_available 0; else true; fi
 FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue bootfirmware_version 0; else true; fi
 FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue debug 0; else true; fi
+FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue is_secondary_boot 0; else true; fi
 
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
 FB: flash bootloader ../imx-boot-@@MACHINE@@.signed

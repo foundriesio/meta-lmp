@@ -40,9 +40,3 @@ do_deploy:append:mx8() {
         ln -sf u-boot-spl.bin-${MACHINE} u-boot-spl.bin-${MACHINE}-
     fi
 }
-
-DEPENDS:append:freedom-u540 = " opensbi"
-
-do_compile:prepend:freedom-u540() {
-    export OPENSBI=${RECIPE_SYSROOT}/share/opensbi/lp64/sifive/fu540/firmware/fw_dynamic.bin
-}

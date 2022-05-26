@@ -139,16 +139,6 @@ OSTREE_KERNEL_ARGS:mx6ull ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNE
 OSTREE_KERNEL_ARGS:mx7d ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:mx7ulp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
-# Toradex Colibri iMX7 eMMC
-PREFERRED_PROVIDER_u-boot-default-script:colibri-imx7-emmc = "u-boot-ostree-scr"
-IMX_DEFAULT_BOOTLOADER:colibri-imx7-emmc ?= "u-boot-fio"
-IMAGE_BOOT_FILES:colibri-imx7-emmc = "uEnv.txt u-boot.imx"
-KERNEL_IMAGETYPE:colibri-imx7-emmc = "fitImage"
-KERNEL_CLASSES:colibri-imx7-emmc = " kernel-lmp-fitimage "
-UBOOT_ENTRYPOINT:colibri-imx7-emmc = "0x81000000"
-UBOOT_DTB_LOADADDRESS:colibri-imx7-emmc = "0x82000000"
-UBOOT_RD_LOADADDRESS:colibri-imx7-emmc = "0x82100000"
-
 # Embedded Artists i.MX7ULP COM
 UBOOT_SIGN_ENABLE:sota:imx7ulpea-ucom = "1"
 PREFERRED_PROVIDER_u-boot-default-script:imx7ulpea-ucom = "u-boot-base-scr"

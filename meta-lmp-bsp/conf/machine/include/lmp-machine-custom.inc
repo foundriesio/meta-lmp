@@ -111,17 +111,6 @@ WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
 IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
-# ARM N1SDP
-PREFERRED_PROVIDER_virtual/kernel:n1sdp = "linux-lmp-lts"
-OSTREE_BOOTLOADER:n1sdp ?= "grub"
-OSTREE_KERNEL_ARGS:n1sdp ?= "earlycon=pl011,0x2A400000 console=ttyAMA0,115200 acpi=force ${OSTREE_KERNEL_ARGS_COMMON}"
-MACHINE_FEATURES:append:n1sdp = " acpi pci usbhost"
-WKS_FILE:n1sdp:sota ?= "efidisk-sota.wks"
-WKS_FILE_DEPENDS:append:n1sdp = " ${INITRD_IMAGE_LIVE}"
-APPEND:n1sdp:append = " console=ttyAMA0,115200 acpi=force"
-## wic-based installer requires image to be available via IMAGE_BOOT_FILES
-IMAGE_BOOT_FILES:n1sdp = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
-
 # Intel
 OSTREE_BOOTLOADER:intel-corei7-64 ?= "grub"
 OSTREE_KERNEL_ARGS:intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

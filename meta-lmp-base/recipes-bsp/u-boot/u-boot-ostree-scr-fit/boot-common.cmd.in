@@ -201,8 +201,10 @@ fi
 # If we are validating secondary boot path, Linux should force reboot back to
 # primary path after running reboot cmd (this is needed for boards without
 # software POR reset support, like Apalis iMX6)
-echo "${fiovb_msg} Forcing secondary boot to 0 after reboot"
-run set_primary_boot
+if test "${fiovb.is_secondary_boot}" = "1"; then
+	echo "${fiovb_msg} Forcing secondary boot to 0 after reboot"
+	run set_primary_boot
+fi
 
 run bootcmd_run
 

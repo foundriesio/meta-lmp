@@ -165,6 +165,7 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 			run load_image
 			run update_primary_image2
 
+			run set_primary_boot
 		else
 			run custom_apply_stable
 		fi
@@ -181,7 +182,6 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 
 		run saveenv_mmc
 		echo "${fio_msg} reset ..."
-		run set_primary_boot
 		reset
 	fi
 fi

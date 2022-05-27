@@ -45,7 +45,7 @@ if test "${modeboot}" = "qspiboot"; then
 	setenv qspi_bootloader2_offset 0x300000
 	setenv qspi_bootloader2_s_offset 0x1080000
 
-	setenv setup_update 'sf probe && setenv update_cmd "sf update ${loadaddr}"'
+	setenv setup_update 'setenv update_cmd "sf probe; sf update ${loadaddr}"'
 
 	# nop, primary will be booted automatically by image selector
 	# after one attempt to boot secondary

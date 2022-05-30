@@ -1,4 +1,4 @@
-From 74b2052e9a6e5a39c0c90d91fa481a477b9eb89f Mon Sep 17 00:00:00 2001
+From 4db0d7e240865d4a5cc13b492b38c6ff34f468ab Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
 Subject: [PATCH 1/2] Allow updating files in the /boot directory
@@ -13,9 +13,9 @@ be enabled by 'touch .ostree-bootcsumdir-source' in
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  Makefile-tests.am                     |   1 +
- src/libostree/ostree-sysroot-deploy.c | 137 ++++++++++++++++++++++++--
+ src/libostree/ostree-sysroot-deploy.c | 139 ++++++++++++++++++++++++--
  tests/test-bootdir-update.sh          |  39 ++++++++
- 3 files changed, 170 insertions(+), 7 deletions(-)
+ 3 files changed, 172 insertions(+), 7 deletions(-)
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
@@ -31,7 +31,7 @@ index efbcad9a..5193a224 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index a8bf9f44..a83e3ea1 100644
+index a8bf9f44..2793617b 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -285,6 +285,37 @@ checksum_dir_recurse (int          dfd,
@@ -135,7 +135,7 @@ index a8bf9f44..a83e3ea1 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -1895,6 +1950,74 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1895,6 +1950,76 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  
@@ -159,7 +159,9 @@ index a8bf9f44..a83e3ea1 100644
 +                break;
 +
 +              /* Skip special files - vmlinuz-* and initramfs-* are handled separately */
-+              if (g_str_has_prefix (dent->d_name, "vmlinuz-") || g_str_has_prefix (dent->d_name, "initramfs-"))
++              if (g_str_has_prefix (dent->d_name, "vmlinuz-") ||
++			      g_str_has_prefix (dent->d_name, "initramfs-") ||
++			      g_str_has_prefix (dent->d_name, ".ostree-bootcsumdir-source"))
 +                continue;
 +
 +              if (fstatat (bootcsum_dfd, dent->d_name, &stbuf, AT_SYMLINK_NOFOLLOW) != 0)

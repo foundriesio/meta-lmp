@@ -1,4 +1,4 @@
-From 83472642c3abd66a22486f770e9946a89dc772a4 Mon Sep 17 00:00:00 2001
+From 40795e2dcf1bbb0a4c1e3a4b53925d970fb5c9ff Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
 Subject: [PATCH 2/2] u-boot: add 'bootdir' to the generated uEnv.txt
@@ -30,7 +30,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  2 files changed, 5 insertions(+)
 
 diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
-index 7e23001e..4cf86246 100644
+index 7e23001e..0ccb739f 100644
 --- a/src/libostree/ostree-bootloader-uboot.c
 +++ b/src/libostree/ostree-bootloader-uboot.c
 @@ -113,6 +113,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
@@ -46,7 +46,7 @@ index 7e23001e..4cf86246 100644
        g_ptr_array_add (new_lines, g_strdup_printf ("kernel_image%s=/boot%s", index_suffix, val));
  
 +      bootdir = strndup (val, strrchr(val, '/') - val);
-+      g_ptr_array_add (new_lines, g_strdup_printf ("bootdir%s=%s/", index_suffix, bootdir));
++      g_ptr_array_add (new_lines, g_strdup_printf ("bootdir%s=/boot%s/", index_suffix, bootdir));
 +
        val = ostree_bootconfig_parser_get (config, "initrd");
        if (val)

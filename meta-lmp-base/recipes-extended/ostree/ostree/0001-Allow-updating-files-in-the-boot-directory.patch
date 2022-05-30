@@ -1,0 +1,260 @@
+From 74b2052e9a6e5a39c0c90d91fa481a477b9eb89f Mon Sep 17 00:00:00 2001
+From: Gatis Paeglis <gatis.paeglis@qt.io>
+Date: Mon, 22 Aug 2016 11:32:16 +0200
+Subject: [PATCH 1/2] Allow updating files in the /boot directory
+
+This patch adds support for copying (or hardlinking on
+single partition systems) all files from the deployment's
+/usr/lib/ostree-boot directory to the relevant
+/boot/ostree/$os-$bootcsum/ directory. This feature can
+be enabled by 'touch .ostree-bootcsumdir-source' in
+/usr/lib/ostree-boot.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ Makefile-tests.am                     |   1 +
+ src/libostree/ostree-sysroot-deploy.c | 137 ++++++++++++++++++++++++--
+ tests/test-bootdir-update.sh          |  39 ++++++++
+ 3 files changed, 170 insertions(+), 7 deletions(-)
+ create mode 100755 tests/test-bootdir-update.sh
+
+diff --git a/Makefile-tests.am b/Makefile-tests.am
+index efbcad9a..5193a224 100644
+--- a/Makefile-tests.am
++++ b/Makefile-tests.am
+@@ -147,6 +147,7 @@ _installed_or_uninstalled_test_scripts = \
+ 	tests/test-signed-pull.sh \
+ 	tests/test-pre-signed-pull.sh \
+ 	tests/test-signed-pull-summary.sh \
++	tests/test-bootdir-update.sh \
+ 	$(NULL)
+ 
+ if USE_GPGME
+diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
+index a8bf9f44..a83e3ea1 100644
+--- a/src/libostree/ostree-sysroot-deploy.c
++++ b/src/libostree/ostree-sysroot-deploy.c
+@@ -285,6 +285,37 @@ checksum_dir_recurse (int          dfd,
+   return TRUE;
+ }
+ 
++static gboolean
++hardlink_or_copy_at (int         src_dfd,
++                     const char *src_subpath,
++                     int         dest_dfd,
++                     const char *dest_subpath,
++                     OstreeSysrootDebugFlags flags,
++                     GCancellable  *cancellable,
++                     GError       **error)
++{
++  if (linkat (src_dfd, src_subpath, dest_dfd, dest_subpath, 0) != 0)
++    {
++      if (G_IN_SET (errno, EMLINK, EXDEV))
++        return glnx_file_copy_at (src_dfd, src_subpath, NULL, dest_dfd, dest_subpath,
++                                  sysroot_flags_to_copy_flags (0, flags),
++                                  cancellable, error);
++      else
++        return glnx_throw_errno_prefix (error, "linkat(%s)", dest_subpath);
++    }
++
++  return TRUE;
++}
++
++static gboolean
++hardlink_or_copy_dir_recurse (int  src_parent_dfd,
++                  int              dest_parent_dfd,
++                  const char      *name,
++                  gboolean         hardlink,
++                  OstreeSysrootDebugFlags flags,
++                  GCancellable    *cancellable,
++                  GError         **error);
++
+ static gboolean
+ copy_dir_recurse (int              src_parent_dfd,
+                   int              dest_parent_dfd,
+@@ -292,6 +323,18 @@ copy_dir_recurse (int              src_parent_dfd,
+                   OstreeSysrootDebugFlags flags,
+                   GCancellable    *cancellable,
+                   GError         **error)
++{
++  return hardlink_or_copy_dir_recurse (src_parent_dfd, dest_parent_dfd, name, FALSE, flags, cancellable, error);
++}
++
++static gboolean
++hardlink_or_copy_dir_recurse (int  src_parent_dfd,
++                  int              dest_parent_dfd,
++                  const char      *name,
++                  gboolean         hardlink,
++                  OstreeSysrootDebugFlags flags,
++                  GCancellable    *cancellable,
++                  GError         **error)
+ {
+   g_auto(GLnxDirFdIterator) src_dfd_iter = { 0, };
+   glnx_autofd int dest_dfd = -1;
+@@ -326,17 +369,28 @@ copy_dir_recurse (int              src_parent_dfd,
+ 
+       if (S_ISDIR (child_stbuf.st_mode))
+         {
+-          if (!copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name,
+-                                 flags, cancellable, error))
++          if (!hardlink_or_copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name,
++                                 hardlink, flags, cancellable, error))
+             return FALSE;
+         }
+       else
+         {
+-          if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf,
+-                                  dest_dfd, dent->d_name,
+-                                  sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
+-                                  cancellable, error))
+-            return glnx_prefix_error (error, "Copying %s", dent->d_name);
++          if (hardlink)
++            {
++              if (!hardlink_or_copy_at (src_dfd_iter.fd, dent->d_name,
++                                        dest_dfd, dent->d_name,
++                                        sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
++                                        cancellable, error))
++                return FALSE;
++            }
++          else
++            {
++              if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf,
++                                      dest_dfd, dent->d_name,
++                                      sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
++                                      cancellable, error))
++                return glnx_prefix_error (error, "Copying %s", dent->d_name);
++            }
+         }
+     }
+ 
+@@ -1749,6 +1803,7 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+ 
+ {
+   GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
++  g_auto(GLnxDirFdIterator) dfd_iter = { 0, };
+   OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
+   g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
+   glnx_autofd int deployment_dfd = -1;
+@@ -1895,6 +1950,74 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+       g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
+     }
+ 
++  /* search for legacy directory for additional files to copy to /boot/ostree/$os-$bootcsum/ */
++  const char legacy_path[] = "usr/lib/ostree-boot";
++  glnx_autofd int legacy_dfd = glnx_opendirat_with_errno (deployment_dfd, legacy_path, TRUE);
++  if (legacy_dfd >= 0)
++    {
++      if (fstatat (legacy_dfd, ".ostree-bootcsumdir-source", &stbuf, 0) == 0)
++        {
++          if (!glnx_dirfd_iterator_init_at (legacy_dfd, ".", FALSE, &dfd_iter, error))
++            return FALSE;
++
++          while (TRUE)
++            {
++              struct dirent *dent;
++
++              if (!glnx_dirfd_iterator_next_dent (&dfd_iter, &dent, cancellable, error))
++                return FALSE;
++              if (dent == NULL)
++                break;
++
++              /* Skip special files - vmlinuz-* and initramfs-* are handled separately */
++              if (g_str_has_prefix (dent->d_name, "vmlinuz-") || g_str_has_prefix (dent->d_name, "initramfs-"))
++                continue;
++
++              if (fstatat (bootcsum_dfd, dent->d_name, &stbuf, AT_SYMLINK_NOFOLLOW) != 0)
++                {
++                  if (errno != ENOENT)
++                    {
++                      glnx_set_prefix_error_from_errno (error, "fstatat %s", dent->d_name);
++                      return FALSE;
++                    }
++
++                  if (fstatat (dfd_iter.fd, dent->d_name, &stbuf, AT_SYMLINK_NOFOLLOW) != 0)
++                    {
++                      glnx_set_error_from_errno (error);
++                      return FALSE;
++                    }
++
++                  if (S_ISDIR (stbuf.st_mode))
++                    {
++                      if (!hardlink_or_copy_dir_recurse (legacy_dfd, bootcsum_dfd, dent->d_name,
++                                                         TRUE, sysroot->debug_flags, cancellable, error))
++                        return FALSE;
++                    }
++                  else
++                    {
++                      if (!hardlink_or_copy_at (legacy_dfd, dent->d_name, bootcsum_dfd, dent->d_name,
++                                                sysroot->debug_flags, cancellable, error))
++                        return FALSE;
++                    }
++                }
++            }
++        }
++      else
++        {
++          if (errno != ENOENT)
++            {
++              glnx_set_prefix_error_from_errno (error, "fstatat %s", ".ostree-bootcsumdir-source");
++              return FALSE;
++            }
++        }
++      glnx_close_fd (&legacy_dfd);
++    }
++  else
++    {
++      if (errno != ENOENT)
++        return glnx_throw_errno_prefix (error, "openat(%s)", legacy_path);
++    }
++
+   g_autofree char *contents = NULL;
+   if (!glnx_fstatat_allow_noent (deployment_dfd, "usr/lib/os-release", &stbuf, 0, error))
+     return FALSE;
+diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
+new file mode 100755
+index 00000000..f69c1253
+--- /dev/null
++++ b/tests/test-bootdir-update.sh
+@@ -0,0 +1,39 @@
++#!/bin/bash
++
++set -euo pipefail
++
++. $(dirname $0)/libtest.sh
++
++echo "1..2"
++
++setup_os_repository "archive-z2" "uboot"
++
++cd ${test_tmpdir}
++
++mkdir -p osdata/usr/lib/ostree-boot
++echo "1" > osdata/usr/lib/ostree-boot/1
++mkdir -p osdata/usr/lib/ostree-boot/subdir
++echo "2" > osdata/usr/lib/ostree-boot/subdir/2
++
++${CMD_PREFIX} ostree --repo=testos-repo commit --tree=dir=osdata/ -b testos/buildmain/x86_64-runtime
++
++${CMD_PREFIX} ostree --repo=sysroot/ostree/repo remote add --set=gpg-verify=false testos $(cat httpd-address)/ostree/testos-repo
++${CMD_PREFIX} ostree --repo=sysroot/ostree/repo pull testos testos/buildmain/x86_64-runtime
++${CMD_PREFIX} ostree admin deploy --karg=root=LABEL=rootfs --os=testos testos:testos/buildmain/x86_64-runtime
++
++assert_has_file sysroot/boot/ostree/testos-${bootcsum}/vmlinuz-3.6.0
++assert_not_has_file sysroot/boot/ostree/testos-${bootcsum}/1
++
++echo "ok boot dir without .ostree-bootcsumdir-source"
++
++touch osdata/usr/lib/ostree-boot/.ostree-bootcsumdir-source
++${CMD_PREFIX} ostree --repo=testos-repo commit --tree=dir=osdata/ -b testos/buildmain/x86_64-runtime
++${CMD_PREFIX} ostree admin upgrade --os=testos
++
++assert_has_file sysroot/boot/ostree/testos-${bootcsum}/vmlinuz-3.6.0
++assert_has_file sysroot/boot/ostree/testos-${bootcsum}/1
++assert_file_has_content sysroot/boot/ostree/testos-${bootcsum}/1 "1"
++assert_has_file sysroot/boot/ostree/testos-${bootcsum}/subdir/2
++assert_file_has_content sysroot/boot/ostree/testos-${bootcsum}/subdir/2 "2"
++
++echo "ok boot dir with .ostree-bootcsumdir-source"
+-- 
+2.34.1
+

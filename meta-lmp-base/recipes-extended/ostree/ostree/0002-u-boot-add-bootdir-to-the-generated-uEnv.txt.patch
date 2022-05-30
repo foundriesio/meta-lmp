@@ -1,0 +1,67 @@
+From 83472642c3abd66a22486f770e9946a89dc772a4 Mon Sep 17 00:00:00 2001
+From: Gatis Paeglis <gatis.paeglis@qt.io>
+Date: Mon, 22 Aug 2016 15:52:21 +0200
+Subject: [PATCH 2/2] u-boot: add 'bootdir' to the generated uEnv.txt
+
+When doing a full copy of:
+
+$deployment/usr/lib/ostree-boot -> /boot/ostree/$os-$bootcsum/
+
+U-Boot bootscript can use the 'bootdir' to find, for example,
+the Device Tree (dtb) file, as in:
+
+load ${dtype} ${disk}:${bootpart} ${a_fdt} ${bootdir}${dtbname}
+
+Or u-boot external bootscript:
+
+load ${dtype} ${disk}:${bootpart} ${a_scr} ${bootdir}${scriptname}
+
+It could also be possible to point 'bootdir' directly to the
+$deployment/usr/lib/ostree-boot, but this would add unnecessary
+restrictions on what file system can be used for rootfs as u-boot,
+for example, can not read from BTRFS. So having
+bootdir=/boot/ostree/$os-$bootcsum/ is a better approach here, as
+/boot can be on a separate partition with its own file system type.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/libostree/ostree-bootloader-uboot.c | 4 ++++
+ tests/test-bootdir-update.sh            | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
+index 7e23001e..4cf86246 100644
+--- a/src/libostree/ostree-bootloader-uboot.c
++++ b/src/libostree/ostree-bootloader-uboot.c
+@@ -113,6 +113,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
+   g_autoptr(GPtrArray) boot_loader_configs = NULL;
+   OstreeBootconfigParser *config;
+   const char *val;
++  g_autofree char *bootdir = NULL;
+ 
+   if (!_ostree_sysroot_read_boot_loader_configs (self->sysroot, bootversion, &boot_loader_configs,
+                                                  cancellable, error))
+@@ -136,6 +137,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
+         }
+       g_ptr_array_add (new_lines, g_strdup_printf ("kernel_image%s=/boot%s", index_suffix, val));
+ 
++      bootdir = strndup (val, strrchr(val, '/') - val);
++      g_ptr_array_add (new_lines, g_strdup_printf ("bootdir%s=%s/", index_suffix, bootdir));
++
+       val = ostree_bootconfig_parser_get (config, "initrd");
+       if (val)
+         g_ptr_array_add (new_lines, g_strdup_printf ("ramdisk_image%s=/boot%s", index_suffix, val));
+diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
+index f69c1253..9365b29e 100755
+--- a/tests/test-bootdir-update.sh
++++ b/tests/test-bootdir-update.sh
+@@ -35,5 +35,6 @@ assert_has_file sysroot/boot/ostree/testos-${bootcsum}/1
+ assert_file_has_content sysroot/boot/ostree/testos-${bootcsum}/1 "1"
+ assert_has_file sysroot/boot/ostree/testos-${bootcsum}/subdir/2
+ assert_file_has_content sysroot/boot/ostree/testos-${bootcsum}/subdir/2 "2"
++assert_file_has_content sysroot/boot/uEnv.txt "bootdir="
+ 
+ echo "ok boot dir with .ostree-bootcsumdir-source"
+-- 
+2.34.1
+

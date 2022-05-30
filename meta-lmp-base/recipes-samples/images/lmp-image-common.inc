@@ -33,6 +33,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     mtd-utils \
     sudo \
     zram \
+    ostree-recovery-initramfs \
 "
 
 # Configure NSS ALTFILES based on NSS_ALT_TYPES

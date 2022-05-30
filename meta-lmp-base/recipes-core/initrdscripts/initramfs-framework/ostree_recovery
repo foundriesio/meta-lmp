@@ -1,0 +1,14 @@
+#!/bin/sh
+# Copyright (C) 2022 Foundries.IO Ltd.
+# Licensed on MIT
+
+ostree_recovery_enabled() {
+	return 0
+}
+
+ostree_recovery_run() {
+	msg "Starting ostree recovery shell..."
+	sh
+	msg "Forcing reboot after recovery"
+	reboot -f
+}

@@ -9,6 +9,16 @@ FIT_LOADABLES ?= ""
 # Allow transition to cover CVE-2021-27097 and CVE-2021-27138
 FIT_NODE_SEPARATOR ?= "-"
 
+# Recovery
+INITRAMFS_RECOVERY_IMAGE ?= ""
+INITRAMFS_RECOVERY_IMAGE_NAME ?= "${@['${INITRAMFS_RECOVERY_IMAGE}-${MACHINE}', ''][d.getVar('INITRAMFS_RECOVERY_IMAGE') == '']}"
+
+python __anonymous () {
+        recovery = d.getVar('INITRAMFS_RECOVERY_IMAGE')
+        if recovery:
+            d.appendVarFlag('do_assemble_fitimage_initramfs', 'depends', ' ${INITRAMFS_RECOVERY_IMAGE}:do_image_complete')
+}
+
 #
 # Emit the fitImage ITS kernel section
 #
@@ -171,7 +181,8 @@ EOF
 #
 # $1 ... .its filename
 # $2 ... Image counter
-# $3 ... Path to ramdisk image
+# $3 ... Ramdisk image name
+# $4 ... Path to ramdisk image
 fitimage_emit_section_ramdisk() {
 
 	ramdisk_csum="${FIT_HASH_ALG}"
@@ -189,8 +200,8 @@ fitimage_emit_section_ramdisk() {
 
 	cat << EOF >> ${1}
                 ramdisk${FIT_NODE_SEPARATOR}${2} {
-                        description = "${INITRAMFS_IMAGE}";
-                        data = /incbin/("${3}");
+                        description = "${3}";
+                        data = /incbin/("${4}");
                         type = "ramdisk";
                         arch = "${UBOOT_ARCH}";
                         os = "linux";
@@ -458,11 +469,15 @@ EOF
 # $1 ... .its filename
 # $2 ... fitImage name
 # $3 ... include ramdisk
+# $4 ... ramdisk name
+# $5 ... ramdisk bundle flag
 fitimage_assemble() {
 	kernelcount=1
 	dtbcount=""
 	DTBS=""
 	ramdiskcount=${3}
+	ramdisk_image_name=${4}
+	ramdisk_bundle=${5}
 	setupcount=""
 	bootscr_id=""
 	fpgacount=""
@@ -481,7 +496,7 @@ fitimage_assemble() {
 
 	uboot_prep_kimage
 
-	if [ "${INITRAMFS_IMAGE_BUNDLE}" = "1" ]; then
+	if [ "${ramdisk_bundle}" = "1" ]; then
 		initramfs_bundle_path="arch/"${UBOOT_ARCH}"/boot/"${KERNEL_IMAGETYPE_REPLACEMENT}".initramfs"
 		if [ -e "${initramfs_bundle_path}" ]; then
 
@@ -578,13 +593,13 @@ fitimage_assemble() {
 	#
 	# Step 6: Prepare a ramdisk section.
 	#
-	if [ "x${ramdiskcount}" = "x1" ] && [ "${INITRAMFS_IMAGE_BUNDLE}" != "1" ]; then
+	if [ "x${ramdiskcount}" = "x1" ] && [ "${ramdisk_bundle}" != "1" ]; then
 		# Find and use the first initramfs image archive type we find
 		for img in cpio.lz4 cpio.lzo cpio.lzma cpio.xz cpio.zst cpio.gz ext2.gz cpio; do
-			initramfs_path="${DEPLOY_DIR_IMAGE}/${INITRAMFS_IMAGE_NAME}.${img}"
+			initramfs_path="${DEPLOY_DIR_IMAGE}/${ramdisk_image_name}.${img}"
 			echo "Using $initramfs_path"
 			if [ -e "${initramfs_path}" ]; then
-				fitimage_emit_section_ramdisk ${1} "${ramdiskcount}" "${initramfs_path}"
+				fitimage_emit_section_ramdisk ${1} "${ramdiskcount}" "${ramdisk_image_name}" "${initramfs_path}"
 				break
 			fi
 		done
@@ -658,5 +673,40 @@ fitimage_assemble() {
 			$add_key_to_u_boot \
 			-r arch/${ARCH}/boot/${2} \
 			${UBOOT_MKIMAGE_SIGN_ARGS}
+	fi
+}
+
+do_assemble_fitimage_initramfs() {
+	if echo ${KERNEL_IMAGETYPES} | grep -wq "fitImage" ; then
+		cd ${B}
+		if test -n "${INITRAMFS_IMAGE}" ; then
+			if [ "${INITRAMFS_IMAGE_BUNDLE}" = "1" ]; then
+				fitimage_assemble fit-image-${INITRAMFS_IMAGE}.its fitImage "" "" ${INITRAMFS_IMAGE_BUNDLE}
+			else
+				fitimage_assemble fit-image-${INITRAMFS_IMAGE}.its fitImage-${INITRAMFS_IMAGE} 1 ${INITRAMFS_IMAGE_NAME} 0
+			fi
+		fi
+
+		if test -n "${INITRAMFS_RECOVERY_IMAGE}" ; then
+			fitimage_assemble fit-image-${INITRAMFS_RECOVERY_IMAGE}.its fitImage-${INITRAMFS_RECOVERY_IMAGE} 1 ${INITRAMFS_RECOVERY_IMAGE_NAME} 0
+		fi
+        fi
+}
+
+kernel_do_deploy:append() {
+	if echo ${KERNEL_IMAGETYPES} | grep -wq "fitImage"; then
+		if [ -n "${INITRAMFS_RECOVERY_IMAGE}" ]; then
+			bbnote "Copying fit-image-${INITRAMFS_RECOVERY_IMAGE}.its source file..."
+			install -m 0644 ${B}/fit-image-${INITRAMFS_RECOVERY_IMAGE}.its "$deployDir/fitImage-its-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}.its"
+			if [ -n "${KERNEL_FIT_LINK_NAME}" ] ; then
+				ln -snf fitImage-its-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}.its "$deployDir/fitImage-its-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_LINK_NAME}"
+			fi
+
+			bbnote "Copying fitImage-${INITRAMFS_RECOVERY_IMAGE} file..."
+			install -m 0644 ${B}/arch/${ARCH}/boot/fitImage-${INITRAMFS_RECOVERY_IMAGE} "$deployDir/fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}${KERNEL_FIT_BIN_EXT}"
+			if [ -n "${KERNEL_FIT_LINK_NAME}" ] ; then
+				ln -snf fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}${KERNEL_FIT_BIN_EXT} "$deployDir/fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_LINK_NAME}"
+			fi
+		fi
 	fi
 }

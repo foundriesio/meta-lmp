@@ -5,13 +5,14 @@ setenv devnum 0
 
 # Remove optee core reserved memory entry as secure-memory is already defined by QEMU
 setenv bootcmd_updfdt 'fdt addr ${fdt_addr}; fdt rm /reserved-memory/optee_core@0xe100000'
-setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'
-setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${scriptaddr} /boot/loader/uEnv.txt; env import -t ${scriptaddr} ${filesize} kernel_image bootargs kernel_image2 bootargs2'
+setenv bootcmd_resetvars 'setenv kernel_image; setenv bootdir; setenv bootargs; setenv kernel_image2; setenv bootdir2; setenv bootargs2'
+setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:2 ${scriptaddr} /boot/loader/uEnv.txt; env import -t ${scriptaddr} ${filesize} kernel_image bootdir bootargs kernel_image2 bootdir2 bootargs2'
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:2 ${ramdisk_addr_r} "/boot"${kernel_image}'
+setenv bootcmd_load_r 'ext4load ${devtype} ${devnum}:2 ${ramdisk_addr_r} "/boot"${bootdir}/recovery.img'
 setenv bootcmd_run 'bootm ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@ ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@ ${fdt_addr}'
-setenv bootcmd_rollbackenv 'setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}'
+setenv bootcmd_rollbackenv 'setenv kernel_image ${kernel_image2}; setenv bootdir ${bootdir2}; setenv bootargs ${bootargs2}'
 setenv bootcmd_set_rollback 'if test ! "${rollback}" = "1"; then setenv rollback 1; setenv upgrade_available 0; saveenv; fi'
-setenv bootostree 'run bootcmd_load_f; run bootcmd_run'
+setenv bootostree 'if test "${recovery}" = "1"; then run bootcmd_load_r; setenv recovery; saveenv; else run bootcmd_load_f; fi; run bootcmd_run'
 setenv altbootcmd 'run bootcmd_otenv; run bootcmd_set_rollback; if test -n "${kernel_image2}"; then run bootcmd_rollbackenv; fi; run bootcmd_updfdt; run bootostree; reset'
 
 if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; fi

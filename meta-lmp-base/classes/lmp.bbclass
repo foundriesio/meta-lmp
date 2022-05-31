@@ -61,6 +61,12 @@ IMAGE_CMD:ostree:append () {
 	if [ -f usr/lib/passwd ]; then
 		sed -i -e 's,:/home,:/var/rootdirs/home,g' usr/lib/passwd
 	fi
+
+	# Support enabling updating files in /boot from /usr/lib/ostree-boot
+	if [ "${OSTREE_DEPLOY_USR_OSTREE_BOOT}" = "1" ]; then
+		mkdir -p usr/lib/ostree-boot
+		touch usr/lib/ostree-boot/.ostree-bootcsumdir-source
+	fi
 }
 
 run_fiotool_cmd () {

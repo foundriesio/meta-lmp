@@ -7,9 +7,6 @@ do_install:append() {
     install -d $ostreeboot
 
     if [ -n "${INITRAMFS_RECOVERY_IMAGE}" ]; then
-        # Enable updating files in /boot from /usr/lib/ostree-boot when recovery is used
-        touch $ostreeboot/.ostree-bootcsumdir-source
-
         if [ "${KERNEL_IMAGETYPE}" = "fitImage" ]; then
             cp ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_RECOVERY_IMAGE}-${MACHINE}-${KERNEL_FIT_LINK_NAME} $ostreeboot/recovery.img
         else

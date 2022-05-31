@@ -1,0 +1,9 @@
+# short-description: Create OTA-enabled split boot SD card image
+# long-description: Creates a partitioned SD card image with OSTree
+# physical sysroot as a payload. Boot files are located in the
+# first vfat partition and ostree boot files are located in the
+# first ext4 partition..
+
+part firmware --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 4096 --size 20
+part /boot --source rootfs --ondisk mmcblk --rootfs-dir=${WORKDIR}/ota-boot --fstype=ext4 --label otaboot --align 4096 ${OSTREE_WKS_BOOT_SIZE}
+part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096

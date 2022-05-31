@@ -1,3 +1,5 @@
+Upstream-Status: Inappropriate [lmp specific]
+
 diff --git a/src/boot/grub2/ostree-grub-generator b/src/boot/grub2/ostree-grub-generator
 index 97ef4d69..b418c2fb 100644
 --- a/src/boot/grub2/ostree-grub-generator

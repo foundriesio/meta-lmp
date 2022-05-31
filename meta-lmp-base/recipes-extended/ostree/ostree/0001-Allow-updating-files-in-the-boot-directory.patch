@@ -10,6 +10,8 @@ single partition systems) all files from the deployment's
 be enabled by 'touch .ostree-bootcsumdir-source' in
 /usr/lib/ostree-boot.
 
+Upstream-Status: Inappropriate [lmp specific]
+
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  Makefile-tests.am                     |   1 +

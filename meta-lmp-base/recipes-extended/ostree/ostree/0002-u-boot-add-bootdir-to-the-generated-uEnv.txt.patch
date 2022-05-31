@@ -23,6 +23,8 @@ for example, can not read from BTRFS. So having
 bootdir=/boot/ostree/$os-$bootcsum/ is a better approach here, as
 /boot can be on a separate partition with its own file system type.
 
+Upstream-Status: Inappropriate [lmp specific]
+
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  src/libostree/ostree-bootloader-uboot.c | 4 ++++

@@ -30,7 +30,17 @@ IMAGE_CMD:ota:append () {
 		${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/import/installed_versions \
 			${GARAGE_TARGET_NAME}-${target_version}
 	fi
+
+	# Split content from /boot into a separated folder so it can be consumed by WKS separately
+	if [ "${OSTREE_SPLIT_BOOT}" = "1" ]; then
+		rm -rf ${OTA_BOOT}
+		mv ${OTA_SYSROOT}/boot ${OTA_BOOT}
+		mkdir -p ${OTA_SYSROOT}/boot
+	fi
 }
+OTA_BOOT = "${WORKDIR}/ota-boot"
+do_image_ota[dirs] += "${OTA_BOOT}"
+do_image_ota[cleandirs] += "${OTA_BOOT}"
 
 # LMP specific cleanups after the main ostree image from meta-updater
 IMAGE_CMD:ostree:append () {

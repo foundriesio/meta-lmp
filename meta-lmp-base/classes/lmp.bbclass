@@ -34,6 +34,10 @@ IMAGE_CMD:ota:append () {
 
 # LMP specific cleanups after the main ostree image from meta-updater
 IMAGE_CMD:ostree:append () {
+	# No need for files under /boot as we use ostree-kernel-initramfs
+	rm -rf boot
+	mkdir boot
+
 	# No need for var/local as the entire var is bind-mounted
 	rm -rf var/local
 

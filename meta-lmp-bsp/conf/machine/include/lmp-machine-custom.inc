@@ -75,6 +75,8 @@ KERNEL_CLASSES:qemuarm64 = " kernel-lmp-fitimage "
 OSTREE_KERNEL_ARGS:qemuarm64 ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT:qemuarm64 = "0x40080000"
 MACHINE_FEATURES:append:qemuarm64-secureboot = " optee"
+OSTREE_SPLIT_BOOT:qemuarm64-secureboot = "1"
+WKS_FILE:sota:qemuarm64-secureboot = "sdimage-split-boot-sota.wks.in"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM:qemuarm64-secureboot = "-m 1057"
 QB_DRIVE_TYPE:qemuarm64-secureboot = "/dev/vdb"

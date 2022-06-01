@@ -33,6 +33,10 @@ CORE_IMAGE_BASE_INSTALL += " \
     mtd-utils \
     sudo \
     zram \
+"
+
+# Additional packages when sota is available
+CORE_IMAGE_BASE_INSTALL:append:sota = " \
     ostree-recovery-initramfs \
 "
 

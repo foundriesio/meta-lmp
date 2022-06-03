@@ -1,0 +1,364 @@
+From 10ef12a7b61bf27fb0c148805d9d42611c385b03 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Thu, 2 Jun 2022 23:27:43 -0300
+Subject: [PATCH] Add support for systemd-boot bootloader
+
+Basic implementation enough to detect based on /boot/loader/loader.conf
+and to keep the file between deployments.
+
+Upstream-Status: pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ Makefile-libostree.am                     |   2 +
+ Makefile-tests.am                         |   1 +
+ src/libostree/ostree-bootloader-sd-boot.c | 130 ++++++++++++++++++++++
+ src/libostree/ostree-bootloader-sd-boot.h |  39 +++++++
+ src/libostree/ostree-repo-private.h       |   2 +
+ src/libostree/ostree-sysroot.c            |   4 +
+ tests/libtest.sh                          |  10 ++
+ tests/test-admin-deploy-dir-sd-boot.sh    |  47 ++++++++
+ 8 files changed, 235 insertions(+)
+ create mode 100644 src/libostree/ostree-bootloader-sd-boot.c
+ create mode 100644 src/libostree/ostree-bootloader-sd-boot.h
+ create mode 100755 tests/test-admin-deploy-dir-sd-boot.sh
+
+diff --git a/Makefile-libostree.am b/Makefile-libostree.am
+index 1f698afc..7a9186b2 100644
+--- a/Makefile-libostree.am
++++ b/Makefile-libostree.am
+@@ -121,6 +121,8 @@ libostree_1_la_SOURCES = \
+ 	src/libostree/ostree-bootloader-syslinux.c \
+ 	src/libostree/ostree-bootloader-uboot.h \
+ 	src/libostree/ostree-bootloader-uboot.c \
++	src/libostree/ostree-bootloader-sd-boot.h \
++	src/libostree/ostree-bootloader-sd-boot.c \
+ 	src/libostree/ostree-repo-static-delta-core.c \
+ 	src/libostree/ostree-repo-static-delta-processing.c \
+ 	src/libostree/ostree-repo-static-delta-compilation.c \
+diff --git a/Makefile-tests.am b/Makefile-tests.am
+index 7c780c2f..0a589685 100644
+--- a/Makefile-tests.am
++++ b/Makefile-tests.am
+@@ -108,6 +108,7 @@ _installed_or_uninstalled_test_scripts = \
+ 	tests/test-admin-deploy-none.sh \
+ 	tests/test-admin-deploy-dir-syslinux.sh \
+ 	tests/test-admin-deploy-dir-uboot.sh \
++	tests/test-admin-deploy-dir-sd-boot.sh \
+ 	tests/test-admin-deploy-dir-grub2.sh \
+ 	tests/test-admin-deploy-dir-none.sh \
+ 	tests/test-admin-deploy-bootid-gc.sh \
+diff --git a/src/libostree/ostree-bootloader-sd-boot.c b/src/libostree/ostree-bootloader-sd-boot.c
+new file mode 100644
+index 00000000..d7fa7d16
+--- /dev/null
++++ b/src/libostree/ostree-bootloader-sd-boot.c
+@@ -0,0 +1,130 @@
++/*
++ * Copyright (C) 2022 Foundries.IO Ltd
++ *
++ * Based on ot-bootloader-uboot.c by Colin Walters <walters@verbum.org>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published
++ * by the Free Software Foundation; either version 2 of the licence or (at
++ * your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ */
++
++#include "config.h"
++
++#include "ostree-sysroot-private.h"
++#include "ostree-bootloader-sd-boot.h"
++#include "otutil.h"
++
++#include <string.h>
++
++static const char sdboot_config_path[] = "boot/loader/loader.conf";
++
++struct _OstreeBootloaderSdboot
++{
++  GObject       parent_instance;
++
++  OstreeSysroot  *sysroot;
++};
++
++typedef GObjectClass OstreeBootloaderSdbootClass;
++
++static void _ostree_bootloader_sdboot_bootloader_iface_init (OstreeBootloaderInterface *iface);
++G_DEFINE_TYPE_WITH_CODE (OstreeBootloaderSdboot, _ostree_bootloader_sdboot, G_TYPE_OBJECT,
++                         G_IMPLEMENT_INTERFACE (OSTREE_TYPE_BOOTLOADER, _ostree_bootloader_sdboot_bootloader_iface_init));
++
++static gboolean
++_ostree_bootloader_sdboot_query (OstreeBootloader *bootloader,
++                                gboolean         *out_is_active,
++                                GCancellable     *cancellable,
++                                GError          **error)
++{
++  OstreeBootloaderSdboot *self = OSTREE_BOOTLOADER_SDBOOT (bootloader);
++  struct stat stbuf;
++
++  if (!glnx_fstatat_allow_noent (self->sysroot->sysroot_fd, sdboot_config_path, &stbuf, AT_SYMLINK_NOFOLLOW, error))
++    return FALSE;
++  *out_is_active = (errno == 0);
++  return TRUE;
++}
++
++static const char *
++_ostree_bootloader_sdboot_get_name (OstreeBootloader *bootloader)
++{
++  return "systemd-boot";
++}
++
++static gboolean
++_ostree_bootloader_sdboot_write_config (OstreeBootloader *bootloader,
++                                       int               new_bootversion,
++                                       GPtrArray        *new_deployments,
++                                       GCancellable     *cancellable,
++                                       GError          **error)
++{
++  OstreeBootloaderSdboot *self = OSTREE_BOOTLOADER_SDBOOT (bootloader);
++
++  /* This should follow the symbolic link to the new bootversion. */
++  g_autofree char *config_contents =
++    glnx_file_get_contents_utf8_at (self->sysroot->sysroot_fd, sdboot_config_path, NULL,
++                                    cancellable, error);
++  if (!config_contents)
++    return FALSE;
++
++  g_autofree char *new_config_path = g_strdup_printf ("boot/loader.%d/loader.conf", new_bootversion);
++  if (!glnx_file_replace_contents_at (self->sysroot->sysroot_fd, new_config_path,
++                                      (guint8*)config_contents, strlen (config_contents),
++                                      GLNX_FILE_REPLACE_DATASYNC_NEW,
++                                      cancellable, error))
++    return FALSE;
++
++  return TRUE;
++}
++
++static void
++_ostree_bootloader_sdboot_finalize (GObject *object)
++{
++  OstreeBootloaderSdboot *self = OSTREE_BOOTLOADER_SDBOOT (object);
++
++  g_clear_object (&self->sysroot);
++
++  G_OBJECT_CLASS (_ostree_bootloader_sdboot_parent_class)->finalize (object);
++}
++
++void
++_ostree_bootloader_sdboot_init (OstreeBootloaderSdboot *self)
++{
++}
++
++static void
++_ostree_bootloader_sdboot_bootloader_iface_init (OstreeBootloaderInterface *iface)
++{
++  iface->query = _ostree_bootloader_sdboot_query;
++  iface->get_name = _ostree_bootloader_sdboot_get_name;
++  iface->write_config = _ostree_bootloader_sdboot_write_config;
++}
++
++void
++_ostree_bootloader_sdboot_class_init (OstreeBootloaderSdbootClass *class)
++{
++  GObjectClass *object_class = G_OBJECT_CLASS (class);
++
++  object_class->finalize = _ostree_bootloader_sdboot_finalize;
++}
++
++OstreeBootloaderSdboot *
++_ostree_bootloader_sdboot_new (OstreeSysroot *sysroot)
++{
++  OstreeBootloaderSdboot *self = g_object_new (OSTREE_TYPE_BOOTLOADER_SDBOOT, NULL);
++  self->sysroot = g_object_ref (sysroot);
++  return self;
++}
+diff --git a/src/libostree/ostree-bootloader-sd-boot.h b/src/libostree/ostree-bootloader-sd-boot.h
+new file mode 100644
+index 00000000..4384fad7
+--- /dev/null
++++ b/src/libostree/ostree-bootloader-sd-boot.h
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (C) 2022 Foundries.IO Ltd
++ *
++ * Based on ot-bootloader-uboot.h by Colin Walters <walters@verbum.org>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published
++ * by the Free Software Foundation; either version 2 of the licence or (at
++ * your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ */
++
++#pragma once
++
++#include "ostree-bootloader.h"
++
++G_BEGIN_DECLS
++
++#define OSTREE_TYPE_BOOTLOADER_SDBOOT (_ostree_bootloader_sdboot_get_type ())
++#define OSTREE_BOOTLOADER_SDBOOT(inst) (G_TYPE_CHECK_INSTANCE_CAST ((inst), OSTREE_TYPE_BOOTLOADER_SDBOOT, OstreeBootloaderSdboot))
++#define OSTREE_IS_BOOTLOADER_SDBOOT(inst) (G_TYPE_CHECK_INSTANCE_TYPE ((inst), OSTREE_TYPE_BOOTLOADER_SDBOOT))
++
++typedef struct _OstreeBootloaderSdboot OstreeBootloaderSdboot;
++
++GType _ostree_bootloader_sdboot_get_type (void) G_GNUC_CONST;
++
++OstreeBootloaderSdboot * _ostree_bootloader_sdboot_new (OstreeSysroot *sysroot);
++
++G_END_DECLS
+diff --git a/src/libostree/ostree-repo-private.h b/src/libostree/ostree-repo-private.h
+index daec289c..1b0e0371 100644
+--- a/src/libostree/ostree-repo-private.h
++++ b/src/libostree/ostree-repo-private.h
+@@ -124,6 +124,7 @@ typedef enum {
+   CFG_SYSROOT_BOOTLOADER_OPT_GRUB2,
+   CFG_SYSROOT_BOOTLOADER_OPT_SYSLINUX,
+   CFG_SYSROOT_BOOTLOADER_OPT_UBOOT,
++  CFG_SYSROOT_BOOTLOADER_OPT_SDBOOT,
+   CFG_SYSROOT_BOOTLOADER_OPT_ZIPL,
+   /* Non-exhaustive */
+ } OstreeCfgSysrootBootloaderOpt;
+@@ -135,6 +136,7 @@ static const char* const CFG_SYSROOT_BOOTLOADER_OPTS_STR[] = {
+   "grub2",
+   "syslinux",
+   "uboot",
++  "systemd-boot",
+   "zipl",
+   NULL,
+ };
+diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
+index f783eb47..08cdc7df 100644
+--- a/src/libostree/ostree-sysroot.c
++++ b/src/libostree/ostree-sysroot.c
+@@ -34,6 +34,7 @@
+ #include "ostree-sysroot-private.h"
+ #include "ostree-deployment-private.h"
+ #include "ostree-bootloader-uboot.h"
++#include "ostree-bootloader-sd-boot.h"
+ #include "ostree-bootloader-syslinux.h"
+ #include "ostree-bootloader-grub2.h"
+ #include "ostree-bootloader-zipl.h"
+@@ -1450,6 +1451,8 @@ _ostree_sysroot_new_bootloader_by_type (
+       return (OstreeBootloader*) _ostree_bootloader_syslinux_new (sysroot);
+     case CFG_SYSROOT_BOOTLOADER_OPT_UBOOT:
+       return (OstreeBootloader*) _ostree_bootloader_uboot_new (sysroot);
++    case CFG_SYSROOT_BOOTLOADER_OPT_SDBOOT:
++      return (OstreeBootloader*) _ostree_bootloader_sdboot_new (sysroot);
+     case CFG_SYSROOT_BOOTLOADER_OPT_ZIPL:
+       /* We never consider zipl as active by default, so it can only be created
+        * if it's explicitly requested in the config */
+@@ -1488,6 +1491,7 @@ _ostree_sysroot_query_bootloader (OstreeSysroot     *sysroot,
+         CFG_SYSROOT_BOOTLOADER_OPT_SYSLINUX,
+         CFG_SYSROOT_BOOTLOADER_OPT_GRUB2,
+         CFG_SYSROOT_BOOTLOADER_OPT_UBOOT,
++        CFG_SYSROOT_BOOTLOADER_OPT_SDBOOT,
+       };
+       for (int i = 0; i < G_N_ELEMENTS (probe); i++)
+         {
+diff --git a/tests/libtest.sh b/tests/libtest.sh
+index 3976bc5b..60bda253 100755
+--- a/tests/libtest.sh
++++ b/tests/libtest.sh
+@@ -368,6 +368,13 @@ setup_os_boot_uboot() {
+     ln -s loader/uEnv.txt sysroot/boot/uEnv.txt
+ }
+ 
++setup_os_boot_sdboot() {
++    # Stub systemd-boot configuration
++    mkdir -p sysroot/boot/loader
++    echo -n "loader.0" > sysroot/boot/loader/ostree_bootversion
++    touch sysroot/boot/loader/loader.conf
++}
++
+ setup_os_boot_grub2() {
+     grub2_options=$1
+     mkdir -p sysroot/boot/grub2/
+@@ -485,6 +492,9 @@ EOF
+         "uboot")
+ 	    setup_os_boot_uboot
+             ;;
++        "sdboot")
++	    setup_os_boot_sdboot
++            ;;
+         *grub2*)
+         setup_os_boot_grub2 "${bootmode}"
+             ;;
+diff --git a/tests/test-admin-deploy-dir-sd-boot.sh b/tests/test-admin-deploy-dir-sd-boot.sh
+new file mode 100755
+index 00000000..53e461fd
+--- /dev/null
++++ b/tests/test-admin-deploy-dir-sd-boot.sh
+@@ -0,0 +1,47 @@
++#!/bin/bash
++#
++# Copyright (C) 2011,2014 Colin Walters <walters@verbum.org>
++# Copyright (C) 2013 Javier Martinez <javier.martinez@collabora.co.uk>
++#
++# SPDX-License-Identifier: LGPL-2.0+
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++set -euo pipefail
++
++. $(dirname $0)/libtest.sh
++
++# Exports OSTREE_SYSROOT so --sysroot not needed.
++kver="3.6.0"
++modulesdir="usr/lib/modules/${kver}"
++setup_os_repository "archive" "sdboot" ${modulesdir}
++
++find sysroot
++
++extra_admin_tests=1
++
++. $(dirname $0)/admin-test-dir.sh
++
++assert_has_file sysroot/boot/loader/loader.conf
++cat << 'EOF' > sysroot/boot/loader/loader.conf
++timeout 10
++editor no
++EOF
++${CMD_PREFIX} ostree admin deploy --karg=root=LABEL=MOO --karg=quiet --os=testos testos:testos/buildmain/x86_64-runtime
++assert_file_has_content sysroot/boot/loader/loader.conf "timeout"
++assert_file_has_content sysroot/boot/loader/loader.conf "editor"
++
++echo "ok deploying loader.conf"
+-- 
+2.34.1
+

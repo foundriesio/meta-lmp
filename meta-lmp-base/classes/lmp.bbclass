@@ -31,6 +31,19 @@ IMAGE_CMD:ota:append () {
 			${GARAGE_TARGET_NAME}-${target_version}
 	fi
 
+	# Ostree /boot/loader as link (default) or as directory
+	if [ "${OSTREE_LOADER_LINK}" = "0" ]; then
+		if [ -h ${OTA_SYSROOT}/boot/loader ]; then
+			loader=`readlink ${OTA_SYSROOT}/boot/loader`
+			rm -f ${OTA_SYSROOT}/boot/loader
+			mv ${OTA_SYSROOT}/boot/${loader} ${OTA_SYSROOT}/boot/loader
+			echo -n ${loader} > ${OTA_SYSROOT}/boot/loader/ostree_bootversion
+		else
+			mkdir -p ${OTA_SYSROOT}/boot/loader
+			echo -n "loader.0" > ${OTA_SYSROOT}/boot/loader/ostree_bootversion
+		fi
+	fi
+
 	# Split content from /boot into a separated folder so it can be consumed by WKS separately
 	if [ "${OSTREE_SPLIT_BOOT}" = "1" ]; then
 		rm -rf ${OTA_BOOT}

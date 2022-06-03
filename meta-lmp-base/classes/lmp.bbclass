@@ -31,6 +31,24 @@ IMAGE_CMD:ota:append () {
 			${GARAGE_TARGET_NAME}-${target_version}
 	fi
 
+	# systemd-boot support
+	if [ "${EFI_PROVIDER}" = "systemd-boot" ]; then
+		if [ "${OSTREE_LOADER_LINK}" != "0" ]; then
+			bbfatal "Systemd-boot requires OSTREE_LOADER_LINK to be set to '0'"
+		fi
+		if [ "${OSTREE_SPLIT_BOOT}" != "1" ]; then
+			bbfatal "Systemd-boot requires OSTREE_SPLIT_BOOT to be set to '1'"
+		fi
+		if [ "${OSTREE_BOOTLOADER}" != "none" ]; then
+			bbfatal "Systemd-boot requires OSTREE_BOOTLOADER to be set to 'none'"
+		fi
+		# As upstream doesn't yet support systemd-boot, we have to undo none and change as needed
+		ostree config --repo=${OTA_SYSROOT}/ostree/repo unset sysroot.bootloader
+		touch ${OTA_SYSROOT}/boot/loader/loader.conf
+		# Remove boot symlink as partition is vfat/ESP
+		rm -f ${OTA_SYSROOT}/boot/boot
+	fi
+
 	# Ostree /boot/loader as link (default) or as directory
 	if [ "${OSTREE_LOADER_LINK}" = "0" ]; then
 		if [ -h ${OTA_SYSROOT}/boot/loader ]; then

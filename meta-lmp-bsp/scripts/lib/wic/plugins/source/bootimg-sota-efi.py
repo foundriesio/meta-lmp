@@ -39,7 +39,8 @@ class BootimgSotaEFIPlugin(SourcePlugin):
         configfile = creator.ks.bootloader.configfile
 
         if not configfile:
-            raise WicError("Missing configfile argument")
+            logger.debug("Setting grub-ota.cfg as default configfile")
+            configfile = "grub-ota.cfg"
 
         custom_cfg = None
         custom_cfg = get_custom_config(configfile)

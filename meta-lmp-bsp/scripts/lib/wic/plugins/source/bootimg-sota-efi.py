@@ -13,6 +13,7 @@ import os
 import shutil
 import re
 
+from oe.path import copyhardlinktree
 from glob import glob
 
 from wic import WicError
@@ -26,7 +27,7 @@ logger = logging.getLogger('wic')
 class BootimgSotaEFIPlugin(SourcePlugin):
     """
     Create Sota EFI boot partition.
-    This plugin only supports the GRUB 2 bootloader.
+    This plugin supports GRUB 2 and systemd-boot bootloaders.
     """
 
     name = 'bootimg-sota-efi'
@@ -61,6 +62,30 @@ class BootimgSotaEFIPlugin(SourcePlugin):
 
 
     @classmethod
+    def do_configure_systemdboot(cls, hdddir, part, creator):
+        """
+        Create loader-specific systemd-boot/gummiboot config
+        """
+        if part.rootfs_dir is None:
+            raise WicError("Couldn't find --rootfs-dir, exiting")
+        copyhardlinktree(part.rootfs_dir, hdddir)
+
+        install_cmd = "install -d %s/loader" % hdddir
+        exec_cmd(install_cmd)
+
+        bootloader = creator.ks.bootloader
+
+        loader_conf = ""
+        loader_conf += "timeout %d\n" % bootloader.timeout
+
+        logger.debug("Writing systemd-boot config "
+                     "%s/loader/loader.conf", hdddir)
+        cfg = open("%s/loader/loader.conf" % hdddir, "w")
+        cfg.write(loader_conf)
+        cfg.close()
+
+
+    @classmethod
     def do_configure_partition(cls, part, source_params, creator, cr_workdir,
                                oe_builddir, bootimg_dir, kernel_dir,
                                native_sysroot):
@@ -75,6 +100,8 @@ class BootimgSotaEFIPlugin(SourcePlugin):
         try:
             if source_params['loader'] == 'grub-efi':
                 cls.do_configure_grubefi(creator, cr_workdir)
+            elif source_params['loader'] == 'systemd-boot':
+                cls.do_configure_systemdboot(hdddir, part, creator)
             else:
                 raise WicError("unrecognized bootimg-sota-efi loader: %s" % source_params['loader'])
         except KeyError:
@@ -164,6 +191,10 @@ class BootimgSotaEFIPlugin(SourcePlugin):
                     exec_cmd(cp_cmd, True)
                 shutil.move("%s/grub.cfg" % cr_workdir,
                             "%s/hdd/boot/EFI/BOOT/grub.cfg" % cr_workdir)
+            elif source_params['loader'] == 'systemd-boot':
+                for mod in [x for x in os.listdir(kernel_dir) if x.startswith("systemd-")]:
+                    cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (kernel_dir, mod, hdddir, mod[8:])
+                    exec_cmd(cp_cmd, True)
             else:
                 raise WicError("unrecognized bootimg-sota-efi loader: %s" %
                                source_params['loader'])

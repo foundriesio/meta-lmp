@@ -86,7 +86,7 @@ KERNEL_CLASSES:qemuarm64-secureboot-ebbr ?= ""
 EFI_PROVIDER:qemuarm64-secureboot-ebbr ?= "grub-efi"
 OSTREE_BOOTLOADER:qemuarm64-secureboot-ebbr ?= "grub"
 IMAGE_BOOT_FILES:qemuarm64-secureboot-ebbr = ""
-WKS_FILE:qemuarm64-secureboot-ebbr:sota ?= "efidisk-sota.wks"
+WKS_FILE:qemuarm64-secureboot-ebbr:sota ?= "efidisk-sota.wks.in"
 
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader:qemuarm = "u-boot-fio"
@@ -117,7 +117,7 @@ IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-in
 OSTREE_BOOTLOADER:intel-corei7-64 ?= "grub"
 OSTREE_KERNEL_ARGS:intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 EFI_PROVIDER:intel-corei7-64 = "grub-efi"
-WKS_FILE:intel-corei7-64:sota ?= "efidisk-sota.wks"
+WKS_FILE:intel-corei7-64:sota ?= "efidisk-sota.wks.in"
 WKS_FILE_DEPENDS:append:intel-corei7-64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
 IMAGE_BOOT_FILES:intel-corei7-64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootx64.efi;EFI/BOOT/bootx64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
@@ -307,7 +307,7 @@ KERNEL_CLASSES:sota:imx8mq-evk-ebbr ?= ""
 EFI_PROVIDER:imx8mq-evk-ebbr ?= "grub-efi"
 OSTREE_BOOTLOADER:imx8mq-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mq-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
-WKS_FILE:sota:imx8mq-evk-ebbr ?= "efidisk-sota.wks"
+WKS_FILE:sota:imx8mq-evk-ebbr ?= "efidisk-sota.wks.in"
 
 # iMX8MM
 UBOOT_SIGN_ENABLE:sota:mx8mm-generic-bsp = "1"
@@ -348,7 +348,7 @@ KERNEL_CLASSES:sota:imx8mm-lpddr4-evk-ebbr ?= ""
 EFI_PROVIDER:imx8mm-lpddr4-evk-ebbr ?= "grub-efi"
 OSTREE_BOOTLOADER:imx8mm-lpddr4-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mm-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
-WKS_FILE:sota:imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks"
+WKS_FILE:sota:imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # iMX8MM EVKB revision
 MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
 
@@ -388,7 +388,7 @@ KERNEL_CLASSES:sota:imx8mp-lpddr4-evk-ebbr ?= ""
 EFI_PROVIDER:imx8mp-lpddr4-evk-ebbr ?= "grub-efi"
 OSTREE_BOOTLOADER:imx8mp-lpddr4-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mp-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
-WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks"
+WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # imx8mp comes with an AzureWave CM276MA PCIe Card
 MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
 

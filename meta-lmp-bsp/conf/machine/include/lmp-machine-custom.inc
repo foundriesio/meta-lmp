@@ -114,9 +114,11 @@ WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
 # Intel
-OSTREE_BOOTLOADER:intel-corei7-64 ?= "grub"
+OSTREE_BOOTLOADER:intel-corei7-64 ?= "none"
 OSTREE_KERNEL_ARGS:intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
-EFI_PROVIDER:intel-corei7-64 = "grub-efi"
+EFI_PROVIDER:intel-corei7-64 = "systemd-boot"
+OSTREE_SPLIT_BOOT:intel-corei7-64 = "1"
+OSTREE_LOADER_LINK:intel-corei7-64 = "0"
 WKS_FILE:intel-corei7-64:sota ?= "efidisk-sota.wks.in"
 WKS_FILE_DEPENDS:append:intel-corei7-64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES

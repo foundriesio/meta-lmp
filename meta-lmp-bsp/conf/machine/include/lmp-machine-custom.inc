@@ -105,9 +105,11 @@ QB_DRIVE_TYPE:qemuarm = "/dev/vdb"
 QB_OPT_APPEND:qemuarm = "-no-acpi -bios ${DEPLOY_DIR_IMAGE}/u-boot.bin -d unimp"
 
 # ARM64 Generic (SystemReady)
-OSTREE_BOOTLOADER:generic-arm64 ?= "grub"
+OSTREE_BOOTLOADER:generic-arm64 ?= "none"
 MACHINE_FEATURES:append:generic-arm64 = " acpi pci usbhost"
-EFI_PROVIDER:generic-arm64 ?= "grub-efi"
+EFI_PROVIDER:generic-arm64 ?= "systemd-boot"
+OSTREE_SPLIT_BOOT:generic-arm64 = "1"
+OSTREE_LOADER_LINK:generic-arm64 = "0"
 WKS_FILE:generic-arm64:sota ?= "image-efi-installer.wks.in"
 WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES

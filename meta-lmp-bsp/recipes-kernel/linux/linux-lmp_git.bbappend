@@ -4,7 +4,3 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI:append:apalis-imx6 = " \
     file://0001-MLK-16912-PL310-unlock-ways-during-initialization.patch \
 "
-
-SRC_URI:append:qemuarm64 = " \
-    file://zone_dma_revert.patch \
-"

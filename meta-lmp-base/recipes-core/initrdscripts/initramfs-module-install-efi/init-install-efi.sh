@@ -276,6 +276,10 @@ mkdir -p $EFIDIR
 # Copy the efi loader
 efiloader=`basename /run/media/${live_dev_name}3/EFI/BOOT/boot*.efi`
 cp /run/media/${live_dev_name}3/EFI/BOOT/${efiloader} $EFIDIR
+# Also duplicate systemd efi loader if available for compliance
+if [ -d /run/media/${live_dev_name}3/EFI/systemd ]; then
+    cp -rf /run/media/${live_dev_name}3/EFI/systemd /boot/EFI
+fi
 
 # Generate default loader.conf
 cat << EOF > /boot/loader/loader.conf

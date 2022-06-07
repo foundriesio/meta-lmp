@@ -111,7 +111,7 @@ EFI_PROVIDER:generic-arm64 ?= "grub-efi"
 WKS_FILE:generic-arm64:sota ?= "image-efi-installer.wks.in"
 WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
-IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
+IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'systemd-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
 # Intel
 OSTREE_BOOTLOADER:intel-corei7-64 ?= "none"
@@ -122,7 +122,7 @@ OSTREE_LOADER_LINK:intel-corei7-64 = "0"
 WKS_FILE:intel-corei7-64:sota ?= "efidisk-sota.wks.in"
 WKS_FILE_DEPENDS:append:intel-corei7-64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
-IMAGE_BOOT_FILES:intel-corei7-64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'grub-efi-bootx64.efi;EFI/BOOT/bootx64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
+IMAGE_BOOT_FILES:intel-corei7-64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'systemd-bootx64.efi;EFI/BOOT/bootx64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
 # Common for iMX targets
 ## Prefer IMX_DEFAULT_BSP=nxp as mainline removes every common machine override

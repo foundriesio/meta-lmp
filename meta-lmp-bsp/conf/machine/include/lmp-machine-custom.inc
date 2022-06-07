@@ -83,8 +83,10 @@ QB_DRIVE_TYPE:qemuarm64-secureboot = "/dev/vdb"
 ## EBBR / SystemReady
 KERNEL_IMAGETYPE:qemuarm64-secureboot-ebbr ?= "Image"
 KERNEL_CLASSES:qemuarm64-secureboot-ebbr ?= ""
-EFI_PROVIDER:qemuarm64-secureboot-ebbr ?= "grub-efi"
-OSTREE_BOOTLOADER:qemuarm64-secureboot-ebbr ?= "grub"
+EFI_PROVIDER:qemuarm64-secureboot-ebbr ?= "systemd-boot"
+OSTREE_SPLIT_BOOT:qemuarm64-secureboot-ebbr = "1"
+OSTREE_LOADER_LINK:qemuarm64-secureboot-ebbr = "0"
+OSTREE_BOOTLOADER:qemuarm64-secureboot-ebbr ?= "none"
 IMAGE_BOOT_FILES:qemuarm64-secureboot-ebbr = ""
 WKS_FILE:qemuarm64-secureboot-ebbr:sota ?= "efidisk-sota.wks.in"
 

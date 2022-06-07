@@ -53,6 +53,9 @@ SRC_URI:append = " \
 	file://systemd-timesyncd-update.service \
 "
 
+# Depend on systemd-boot as the efi payload is provided by a different recipe
+RDEPENDS:${PN} += "${@bb.utils.contains('EFI_PROVIDER', 'systemd-boot', 'systemd-boot', '', d)}"
+
 # /var in lmp is expected to be rw, so drop volatile-binds service files
 RDEPENDS:${PN}:remove = "volatile-binds"
 

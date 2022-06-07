@@ -3,6 +3,7 @@
 
 part /boot --source bootimg-efi --sourceparams="loader=${EFI_PROVIDER},title=Install ${DISTRO_NAME} (${DISTRO_VERSION}),label=install-efi,initrd=${INITRD_IMAGE_LIVE}-${MACHINE}.${INITRAMFS_FSTYPES}" --ondisk sda --label install --active --align 1024 --use-uuid --size 100
 
+part /efi --source rootfs --ondisk sda --rootfs-dir=${WORKDIR}/ota-boot --fstype=vfat --label otaboot --align 4096 ${OSTREE_WKS_BOOT_SIZE}
 part / --source bootimg-partition --ondisk sda --fstype=ext4 --label image --use-uuid --align 1024
 
 bootloader --ptable gpt --timeout=5

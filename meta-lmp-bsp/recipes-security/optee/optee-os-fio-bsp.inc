@@ -10,6 +10,8 @@ OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
 OPTEEMACHINE:qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE:zynqmp = "zynqmp-zcu102"
 OPTEEMACHINE:versal = "versal-generic"
+OPTEEMACHINE:stm32mp15-disco = "stm32mp1-157C_DK2"
+OPTEEMACHINE:stm32mp15-eval = "stm32mp1-157C_EV1"
 
 # SoC Settings
 EXTRA_OEMAKE:append:mx8m-nxp-bsp = " \

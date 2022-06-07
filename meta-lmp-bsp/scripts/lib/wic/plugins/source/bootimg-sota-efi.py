@@ -70,6 +70,9 @@ class BootimgSotaEFIPlugin(SourcePlugin):
             raise WicError("Couldn't find --rootfs-dir, exiting")
         copyhardlinktree(part.rootfs_dir, hdddir)
 
+        install_cmd = "install -d %s/EFI/systemd" % hdddir
+        exec_cmd(install_cmd)
+
         install_cmd = "install -d %s/loader" % hdddir
         exec_cmd(install_cmd)
 
@@ -193,6 +196,8 @@ class BootimgSotaEFIPlugin(SourcePlugin):
                             "%s/hdd/boot/EFI/BOOT/grub.cfg" % cr_workdir)
             elif source_params['loader'] == 'systemd-boot':
                 for mod in [x for x in os.listdir(kernel_dir) if x.startswith("systemd-")]:
+                    cp_cmd = "cp %s/%s %s/EFI/systemd/%s" % (kernel_dir, mod, hdddir, mod)
+                    exec_cmd(cp_cmd, True)
                     cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (kernel_dir, mod, hdddir, mod[8:])
                     exec_cmd(cp_cmd, True)
             else:

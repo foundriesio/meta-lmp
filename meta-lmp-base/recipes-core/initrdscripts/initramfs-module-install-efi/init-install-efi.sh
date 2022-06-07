@@ -9,8 +9,8 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-# minimal ESP partition size is 100mb
-boot_size=100
+# Recommended ESP partition size is 512m
+boot_size=512
 
 # Get a list of hard drives
 hdnamelist=""
@@ -239,30 +239,20 @@ mkdir -p /boot
 
 # Handling of the target root partition
 mount $rootfs /tgt_root
-mount -o rw,loop,noatime,nodiratime /run/media/$1/$2 /src_root
+mount -o rw,loop,noatime,nodiratime /run/media/${live_dev_name}3/rootfs.img /src_root
 echo "Copying rootfs files..."
 cp -a /src_root/* /tgt_root
-# Update fstab at the ostree deploy folder
-if [ -d /tgt_root/ostree/deploy/lmp/deploy ] ; then
-    deploy_hash=$(ls /tgt_root/ostree/deploy/lmp/deploy/ | grep -m 1 -v "\.origin")
-    boot_uuid=$(blkid -o value -s UUID ${bootfs})
-    sed -i "s/LABEL=efi/UUID=${boot_uuid}/g" /tgt_root/ostree/deploy/lmp/deploy/${deploy_hash}/etc/fstab
-fi
-
-# Update boot args to include UUID and extra options
-rootfs_uuid=$(blkid -o value -s UUID ${rootfs})
-sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" \
-    /tgt_root/boot/loader/grub.cfg /tgt_root/boot/loader/entries/*.conf
+umount /src_root
 
 # LMP preloaded containers (containers and updated installed_versions)
-if [ -d /run/media/$1/ostree/deploy/lmp/var/lib/docker ]; then
-    cp -a /run/media/$1/ostree/deploy/lmp/var/lib/docker /tgt_root/ostree/deploy/lmp/var/lib/
-    cp -a /run/media/$1/ostree/deploy/lmp/var/sota/import/installed_versions /tgt_root/ostree/deploy/lmp/var/sota/import/
+if [ -d /run/media/${live_dev_name}3/ostree/deploy/lmp/var/lib/docker ]; then
+    cp -a /run/media/${live_dev_name}3/ostree/deploy/lmp/var/lib/docker /tgt_root/ostree/deploy/lmp/var/lib/
+    cp -a /run/media/${live_dev_name}3/ostree/deploy/lmp/var/sota/import/installed_versions /tgt_root/ostree/deploy/lmp/var/sota/import/
 fi
-if [ -d /run/media/$1/ostree/deploy/lmp/var/sota/compose-apps ]; then
+if [ -d /run/media/${live_dev_name}3/ostree/deploy/lmp/var/sota/compose-apps ]; then
     # Delete preloaded containers previously available as part of rootfs.img (platform build)
     rm -rf /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
-    cp -a /run/media/$1/ostree/deploy/lmp/var/sota/compose-apps /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
+    cp -a /run/media/${live_dev_name}3/ostree/deploy/lmp/var/sota/compose-apps /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
 fi
 
 # LMP specific customizations, if available (live media first partition, vfat)
@@ -270,27 +260,31 @@ if [ -d /run/media/${live_dev_name}1/lmp ]; then
     cp -a /run/media/${live_dev_name}1/lmp /tgt_root/ostree/deploy/lmp/var/
 fi
 
-umount /src_root
-
 # Handling of the target boot partition
 mount $bootfs /boot
 echo "Preparing boot partition..."
 
+echo "Copying boot files..."
+cp -rf /run/media/${live_dev_name}2/* /boot
+
+# Update boot args to include UUID and extra options
+rootfs_uuid=$(blkid -o value -s UUID ${rootfs})
+sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" /boot/loader/entries/*.conf
+
 EFIDIR="/boot/EFI/BOOT"
 mkdir -p $EFIDIR
 # Copy the efi loader
-efiloader=`basename /run/media/$1/EFI/BOOT/boot*.efi`
-cp /run/media/$1/EFI/BOOT/${efiloader} $EFIDIR
+efiloader=`basename /run/media/${live_dev_name}3/EFI/BOOT/boot*.efi`
+cp /run/media/${live_dev_name}3/EFI/BOOT/${efiloader} $EFIDIR
 
-# Generate boot grub.cfg
-cat << EOF > $EFIDIR/grub.cfg
-search.fs_uuid ${rootfs_uuid} root
-configfile /boot/loader/grub.cfg
+# Generate default loader.conf
+cat << EOF > /boot/loader/loader.conf
+timeout 1
 EOF
 
 # Make sure startup.nsh is also available at the boot partition
-if [ -f /run/media/$1/startup.nsh ]; then
-    cp /run/media/$1/startup.nsh /boot
+if [ -f /run/media/${live_dev_name}3/startup.nsh ]; then
+    cp /run/media/${live_dev_name}3/startup.nsh /boot
 fi
 
 # Set default EFI boot entry

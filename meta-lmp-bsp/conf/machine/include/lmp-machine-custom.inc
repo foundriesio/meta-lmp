@@ -487,6 +487,8 @@ UBOOT_ENTRYPOINT:am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am64xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx-evm = "0x88000000"
 EFI_PROVIDER:am64xx-evm = ""
+# multiconfig with the same TMP fails in the rm_work.bbclass
+RM_WORK_EXCLUDE:append:am64xx-evm = " texinfo-dummy-native gettext-minimal-native gnu-config"
 
 # Nvidia Tegra
 DISTRO_FEATURES:append:tegra = " opengl"

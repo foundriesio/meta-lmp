@@ -40,3 +40,32 @@ do_deploy:append:mx8-nxp-bsp() {
         ln -sf u-boot-spl.bin-${MACHINE} u-boot-spl.bin-${MACHINE}-
     fi
 }
+
+do_deploy:append:stm32mp1common() {
+    if [ -n "${UBOOT_CONFIG}" ]; then
+        for config in ${UBOOT_MACHINE}; do
+            machine_idx=$(expr $machine_idx + 1);
+            for type in ${UBOOT_CONFIG}; do
+                type_idx=$(expr $type_idx + 1);
+                if [ $type_idx -eq $machine_idx ]; then
+                    for devicetree in ${UBOOT_DEVICETREE}; do
+                        soc_suffix=""
+                        if [ -n "${STM32MP_SOC_NAME}" ]; then
+                            for soc in ${STM32MP_SOC_NAME}; do
+                                [ "$(echo ${devicetree} | grep -c ${soc})" -eq 1 ] && soc_suffix="-${soc}"
+                            done
+                        fi
+                        type_suffix=$(echo ${type} | cut -d'_' -f1)
+                        install -d ${DEPLOYDIR}/u-boot
+                        install -m 0644 ${B}/${config}/u-boot-nodtb.bin ${DEPLOYDIR}/u-boot/u-boot-nodtb${soc_suffix}.${UBOOT_SUFFIX}
+                        install -m 0644 ${B}/${config}/arch/arm/dts/${devicetree}.dtb ${DEPLOYDIR}/u-boot/u-boot-${devicetree}-${type_suffix}.dtb
+                    done
+                    unset soc_suffix
+                    unset type_suffix
+                fi
+            done
+            unset type_idx
+        done
+        unset machine_idx
+    fi
+}

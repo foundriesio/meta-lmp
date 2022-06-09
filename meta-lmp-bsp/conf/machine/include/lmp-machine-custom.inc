@@ -417,7 +417,7 @@ UBOOT_SUFFIX:stm32mp1common = "bin"
 ## stm32mp15-eval
 LINUX_A7_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-a7-examples"
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-m4-examples"
-UBOOT_DEVICETREE:stm32mp15-eval = "stm32mp157a-ev1"
+UBOOT_DEVICETREE:stm32mp15-eval = "stm32mp157c-ev1"
 IMAGE_FSTYPES:remove:stm32mp15-eval = "wic wic.gz wic.bmap"
 EXTRA_IMAGEDEPENDS:append:stm32mp15-eval = "flashlayouts-stm32mp1"
 UBOOT_LOADADDRESS:stm32mp15-eval = "0xC2000000"

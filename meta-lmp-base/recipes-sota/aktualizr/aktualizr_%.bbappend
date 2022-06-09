@@ -60,6 +60,7 @@ PACKAGES += "${PN}-get ${PN}-lite ${PN}-lite-lib ${PN}-lite-dev"
 FILES:${PN}-get = "${bindir}/${PN}-get"
 FILES:${PN}-lite = " \
                     ${bindir}/${PN}-lite \
+                    ${bindir}/aklite-apps \
                     ${nonarch_libdir}/tmpfiles.d/${PN}-lite.conf \
                     "
 FILES:${PN}-lite-lib = "${nonarch_libdir}/lib${PN}_lite.so"

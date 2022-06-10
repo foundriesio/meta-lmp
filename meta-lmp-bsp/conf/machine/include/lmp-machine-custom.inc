@@ -118,6 +118,7 @@ WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'systemd-bootaa64.efi;EFI/BOOT/bootaa64.efi systemd-bootaa64.efi;EFI/systemd/systemd-bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 
 # Intel
+UEFI_SIGN_ENABLE:intel-corei7-64 = "1"
 OSTREE_BOOTLOADER:intel-corei7-64 ?= "none"
 OSTREE_KERNEL_ARGS:intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 EFI_PROVIDER:intel-corei7-64 = "systemd-boot"

@@ -150,3 +150,18 @@ def make_efi_dtb_boot_files(d):
         return os.path.basename(dtb) + ';dtb/' + os.path.basename(dtb)
 
     return ' '.join([transform(dtb) for dtb in alldtbs.split() if dtb])
+
+def make_efi_cer_boot_files(d):
+    # Generate IMAGE_EFI_BOOT_FILES entries for certificate files available
+    # at the UEFI_SIGN_KEYDIR folder.
+    keydir = d.getVar('UEFI_SIGN_KEYDIR')
+    if not keydir:
+        return ''
+
+    def transform(cer):
+        cer_path = os.path.join(keydir, cer + '.cer')
+        if not os.access(cer_path, os.R_OK):
+            bb.fatal("Unable to find certificate '%s.cer' in '%s'" % (cer, keydir))
+        return cer_path + ';uefi_certs/' + os.path.basename(cer_path)
+
+    return ' '.join([transform(cer) for cer in ['PK', 'KEK', 'DB', 'DBX']])

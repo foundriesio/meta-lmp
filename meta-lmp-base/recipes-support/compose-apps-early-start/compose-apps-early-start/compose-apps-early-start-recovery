@@ -1,15 +1,31 @@
 #!/bin/sh
 
-# Force compose down, restart docker and try again
+recover_compose_apps() {
+	# Force compose down, restart docker and try again
 
-for app in `ls /var/sota/compose-apps` ; do
-	cd /var/sota/compose-apps/${app}
-	docker compose down
-done
+	for app in `ls /var/sota/compose-apps` ; do
+		cd /var/sota/compose-apps/${app}
+		docker compose down
+	done
 
-# TODO: extend with support for restorable-apps, which should
-# allow us to remove /var/lib/docker completely
+	systemctl restart docker
+}
 
-systemctl restart docker
+recover_restorable_apps() {
+	systemctl stop docker
+	rm -rf /var/sota/compose-apps/*
+	rm -rf /var/lib/docker
+
+	systemctl restart compose-apps-register-images.service
+	systemctl start docker
+}
+
+if [ -d /var/sota/reset-apps ] ; then
+	recover_restorable_apps
+else
+	recover_compose_apps
+fi
+
 systemctl reset-failed compose-apps-early-start.service
+sleep 60
 systemctl restart compose-apps-early-start.service

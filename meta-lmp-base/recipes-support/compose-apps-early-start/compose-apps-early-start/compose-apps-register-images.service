@@ -1,0 +1,14 @@
+[Unit]
+Description=Register images of Apps at a docker store repository
+Before=docker.service
+Before=lmp-device-auto-register.service
+ConditionPathExists=/var/sota/reset-apps
+ConditionPathExists=!/var/sota/sql.db
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/aklite-apps register
+
+[Install]
+WantedBy=multi-user.target

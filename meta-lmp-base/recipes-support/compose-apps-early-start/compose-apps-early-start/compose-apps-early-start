@@ -6,11 +6,11 @@ function start_compose_app() {
 
 	echo "Starting app ${app}"
 	ret=0
-	docker-compose up -d || ret=${?}
+	docker compose up -d || ret=${?}
 	if [ ${ret} -ne 0 ] ; then
 		echo "Failed to start app ${app}, trying compose down / up"
-		docker-compose down
-		docker-compose up -d
+		docker compose down
+		docker compose up -d
 	fi
 }
 

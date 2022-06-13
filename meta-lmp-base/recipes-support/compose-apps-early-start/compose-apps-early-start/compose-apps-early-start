@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-function start_compose_app() {
+start_compose_app() {
 	app=$1
 	cd /var/sota/compose-apps/${app}
 
@@ -14,21 +14,45 @@ function start_compose_app() {
 	fi
 }
 
-if [ -f /var/lmp/default-apps ] ; then
-	if [ -d /var/sota/compose-apps ] ; then
-		for x in $(ls /var/sota/compose-apps) ; do
-			if ! grep -q $x /var/lmp/default-apps 2>/dev/null ; then
-				echo "Disabling preloaded app: $x"
-				rm -rf /var/sota/compose-apps/$x
-			fi
-		done
+start_compose_apps() {
+	if [ -f /var/lmp/default-apps ] ; then
+		if [ -d /var/sota/compose-apps ] ; then
+			for x in $(ls /var/sota/compose-apps) ; do
+				if ! grep -q $x /var/lmp/default-apps 2>/dev/null ; then
+					echo "Disabling preloaded app: $x"
+					rm -rf /var/sota/compose-apps/$x
+				fi
+			done
+		fi
 	fi
-fi
 
-if [ -d /var/sota/compose-apps ] ; then
-	for app in `ls /var/sota/compose-apps` ; do
-		start_compose_app ${app}
-	done
+	if [ -d /var/sota/compose-apps ] ; then
+		for app in `ls /var/sota/compose-apps` ; do
+			start_compose_app ${app}
+		done
+	else
+		echo "No apps defined"
+	fi
+}
+
+start_restorable_apps() {
+	default_apps_path="/var/lmp/default-apps"
+	shortlist=""
+
+	if [ -f $default_apps_path ] ; then
+		for app in `cat $default_apps_path`; do
+			shortlist="${shortlist}${app},"
+		done
+		if [ ! -z $shortlist ] ; then
+			shortlist=${shortlist::-1}
+                fi
+	fi
+
+	aklite-apps run --apps "${shortlist}"
+}
+
+if [ -d /var/sota/reset-apps ] ; then
+	start_restorable_apps
 else
-	echo "No apps defined"
+	start_compose_apps
 fi

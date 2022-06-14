@@ -50,6 +50,7 @@ shutdown:x:70:
 nobody:*:99:
 users:x:100:
 pulse:x:171:
+ntp:x:971:
 parsec:x:972:
 pulse-access:x:973:
 pulse-rt:x:974:

@@ -483,6 +483,26 @@ KERNEL_CLASSES:sota:versal = "kernel-lmp-fitimage"
 IMAGE_BOOT_FILES:sota:versal = "boot.bin boot.itb"
 WKS_FILES:sota:versal = "sdimage-sota.wks"
 
+# TI AM62x
+MACHINE_FEATURES:append:am62xx-evm = " optee"
+SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
+KERNEL_BUILTIN_WIREGUARD:am62xx-evm = "1"
+PREFERRED_PROVIDER_virtual/kernel:am62xx-evm ?= "linux-lmp-ti-staging"
+PREFERRED_PROVIDER_u-boot-fw-utils:am62xx-evm = "libubootenv"
+PREFERRED_RPROVIDER_u-boot-fw-utils:am62xx-evm = "libubootenv"
+# only need boot script for sota builds
+WKS_FILE_DEPENDS:append:sota:am62xx-evm = " u-boot-default-script"
+PREFERRED_PROVIDER_u-boot-default-script:sota:am62xx-evm = "u-boot-ostree-scr-fit"
+KERNEL_IMAGETYPE:sota:am62xx-evm = "fitImage"
+KERNEL_CLASSES:sota:am62xx-evm = " kernel-lmp-fitimage "
+IMAGE_BOOT_FILES:append:am62xx-evm = " boot.itb"
+UBOOT_ENTRYPOINT:am62xx-evm = "0x82000000"
+UBOOT_LOADADDRESS:am62xx-evm = "0x82000000"
+UBOOT_DTB_LOADADDRESS:am62xx-evm = "0x88000000"
+EFI_PROVIDER:am62xx-evm = ""
+# multiconfig with the same TMP fails in the rm_work.bbclass
+RM_WORK_EXCLUDE:append:am62xx-evm = " texinfo-dummy-native gettext-minimal-native gnu-config"
+
 # TI AM64x
 MACHINE_FEATURES:append:am64xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"

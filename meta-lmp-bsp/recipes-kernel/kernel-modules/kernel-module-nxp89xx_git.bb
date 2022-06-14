@@ -12,3 +12,5 @@ S = "${WORKDIR}/git/mxm_wifiex/wlan_src"
 inherit module
 
 EXTRA_OEMAKE = "KERNELDIR=${STAGING_KERNEL_BUILDDIR} -C ${STAGING_KERNEL_BUILDDIR} M=${S}"
+
+INHIBIT_PACKAGE_DEBUG_SPLIT = "${@bb.utils.contains('DISTRO_FEATURES', 'modsign', '1', '', d)}"

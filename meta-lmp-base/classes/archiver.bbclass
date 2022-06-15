@@ -485,8 +485,7 @@ python do_unpack_and_patch() {
     # Save the original source for creating the patches
     if d.getVarFlag('ARCHIVER_MODE', 'diff') == '1':
         src = d.getVar('S').rstrip('/')
-        # append machine name to avoid races in multiconfig when using the same TMPDIR
-        src_orig = '%s.orig.%s' % (src, d.getVar('MACHINE'))
+        src_orig = '%s.orig' % src
         oe.path.copytree(src, src_orig)
 
     if bb.data.inherits_class('dos2unix', d):

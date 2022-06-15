@@ -100,6 +100,11 @@ BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/u-boot/u-boot-xlnx_%.bbappend \
 "
 
+# mask gcc tegra when we don't use any tegra machine
+BBMASK_TEGRA_GCC = "/meta-tegra/recipes-devtools/gcc/"
+BBMASK_TEGRA_GCC:tegra = ""
+BBMASK += "${BBMASK_TEGRA_GCC}"
+
 # disable xsct tarball by default (xilinx)
 USE_XSCT_TARBALL = "0"
 

@@ -1,0 +1,40 @@
+From 8f6402f69f8366777861a56c53ae9893b27fbbad Mon Sep 17 00:00:00 2001
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Date: Fri, 30 Jul 2021 17:20:18 +0200
+Subject: [PATCH 1/1] Enable RISC-V build
+
+Set necessary Makefile variables for architecture riscv64.
+
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+---
+ Make.rules | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Make.rules b/Make.rules
+index 903a5a4..69bd3bd 100644
+--- a/Make.rules
++++ b/Make.rules
+@@ -10,6 +10,8 @@ else ifeq ($(ARCH),aarch64)
+ ARCH3264 =
+ else ifeq ($(ARCH),arm)
+ ARCH3264 =
++else ifeq ($(ARCH),riscv64)
++ARCH3264 =
+ else
+ $(error unknown architecture $(ARCH))
+ endif
+@@ -56,6 +58,11 @@ ifeq ($(ARCH),aarch64)
+   FORMAT = -O binary
+ endif
+ 
++ifeq ($(ARCH),riscv64)
++  LDFLAGS += --defsym=EFI_SUBSYSTEM=0x0a
++  FORMAT = -O binary
++endif
++
+ %.efi: %.so
+ 	$(OBJCOPY) -j .text -j .sdata -j .data -j .dynamic -j .dynsym \
+ 		   -j .rel -j .rela -j .rel.* -j .rela.* -j .rel* -j .rela* \
+-- 
+2.31.1
+

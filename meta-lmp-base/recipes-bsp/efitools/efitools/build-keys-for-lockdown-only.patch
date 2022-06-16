@@ -1,0 +1,28 @@
+Only build keys relevant for LockDown.efi
+
+Upstream-Status: Inappropriate [lmp specific]
+
+diff --git a/Makefile b/Makefile
+index 9638c52..ede2bf9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -13,7 +13,7 @@ KEYS = PK KEK DB
+ EXTRAKEYS = DB1 DB2
+ EXTERNALKEYS = ms-uefi ms-kek
+ 
+-ALLKEYS = $(KEYS) $(EXTRAKEYS) $(EXTERNALKEYS)
++ALLKEYS = $(KEYS)
+ 
+ KEYAUTH = $(ALLKEYS:=.auth)
+ KEYUPDATEAUTH = $(ALLKEYS:=-update.auth) $(ALLKEYS:=-pkupdate.auth)
+@@ -26,9 +26,7 @@ include Make.rules
+ 
+ EFISIGNED = $(patsubst %.efi,%-signed.efi,$(EFIFILES))
+ 
+-all: $(EFIFILES) $(BINARIES) $(MANPAGES) noPK.auth $(KEYAUTH) DBX.auth \
+-	$(KEYUPDATEAUTH) $(KEYBLACKLISTAUTH) $(KEYHASHBLACKLISTAUTH)
+-
++all: $(EFIFILES) $(BINARIES) $(MANPAGES) $(KEYAUTH) DBX.auth
+ 
+ install: all
+ 	$(INSTALL) -m 755 -d $(MANDIR)

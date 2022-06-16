@@ -1,0 +1,21 @@
+Allow using local auths instead of generating them as part of the build.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+diff --git a/Make.rules b/Make.rules
+index d34b2f8..d7b0c7e 100644
+--- a/Make.rules
++++ b/Make.rules
+@@ -98,8 +98,12 @@ endif
+ getcert = $(shell if [ "$(1)" = "PK" -o "$(1)" = "KEK" ]; then echo "-c PK.crt -k PK.key"; else echo "-c KEK.crt -k KEK.key"; fi)
+ getvar = $(shell if [ "$(1)" = "PK" -o "$(1)" = "KEK" ]; then echo $(1); else echo db; fi)
+ 
++ifeq ($(USE_LOCAL_AUTHS),1)
++%.auth:
++else
+ %.auth: %.esl PK.crt KEK.crt sign-efi-sig-list
+ 	$(SIGN_EFI_SIG_LIST) $(call getcert,$*) $(call getvar,$*) $< $@
++endif
+ 
+ %-update.auth: %.esl PK.crt KEK.crt sign-efi-sig-list
+ 	$(SIGN_EFI_SIG_LIST) -a $(call getcert,$*) $(call getvar,$*) $< $@

@@ -129,7 +129,7 @@ WKS_FILE:intel-corei7-64:sota ?= "efidisk-sota.wks.in"
 WKS_FILE_DEPENDS:append:intel-corei7-64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
 IMAGE_BOOT_FILES:intel-corei7-64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'systemd-bootx64.efi;EFI/BOOT/bootx64.efi systemd-bootx64.efi;EFI/systemd/systemd-bootx64.efi startup.nsh ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
-IMAGE_EFI_BOOT_FILES:append:intel-corei7-64 = " ${@make_efi_cer_boot_files(d)}"
+IMAGE_EFI_BOOT_FILES:append:intel-corei7-64 = " LockDown.efi ${@make_efi_cer_boot_files(d)}"
 
 # Common for iMX targets
 ## Prefer IMX_DEFAULT_BSP=nxp as mainline removes every common machine override

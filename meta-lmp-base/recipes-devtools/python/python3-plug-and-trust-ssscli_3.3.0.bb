@@ -13,6 +13,8 @@ inherit setuptools3
 RDEPENDS:${PN} += "plug-and-trust-seteec \
     ${PYTHON_PN}-click \
     ${PYTHON_PN}-func-timeout \
+    ${PYTHON_PN}-logging \
+    ${PYTHON_PN}-cryptography \
 "
 
 BBCLASSEXTEND = "native nativesdk"

@@ -8,6 +8,9 @@ MAINTAINER = "LMP Support <support@foundries.io>"
 
 TARGET_VENDOR = "-lmp"
 
+LMP_FACTORY ?= "lmp"
+SPDX_ORG = "Foundries.IO (factory ${LMP_FACTORY})"
+
 TCLIBCAPPEND = ""
 
 require conf/distro/include/arm-defaults.inc

@@ -72,6 +72,8 @@ BUILD_OSTREE_TARBALL ?= "0"
 # LMP default classes and overwrites
 INHERIT += "lmp"
 
+## Create SPDX (SBOM) by default
+INHERIT += "create-spdx"
 INHERIT += "buildhistory"
 INHERIT += "image-buildinfo"
 BUILDHISTORY_COMMIT = "1"

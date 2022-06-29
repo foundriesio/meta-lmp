@@ -27,14 +27,6 @@ OBJCOPY:pn-tini:toolchain-clang = "${HOST_PREFIX}objcopy"
 # ERROR: Task (/srv/oe/build/conf/../../layers/meta-virtualization/recipes-containers/tini/tini_0.19.0.bb:do_package) failed with exit code '1'
 STRIP:pn-tini:toolchain-clang = "${HOST_PREFIX}strip"
 
-# glibc is built with gcc and hence encodes some libgcc specific builtins which are not found
-# when doing static linking with clang using compiler-rt, so use libgcc
-# undefined reference to `__unordtf2'
-# | /srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/ostree/2021.6-r0/recipe-sysroot-native/usr/bin/x86_64-lmp-linux/x86_64-lmp-linux-ld: /usr/src/deb>
-# | /srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/ostree/2021.6-r0/recipe-sysroot-native/usr/bin/x86_64-lmp-linux/x86_64-lmp-linux-ld: /usr/src/deb>
-COMPILER_RT:pn-ostree:toolchain-clang:x86 = "-rtlib=libgcc --unwindlib=libgcc"
-COMPILER_RT:pn-ostree:toolchain-clang:x86-64 = "-rtlib=libgcc --unwindlib=libgcc"
-
 # ERROR: ostree-2021.6-r0 do_populate_sysroot: Fatal errors occurred in subprocesses:
 # Command '['x86_64-lmp-linux-llvm-strip', '--remove-section=.comment', '--remove-section=.note', '/srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/ostree/2021.6-r0/sysroot-destdir/usr/lib/ostree/ostree-prepare-root']' returned non-zero exit status 1.
 # Subprocess output:x86_64-lmp-linux-llvm-strip: error: Link field value 35 in section .rela.plt is not a symbol table

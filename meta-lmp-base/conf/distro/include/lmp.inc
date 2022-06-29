@@ -83,6 +83,10 @@ INHERIT += "buildhistory"
 INHERIT += "image-buildinfo"
 BUILDHISTORY_COMMIT = "1"
 
+# Clang toolchain
+TOOLCHAIN ?= "clang"
+RUNTIME = "llvm"
+
 PREMIRRORS ??= "\
      git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
      ftp://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \

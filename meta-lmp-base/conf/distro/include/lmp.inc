@@ -14,6 +14,7 @@ SPDX_ORG = "Foundries.IO (factory ${LMP_FACTORY})"
 TCLIBCAPPEND = ""
 
 require conf/distro/include/arm-defaults.inc
+require conf/distro/include/non-clangable.inc
 require conf/distro/include/security_flags.inc
 
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"

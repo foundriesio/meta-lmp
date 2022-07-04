@@ -22,6 +22,8 @@ PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"
 
+PKCS11_ENGINE_PATH = "${libdir}/engines-3/pkcs11.so"
+
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE:${PN}-lite = "aktualizr-lite.service"
 

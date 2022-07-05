@@ -6,13 +6,14 @@
 #  - ----- --------- -------------- ---------------
 # ^ ^     ^         ^              ^
 # | |     |         |              |
-# 0 17kB 529kB     4MB           68MB
+# 0 17kB 529kB     8MB           68MB
 #
 # Warning: the first stage of boot (here fsbl1, fsbl2, fip) MUST be on GPT partition to be detected.
 #
 part fsbl1 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl1 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K --align 17
 part fsbl2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl2 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K
-part fip --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip --sourceparams="file=${DEPLOY_DIR_IMAGE}/fip/fip-stm32mp157c-dk2-optee.bin" --ondisk mmcblk --part-type 0x8301 --fixed-size 4096K
+part fip1 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip-a --sourceparams="file=${DEPLOY_DIR_IMAGE}/fip/fip-stm32mp157c-dk2-optee.bin" --ondisk mmcblk --part-type 0x8301 --fixed-size 4096K
+part fip2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip-b --sourceparams="file=${DEPLOY_DIR_IMAGE}/fip/fip-stm32mp157c-dk2-optee.bin" --ondisk mmcblk --part-type 0x8301 --fixed-size 4096K
 
 part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 4096 --size 16
 part / --source otaimage --ondisk mmcblk --fstype=ext4 --align 4096

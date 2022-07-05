@@ -1,0 +1,55 @@
+From e65bf4316d9963e2a7321421d08520c2479f4e41 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Tue, 5 Jul 2022 14:56:45 +0300
+Subject: [PATCH] stm32mp1: check for fip-a/fip-b partitions
+
+Check for FIP-A/FIP-B partitions, if regular FIP is not found.
+
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Change-Id: If143854b0cc91e7448f724b1d5f9119662555df9
+---
+ plat/st/common/bl2_io_storage.c         | 17 ++++++++++++++---
+ plat/st/stm32mp1/include/platform_def.h |  2 ++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/plat/st/common/bl2_io_storage.c b/plat/st/common/bl2_io_storage.c
+index 2ea9f627e..7e7f29de5 100644
+--- a/plat/st/common/bl2_io_storage.c
++++ b/plat/st/common/bl2_io_storage.c
+@@ -404,9 +404,20 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
+ 			partition_init(GPT_IMAGE_ID);
+ 			entry = get_partition_entry(FIP_IMAGE_NAME);
+ 			if (entry == NULL) {
+-				ERROR("Could NOT find the %s partition!\n",
+-				      FIP_IMAGE_NAME);
+-				return -ENOENT;
++				boot_api_context_t *boot_context =
++					(boot_api_context_t *)stm32mp_get_boot_ctx_address();
++				uint32_t boot_part = boot_context->boot_partition_used_toboot;
++
++				if (boot_part == 1U)
++					entry = get_partition_entry(FIP_IMAGE_NAME_A);
++				else
++					entry = get_partition_entry(FIP_IMAGE_NAME_B);
++
++				if (entry == NULL) {
++					ERROR("Could NOT find the %s partition!\n",
++							FIP_IMAGE_NAME);
++					return -ENOENT;
++				}
+ 			}
+ 
+ 			image_block_spec.offset = entry->start;
+diff --git a/plat/st/stm32mp1/include/platform_def.h b/plat/st/stm32mp1/include/platform_def.h
+index 4434afa17..39c3b0b48 100644
+--- a/plat/st/stm32mp1/include/platform_def.h
++++ b/plat/st/stm32mp1/include/platform_def.h
+@@ -40,6 +40,8 @@
+ #define BL33_BINARY_TYPE		U(0x0)
+ #else /* STM32MP_USE_STM32IMAGE */
+ #define FIP_IMAGE_NAME			"fip"
++#define FIP_IMAGE_NAME_A		"fip-a"
++#define FIP_IMAGE_NAME_B		"fip-b"
+ #endif /* STM32MP_USE_STM32IMAGE */
+ 
+ #define STM32MP_PRIMARY_CPU		U(0x0)

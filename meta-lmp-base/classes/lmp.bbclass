@@ -35,7 +35,7 @@ preload_apps () {
 # This is set by our CI scripts and allows the initial target to populated by
 # the build process so it can be incorporated at the first aktualizr-lite run
 IMAGE_CMD:ota:append () {
-	if [ -n "${GARAGE_CUSTOMIZE_TARGET}" ]; then
+	if [ -n "${GARAGE_CUSTOMIZE_TARGET}" ] && [ -n "${SOTA_PACKED_CREDENTIALS}" ] ; then
 		bbplain "Running command(${GARAGE_CUSTOMIZE_TARGET}) to customize target"
 		${GARAGE_CUSTOMIZE_TARGET} \
 		${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var/sota/import/installed_versions \

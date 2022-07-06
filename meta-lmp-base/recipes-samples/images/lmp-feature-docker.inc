@@ -6,5 +6,6 @@ CORE_IMAGE_BASE_INSTALL += " \
 "
 
 EXTRA_USERS_PARAMS += "\
+groupadd docker; \
 usermod -a -G docker ${LMP_USER}; \
 "

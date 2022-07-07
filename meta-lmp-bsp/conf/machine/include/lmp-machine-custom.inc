@@ -450,6 +450,7 @@ WKS_FILE_DEPENDS:append:stm32mp15-disco = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script:stm32mp15-disco = "u-boot-ostree-scr-fit"
 WKS_FILE_DEPENDS:remove:stm32mp15-disco = "st-image-bootfs st-image-userfs"
 WKS_FILE:sota:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee-sota.wks.in"
+LMP_BOOT_FIRMWARE_FILES:stm32mp15-disco = "arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32 fip/fip-stm32mp157c-dk2-optee.bin boot.itb"
 
 # Xilinx
 USE_XSCT_TARBALL:zynqmp = "1"

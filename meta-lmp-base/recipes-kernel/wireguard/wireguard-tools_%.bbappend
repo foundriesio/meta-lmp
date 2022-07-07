@@ -11,3 +11,6 @@ FILES:${PN}-wg-quick = " \
 
 RDEPENDS:${PN} = "kernel-module-wireguard"
 RDEPENDS:${PN}-wg-quick = "${PN} bash"
+
+# SPDX data can miss updates due caching
+do_create_runtime_spdx[nostamp] = "1"

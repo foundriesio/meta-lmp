@@ -49,6 +49,7 @@ PACKAGECONFIG:remove:pn-runc-opencontainers = "static"
 PACKAGECONFIG:append:pn-qemu-native = " libusb"
 PACKAGECONFIG:append:pn-networkmanager = " libedit"
 PACKAGECONFIG:remove:pn-networkmanager = " readline"
+PACKAGECONFIG:append:pn-kmod = " openssl"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"

@@ -118,6 +118,9 @@ WARN_QA:remove = "${WARN_TO_ERROR_QA}"
 ERROR_QA:append = " ${WARN_TO_ERROR_QA}"
 ERROR_QA:remove = "version-going-backwards"
 
+# Required to avoid removing libraries used during signing
+RM_WORK_EXCLUDE += "make-mod-scripts"
+
 LMP_USER ?= "fio"
 # LMP_PASSWORD is a hassed password. To generate the hash use the following command on a host machine
 # mkpasswd -m sha512crypt

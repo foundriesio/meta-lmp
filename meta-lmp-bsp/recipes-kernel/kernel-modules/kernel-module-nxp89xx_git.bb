@@ -7,6 +7,8 @@ MRVL_SRC ?= "git://source.codeaurora.org/external/imx/mwifiex.git;protocol=https
 SRC_URI = "${MRVL_SRC};branch=${SRCBRANCH}"
 SRCREV = "3c2a3c2cd25e9dce95f34c21bb4e728647eb64ee"
 
+DEPENDS += "virtual/kernel"
+
 S = "${WORKDIR}/git/mxm_wifiex/wlan_src"
 
 inherit module

@@ -8,7 +8,7 @@ inherit setuptools3 systemd
 SRC_URI = "git://github.com/jhaws1982/docker-vxcan.git;branch=master;protocol=https \
            file://docker-vxcan.service \
 "
-SRCREV = "813370f5bf1ec3a5254a6541c25ea9db33fde8de"
+SRCREV = "54e7dd42d5d39fb3cf30a9c479081865fca42534"
 
 S = "${WORKDIR}/git"
 B = "${S}"

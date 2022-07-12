@@ -21,6 +21,7 @@ PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"
+PACKAGECONFIG[aklite-offline] = "-DBUILD_AKLITE_OFFLINE=ON,-DBUILD_AKLITE_OFFLINE=OFF,"
 
 PKCS11_ENGINE_PATH = "${libdir}/engines-3/pkcs11.so"
 
@@ -63,6 +64,7 @@ FILES:${PN}-get = "${bindir}/${PN}-get"
 FILES:${PN}-lite = " \
                     ${bindir}/${PN}-lite \
                     ${bindir}/aklite-apps \
+                    ${bindir}/aklite-offline \
                     ${nonarch_libdir}/tmpfiles.d/${PN}-lite.conf \
                     "
 FILES:${PN}-lite-lib = "${nonarch_libdir}/lib${PN}_lite.so"

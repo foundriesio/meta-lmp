@@ -50,6 +50,8 @@ PACKAGECONFIG:append:pn-qemu-native = " libusb"
 PACKAGECONFIG:append:pn-networkmanager = " libedit"
 PACKAGECONFIG:remove:pn-networkmanager = " readline"
 PACKAGECONFIG:append:pn-kmod = " openssl"
+PACKAGECONFIG:append:pn-cryptsetup = " luks2"
+PACKAGECONFIG:append:pn-cryptsetup-native = " luks2"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"

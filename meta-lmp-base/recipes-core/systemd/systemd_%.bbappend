@@ -9,6 +9,8 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'efi', 'gnu-efi', '', d)} \
     backlight \
     binfmt \
+    cryptsetup \
+    cryptsetup-plugins \
     gshadow \
     hibernate \
     hostnamed \
@@ -23,7 +25,9 @@ PACKAGECONFIG ?= " \
     nss \
     nss-mymachines \
     nss-resolve \
+    openssl \
     quotacheck \
+    p11kit \
     randomseed \
     resolved \
     serial-getty-generator \
@@ -39,6 +43,16 @@ PACKAGECONFIG ?= " \
     xz \
     zstd \
 "
+
+PACKAGECONFIG[p11kit] = "-Dp11kit=true,-Dp11kit=false,p11-kit"
+PACKAGECONFIG[cryptsetup-plugins] = "-Dlibcryptsetup-plugins=true,-Dlibcryptsetup-plugins=false,cryptsetup,,cryptsetup"
+
+PACKAGE_BEFORE_PN += "${PN}-crypt"
+SUMMARY:${PN}-crypt = "Cryptographic tools and libraries for manipulating LUKS2 devices"
+FILES:${PN}-crypt = "${bindir}/systemd-cryptenroll \
+		     ${nonarch_libdir}/cryptsetup \
+		    "
+RRECOMMENDS:${PN} += "systemd-crypt"
 
 ALTERNATIVE_PRIORITY[resolv-conf] = "300"
 

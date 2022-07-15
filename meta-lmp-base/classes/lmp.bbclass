@@ -1,6 +1,7 @@
 USE_FIOTOOLS ?= "1"
 FIO_PUSH_CMD ?= "fiopush"
 FIO_CHECK_CMD ?= "fiocheck"
+SOTA_TUF_ROOT_DIR ?= "usr/lib/sota/tuf"
 
 # Provided by meta-lmp-bsp or any other compatible BSP layer
 include conf/machine/include/lmp-machine-custom.inc
@@ -10,6 +11,23 @@ include conf/machine/include/lmp-partner-custom.inc
 
 # Allow customizations per factory level
 include conf/machine/include/lmp-factory-custom.inc
+
+provision_root_meta () {
+	if [ -n "${SOTA_TUF_ROOT_FETCHER}" ]; then
+		if [ -f "${SOTA_TUF_ROOT_FETCHER}" ] && [ -x "${SOTA_TUF_ROOT_FETCHER}" ]; then
+			bbplain "Fetching TUF root role metadata to the ostree-based rootfs..."
+
+			FACTORY="${LMP_DEVICE_FACTORY}" \
+			SOTA_TUF_ROOT_DIR="${SOTA_TUF_ROOT_DIR}" \
+			LOG_FILE="${SOTA_TUF_ROOT_LOG_FILE}" \
+				${SOTA_TUF_ROOT_FETCHER}
+		else
+			bbfatal "Provisioning of TUF root role metadata is turned ON, but the specified metadata fetcher is either doesn't exist or is not executable: ${TUF_ROOT_FETCHER}"
+		fi
+	else
+		bbfatal "Provisioning of TUF root role metadata is turned ON, but a metadata fetcher `SOTA_TUF_ROOT_FETCHER` is not defined"
+	fi
+}
 
 preload_apps () {
 	if [ "${COMPOSE_APP_TYPE}" = "restorable" ]; then
@@ -113,6 +131,13 @@ IMAGE_CMD:ostree:append () {
 		mkdir -p usr/lib/ostree-boot
 		touch usr/lib/ostree-boot/.ostree-bootcsumdir-source
 	fi
+
+       if [ "${SOTA_TUF_ROOT_PROVISION}" = "1" ]; then
+               # fetch root role metadata and store them on the ostree-based filesystem
+               provision_root_meta
+       else
+               bbplain "Provisioning of TUF root role metadata is turned OFF"
+       fi
 }
 
 run_fiotool_cmd () {

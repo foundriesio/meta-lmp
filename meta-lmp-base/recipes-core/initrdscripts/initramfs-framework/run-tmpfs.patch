@@ -1,10 +1,10 @@
 diff --git a/finish b/finish
-index 717383e..f34edd8 100755
+index ac0de9f..ed8298d 100755
 --- a/finish
 +++ b/finish
-@@ -14,10 +14,11 @@ finish_run() {
- 
- 		info "Switching root to '$ROOTFS_DIR'..."
+@@ -35,10 +35,11 @@ finish_run() {
+ 			mount -n --move "$dir" "${ROOTFS_DIR}/media/${dir##*/}"
+ 		done
  
 -		debug "Moving /dev, /proc and /sys onto rootfs..."
 +		debug "Moving /dev, /proc, /sys and /run onto rootfs..."
@@ -16,7 +16,7 @@ index 717383e..f34edd8 100755
  		cd $ROOTFS_DIR
  		exec switch_root -c /dev/console $ROOTFS_DIR ${bootparam_init:-/sbin/init}
 diff --git a/init b/init
-index c71ce0c..79cf5c1 100755
+index 567694a..dc2548b 100755
 --- a/init
 +++ b/init
 @@ -78,9 +78,11 @@ EFI_DIR=/sys/firmware/efi  # place to store device firmware information

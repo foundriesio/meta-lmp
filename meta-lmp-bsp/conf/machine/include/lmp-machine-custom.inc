@@ -431,6 +431,7 @@ UBOOT_DTB_LOADADDRESS:stm32mp1common = "0xC4000000"
 KERNEL_IMAGETYPE:stm32mp1common = "zImage"
 KERNEL_IMAGETYPE:sota:stm32mp1common = "fitImage"
 WKS_FILE_DEPENDS:append:stm32mp1common = " e2fsprogs-native"
+MACHINE_FEATURES:remove:stm32mp1common = "fw-update"
 ## stm32mp15-eval
 LINUX_A7_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-a7-examples"
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-m4-examples"

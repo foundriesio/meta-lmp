@@ -1,0 +1,97 @@
+From ab2b325c1ab895e626d4e11a9f26b9e7c968f8d8 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Thu, 23 Jun 2022 21:19:26 +0300
+Subject: [PATCH] feat(stm32mp1): save boot auth status and partition info
+
+Introduce a functionality for saving/restoring boot auth status
+and partition used for booting (FSBL partition on which the boot
+was successful).
+
+Upstream-Status: Backported [https://github.com/ARM-software/arm-trusted-firmware/commit/ab2b325c1ab895e626d4e11a9f26b9e7c968f8d8]
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Change-Id: I4d7f153b70dfc49dad8c1c3fa71111a350caf1ee
+---
+ plat/st/common/include/stm32mp_common.h |  3 +++
+ plat/st/stm32mp1/bl2_plat_setup.c       |  2 ++
+ plat/st/stm32mp1/stm32mp1_private.c     | 22 +++++++++++++++++++---
+ 3 files changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/plat/st/common/include/stm32mp_common.h b/plat/st/common/include/stm32mp_common.h
+index 0010cd8f3..79f81dbb5 100644
+--- a/plat/st/common/include/stm32mp_common.h
++++ b/plat/st/common/include/stm32mp_common.h
+@@ -127,6 +127,9 @@ int stm32mp_unmap_ddr(void);
+ void stm32_save_boot_interface(uint32_t interface, uint32_t instance);
+ void stm32_get_boot_interface(uint32_t *interface, uint32_t *instance);
+ 
++/* Functions to save and get boot authentication status and partition used */
++void stm32_save_boot_auth(uint32_t auth_status, uint32_t boot_partition);
++
+ #if !STM32MP_USE_STM32IMAGE && PSA_FWU_SUPPORT
+ void stm32mp1_fwu_set_boot_idx(void);
+ uint32_t stm32_get_and_dec_fwu_trial_boot_cnt(void);
+diff --git a/plat/st/stm32mp1/bl2_plat_setup.c b/plat/st/stm32mp1/bl2_plat_setup.c
+index 6f5fcc78c..059e1cfd6 100644
+--- a/plat/st/stm32mp1/bl2_plat_setup.c
++++ b/plat/st/stm32mp1/bl2_plat_setup.c
+@@ -316,6 +316,8 @@ void bl2_el3_plat_arch_setup(void)
+ 
+ 	stm32_save_boot_interface(boot_context->boot_interface_selected,
+ 				  boot_context->boot_interface_instance);
++	stm32_save_boot_auth(boot_context->auth_status,
++			     boot_context->boot_partition_used_toboot);
+ 
+ #if STM32MP_USB_PROGRAMMER && STM32MP15
+ 	/* Deconfigure all UART RX pins configured by ROM code */
+diff --git a/plat/st/stm32mp1/stm32mp1_private.c b/plat/st/stm32mp1/stm32mp1_private.c
+index d6ad32559..86b9f237a 100644
+--- a/plat/st/stm32mp1/stm32mp1_private.c
++++ b/plat/st/stm32mp1/stm32mp1_private.c
+@@ -43,8 +43,10 @@
+ #if STM32MP15
+ #define TAMP_BOOT_MODE_BACKUP_REG_ID	U(20)
+ #endif
+-#define TAMP_BOOT_MODE_ITF_MASK		U(0x0000FF00)
++#define TAMP_BOOT_MODE_ITF_MASK		GENMASK(15, 8)
+ #define TAMP_BOOT_MODE_ITF_SHIFT	8
++#define TAMP_BOOT_MODE_AUTH_MASK	GENMASK(23, 16)
++#define TAMP_BOOT_MODE_AUTH_SHIFT	16
+ 
+ /*
+  * Backup register to store fwu update information.
+@@ -52,9 +54,9 @@
+  * (so it should be in Zone 2).
+  */
+ #define TAMP_BOOT_FWU_INFO_REG_ID	U(10)
+-#define TAMP_BOOT_FWU_INFO_IDX_MSK	U(0xF)
++#define TAMP_BOOT_FWU_INFO_IDX_MSK	GENMASK(3, 0)
+ #define TAMP_BOOT_FWU_INFO_IDX_OFF	U(0)
+-#define TAMP_BOOT_FWU_INFO_CNT_MSK	U(0xF0)
++#define TAMP_BOOT_FWU_INFO_CNT_MSK	GENMASK(7, 4)
+ #define TAMP_BOOT_FWU_INFO_CNT_OFF	U(4)
+ 
+ #if defined(IMAGE_BL2)
+@@ -746,6 +748,20 @@ void stm32_get_boot_interface(uint32_t *interface, uint32_t *instance)
+ 	*instance = itf & 0xFU;
+ }
+ 
++void stm32_save_boot_auth(uint32_t auth_status, uint32_t boot_partition)
++{
++	uint32_t boot_status = tamp_bkpr(TAMP_BOOT_MODE_BACKUP_REG_ID);
++
++	clk_enable(RTCAPB);
++
++	mmio_clrsetbits_32(boot_status,
++			   TAMP_BOOT_MODE_AUTH_MASK,
++			   ((auth_status << 4) | (boot_partition & 0xFU)) <<
++			   TAMP_BOOT_MODE_AUTH_SHIFT);
++
++	clk_disable(RTCAPB);
++}
++
+ #if !STM32MP_USE_STM32IMAGE && PSA_FWU_SUPPORT
+ void stm32mp1_fwu_set_boot_idx(void)
+ {
+-- 
+2.25.1
+

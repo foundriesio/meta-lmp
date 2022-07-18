@@ -106,6 +106,11 @@ BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \
     /meta-xilinx-tools/recipes-bsp/u-boot/u-boot-xlnx_%.bbappend \
 "
+# meta-st-stm32mp: mask appends that are not required by lmp
+BBMASK += " \
+    /meta-st-stm32mp/recipes-core/busybox/busybox_%.bbappend \
+    /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.110.bbappend \
+"
 
 # disable xsct tarball by default (xilinx)
 USE_XSCT_TARBALL = "0"

@@ -560,6 +560,8 @@ OSTREE_KERNEL_ARGS:sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_
 # Cross machines / BSPs
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio:imx-nxp-bsp ?= "2021.04"
+## Prefer the BSP kernel module
+PREFERRED_VERSION_kernel-module-imx-gpu-viv:imx-nxp-bsp ?= "6.4.3.p2.4"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
 PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.17.0"
 PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.17.0"

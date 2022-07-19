@@ -43,6 +43,7 @@ ROOT_DEVICE=$(realpath ${ROOT_DEVICE})
 # get the partition number and type
 INFO=$(udevadm info --query=property --name=${ROOT_DEVICE})
 PART_ENTRY_NUMBER=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NUMBER=' | cut -d'=' -f2)
+PART_ENTRY_NAME=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NAME=' | cut -d'=' -f2)
 
 # in case the root device is not on a partitioned media
 if [ "x$PART_ENTRY_NUMBER" = "x" ]; then
@@ -71,6 +72,10 @@ fi
 END=$((${SIZE} - 1))
 PARTOF=$(echo "${INFO}" | grep '^ID_PART_ENTRY_OFFSET=' | cut -d'=' -f2)
 echo -e "d\n${PART_ENTRY_NUMBER}\nn\n${TYPE}${PART_ENTRY_NUMBER}\n${PARTOF}\n${END}\nw\n" | ${FDISK} ${DEVICE}
+
+if [ -n "${PART_ENTRY_NAME}" ]; then
+	${SGDISK} --change-name=${PART_ENTRY_NUMBER}:"${PART_ENTRY_NAME}" ${DEVICE}
+fi
 
 ${PARTX} -u ${DEVICE}
 ${RESIZE2FS} "${ROOT_DEVICE}"

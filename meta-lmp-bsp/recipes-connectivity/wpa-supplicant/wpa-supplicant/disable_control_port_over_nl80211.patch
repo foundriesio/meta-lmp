@@ -1,0 +1,26 @@
+wpa-supplicant 2.10 enables NL80211_EXT_FEATURE_CONTROL_PORT_OVER_NL80211 by
+default if provided by the driver, but that causes a handshake issue with ath10k
+(wireless device used on imx8mm-evka).
+
+Can be reverted once better investigated and reproduced with latest firmware
+and kernel (from 5.15 BSP).
+
+Upstream-Status: Inappropriate [lmp specific]
+
+diff --git a/src/drivers/driver_nl80211_capa.c b/src/drivers/driver_nl80211_capa.c
+index 83868b78e..01e7fa919 100644
+--- a/src/drivers/driver_nl80211_capa.c
++++ b/src/drivers/driver_nl80211_capa.c
+@@ -619,9 +619,12 @@ static void wiphy_info_ext_feature_flags(struct wiphy_info_data *info,
+ 			      NL80211_EXT_FEATURE_ENABLE_FTM_RESPONDER))
+ 		capa->flags |= WPA_DRIVER_FLAGS_FTM_RESPONDER;
+ 
++/* Disable WPA_DRIVER_FLAGS_CONTROL_PORT on ath10k as it causes issues on handshake */
++#if 0
+ 	if (ext_feature_isset(ext_features, len,
+ 			      NL80211_EXT_FEATURE_CONTROL_PORT_OVER_NL80211))
+ 		capa->flags |= WPA_DRIVER_FLAGS_CONTROL_PORT;
++#endif
+ 	if (ext_feature_isset(ext_features, len,
+ 			      NL80211_EXT_FEATURE_CONTROL_PORT_NO_PREAUTH))
+ 		capa->flags2 |= WPA_DRIVER_FLAGS2_CONTROL_PORT_RX;

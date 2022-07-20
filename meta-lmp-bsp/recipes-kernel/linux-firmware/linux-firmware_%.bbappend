@@ -56,6 +56,11 @@ do_install:append:imx-nxp-bsp () {
     install -m 0644 ${WORKDIR}/imx-firmware/nxp/FwImage_8997/txpwrlimit_cfg_8997.conf  ${D}${nonarch_base_libdir}/firmware/nxp
 }
 
+do_install:append:stm32mpcommon() {
+    # Set BFL3_EXT_LPO_ISCLOCK for wifi to work with upstream 5.15
+    sed -i "s/^boardflags3=0x08/boardflags3=0x02/g" ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157*
+}
+
 PACKAGES =+ "${PN}-nxp89xx"
 
 FILES:${PN}-nxp89xx = " \

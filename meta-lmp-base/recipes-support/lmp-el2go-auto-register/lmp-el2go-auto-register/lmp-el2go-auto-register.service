@@ -1,0 +1,13 @@
+[Unit]
+Description=Script to auto-register device into Factory via EdgeLock2GO
+Wants=network-online.target time-sync.target systemd-time-wait-sync.service
+After=network-online.target time-sync.target systemd-time-wait-sync.service
+ConditionPathExists=!/var/sota/sql.db
+
+[Service]
+EnvironmentFile=-/etc/default/lmp-el2go-auto-register
+ExecStart=/usr/bin/lmp-el2go-auto-register
+WorkingDirectory=/run
+
+[Install]
+WantedBy=multi-user.target

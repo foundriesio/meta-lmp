@@ -22,7 +22,7 @@ provision_root_meta () {
 			LOG_FILE="${SOTA_TUF_ROOT_LOG_FILE}" \
 				${SOTA_TUF_ROOT_FETCHER}
 		else
-			bbfatal "Provisioning of TUF root role metadata is turned ON, but the specified metadata fetcher is either doesn't exist or is not executable: ${TUF_ROOT_FETCHER}"
+			bbfatal "Provisioning of TUF root role metadata is turned ON, but the specified metadata fetcher is either doesn't exist or is not executable: ${SOTA_TUF_ROOT_FETCHER}"
 		fi
 	else
 		bbfatal "Provisioning of TUF root role metadata is turned ON, but a metadata fetcher `SOTA_TUF_ROOT_FETCHER` is not defined"

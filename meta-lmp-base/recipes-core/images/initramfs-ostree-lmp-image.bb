@@ -7,8 +7,13 @@ PACKAGE_INSTALL = "initramfs-framework-base \
 	initramfs-module-ostree-factory-reset \
 	${VIRTUAL-RUNTIME_base-utils} \
 	${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'initramfs-framework-ima', '', d)} \
+	${@bb.utils.contains('DISTRO_FEATURES', 'luks', '${PACKAGE_INSTALL_LUKS}', '', d)} \
 	udev base-passwd e2fsprogs-e2fsck \
 	${ROOTFS_BOOTSTRAP_INSTALL}"
+
+PACKAGE_INSTALL_LUKS = "\
+	${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'initramfs-module-cryptfs-pkcs11', '', d)} \
+"
 
 SYSTEMD_DEFAULT_TARGET = "initrd.target"
 

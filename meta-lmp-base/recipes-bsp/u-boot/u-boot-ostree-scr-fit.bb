@@ -34,6 +34,8 @@ do_compile() {
 	sed -i -e '/@@INCLUDE_COMMON_ALTERNATIVE@@/ {' -e 'r ${S}/boot-common-alternative.cmd.in' -e 'd' -e '}' \
 			boot.cmd.in
 	sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
+	    -e 's/@@OSTREE_SPLIT_BOOT@@/${OSTREE_SPLIT_BOOT}/g' \
+	    -e 's/@@OSTREE_DEPLOY_USR_OSTREE_BOOT@@/${OSTREE_DEPLOY_USR_OSTREE_BOOT}/g' \
 			boot.cmd.in > boot.cmd
 	sed -e 's/@@FIT_HASH_ALG@@/${FIT_HASH_ALG}/' \
 	    -e 's/@@UBOOT_SIGN_KEYNAME@@/${UBOOT_SIGN_KEYNAME}/' \

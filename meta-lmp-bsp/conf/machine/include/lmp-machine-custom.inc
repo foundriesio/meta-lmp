@@ -341,8 +341,11 @@ KERNEL_CLASSES:sota:mx8mm-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mm-nxp-bsp ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE:mx8mm-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
-WKS_FILE:sota:mx8mm-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mm-nxp-bsp = "flash_evk_spl"
+## LUKS
+OSTREE_SPLIT_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
+OSTREE_DEPLOY_USR_OSTREE_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
+WKS_FILE:sota:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', 'sdimage-imx8-spl-split-boot-sota.wks.in', 'sdimage-imx8-spl-sota.wks.in', d)}"
 ## iMX8MM EVK
 KERNEL_DEVICETREE:append:imx8mm-lpddr4-evk = " freescale/imx8mm-evkb.dtb"
 KMACHINE:imx8mm-lpddr4-evk = "imx8mmevk"

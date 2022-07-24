@@ -12,6 +12,8 @@ SRC_URI = "\
     file://sudoers \
 "
 
+# With luks we need to decrease the fs size, so give enough overhead
+IMAGE_OVERHEAD_FACTOR = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '2.3', '1.3', d)}"
 # In most cases the rootfs will be expanded to fit available storage
 # However, for QEMU targets we need to pre-allocate enough free space
 # for a full image update

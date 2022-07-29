@@ -8,4 +8,5 @@ CORE_IMAGE_BASE_INSTALL += " \
     tmux \
     minicom \
     devmem2 \
+    curl \
 "

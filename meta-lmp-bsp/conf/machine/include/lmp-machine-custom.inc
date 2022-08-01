@@ -341,6 +341,8 @@ PREFERRED_PROVIDER_virtual/kernel:mx8mm-nxp-bsp ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE:mx8mm-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE:sota:mx8mm-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mm-nxp-bsp = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio:mx8mm-nxp-bsp ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8mm-nxp-bsp ?= "imx-2022.04"
 ## iMX8MM EVK
 KERNEL_DEVICETREE:append:imx8mm-lpddr4-evk = " freescale/imx8mm-evkb.dtb"
 KMACHINE:imx8mm-lpddr4-evk = "imx8mmevk"

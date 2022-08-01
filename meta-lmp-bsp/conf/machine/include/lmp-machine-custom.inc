@@ -345,6 +345,8 @@ KERNEL_CLASSES:sota:mx8mm-generic-bsp = " kernel-lmp-fitimage "
 PREFERRED_PROVIDER_virtual/kernel:mx8mm-nxp-bsp ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE:mx8mm-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
 IMXBOOT_TARGETS:mx8mm-nxp-bsp = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio:mx8mm-nxp-bsp ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8mm-nxp-bsp ?= "imx-2022.04"
 ## LUKS
 OSTREE_SPLIT_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"

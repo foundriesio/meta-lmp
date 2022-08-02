@@ -41,8 +41,8 @@ setenv update_image_boot0 'echo "${fio_msg} writing ${image_path} ..."; run set_
 setenv backup_primary_image 'echo "${fio_msg} backing up primary boot image set ..."; mmc dev ${devnum} 1 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 2 && mmc write ${loadaddr} 0x0 0x3FFE'
 setenv restore_primary_image 'echo "${fio_msg} restore primary boot image set ..."; mmc dev ${devnum} 2 && mmc read ${loadaddr} 0x0 0x3FFE && mmc dev ${devnum} 1 && mmc write ${loadaddr} 0x0 0x3FFE'
 
-setenv update_primary_image1 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_s_image}"; setenv start_blk "${bootloader_s}";  run load_image; run update_image_boot0'
-setenv update_primary_image2 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_s_image}"; setenv start_blk "${bootloader2_s}";  run load_image; run update_image_boot0'
+setenv update_primary_image1 'if test "${ostree_deploy_usr}" = "1"; then setenv image_path "${bootdir}/${bootloader_s_image}"; else setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_s_image}"; fi; setenv start_blk "${bootloader_s}";  run load_image; run update_image_boot0'
+setenv update_primary_image2 'if test "${ostree_deploy_usr}" = "1"; then setenv image_path "${bootdir}/${bootloader2_s_image}"; else setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_s_image}"; fi; setenv start_blk "${bootloader2_s}";  run load_image; run update_image_boot0'
 
 setenv update_primary_image 'run update_primary_image1; run update_primary_image2'
 

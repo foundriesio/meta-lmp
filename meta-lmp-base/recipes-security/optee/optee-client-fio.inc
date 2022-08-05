@@ -9,7 +9,6 @@ inherit systemd cmake
 
 SRC_URI = " \
     git://github.com/OP-TEE/optee_client.git;protocol=https;branch=master \
-    file://ckteec.module \
     file://tee-supplicant.service \
 "
 
@@ -25,12 +24,7 @@ EXTRA_OECMAKE = " \
 EXTRA_OECMAKE:append:toolchain-clang = " -DCFG_WERROR=0"
 
 do_install:append() {
-    install -d ${D}${datadir}/p11-kit/modules
-    install -m 0644 ${WORKDIR}/ckteec.module ${D}${datadir}/p11-kit/modules/ckteec.module
     install -D -p -m0644 ${WORKDIR}/tee-supplicant.service ${D}${systemd_system_unitdir}/tee-supplicant.service
 }
 
 SYSTEMD_SERVICE:${PN} = "tee-supplicant.service"
-FILES:${PN} += " \
-    ${datadir}/p11-kit/modules \
-"

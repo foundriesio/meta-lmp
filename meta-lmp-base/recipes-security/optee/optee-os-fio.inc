@@ -77,6 +77,7 @@ addtask deploy before do_build after do_install
 SYSROOT_DIRS += "${nonarch_base_libdir}/firmware"
 
 PACKAGES += "${PN}-ta"
+RPROVIDES:${PN}-ta = "virtual-optee-os-ta"
 
 FILES:${PN} = "${nonarch_base_libdir}/firmware/"
 FILES:${PN}-ta = "${nonarch_base_libdir}/optee_armtz"

@@ -23,7 +23,8 @@ OPTEE_TA_SIGN_KEY ?= ""
 EXTRA_OEMAKE += "${@oe.utils.ifelse('${OPTEE_TA_SIGN_KEY}' != '', 'TA_SIGN_KEY=${OPTEE_TA_SIGN_KEY}', '')}"
 
 EXTRA_OEMAKE += "V=1 \
-                 LIBGCC_LOCATE_CFLAGS=--sysroot=${STAGING_DIR_HOST} \
+                 CFLAGS32=--sysroot=${STAGING_DIR_HOST} \
+                 CFLAGS64=--sysroot=${STAGING_DIR_HOST} \
                  COMPILER=${OPTEE_COMPILER} \
                  OPTEE_CLIENT_EXPORT=${STAGING_DIR_HOST}${prefix} \
                  TEEC_EXPORT=${STAGING_DIR_HOST}${prefix} \

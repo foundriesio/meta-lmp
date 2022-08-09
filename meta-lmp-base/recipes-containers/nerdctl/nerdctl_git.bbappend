@@ -5,9 +5,4 @@ SRC_URI:append = "\
 	file://0001-extend-ps-output.patch;patchdir=src/import \
 	"
 
-do_install() {
-	install -d ${D}${bindir}
-	install -m 755 ${S}/src/import/_output/nerdctl ${D}${bindir}
-}
-
 RDEPENDS:${PN} += "cni"

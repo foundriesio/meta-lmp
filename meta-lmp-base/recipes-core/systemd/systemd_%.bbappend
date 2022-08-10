@@ -89,5 +89,7 @@ do_install:append() {
 	ln -sf ../systemd-timesyncd-update.service ${D}${systemd_system_unitdir}/sysinit.target.wants/systemd-timesyncd-update.service
 
 	# Remove systemd-boot as it is provided by a separated recipe and we can't disable via pkgconfig
-	rm -rf ${D}${nonarch_base_libdir}/systemd/boot
+	if ${@bb.utils.contains('PACKAGECONFIG', 'efi', 'true', 'false', d)}; then
+		rm -r ${D}${nonarch_libdir}/systemd/boot
+	fi
 }

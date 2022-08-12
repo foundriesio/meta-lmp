@@ -7,6 +7,7 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'rfkill', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xkbcommon', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'efi', 'gnu-efi', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'tpm2', 'tpm2', '', d)} \
     backlight \
     binfmt \
     cryptsetup \

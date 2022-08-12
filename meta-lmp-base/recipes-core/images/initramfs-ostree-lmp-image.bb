@@ -11,8 +11,10 @@ PACKAGE_INSTALL = "initramfs-framework-base \
 	udev base-passwd e2fsprogs-e2fsck \
 	${ROOTFS_BOOTSTRAP_INSTALL}"
 
-PACKAGE_INSTALL_LUKS = "\
-	${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'initramfs-module-cryptfs-pkcs11', '', d)} \
+# Prefer TPM 2.0 when both are available as OP-TEE requires RPMB/eMMC
+PACKAGE_INSTALL_LUKS ?= "\
+	${@bb.utils.contains('MACHINE_FEATURES', 'tpm2', 'initramfs-module-cryptfs-tpm2', \
+		bb.utils.contains('MACHINE_FEATURES', 'optee', 'initramfs-module-cryptfs-pkcs11', '', d), d)} \
 "
 
 SYSTEMD_DEFAULT_TARGET = "initrd.target"

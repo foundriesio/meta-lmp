@@ -1,0 +1,134 @@
+#!/bin/sh
+# Copyright (C) 2022 Fondries.IO
+# SPDX-License-Identifier: MIT
+#
+# Encrypt (reencrypt) root device with LUKS2
+
+cryptfs_enabled() {
+	return 0
+}
+
+e2fsck_check() {
+	if [ -n "`which e2fsck`" ]; then
+		fsckout=`e2fsck -p -v ${1}`
+		fsckret=$?
+		# Avoid empty newline after summary
+		echo "e2fsck: ${fsckout}" >/dev/kmsg
+		# Return code >= 4 means uncorrected / operational error
+		## TODO: force boot into a recovery mode or similar, as there is really not
+		## much we can do in case the fs is corrupted in a bad way
+		if [ "${fsckret}" -ge "4" ]; then
+			echo "e2fsck: WARNING: file system errors left uncorrected: ret ${fsckret}" >/dev/kmsg
+		fi
+	fi
+}
+
+cryptfs_gen_passphrase() {
+	# Static as at this point we just need a key for encrypting and later enrolling a new keyslot
+	mkdir -p /run/cryptsetup
+	echo -n "fiopassphrase" > /run/cryptsetup/passphrase
+}
+
+cryptfs_run() {
+	# Similar to rootfs, we need to wait for the device to become available
+	C=0
+	delay=${bootparam_rootdelay:-1}
+	timeout=${bootparam_roottimeout:-5}
+	while true; do
+		if [ $(( $C * $delay )) -gt $timeout ]; then
+			fatal "root '$bootparam_root' doesn't exist or does not contain a /dev."
+		fi
+
+		if [ -n "$bootparam_root" ]; then
+			root_dev="$bootparam_root"
+			if [ "`echo ${bootparam_root} | cut -c1-5`" = "UUID=" ]; then
+				root_uuid=`echo $bootparam_root | cut -c6-`
+				root_dev=`readlink -f /dev/disk/by-uuid/$root_uuid`
+			elif [ "`echo ${bootparam_root} | cut -c1-9`" = "PARTUUID=" ]; then
+				root_partuuid=`echo $bootparam_root | cut -c10-`
+				root_dev=`readlink -f /dev/disk/by-partuuid/$root_partuuid`
+			elif [ "`echo ${bootparam_root} | cut -c1-10`" = "PARTLABEL=" ]; then
+				root_partlabel=`echo $bootparam_root | cut -c11-`
+				root_dev=`readlink -f /dev/disk/by-partlabel/$root_partlabel`
+			elif [ "`echo ${bootparam_root} | cut -c1-6`" = "LABEL=" ]; then
+				root_label=`echo $bootparam_root | cut -c7-`
+				root_dev=`readlink -f /dev/disk/by-label/$root_label`
+			fi
+
+			[ -e "$root_dev" ] && break
+		fi
+		debug "Sleeping for $delay second(s) to wait root to settle..."
+		sleep $delay
+		C=$(( $C + 1 ))
+	done
+
+	flags=""
+	if [ -n "$bootparam_rootflags" ]; then
+		flags="$flags -o$bootparam_rootflags"
+	fi
+	if [ -n "$bootparam_rootfstype" ]; then
+		flags="$flags -t$bootparam_rootfstype"
+	fi
+
+	# Identify desired token format (e.g. pkcs11, tpm2, etc) and import required functions
+	[ ! -d /etc/cryptfs ] && fatal "No initramfs cryptfs module found"
+	luks_token=`ls /etc/cryptfs | head -n1`
+	[ -z "${luks_token}" ] && fatal "No valid initramfs cryptfs module found"
+	. /etc/cryptfs/${luks_token}
+
+	cryptfs_check_${luks_token}
+
+	cryptfs_gen_passphrase
+
+	if ! cryptsetup isLuks ${root_dev}; then
+		# Partition not yet encrypted
+		msg "${root_dev} not yet encrypted, encrypting with LUKS2"
+		e2fsck_check ${root_dev}
+		block_size=`dumpe2fs -h ${root_dev} 2>/dev/null | grep "^Block size" | cut -d ':' -f 2 | tr -d ' '`
+		block_count=`dumpe2fs -h ${root_dev} 2>/dev/null | grep "^Block count" | cut -d ':' -f 2 | tr -d ' '`
+		luks_size=33554432 # 32M
+		new_block_count=$(($block_count - $luks_size / $block_size))
+		resize2fs -p ${root_dev} ${new_block_count}
+		if [ $? -ne 0 ]; then
+			fatal "Failed to resize ${root_dev} to allow extra size required for luks support"
+		fi
+
+		cat /run/cryptsetup/passphrase | cryptsetup -v reencrypt --encrypt --disable-locks --reduce-device-size 32m ${root_dev}
+
+		# Align label and UUID if used as boot parameter (not safe, better use the proper device path instead)
+		if [ -n "$root_label" ]; then
+			cryptsetup config --label ${root_label} ${root_dev}
+		fi
+		if [ -n "$root_uuid" ]; then
+			yes | cryptsetup luksUUID --uuid ${root_uuid} ${root_dev}
+		fi
+	fi
+
+	luks_name="`basename ${root_dev}`_crypt"
+
+	# Check if online encryption is still in progress
+	if cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
+		# Run recovery process
+		cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name}
+		e2fsck_check /dev/mapper/${luks_name}
+		cat /run/cryptsetup/passphrase | cryptsetup -v reencrypt --resume-only ${root_dev}
+		cryptsetup close ${luks_name}
+	fi
+
+	cryptfs_pre_${luks_token}
+
+	if ! cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
+		msg "Enrolling LUKS2 keyslot based on ${luks_token} token"
+		cryptfs_enroll_${luks_token} ${root_dev}
+	fi
+
+	! cryptsetup luksOpen ${root_dev} ${luks_name} &&
+		fatal "Unable to open the LUKS partition ${root_dev} with the enrolled ${luks_token} token"
+
+	cryptfs_post_${luks_token}
+
+	e2fsck_check /dev/mapper/${luks_name}
+
+	mount ${flags} /dev/mapper/${luks_name} ${ROOTFS_DIR} ||
+		(cryptsetup luksClose ${luks_name} && fatal "Failed to mount LUKS ${luks_name}")
+}

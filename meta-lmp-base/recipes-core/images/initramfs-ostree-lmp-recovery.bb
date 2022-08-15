@@ -4,6 +4,7 @@ inherit core-image nopackages
 
 SRC_URI = "\
 	file://uboot_env.sh \
+	file://udhcpc.sh \
 "
 
 PACKAGE_INSTALL = " \
@@ -62,6 +63,7 @@ fakeroot do_populate_recovery_rootfs () {
 	if ${@bb.utils.contains('SOTA_CLIENT_FEATURES', 'ubootenv', 'true', 'false', d)}; then
 		install -m 0755 ${WORKDIR}/uboot_env.sh ${IMAGE_ROOTFS}/recovery.d/10-uboot_env
 	fi
+	install -m 0755 ${WORKDIR}/udhcpc.sh ${IMAGE_ROOTFS}/recovery.d/20-udhcpc
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_recovery_rootfs; "

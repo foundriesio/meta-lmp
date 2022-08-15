@@ -5,6 +5,7 @@ inherit core-image nopackages
 SRC_URI = "\
 	file://uboot_env.sh \
 	file://udhcpc.sh \
+	file://image_download.sh \
 "
 
 PACKAGE_INSTALL = " \
@@ -65,6 +66,7 @@ fakeroot do_populate_recovery_rootfs () {
 		install -m 0755 ${WORKDIR}/uboot_env.sh ${IMAGE_ROOTFS}/recovery.d/10-uboot_env
 	fi
 	install -m 0755 ${WORKDIR}/udhcpc.sh ${IMAGE_ROOTFS}/recovery.d/20-udhcpc
+	install -m 0755 ${WORKDIR}/image_download.sh ${IMAGE_ROOTFS}/recovery.d/30-image_download
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_recovery_rootfs; "

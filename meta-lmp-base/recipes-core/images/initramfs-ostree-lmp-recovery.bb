@@ -20,7 +20,7 @@ PACKAGE_INSTALL = " \
 	udev \
 	util-linux-mount \
 	${@bb.utils.contains('MACHINE_FEATURES', 'fiovb', 'optee-fiovb', '' , d)} \
-	${@bb.utils.contains('SOTA_CLIENT_FEATURES', 'ubootenv', 'u-boot-fw-utils', '' , d)} \
+	${@bb.utils.contains('SOTA_CLIENT_FEATURES', 'ubootenv', 'u-boot-fio-env u-boot-fw-utils', '' , d)} \
 	${ROOTFS_BOOTSTRAP_INSTALL}"
 
 

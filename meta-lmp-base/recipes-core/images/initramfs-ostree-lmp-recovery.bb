@@ -11,6 +11,7 @@ PACKAGE_INSTALL = " \
 	e2fsprogs-mke2fs \
 	e2fsprogs-resize2fs \
 	initramfs-framework-base \
+	initramfs-module-debug \
 	initramfs-module-ostree-recovery \
 	initramfs-module-udev \
 	ostree \

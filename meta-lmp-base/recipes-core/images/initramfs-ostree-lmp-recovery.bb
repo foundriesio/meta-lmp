@@ -2,6 +2,10 @@ DESCRIPTION = "Linux microPlatform OSTree initramfs recovery image"
 
 inherit core-image nopackages
 
+SRC_URI = "\
+	file://uboot_env.sh \
+"
+
 PACKAGE_INSTALL = " \
 	base-files \
 	base-passwd \
@@ -46,3 +50,18 @@ IMAGE_OVERHEAD_FACTOR = "1.0"
 BAD_RECOMMENDATIONS += " \
 	initramfs-module-rootfs \
 "
+
+addtask rootfs after do_unpack
+
+python () {
+    d.delVarFlag("do_fetch", "noexec")
+    d.delVarFlag("do_unpack", "noexec")
+}
+
+fakeroot do_populate_recovery_rootfs () {
+	if ${@bb.utils.contains('SOTA_CLIENT_FEATURES', 'ubootenv', 'true', 'false', d)}; then
+		install -m 0755 ${WORKDIR}/uboot_env.sh ${IMAGE_ROOTFS}/recovery.d/10-uboot_env
+	fi
+}
+
+IMAGE_PREPROCESS_COMMAND += "do_populate_recovery_rootfs; "

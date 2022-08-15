@@ -23,9 +23,10 @@ FILES:initramfs-module-ostree-factory-reset = "/init.d/98-ostree_factory_reset"
 
 SUMMARY:initramfs-module-ostree-recovery = "recovery initramfs for ostree based filesystems"
 RDEPENDS:initramfs-module-ostree-recovery = "${PN}-base ostree"
-FILES:initramfs-module-ostree-recovery = "/init.d/98-ostree_recovery"
+FILES:initramfs-module-ostree-recovery = "/init.d/98-ostree_recovery /recovery.d"
 
 do_install:append() {
+	install -d ${D}/recovery.d
 	install -m 0755 ${WORKDIR}/ostree ${D}/init.d/98-ostree
 	install -m 0755 ${WORKDIR}/ostree_factory_reset ${D}/init.d/98-ostree_factory_reset
 	install -m 0755 ${WORKDIR}/ostree_recovery ${D}/init.d/98-ostree_recovery

@@ -7,8 +7,44 @@ ostree_recovery_enabled() {
 }
 
 ostree_recovery_run() {
-	msg "Starting ostree recovery shell..."
-	sh
+	RECOVERY_MODULES_DIR=/recovery.d
+
+	# Load and run recovery modules same way as done for initramfs
+	for m in `ls $RECOVERY_MODULES_DIR/ | sort -n`; do
+		# Skip backup files
+		if [ "`echo $m | sed -e 's/\~$//'`" != "$m" ]; then
+			continue
+		fi
+
+		module=`basename $m | cut -d'-' -f 2`
+		debug "Loading recovery module $module"
+
+		# pre hooks
+		for h in $MODULE_PRE_HOOKS; do
+			debug "Calling recovery module hook (pre): $h"
+			eval "$h pre $module"
+			debug "Finished recovery module hook (pre): $h"
+		done
+
+		# process module
+		. $RECOVERY_MODULES_DIR/$m
+
+		if ! eval "${module}_enabled"; then
+			debug "Skipping recovery module $module"
+			continue
+		fi
+
+		debug "Running recovery ${module}_run"
+		eval "${module}_run"
+
+		# post hooks
+		for h in $MODULE_POST_HOOKS; do
+			debug "Calling recovery module hook (post): $h"
+			eval "$h post $module"
+			debug "Finished recovery module hook (post): $h"
+		done
+	done
+
 	msg "Forcing reboot after recovery"
-	reboot -f
+	sync && reboot -f
 }

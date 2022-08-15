@@ -3,7 +3,6 @@ DESCRIPTION = "Linux microPlatform OSTree initramfs recovery image"
 inherit core-image nopackages
 
 PACKAGE_INSTALL = " \
-	aktualizr-lite \
 	base-files \
 	base-passwd \
 	busybox \
@@ -14,7 +13,6 @@ PACKAGE_INSTALL = " \
 	initramfs-module-debug \
 	initramfs-module-ostree-recovery \
 	initramfs-module-udev \
-	ostree \
 	udev \
 	util-linux-mount \
 	${@bb.utils.contains('MACHINE_FEATURES', 'fiovb', 'optee-fiovb', '' , d)} \

@@ -76,6 +76,8 @@ OSTREE_KERNEL_ARGS:qemuarm64 ?= "console=ttyAMA0 ${OSTREE_KERNEL_ARGS_COMMON}"
 UBOOT_ENTRYPOINT:qemuarm64 = "0x40080000"
 MACHINE_FEATURES:append:qemuarm64-secureboot = " optee"
 OSTREE_SPLIT_BOOT:qemuarm64-secureboot = "1"
+OSTREE_DEPLOY_USR_OSTREE_BOOT:qemuarm64-secureboot = "1"
+INITRAMFS_RECOVERY_IMAGE:qemuarm64-secureboot = "initramfs-ostree-lmp-recovery"
 WKS_FILE:sota:qemuarm64-secureboot = "sdimage-split-boot-sota.wks.in"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM:qemuarm64-secureboot = "-m 1057"

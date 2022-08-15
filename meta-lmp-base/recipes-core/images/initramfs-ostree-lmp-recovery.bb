@@ -18,6 +18,7 @@ PACKAGE_INSTALL = " \
 	initramfs-module-debug \
 	initramfs-module-ostree-recovery \
 	initramfs-module-udev \
+	os-release \
 	udev \
 	util-linux-mount \
 	${@bb.utils.contains('MACHINE_FEATURES', 'fiovb', 'optee-fiovb', '' , d)} \

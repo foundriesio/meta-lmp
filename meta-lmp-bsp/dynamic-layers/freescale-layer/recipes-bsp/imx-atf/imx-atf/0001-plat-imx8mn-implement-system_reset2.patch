@@ -1,0 +1,27 @@
+From 159a2308a6d6f59bd1c91b3952c57b1bb83bc090 Mon Sep 17 00:00:00 2001
+From: Michael Scott <mike@foundries.io>
+Date: Sun, 27 Mar 2022 20:58:20 -0700
+Subject: [PATCH 1/2] plat: imx8mn: implement system_reset2
+
+This allows for the setup of PSCI RESET2 function
+
+Signed-off-by: Michael Scott <mike@foundries.io>
+---
+ plat/imx/imx8m/imx8mn/imx8mn_psci.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/plat/imx/imx8m/imx8mn/imx8mn_psci.c b/plat/imx/imx8m/imx8mn/imx8mn_psci.c
+index b8fc171ef..291b7aabf 100644
+--- a/plat/imx/imx8m/imx8mn/imx8mn_psci.c
++++ b/plat/imx/imx8m/imx8mn/imx8mn_psci.c
+@@ -27,6 +27,7 @@ static const plat_psci_ops_t imx_plat_psci_ops = {
+ 	.pwr_domain_pwr_down_wfi = imx_pwr_domain_pwr_down_wfi,
+ 	.get_sys_suspend_power_state = imx_get_sys_suspend_power_state,
+ 	.system_reset = imx_system_reset,
++	.system_reset2 = imx_system_reset2,
+ 	.system_off = imx_system_off,
+ };
+ 
+-- 
+2.37.1
+

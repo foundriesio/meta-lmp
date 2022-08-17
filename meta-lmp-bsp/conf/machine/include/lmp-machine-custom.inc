@@ -403,6 +403,36 @@ WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # imx8mp comes with an AzureWave CM276MA PCIe Card
 MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
 
+# iMX8MN
+UBOOT_SIGN_ENABLE:sota:mx8mn-generic-bsp = "1"
+IMX_DEFAULT_BOOTLOADER:mx8mn-generic-bsp ?= "u-boot-fio"
+UBOOT_DTB_LOADADDRESS:mx8mn-generic-bsp = "0x43000000"
+PREFERRED_PROVIDER_virtual/trusted-firmware-a:mx8mn-generic-bsp ?= "imx-atf"
+EXTRA_IMAGEDEPENDS:append:mx8mn-generic-bsp = "virtual/trusted-firmware-a"
+UBOOT_CLASSES:mx8mn-generic-bsp = "uboot-fitimage"
+ATF_BINARY:mx8mn-generic-bsp = "arm-trusted-firmware.bin"
+UBOOT_CONFIG:mx8mn-generic-bsp = ""
+LMP_BOOT_FIRMWARE_FILES:mx8mn-generic-bsp = "imx-boot u-boot.itb"
+IMAGE_BOOT_FILES:mx8mn-generic-bsp = "imx-boot u-boot.itb ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+IMAGE_BOOT_FILES:sota:mx8mn-generic-bsp = "boot.itb"
+WKS_FILE_DEPENDS:append:mx8mn-generic-bsp = " u-boot-default-script imx-boot"
+PREFERRED_PROVIDER_u-boot-default-script:mx8mn-generic-bsp = "u-boot-base-scr"
+PREFERRED_PROVIDER_u-boot-default-script:sota:mx8mn-generic-bsp = "u-boot-ostree-scr-fit"
+KERNEL_IMAGETYPE:sota:mx8mn-generic-bsp = "fitImage"
+KERNEL_CLASSES:sota:mx8mn-generic-bsp = " kernel-lmp-fitimage "
+## iMX8: Use latest NXP BSP downstream kernel
+PREFERRED_PROVIDER_virtual/kernel:mx8mn-generic-bsp ?= "linux-lmp-fslc-imx"
+MACHINE_FIRMWARE:mx8mn-generic-bsp = "linux-firmware-imx-sdma-imx7d"
+WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
+IMXBOOT_TARGETS:mx8mn-generic-bsp = "flash_evk_spl_ddr4"
+# iMX8MN DDR4 EVK
+KMACHINE:imx8mn-ddr4-evk = "imx8mn-evk"
+OSTREE_KERNEL_ARGS:imx8mn-ddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
+SOTA_CLIENT_FEATURES:append:imx8mn-ddr4-evk = " ubootenv"
+UBOOT_MACHINE:imx8mn-ddr4-evk = "imx8mn_ddr4_evk_config"
+BOOTSCR_LOAD_ADDR:imx8mn-ddr4-evk = "0x44800000"
+MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach-conf"
+
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/bootloader:stm32mp1common = "u-boot-fio"

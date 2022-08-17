@@ -10,6 +10,7 @@ SRC_URI:append:mx8m-nxp-bsp = " \
      file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \
      file://0004-iMX8M-also-create-nohdmi-boot-image.patch \
      file://0001-iMX8M-change-DDR-DMEM-padding.patch \
+     file://0001-iMX8M-add-SPL-only-build-for-DDR4.patch \
 "
 
 SRC_URI:append:mx8qm-nxp-bsp = " \
@@ -25,7 +26,7 @@ do_compile[depends] = " \
 
 do_compile:prepend:mx8-nxp-bsp() {
     for target in ${IMXBOOT_TARGETS}; do
-        if [ "${target}" = "flash_evk_spl" ]; then
+        if [ "${target}" = "flash_evk_spl" ] || [ "${target}" = "flash_evk_spl_ddr4" ]; then
             # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
             # spl and its dtb separate (dt-spl.dtb will contain public hash of
             # used to check the signature of u-boot fit-image)
@@ -41,7 +42,7 @@ do_compile:prepend:mx8-nxp-bsp() {
 
 do_compile:append() {
     for target in ${IMXBOOT_TARGETS}; do
-        if [ "${target}" = "flash_evk_spl" ]; then
+        if [ "${target}" = "flash_evk_spl" ] || [ "${target}" = "flash_evk_spl_ddr4" ]; then
             if [ -e "${BOOT_STAGING}/flash.bin-nohdmi" ]; then
                 cp ${BOOT_STAGING}/flash.bin-nohdmi ${S}/${BOOT_CONFIG_MACHINE}-${target}-nohdmi
             fi
@@ -51,7 +52,7 @@ do_compile:append() {
 
 do_install:append() {
     for target in ${IMXBOOT_TARGETS}; do
-        if [ "${target}" = "flash_evk_spl" ]; then
+        if [ "${target}" = "flash_evk_spl" ] || [ "${target}" = "flash_evk_spl_ddr4" ]; then
             if [ -e "${S}/${BOOT_CONFIG_MACHINE}-${target}-nohdmi" ]; then
                 install -m 0644 ${S}/${BOOT_CONFIG_MACHINE}-${target}-nohdmi ${D}/boot/
             fi
@@ -61,7 +62,7 @@ do_install:append() {
 
 do_deploy:append() {
     for target in ${IMXBOOT_TARGETS}; do
-        if [ "${target}" = "flash_evk_spl" ]; then
+        if [ "${target}" = "flash_evk_spl" ] || [ "${target}" = "flash_evk_spl_ddr4" ]; then
             # Also create imx-boot link with the machine name
             if [ ! -e "${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}" ]; then
                 ln -sf ${BOOT_CONFIG_MACHINE}-${target} ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}

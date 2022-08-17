@@ -78,3 +78,6 @@ EXTRA_OEMAKE:append:imx8mm-lpddr4-evk-sec = " \
 EXTRA_OEMAKE:append:imx8mp-lpddr4-evk-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y CFG_RPMB_FS_DEV_ID=2 \
 "
+EXTRA_OEMAKE:append:imx8mn-ddr4-evk-sec = " \
+    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y CFG_RPMB_FS_DEV_ID=2 \
+"

@@ -1,0 +1,62 @@
+From 4966fadb0d380ac4e2b8e42703300d2df2cb9690 Mon Sep 17 00:00:00 2001
+From: Michael Scott <mike@foundries.io>
+Date: Thu, 4 Aug 2022 17:46:13 -0700
+Subject: [PATCH] [FIO internal] arm64: dts: imx8mn-evk.dtsi: re-add bluetooth
+ reset configuration
+
+This fixes the Murata 1MW bluetooth initialization
+
+Signed-off-by: Michael Scott <mike@foundries.io>
+---
+ arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
+index 1493b546e023..d68ac33ce668 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
+@@ -28,6 +28,14 @@ memory@40000000 {
+ 		reg = <0x0 0x40000000 0 0x80000000>;
+ 	};
+ 
++	modem_reset: modem-reset {
++		compatible = "gpio-reset";
++		reset-gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
++		reset-delay-us = <2000>;
++		reset-post-delay-ms = <40>;
++		#reset-cells = <0>;
++	};
++
+ 	ir_recv: ir-receiver {
+ 		compatible = "gpio-ir-receiver";
+ 		gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+@@ -441,6 +449,7 @@ &uart1 { /* BT */
+ 	assigned-clocks = <&clk IMX8MN_CLK_UART1>;
+ 	assigned-clock-parents = <&clk IMX8MN_SYS_PLL1_80M>;
+ 	fsl,uart-has-rtscts;
++	resets = <&modem_reset>;
+ 	status = "okay";
+ };
+ 
+@@ -467,8 +476,10 @@ &usdhc1 {
+ 	pinctrl-1 = <&pinctrl_usdhc1_100mhz>, <&pinctrl_wlan>;
+ 	pinctrl-2 = <&pinctrl_usdhc1_200mhz>, <&pinctrl_wlan>;
+ 	bus-width = <4>;
++	pm-ignore-notify;
+ 	keep-power-in-suspend;
+ 	non-removable;
++	cap-power-off-card;
+ 	wakeup-source;
+ 	/delete-property/ vmmc-supply;
+ 	mmc-pwrseq = <&usdhc1_pwrseq>;
+@@ -717,6 +728,7 @@ MX8MN_IOMUXC_UART1_RXD_UART1_DCE_RX	0x140
+ 			MX8MN_IOMUXC_UART1_TXD_UART1_DCE_TX	0x140
+ 			MX8MN_IOMUXC_UART3_RXD_UART1_DCE_CTS_B	0x140
+ 			MX8MN_IOMUXC_UART3_TXD_UART1_DCE_RTS_B	0x140
++			MX8MN_IOMUXC_SD1_DATA4_GPIO2_IO6	0x19
+ 		>;
+ 	};
+ 
+-- 
+2.37.1
+

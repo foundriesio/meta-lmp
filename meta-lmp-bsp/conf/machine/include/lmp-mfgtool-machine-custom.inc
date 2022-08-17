@@ -60,6 +60,14 @@ IMAGE_BOOT_FILES:mx8mm-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE:mx8mm-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx8mm-generic-bsp = " kernel-lmp-fitimage "
 
+# iMX8MN
+UBOOT_SIGN_ENABLE:mx8mn-generic-bsp = "1"
+IMX_DEFAULT_BOOTLOADER:mx8mn-generic-bsp ?= "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot-default-script:mx8mn-generic-bsp = "u-boot-ostree-scr"
+IMAGE_BOOT_FILES:mx8mn-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
+KERNEL_IMAGETYPE:mx8mn-generic-bsp = "fitImage"
+KERNEL_CLASSES:mx8mn-generic-bsp = " kernel-lmp-fitimage "
+
 # Apalis-iMX6
 UBOOT_SIGN_ENABLE:apalis-imx6 = "1"
 PREFERRED_PROVIDER_virtual/kernel:apalis-imx6 = "linux-lmp-dev-mfgtool"

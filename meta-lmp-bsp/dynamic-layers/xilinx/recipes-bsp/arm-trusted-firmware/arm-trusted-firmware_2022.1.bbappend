@@ -1,3 +1,9 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
+SRC_URI:append:versal = " \
+	file://plat-versal-support-raw-bin.patch \
+"
+
 # Align provides with meta-arm
 PROVIDES += "virtual/trusted-firmware-a"
 

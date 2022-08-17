@@ -306,6 +306,8 @@ KERNEL_CLASSES:sota:mx8mq-generic-bsp = " kernel-lmp-fitimage "
 PREFERRED_PROVIDER_virtual/kernel:mx8mq-nxp-bsp ?= "linux-lmp-fslc-imx"
 WKS_FILE:sota:mx8mq-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mq-nxp-bsp = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio:mx8mq-nxp-bsp ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8mq-nxp-bsp ?= "imx-2022.04"
 ## iMX8MQ EVK
 KMACHINE:imx8mq-evk = "imx8mqevk"
 OSTREE_KERNEL_ARGS:imx8mq-evk ?= "console=tty1 console=ttymxc0,115200 earlycon=ec_imx6q,0x30860000,115200 root=/dev/mmcblk0p2 rootfstype=ext4"

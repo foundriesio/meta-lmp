@@ -16,7 +16,8 @@ setenv fdt_file_final ${fdt_file}
 setenv fit_addr ${ramdisk_addr_r}
 
 setenv dtoverlay zynqmp-sck-kv-g-rev${card1_rev}.dtbo
-setenv bootcmd_custom_run 'bootm ${fit_addr}#conf-system-top.dtb#conf-${dtoverlay}'
+setenv enable_tpm2 'tpm2 init; tpm2 startup TPM2_SU_CLEAR'
+setenv bootcmd_custom_run 'run enable_tpm2; bootm ${fit_addr}#conf-system-top.dtb#conf-${dtoverlay}'
 
 setenv bootloader_image "boot.bin"
 setenv bootloader_s_image ${bootloader_image}

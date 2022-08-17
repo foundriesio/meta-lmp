@@ -14,6 +14,7 @@ SRC_URI:append = " \
     file://0004-plat-imx8mq-SiP-call-for-secondary-boot.patch \
     file://0001-plat-imx8mp-SiP-call-for-secondary-boot.patch \
     file://0001-plat-imx8mn-implement-system_reset2.patch \
+    file://0002-plat-imx8mn-SiP-call-for-secondary-boot.patch \
 "
 
 SRC_URI:append:toradex = " \

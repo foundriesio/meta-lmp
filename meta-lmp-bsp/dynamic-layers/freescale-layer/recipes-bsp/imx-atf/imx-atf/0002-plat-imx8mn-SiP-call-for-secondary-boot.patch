@@ -1,0 +1,43 @@
+From 03437de41f4082961eedc97b8fbda0d2be0d403d Mon Sep 17 00:00:00 2001
+From: Michael Scott <mike@foundries.io>
+Date: Mon, 1 Aug 2022 12:16:20 -0700
+Subject: [PATCH 2/2] plat: imx8mn: SiP call for secondary boot
+
+Signed-off-by: Michael Scott <mike@foundries.io>
+---
+ plat/imx/imx8m/gpc_common.c                  | 2 +-
+ plat/imx/imx8m/imx8mn/include/platform_def.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/plat/imx/imx8m/gpc_common.c b/plat/imx/imx8m/gpc_common.c
+index be1a650c8..7c9725610 100644
+--- a/plat/imx/imx8m/gpc_common.c
++++ b/plat/imx/imx8m/gpc_common.c
+@@ -414,7 +414,7 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
+ 		SMC_SET_GP(handle, CTX_GPREG_X1, ret1);
+ 		SMC_SET_GP(handle, CTX_GPREG_X2, ret2);
+ 		break;
+-#if defined(PLAT_imx8mp)
++#if defined(PLAT_imx8mp) || defined(PLAT_imx8mn)
+ 	case IMX_SIP_SRC_SET_SECONDARY_BOOT:
+ 		if (x2)
+ 			mmio_setbits_32(IMX_SRC_BASE + SRC_GPR10_OFFSET,
+diff --git a/plat/imx/imx8m/imx8mn/include/platform_def.h b/plat/imx/imx8m/imx8mn/include/platform_def.h
+index e612214b9..8c52640a6 100644
+--- a/plat/imx/imx8m/imx8mn/include/platform_def.h
++++ b/plat/imx/imx8m/imx8mn/include/platform_def.h
+@@ -119,9 +119,11 @@
+ #define SRC_M4RCR			U(0xc)
+ #define SRC_OTG1PHY_SCR			U(0x20)
+ #define SRC_GPR1_OFFSET			U(0x74)
++#define SRC_GPR10_OFFSET		U(0x98)
+ 
+ #define SRC_SCR_M4_ENABLE_MASK		BIT(3)
+ #define SRC_SCR_M4C_NON_SCLR_RST_MASK  	BIT(0)
++#define SRC_GPR10_PERSIST_SECONDARY_BOOT	BIT(30)
+ 
+ #define SNVS_LPCR			U(0x38)
+ #define SNVS_LPCR_SRTC_ENV		BIT(0)
+-- 
+2.37.1
+

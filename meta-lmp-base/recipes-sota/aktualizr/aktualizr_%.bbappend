@@ -13,10 +13,6 @@ SRC_URI:lmp = "gitsm://github.com/foundriesio/aktualizr-lite;protocol=https;bran
     ${@ d.expand("https://tuf-cli-releases.ota.here.com/cli-${GARAGE_SIGN_PV}.tgz;unpack=0;name=garagesign") if not oe.types.boolean(d.getVar('GARAGE_SIGN_AUTOVERSION')) else ''} \
 "
 
-SRC_URI:append:libc-musl = " \
-    file://utils.c-disable-tilde-as-it-is-not-supported-by-musl.patch \
-"
-
 PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"

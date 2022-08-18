@@ -274,6 +274,8 @@ UBOOT_CONFIG:imx8qm-mek = ""
 UBOOT_SUFFIX:imx8qm-mek = "bin"
 UBOOT_MACHINE:imx8qm-mek = "imx8qm_mek_defconfig"
 UBOOT_DTB_NAME:imx8qm-mek ?= "fsl-imx8qm-mek.dtb"
+PREFERRED_VERSION_u-boot-fio:imx8qm-mek ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:imx8qm-mek ?= "imx-2022.04"
 ## Toradex Apalis iMX8QM
 KERNEL_BUILTIN_WIREGUARD:apalis-imx8 = "0"
 OSTREE_KERNEL_ARGS:apalis-imx8 ?= "pci=nomsi console=tty1 console=ttyLP1,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"

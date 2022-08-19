@@ -27,4 +27,5 @@ TF_A_SOC_NAME  = "${STM32MP_SOC_NAME}"
 SRC_URI += " \
      file://0001-feat-stm32mp1-save-boot-auth-status-and-partition-in.patch \
      file://0002-feat-stm32mp1-check-for-fip-a-fip-b-partitions.patch \
+     file://0003-FIO-interal-stm32mp1-support-for-boot-script-in-FIP.patch \
      "

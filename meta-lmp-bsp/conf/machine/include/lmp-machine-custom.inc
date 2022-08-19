@@ -590,9 +590,9 @@ PREFERRED_VERSION_u-boot-fio:imx-nxp-bsp ?= "2021.04"
 ## Prefer the BSP kernel module
 PREFERRED_VERSION_kernel-module-imx-gpu-viv:imx-nxp-bsp ?= "6.4.3.p2.4"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
-PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.17.0"
-PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.17.0"
-PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.17.0"
+PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.18.0"
+PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.18.0"
+PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.18.0"
 ## We don't use imx-boot-container just yet
 UBOOT_PROVIDES_BOOT_CONTAINER:mx8-generic-bsp = ""
 ## No need to install u-boot, already a WKS dependency

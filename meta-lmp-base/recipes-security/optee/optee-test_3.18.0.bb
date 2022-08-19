@@ -1,6 +1,6 @@
 require optee-test-fio.inc
 
-SRCREV = "44a31d02379bd8e50762caa5e1592ad81e3339af"
+SRCREV = "da5282a011b40621a2cf7a296c11a35c833ed91b"
 
 # Due OpenSSL 3.0 deprecated warnings
 CFLAGS += "-Wno-error=deprecated-declarations"

@@ -39,6 +39,9 @@ FIP_UBOOT_SUFFIX ?= "bin"
 FIP_UBOOT_DTB        ?= "u-boot"
 FIP_UBOOT_DTB_SUFFIX ?= "dtb"
 FIP_UBOOT_CONFIG ?= "trusted"
+# U-Boot boot cmd script
+FIP_BOOT_ITB_BINARY ?= "boot.itb"
+FIP_BOOT_ITB_UUID ?= "c75cd5f6-1f9c-11ed-861d-0242ac120002"
 
 # Configure default folder path for binaries to package
 FIP_DEPLOYDIR_FIP    ?= "${DEPLOYDIR}/fip"
@@ -47,6 +50,7 @@ FIP_DEPLOYDIR_TFA    ?= "${DEPLOYDIR}/arm-trusted-firmware/bl32"
 FIP_DEPLOYDIR_FWCONF ?= "${DEPLOYDIR}/arm-trusted-firmware/fwconfig"
 FIP_DEPLOYDIR_OPTEE  ?= "${DEPLOY_DIR}/images/${MACHINE}/optee"
 FIP_DEPLOYDIR_UBOOT  ?= "${DEPLOY_DIR}/images/${MACHINE}/u-boot"
+FIP_DEPLOYDIR_BOOT_ITB  ?= "${DEPLOY_DIR}/images/${MACHINE}"
 
 # Set default configuration to allow FIP signing
 FIP_SIGN_ENABLE ??= ''
@@ -55,9 +59,11 @@ FIP_SIGN_KEY_EXTERNAL ??= ''
 FIP_SIGN_KEY_PASS ??= ''
 FIP_SIGN_SUFFIX ??= ''
 
+
 # Define FIP dependency build
 FIP_DEPENDS += "virtual/bootloader"
 FIP_DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os', '', d)}"
+FIP_DEPENDS += "u-boot-default-script"
 FIP_DEPENDS:class-nativesdk = ""
 
 # -----------------------------------------------
@@ -208,6 +214,8 @@ do_deploy:append:class-target() {
             else
                 bbfatal "Wrong configuration '${bl32_conf}' found in FIP_CONFIG for ${config} config."
             fi
+            # Integrate boot.itb script into FIP image
+            FIP_BOOT_ITB_CONF="--blob uuid=${FIP_BOOT_ITB_UUID},file=${FIP_DEPLOYDIR_BOOT_ITB}/${FIP_BOOT_ITB_BINARY}"
             # Init certificate settings
             if [ "${FIP_SIGN_ENABLE}" = "1" ]; then
                 soc_sign_suffix=""
@@ -243,6 +251,7 @@ do_deploy:append:class-target() {
                         ${FIP_HWCONFIG} \
                         ${FIP_NTFW} \
                         ${FIP_EXTRACONF} \
+                        ${FIP_BOOT_ITB_CONF} \
                         ${FIP_CERTCONF} \
                         --tb-fw ${WORKDIR}/bl2-fake.bin
                 # Remove fake bl2 binary
@@ -257,6 +266,7 @@ do_deploy:append:class-target() {
                             ${FIP_NTFW} \
                             ${FIP_BL31CONF} \
                             ${FIP_EXTRACONF} \
+                            ${FIP_BOOT_ITB_CONF} \
                             ${FIP_CERTCONF} \
                             ${FIP_DEPLOYDIR_FIP}/${FIP_BASENAME}-${dt}-${config}${FIP_SIGN_SUFFIX}.${FIP_SUFFIX}"
             ${FIPTOOL} create \
@@ -265,6 +275,7 @@ do_deploy:append:class-target() {
                             ${FIP_NTFW} \
                             ${FIP_BL31CONF} \
                             ${FIP_EXTRACONF} \
+                            ${FIP_BOOT_ITB_CONF} \
                             ${FIP_CERTCONF} \
                             ${FIP_DEPLOYDIR_FIP}/${FIP_BASENAME}-${dt}-${config}${FIP_SIGN_SUFFIX}.${FIP_SUFFIX}
         done

@@ -36,8 +36,10 @@ do_install() {
         for file in ${LMP_BOOT_FIRMWARE_FILES}; do
             if [ -f ${S}/${file} ]; then
                 install -m 644 ${S}/${file} ${D}${nonarch_base_libdir}/firmware/
-            else
+            elif [ -f ${DEPLOY_DIR_IMAGE}/${file} ]; then
                 install -m 644 ${DEPLOY_DIR_IMAGE}/${file} ${D}${nonarch_base_libdir}/firmware/
+            else
+                bbfatal "File "${file}" not found in "${S}" and "${DEPLOY_DIR_IMAGE}""
             fi
         done
 

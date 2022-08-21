@@ -179,6 +179,8 @@ IMAGE_BOOT_FILES:mx6ul-generic-bsp = " boot.scr uEnv.txt zImage"
 KERNEL_IMAGETYPE:sota:mx6ul-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx6ul-generic-bsp = " kernel-lmp-fitimage "
 WKS_FILE:mx6ul-generic-bsp:sota = "sdimage-imx6-spl-fit-sota.wks"
+PREFERRED_VERSION_u-boot-fio:mx6ul-nxp-bsp ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx6ul-nxp-bsp ?= "imx-2022.04"
 # iMX6UL EVK
 SOTA_CLIENT_FEATURES:append:imx6ulevk = " ubootenv"
 UBOOT_MACHINE:imx6ulevk = "mx6ul_14x14_evk_defconfig"

@@ -1,0 +1,36 @@
+From 1857d321cf942057c1340a3a123ab871826fd784 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Mon, 22 Aug 2022 14:51:13 +0000
+Subject: [PATCH] drivers: imx: dcp: fix compilation address error
+
+hwkey->data will never be null because it is an array
+
+struct tee_hw_unique_key {
+        uint8_t data[HW_UNIQUE_KEY_LENGTH];
+};
+
+Fix the following:
+
+| core/drivers/imx/dcp/dcp_huk.c: In function 'tee_otp_get_hw_unique_key':
+| core/drivers/imx/dcp/dcp_huk.c:71:23: error: the comparison will always evaluate as 'true' for the address of 'data' will never be NULL [-Werror=address]
+|    71 |         if (!hwkey || !hwkey->data) {
+|       |                       ^
+
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ core/drivers/imx/dcp/dcp_huk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/drivers/imx/dcp/dcp_huk.c b/core/drivers/imx/dcp/dcp_huk.c
+index db3ffee4b..ca79ff78b 100644
+--- a/core/drivers/imx/dcp/dcp_huk.c
++++ b/core/drivers/imx/dcp/dcp_huk.c
+@@ -68,7 +68,7 @@ TEE_Result tee_otp_get_hw_unique_key(struct tee_hw_unique_key *hwkey)
+ {
+ 	TEE_Result ret = TEE_ERROR_GENERIC;
+ 
+-	if (!hwkey || !hwkey->data) {
++	if (!hwkey) {
+ 		EMSG("HUK generation failed, hwkey structure is NULL");
+ 		return TEE_ERROR_BAD_PARAMETERS;
+ 	}

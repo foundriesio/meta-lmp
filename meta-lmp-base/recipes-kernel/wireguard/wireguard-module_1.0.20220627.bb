@@ -1,6 +1,6 @@
 require recipes-kernel/wireguard/wireguard.inc
 
-SRCREV = "edb7f9587794326b3023fdf2c2e5cc69faf31a33"
+SRCREV = "18fbcd68a35a892527345dc5679d0b2d860ee004"
 
 SRC_URI = "git://git.zx2c4.com/wireguard-linux-compat;protocol=https;branch=master"
 

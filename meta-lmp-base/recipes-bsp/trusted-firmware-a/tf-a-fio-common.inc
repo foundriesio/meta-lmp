@@ -1,12 +1,9 @@
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/tf-a-stm32mp:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/tf-a-fio:"
 
 inherit deploy
-inherit fip-utils-stm32mp
-
-# Include TF-A config definitions
-include tf-a-stm32mp-config.inc
+inherit fip-utils
 
 # ------------------------------------
 # Set MBEDTLS support
@@ -30,12 +27,12 @@ B = "${WORKDIR}/build"
 EXTERNALSRC_BUILD:pn-${PN} = "${WORKDIR}/build"
 
 DEPENDS += "dtc-native"
-DEPENDS:append = " ${@bb.utils.contains('TF_A_ENABLE_DEBUG_WRAPPER', '1', 'stm32wrapper4dbg-native', '', d)}"
 
 # Default log level
-ST_TF_A_DEBUG ??= "1"
-ST_TF_A_LOG_LEVEL_RELEASE ??= "20"
-ST_TF_A_LOG_LEVEL_DEBUG ??= "40"
+TF_A_DEBUG_TRACE ??= "1"
+TF_A_DEBUG ??= "1"
+TF_A_LOG_LEVEL_RELEASE ??= "20"
+TF_A_LOG_LEVEL_DEBUG ??= "40"
 
 # Configure make settings
 EXTRA_OEMAKE += 'PLAT=${TFA_PLATFORM}'
@@ -43,12 +40,12 @@ EXTRA_OEMAKE += 'ARCH=${TFA_ARM_ARCH}'
 EXTRA_OEMAKE += 'ARM_ARCH_MAJOR=${TFA_ARM_MAJOR}'
 EXTRA_OEMAKE += 'CROSS_COMPILE=${TARGET_PREFIX}'
 # Debug support
-EXTRA_OEMAKE += "${@bb.utils.contains('ST_TF_A_DEBUG_TRACE', '1', 'DEBUG=${ST_TF_A_DEBUG}', '', d)}"
-EXTRA_OEMAKE += "${@bb.utils.contains('ST_TF_A_DEBUG_TRACE', '1', 'LOG_LEVEL=${ST_TF_A_LOG_LEVEL_DEBUG}', 'LOG_LEVEL=${ST_TF_A_LOG_LEVEL_RELEASE}', d)}"
+EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_DEBUG_TRACE', '1', 'DEBUG=${TF_A_DEBUG}', '', d)}"
+EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_DEBUG_TRACE', '1', 'LOG_LEVEL=${TF_A_LOG_LEVEL_DEBUG}', 'LOG_LEVEL=${TF_A_LOG_LEVEL_RELEASE}', d)}"
 
 # Define default TF-A namings
 TF_A_BASENAME ?= "tf-a"
-TF_A_SUFFIX ?= "stm32"
+TF_A_SUFFIX ?= ""
 
 # Output the ELF generated
 ELF_DEBUG_ENABLE ?= ""
@@ -82,9 +79,6 @@ FWCONFIG_NAME ?= "fw-config"
 # Set default TF-A config
 TF_A_CONFIG ?= ""
 
-# Enable the wrapper for debug
-TF_A_ENABLE_DEBUG_WRAPPER ??= "1"
-
 # Set default configuration to allow signing
 TF_A_SIGN_ENABLE ??= "0"
 TF_A_ENCRYPTED_ENABLE ??= "0"
@@ -96,7 +90,7 @@ TF_A_METADATA_SUFFIX ?= "bin"
 TF_A_METADATA_BINARY ??= "${TF_A_METADATA_NAME}.${TF_A_METADATA_SUFFIX}"
 
 TF_A_METADATA_TOOL ?= "tools/fwu_gen_metadata/fwumd_tool.py"
-TF_A_METADATA_JSON ?= "plat/st/stm32mp1/default_metadata.json"
+TF_A_METADATA_JSON ?= ""
 
 # Configure specific build flags
 EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_SIGN_ENABLE', '1', 'TRUSTED_BOARD_BOOT=1', '', d)}"
@@ -172,7 +166,7 @@ python () {
     if signature_val and signature_val == "1":
         bb.warn("TF-A SIGNATURE: force to disable DEBUG and decrease log level")
         # force no debug and log level to release
-        d.setVar('ST_TF_A_DEBUG_TRACE', "0")
+        d.setVar('TF_A_DEBUG_TRACE', "0")
 }
 
 # -----------------------------------------------
@@ -230,8 +224,8 @@ do_compile() {
             # Init specific soc settings
             soc_extra_opt=""
             soc_suffix=""
-            if [ -n "${STM32MP_SOC_NAME}" ]; then
-                for soc in ${STM32MP_SOC_NAME}; do
+            if [ -n "${TF_A_SOC_NAME}" ]; then
+                for soc in ${TF_A_SOC_NAME}; do
                     if [ "$(echo ${dt} | grep -c ${soc})" -eq 1 ]; then
                         soc_extra_opt="$(echo ${soc} | awk '{print toupper($0)}')=1"
                         soc_suffix="-${soc}"
@@ -243,9 +237,6 @@ do_compile() {
             # Copy TF-A binary with explicit devicetree filename
             if [ -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}.${TF_A_SUFFIX}" ]; then
                 cp "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}.${TF_A_SUFFIX}" "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}"
-                if [ "${TF_A_ENABLE_DEBUG_WRAPPER}" = "1" ]; then
-                    stm32wrapper4dbg -s "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}.${TF_A_SUFFIX}" -d "${B}/${config}${soc_suffix}/debug-${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}"
-                fi
             fi
             # Specific for bl32 target
             if [ "$(echo ${tf_a_make_target} | grep -cw 'bl32')" = "1" ]; then
@@ -277,8 +268,8 @@ do_deploy() {
         for dt in ${dt_config}; do
             # Init soc suffix
             soc_suffix=""
-            if [ -n "${STM32MP_SOC_NAME}" ]; then
-                for soc in ${STM32MP_SOC_NAME}; do
+            if [ -n "${TF_A_SOC_NAME}" ]; then
+                for soc in ${TF_A_SOC_NAME}; do
                     [ "$(echo ${dt} | grep -c ${soc})" -eq 1 ] && soc_suffix="-${soc}"
                 done
             fi
@@ -288,10 +279,6 @@ do_deploy() {
                     # Install TF-A binary
                     if [ -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" ]; then
                         install -m 644 "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" "${DEPLOYDIR}/arm-trusted-firmware/"
-                        if [ "${TF_A_ENABLE_DEBUG_WRAPPER}" = "1" ]; then
-                            install -d "${DEPLOYDIR}/arm-trusted-firmware/debug"
-                            install -m 644 "${B}/${config}${soc_suffix}/debug-${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" "${DEPLOYDIR}/arm-trusted-firmware/debug/"
-                        fi
                     fi
                     if [ -n "${ELF_DEBUG_ENABLE}" ]; then
                         install -d ${DEPLOYDIR}/arm-trusted-firmware/debug

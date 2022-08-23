@@ -1,6 +1,5 @@
 # Define config for each TF_A_CONFIG
 #   TF_A_CONFIG[config] ?= "<list of devicetree>,<extra opt flags>,<binary basename (default: 'tf-a')>,<make target (default: 'all')>,<type of binary to deploy: [bl2 bl31 bl32 fwconfig] (default 'bl2')>"
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 TF_A_CONFIG[optee]  ?= "${STM32MP_DEVICETREE},AARCH32_SP=optee,,${@bb.utils.contains('FIP_BL31_ENABLE', '1', 'bl31 dtbs', 'dtbs', d)},${@bb.utils.contains('FIP_BL31_ENABLE', '1', 'bl31 fwconfig', 'fwconfig', d)}"
 TF_A_CONFIG[trusted] ?= "${@' '.join(d for d in '${STM32MP_DEVICETREE}'.split() if 'stm32mp15' in d)},AARCH32_SP=sp_min,,bl32 dtbs,bl32 fwconfig"
@@ -23,9 +22,3 @@ TFA_PLATFORM  = "stm32mp1"
 TF_A_SUFFIX   = "stm32"
 TF_A_METADATA_JSON ?= "plat/st/stm32mp1/default_metadata.json"
 TF_A_SOC_NAME  = "${STM32MP_SOC_NAME}"
-
-SRC_URI += " \
-     file://0001-feat-stm32mp1-save-boot-auth-status-and-partition-in.patch \
-     file://0002-feat-stm32mp1-check-for-fip-a-fip-b-partitions.patch \
-     file://0003-FIO-interal-stm32mp1-support-for-boot-script-in-FIP.patch \
-     "

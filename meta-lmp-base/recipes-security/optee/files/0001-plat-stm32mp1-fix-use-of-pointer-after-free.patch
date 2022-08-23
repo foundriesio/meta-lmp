@@ -1,0 +1,43 @@
+From 9dfbef6196959f04589b6c7db07ca564b3bef939 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Tue, 23 Aug 2022 13:24:50 +0000
+Subject: [PATCH] plat-stm32mp1: fix use of pointer after free
+
+| In file included from lib/libutils/isoc/include/assert.h:9,
+|                  from core/include/drivers/serial.h:8,
+|                  from core/include/drivers/stm32_uart.h:10,
+|                  from core/arch/arm/plat-stm32mp1/main.c:14:
+| core/arch/arm/plat-stm32mp1/main.c: In function 'init_console_from_dt':
+| core/arch/arm/plat-stm32mp1/main.c:141:50: error: pointer 'pd' used after 'free' [-Werror=use-after-free]
+|   141 |         IMSG("DTB enables console (%ssecure)", pd->secure ? "" : "non-");
+|       |                                                ~~^~~~~~~~
+| lib/libutils/ext/include/trace.h:41:22: note: in definition of macro 'trace_printf_helper'
+|    41 |                      __VA_ARGS__)
+|       |                      ^~~~~~~~~~~
+| core/arch/arm/plat-stm32mp1/main.c:141:9: note: in expansion of macro 'IMSG'
+|   141 |         IMSG("DTB enables console (%ssecure)", pd->secure ? "" : "non-");
+|       |         ^~~~
+| core/arch/arm/plat-stm32mp1/main.c:139:9: note: call to 'free' here
+|   139 |         free(pd);
+|       |         ^~~~~~~~
+
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ core/arch/arm/plat-stm32mp1/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/arch/arm/plat-stm32mp1/main.c b/core/arch/arm/plat-stm32mp1/main.c
+index ec6d619aa..6a0686f49 100644
+--- a/core/arch/arm/plat-stm32mp1/main.c
++++ b/core/arch/arm/plat-stm32mp1/main.c
+@@ -136,9 +136,9 @@ static TEE_Result init_console_from_dt(void)
+ 	/* Replace early console with the new one */
+ 	console_flush();
+ 	console_data = *pd;
+-	free(pd);
+ 	register_serial_console(&console_data.chip);
+ 	IMSG("DTB enables console (%ssecure)", pd->secure ? "" : "non-");
++	free(pd);
+ 
+ 	return TEE_SUCCESS;
+ }

@@ -24,6 +24,7 @@ SRCBRANCH ?= "master"
 SRC_URI = "git://github.com/foundriesio/optee_os.git;protocol=https;branch=${SRCBRANCH}"
 
 SRC_URI += " file://0001-drivers-imx-dcp-fix-compilation-address-error.patch"
+SRC_URI += " file://0001-plat-stm32mp1-fix-use-of-pointer-after-free.patch"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

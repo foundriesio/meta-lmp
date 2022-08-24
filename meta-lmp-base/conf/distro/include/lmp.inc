@@ -50,6 +50,7 @@ PACKAGECONFIG:append:pn-qemu-native = " libusb"
 PACKAGECONFIG:append:pn-networkmanager = " libedit"
 PACKAGECONFIG:remove:pn-networkmanager = " readline"
 PACKAGECONFIG:append:pn-kmod = " openssl"
+PACKAGECONFIG:append:pn-kmod-native = " openssl"
 PACKAGECONFIG:append:pn-cryptsetup = " luks2"
 PACKAGECONFIG:append:pn-cryptsetup-native = " luks2"
 

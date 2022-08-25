@@ -76,6 +76,7 @@ BUILD_OSTREE_TARBALL ?= "0"
 
 # LMP default classes and overwrites
 INHERIT += "lmp"
+INHERIT += "lmp-staging"
 
 ## Create SPDX (SBOM) by default
 INHERIT += "create-spdx"

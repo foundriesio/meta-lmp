@@ -1,0 +1,170 @@
+From e39b0c3f0650c8a4a2f7c9408707c3ab3c789fee Mon Sep 17 00:00:00 2001
+From: Mike Sul <mike.sul@foundries.io>
+Date: Thu, 25 Aug 2022 13:44:08 +0200
+Subject: [PATCH] cmd: ps: Extend `ps` output
+
+Extend `nerdctl ps --format json` output with the following:
+ - container `Labels`;
+ - details of container State (aka Status).
+
+Since `Status` field is already used for a container status summary
+(e.g. "Exited (1) 15 hours ago") a new field `State` is introduced that
+consists of sub-fields describing container details:
+```
+"State": {
+    "Status": "stopped",
+    "ExitStatus": 1,
+    "ExitTime": "2022-08-25T18:38:27.85885644Z"
+  },
+```
+
+Signed-off-by: Mike <mike.sul@foundries.io>
+---
+ src/import/cmd/nerdctl/compose_ps.go  |  2 +-
+ src/import/cmd/nerdctl/ps.go          | 10 ++++++++--
+ src/import/cmd/nerdctl/start.go       |  2 +-
+ src/import/cmd/nerdctl/stats.go       |  2 +-
+ src/import/cmd/nerdctl/update.go      |  2 +-
+ src/import/pkg/formatter/formatter.go | 14 +++++++-------
+ 6 files changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/src/import/cmd/nerdctl/compose_ps.go b/src/import/cmd/nerdctl/compose_ps.go
+index 5d12cd5..f58307b 100644
+--- a/src/import/cmd/nerdctl/compose_ps.go
++++ b/src/import/cmd/nerdctl/compose_ps.go
+@@ -80,7 +80,7 @@ func composePsAction(cmd *cobra.Command, args []string) error {
+ 		if err != nil {
+ 			return err
+ 		}
+-		status := formatter.ContainerStatus(ctx, container)
++		status, _ := formatter.ContainerStatus(ctx, container)
+ 		if status == "Up" {
+ 			status = "running" // corresponds to Docker Compose v2.0.1
+ 		}
+diff --git a/src/import/cmd/nerdctl/ps.go b/src/import/cmd/nerdctl/ps.go
+index 70fc9f6..c85c0e2 100644
+--- a/src/import/cmd/nerdctl/ps.go
++++ b/src/import/cmd/nerdctl/ps.go
+@@ -108,8 +108,10 @@ type containerPrintable struct {
+ 	Platform  string // nerdctl extension
+ 	Names     string
+ 	Ports     string
++	State     containerd.Status
+ 	Status    string
+ 	Runtime   string // nerdctl extension
++	Labels    map[string]string
+ 	// TODO: "Labels", "LocalVolumes", "Mounts", "Networks", "RunningFor", "Size", "State"
+ }
+ 
+@@ -182,11 +184,13 @@ func printContainers(ctx context.Context, cmd *cobra.Command, containers []conta
+ 			id = id[:12]
+ 		}
+ 
+-		cStatus := formatter.ContainerStatus(ctx, c)
++		cStatus, cState := formatter.ContainerStatus(ctx, c)
+ 		if !strings.HasPrefix(cStatus, "Up") && !all {
+ 			continue
+ 		}
+-
++		if cState == nil {
++			cState = &containerd.Status{Status: containerd.Unknown}
++		}
+ 		p := containerPrintable{
+ 			Command:   formatter.InspectContainerCommand(spec, trunc),
+ 			CreatedAt: info.CreatedAt.Round(time.Second).Local().String(), // format like "2021-08-07 02:19:45 +0900 JST"
+@@ -195,8 +199,10 @@ func printContainers(ctx context.Context, cmd *cobra.Command, containers []conta
+ 			Platform:  info.Labels[labels.Platform],
+ 			Names:     getPrintableContainerName(info.Labels),
+ 			Ports:     formatter.FormatPorts(info.Labels),
++			State:     *cState,
+ 			Status:    cStatus,
+ 			Runtime:   info.Runtime.Name,
++			Labels:    info.Labels,
+ 		}
+ 
+ 		if tmpl != nil {
+diff --git a/src/import/cmd/nerdctl/start.go b/src/import/cmd/nerdctl/start.go
+index 7d2bfe7..3e8cfb8 100644
+--- a/src/import/cmd/nerdctl/start.go
++++ b/src/import/cmd/nerdctl/start.go
+@@ -85,7 +85,7 @@ func startContainer(ctx context.Context, container containerd.Container) error {
+ 		}
+ 		taskCIO = cio.LogURI(logURI)
+ 	}
+-	cStatus := formatter.ContainerStatus(ctx, container)
++	cStatus, _ := formatter.ContainerStatus(ctx, container)
+ 	if cStatus == "Up" {
+ 		logrus.Warnf("container %s is already running", container.ID())
+ 		return nil
+diff --git a/src/import/cmd/nerdctl/stats.go b/src/import/cmd/nerdctl/stats.go
+index 4e38420..86ca042 100644
+--- a/src/import/cmd/nerdctl/stats.go
++++ b/src/import/cmd/nerdctl/stats.go
+@@ -169,7 +169,7 @@ func statsAction(cmd *cobra.Command, args []string) error {
+ 		}
+ 
+ 		for _, c := range containers {
+-			cStatus := formatter.ContainerStatus(ctx, c)
++			cStatus, _ := formatter.ContainerStatus(ctx, c)
+ 			if !all {
+ 				if !strings.HasPrefix(cStatus, "Up") {
+ 					continue
+diff --git a/src/import/cmd/nerdctl/update.go b/src/import/cmd/nerdctl/update.go
+index a587671..e30aceb 100644
+--- a/src/import/cmd/nerdctl/update.go
++++ b/src/import/cmd/nerdctl/update.go
+@@ -170,7 +170,7 @@ func updateContainer(ctx context.Context, client *containerd.Client, id string,
+ 	if err != nil {
+ 		return err
+ 	}
+-	cStatus := formatter.ContainerStatus(ctx, container)
++	cStatus, _ := formatter.ContainerStatus(ctx, container)
+ 	if cStatus == "pausing" {
+ 		return fmt.Errorf("container %q is in pausing state", id)
+ 	}
+diff --git a/src/import/pkg/formatter/formatter.go b/src/import/pkg/formatter/formatter.go
+index 7efb0fb..4a21794 100644
+--- a/src/import/pkg/formatter/formatter.go
++++ b/src/import/pkg/formatter/formatter.go
+@@ -33,7 +33,7 @@ import (
+ 	"github.com/sirupsen/logrus"
+ )
+ 
+-func ContainerStatus(ctx context.Context, c containerd.Container) string {
++func ContainerStatus(ctx context.Context, c containerd.Container) (string, *containerd.Status) {
+ 	// Just in case, there is something wrong in server.
+ 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+ 	defer cancel()
+@@ -45,23 +45,23 @@ func ContainerStatus(ctx context.Context, c containerd.Container) string {
+ 		// when it exits. So, the status will be "created" for this
+ 		// case.
+ 		if errdefs.IsNotFound(err) {
+-			return strings.Title(string(containerd.Created))
++			return strings.Title(string(containerd.Created)), nil
+ 		}
+-		return strings.Title(string(containerd.Unknown))
++		return strings.Title(string(containerd.Unknown)), nil
+ 	}
+ 
+ 	status, err := task.Status(ctx)
+ 	if err != nil {
+-		return strings.Title(string(containerd.Unknown))
++		return strings.Title(string(containerd.Unknown)), nil
+ 	}
+ 
+ 	switch s := status.Status; s {
+ 	case containerd.Stopped:
+-		return fmt.Sprintf("Exited (%v) %s", status.ExitStatus, TimeSinceInHuman(status.ExitTime))
++		return fmt.Sprintf("Exited (%v) %s", status.ExitStatus, TimeSinceInHuman(status.ExitTime)), &status
+ 	case containerd.Running:
+-		return "Up" // TODO: print "status.UpTime" (inexistent yet)
++		return "Up", &status // TODO: print "status.UpTime" (inexistent yet)
+ 	default:
+-		return strings.Title(string(s))
++		return strings.Title(string(s)), &status
+ 	}
+ }
+ 
+-- 
+2.36.0
+

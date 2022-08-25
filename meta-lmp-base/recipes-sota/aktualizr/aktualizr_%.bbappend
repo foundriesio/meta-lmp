@@ -3,15 +3,12 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 BRANCH:lmp = "master"
 SRCREV:lmp = "8ab66e59dd051cd09be50147067d2742b64a8ea7"
 
-SRC_URI:lmp = "gitsm://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH};name=aktualizr \
-    file://aktualizr.service \
+SRC_URI:remove:lmp = "gitsm://github.com/uptane/aktualizr;branch=${BRANCH};name=aktualizr;protocol=https"
+SRC_URI:append:lmp = " \
+    gitsm://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH};name=aktualizr \
     file://aktualizr-lite.service.in \
-    file://aktualizr-secondary.service \
-    file://aktualizr-serialcan.service \
     file://tmpfiles.conf \
-    file://10-resource-control.conf \
-    ${@ d.expand("https://tuf-cli-releases.ota.here.com/cli-${GARAGE_SIGN_PV}.tgz;unpack=0;name=garagesign") if not oe.types.boolean(d.getVar('GARAGE_SIGN_AUTOVERSION')) else ''} \
-"
+    "
 
 PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"

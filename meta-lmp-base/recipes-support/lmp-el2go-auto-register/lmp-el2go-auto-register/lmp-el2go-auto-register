@@ -35,7 +35,7 @@ def run_quietly(args: List[str]):
 
 
 class Pkcs11:
-    LIB = "/usr/lib/libckteec.so.0.1"
+    LIB = "/usr/lib/libckteec.so.0"
 
     def gen_kp(self, slot: str, label: str):
         args = [

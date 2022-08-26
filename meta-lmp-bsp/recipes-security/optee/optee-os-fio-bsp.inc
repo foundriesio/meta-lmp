@@ -1,3 +1,5 @@
+OPTEEMACHINE:am62xx = "k3-am62x"
+OPTEEMACHINE:am64xx = "k3-am64x"
 OPTEEMACHINE:apalis-imx6 = "imx-mx6qapalis"
 OPTEEMACHINE:apalis-imx8 = "imx-mx8qmmek"
 OPTEEMACHINE:imx6ulevk = "imx-mx6ulevk"
@@ -34,6 +36,9 @@ EXTRA_OEMAKE:append:kv260 = " \
 "
 
 # Machine Settings
+EXTRA_OEMAKE:append:am62xx-evm = " \
+    CFG_WITH_SOFTWARE_PRNG=y \
+"
 EXTRA_OEMAKE:append:apalis-imx6 = " \
     CFG_NS_ENTRY_ADDR=0x17800000 CFG_NXP_CAAM=y CFG_CRYPTO_DRIVER=y CFG_HWRNG_PTA=n \
     CFG_TZDRAM_START=0x4e000000 CFG_DT=y CFG_OVERLAY_ADDR=0x16000000 \

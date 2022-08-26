@@ -18,6 +18,7 @@ PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"
 PACKAGECONFIG[aklite-offline] = "-DBUILD_AKLITE_OFFLINE=ON,-DBUILD_AKLITE_OFFLINE=OFF,"
+PACKAGECONFIG[nerdctl] = "-DBUILD_AKLITE_WITH_NERDCTL=ON,-DBUILD_AKLITE_WITH_NERDCTL=OFF,,nerdctl"
 
 PKCS11_ENGINE_PATH = "${libdir}/engines-3/pkcs11.so"
 

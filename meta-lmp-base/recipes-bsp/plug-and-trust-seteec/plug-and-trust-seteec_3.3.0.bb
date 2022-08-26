@@ -3,11 +3,11 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 SRC_URI = "git://github.com/foundriesio/plug-and-trust-seteec;branch=main;protocol=https"
-SRCREV = "f88be2ce7a35a8adb9a7bdd6f8cdb1907119d553"
+SRCREV = "f9df65c413b64784fc096bb19b2b25c3b37b498c"
 
 DEPENDS = "openssl optee-client"
 
-inherit cmake dos2unix
+inherit cmake dos2unix pkgconfig
 
 S = "${WORKDIR}/git"
 
@@ -31,11 +31,6 @@ EXTRA_OECMAKE += "\
     -DWithSETEEC=ON -DEL2GO_HOSTNAME="${EL2GO_HOSTNAME}" \
 "
 
-do_install:append() {
-    install -d ${D}${sysconfdir}/ssl
-    install -m 0644 ${S}/nxp_iot_agent/ex/src/openssl_conf_v111.cnf ${D}${sysconfdir}/ssl/openssl_conf_sss.cnf
-}
-
 FILES:${PN} += "\
     ${libdir}/liba7x_utils.so \
     ${libdir}/libex_common.so \
@@ -47,6 +42,6 @@ FILES:${PN} += "\
     ${libdir}/libSSS_APIs.so \
     ${libdir}/libSEMS_LITE_AGENT_APIs.so \
     ${libdir}/libsssapisw.so \
-    ${libdir}/libsss_engine.so \
+    ${libdir}/engines-3 \
 "
 FILES:${PN}-dev = "${includedir} ${libdir}/libpaho*.so ${libdir}/cmake ${datadir}/cmake ${datadir}/se05x"

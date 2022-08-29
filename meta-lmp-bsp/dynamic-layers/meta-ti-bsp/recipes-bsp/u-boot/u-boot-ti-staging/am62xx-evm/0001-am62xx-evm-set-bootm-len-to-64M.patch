@@ -1,4 +1,4 @@
-From a94945325466109d9723b520b2fee1ce9370f1d9 Mon Sep 17 00:00:00 2001
+From 16ece5009a3e09d350a02cd4c22a91b2a3df49fa Mon Sep 17 00:00:00 2001
 From: Tim Anderson <tim.anderson@foundries.io>
 Date: Fri, 17 Jun 2022 16:27:45 +0000
 Subject: [PATCH] am62xx-evm: set bootm len to 64M
@@ -9,10 +9,10 @@ Signed-off-by: Tim Anderson <tim.anderson@foundries.io>
  1 file changed, 2 insertions(+)
 
 diff --git a/include/configs/am62x_evm.h b/include/configs/am62x_evm.h
-index eb7c2a287c..6ae3f4ad34 100644
+index f6a0bc4275..60b1aef6ef 100644
 --- a/include/configs/am62x_evm.h
 +++ b/include/configs/am62x_evm.h
-@@ -50,6 +50,8 @@
+@@ -51,6 +51,8 @@
  #define CONFIG_SYS_SPL_MALLOC_SIZE     SZ_16M
  #endif
  
@@ -20,7 +20,7 @@ index eb7c2a287c..6ae3f4ad34 100644
 +
  #define PARTS_DEFAULT \
  	/* Linux partitions */ \
- 	"name=rootfs,start=0,size=-,uuid=${uuid_gpt_rootfs}\0"
+ 	"uuid_disk=${uuid_gpt_disk};" \
 -- 
-2.25.1
+2.34.1
 

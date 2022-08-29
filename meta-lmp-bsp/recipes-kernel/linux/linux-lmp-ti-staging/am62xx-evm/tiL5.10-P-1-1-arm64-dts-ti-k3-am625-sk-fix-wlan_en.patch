@@ -1,0 +1,47 @@
+From patchwork Fri Aug 26 03:36:13 2022
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Hari Nagalla <hnagalla@ti.com>
+X-Patchwork-Id: 10168
+X-Patchwork-Delegate: d-gerlach@ti.com
+From: Hari Nagalla <hnagalla@ti.com>
+Subject: [tiL5.10-P PATCH 1/1] arm64: dts: ti: k3-am625-sk: fix wlan_en
+Date: Thu, 25 Aug 2022 22:36:13 -0500
+Message-ID: <20220826033613.10980-2-hnagalla@ti.com>
+In-Reply-To: <20220826033613.10980-1-hnagalla@ti.com>
+References: <20220826033613.10980-1-hnagalla@ti.com>
+Return-Path: nm@ti.com
+List-Post: <mailto:linux-patch-review@list.ti.com>
+MIME-Version: 1.0
+To: linux-patch-review@list.ti.com
+Cc: praneeth@ti.com, vigneshr@ti.com, gadiyar@ti.com
+List-ID: <linux-patch-review@list.ti.com>
+List-Post: <mailto:linux-patch-review@list.ti.com>
+
+WLAN card may be cycled up/down using ifconfig, iw utilities. This means
+the WL_EN fixed regualator can't be always on.
+
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am625-sk.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-sk.dts b/arch/arm64/boot/dts/ti/k3-am625-sk.dts
+index 5c7b4b912c5c..e0bd467302c7 100644
+--- a/arch/arm64/boot/dts/ti/k3-am625-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am625-sk.dts
+@@ -157,11 +157,12 @@
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+ 		enable-active-high;
+-		regulator-always-on;
+ 		vin-supply = <&wlan_lten>;
+ 		gpios = <&main_gpio0 71 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&wlan_en_pins_default>;
++		/* WLAN card specific delay */
++		startup-delay-us = <70000>;
+ 	};
+ 
+ 	vcc_1v8: regulator-7 {

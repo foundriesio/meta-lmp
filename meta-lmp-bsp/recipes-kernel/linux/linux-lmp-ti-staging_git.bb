@@ -21,6 +21,10 @@ SRC_URI:append:am64xx-evm = " \
     file://0001-arm64-dts-ti-k3-am642-sk-Enable-WLAN-connected-to-SD.patch \
 "
 
+SRC_URI:append:am62xx-evm = " \
+    file://tiL5.10-P-1-1-arm64-dts-ti-k3-am625-sk-fix-wlan_en.patch \
+"
+
 KMETA = "kernel-meta"
 
 do_kernel_metadata:prepend() {

@@ -4,7 +4,6 @@ echo "Using ${fdtfile}"
 setenv bootlimit 3
 setenv devtype ${boot_device}
 setenv devnum ${boot_instance}
-setenv bootpart 5
 setenv rootpart 6
 setenv fit_addr ${ramdisk_addr_r}
 setenv fdt_file_final ${fdtfile}

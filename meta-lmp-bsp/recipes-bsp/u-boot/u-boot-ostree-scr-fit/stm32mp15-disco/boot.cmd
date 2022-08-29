@@ -24,18 +24,14 @@ setenv bootloader_size 0x200 # FSBL image is 256 Kb
 setenv bootloader2_size 0x2000 # FIP image is 4 Mb
 setenv bootloader_ostree "tf-a-stm32mp157c-dk2-sdcard.stm32"
 setenv bootloader2_ostree "fip-stm32mp157c-dk2-optee.bin"
-setenv bootloader3_ostree "boot.itb"
-setenv bootloader3_image "boot1.itb"
-setenv bootloader3_s_image "boot2.itb"
 setenv uboot_hwpart 0
 
-setenv backup_primary_image 'echo "${fio_msg} backing up primary boot image set ..."; mmc dev ${devnum} ${uboot_hwpart} && mmc read ${loadaddr} ${bootloader} ${bootloader_size} && mmc write ${loadaddr} ${bootloader_s} ${bootloader_size} && mmc read ${loadaddr} ${bootloader2} ${bootloader2_size} && mmc write ${loadaddr} ${bootloader2_s} ${bootloader2_size} && fatload mmc ${devnum}:${bootpart} ${loadaddr} ${bootloader3_image} && fatwrite mmc ${devnum}:${bootpart} ${loadaddr} ${bootloader3_s_image} ${filesize}'
-setenv restore_primary_image 'echo "${fio_msg} restore primary boot image set ..."; mmc dev ${devnum} ${uboot_hwpart} && mmc read ${loadaddr} ${bootloader_s} ${bootloader_size} && mmc write ${loadaddr} ${bootloader} ${bootloader_size} && mmc read ${loadaddr} ${bootloader2_s} ${bootloader2_size} && mmc write ${loadaddr} ${bootloader2} ${bootloader2_size} && fatload mmc ${devnum}:${bootpart} ${loadaddr} ${bootloader3_s_image} && fatwrite mmc ${devnum}:${bootpart} ${loadaddr} ${bootloader3_image} ${filesize}'
+setenv backup_primary_image 'echo "${fio_msg} backing up primary boot image set ..."; mmc dev ${devnum} ${uboot_hwpart} && mmc read ${loadaddr} ${bootloader} ${bootloader_size} && mmc write ${loadaddr} ${bootloader_s} ${bootloader_size} && mmc read ${loadaddr} ${bootloader2} ${bootloader2_size} && mmc write ${loadaddr} ${bootloader2_s} ${bootloader2_size}'
+setenv restore_primary_image 'echo "${fio_msg} restore primary boot image set ..."; mmc dev ${devnum} ${uboot_hwpart} && mmc read ${loadaddr} ${bootloader_s} ${bootloader_size} && mmc write ${loadaddr} ${bootloader} ${bootloader_size} && mmc read ${loadaddr} ${bootloader2_s} ${bootloader2_size} && mmc write ${loadaddr} ${bootloader2} ${bootloader2_size}'
 
 setenv update_image 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} ${uboot_hwpart} && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
 setenv update_primary_image1 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_ostree}"; setenv start_blk "${bootloader}"; run load_image; run update_image'
 setenv update_primary_image2 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_ostree}"; setenv start_blk "${bootloader2}"; run load_image; run update_image'
-setenv update_primary_image3 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader3_ostree}"; run load_image; fatwrite mmc ${devnum}:${bootpart} ${loadaddr} ${bootloader3_image} ${filesize}'
-setenv update_primary_image 'run update_primary_image1 && run update_primary_image2 && run update_primary_image3'
+setenv update_primary_image 'run update_primary_image1 && run update_primary_image2'
 
 @@INCLUDE_COMMON_ALTERNATIVE@@

@@ -42,6 +42,8 @@ FIP_UBOOT_CONFIG ?= "trusted"
 # U-Boot boot cmd script
 FIP_BOOT_ITB_BINARY ?= "boot.itb"
 FIP_BOOT_ITB_UUID ?= "c75cd5f6-1f9c-11ed-861d-0242ac120002"
+# Integrate boot.itb script into FIP image for OTA setups
+FIP_BOOT_ITB_CONF ?= "${@bb.utils.contains('PREFERRED_PROVIDER_u-boot-default-script', 'u-boot-ostree-scr-fit', '--blob uuid=${FIP_BOOT_ITB_UUID},file=${FIP_DEPLOYDIR_BOOT_ITB}/${FIP_BOOT_ITB_BINARY}', '', d)}"
 
 # Configure default folder path for binaries to package
 FIP_DEPLOYDIR_FIP    ?= "${DEPLOYDIR}/fip"
@@ -214,8 +216,6 @@ do_deploy:append:class-target() {
             else
                 bbfatal "Wrong configuration '${bl32_conf}' found in FIP_CONFIG for ${config} config."
             fi
-            # Integrate boot.itb script into FIP image
-            FIP_BOOT_ITB_CONF="--blob uuid=${FIP_BOOT_ITB_UUID},file=${FIP_DEPLOYDIR_BOOT_ITB}/${FIP_BOOT_ITB_BINARY}"
             # Init certificate settings
             if [ "${FIP_SIGN_ENABLE}" = "1" ]; then
                 soc_sign_suffix=""

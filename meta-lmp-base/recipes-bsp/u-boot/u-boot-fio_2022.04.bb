@@ -1,5 +1,5 @@
 require u-boot-fio-common.inc
 
-SRCREV = "6c4ba3f7b27d4dd6b900b0bc8a2556d01027c557"
+SRCREV = "53fc8270207a7793864994444d88c5cf6e392f16"
 SRCBRANCH = "2022.04+fio"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=5a7450c57ffe5ae63fd732446b988025"

@@ -468,6 +468,7 @@ MACHINE_FEATURES:remove:stm32mp1common = "fw-update"
 PREFERRED_PROVIDER_u-boot-default-script:stm32mp1common = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:stm32mp1common = "u-boot-ostree-scr-fit"
 ## stm32mp15-eval
+BOOTDEVICE_LABELS:append:stm32mp15-eval = " emmc"
 LINUX_A7_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-a7-examples stm32mp157f-ev1-a7-examples"
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-m4-examples stm32mp157f-ev1-m4-examples"
 STM32MP_DT_FILES_EV:stm32mp15-eval = "stm32mp157c-ev1"

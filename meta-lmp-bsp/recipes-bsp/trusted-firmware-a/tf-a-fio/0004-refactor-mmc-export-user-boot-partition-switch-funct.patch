@@ -1,0 +1,111 @@
+From 9205ea7e602c435a1119858a552a82cd9afe7fb2 Mon Sep 17 00:00:00 2001
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Mon, 23 May 2022 17:06:37 +0200
+Subject: [PATCH 1/2] refactor(mmc): export user/boot partition switch
+ functions
+
+At the moment, mmc_boot_part_read_blocks() takes care to switch
+to the boot partition before transfer and back afterwards.
+This can introduce large overhead when reading small chunks.
+Give consumers of the API more control by exporting
+mmc_part_switch_current_boot() and mmc_part_switch_user().
+
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Change-Id: Ib641f188071bb8e0196f4af495ec9ad4a292284f
+---
+ drivers/mmc/mmc.c     | 36 +++++++++++++++++++++++++++++-------
+ include/drivers/mmc.h |  4 +++-
+ 2 files changed, 32 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mmc/mmc.c b/drivers/mmc/mmc.c
+index c327e71d2..4917f02db 100644
+--- a/drivers/mmc/mmc.c
++++ b/drivers/mmc/mmc.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2018-2021, ARM Limited and Contributors. All rights reserved.
++ * Copyright (c) 2018-2022, ARM Limited and Contributors. All rights reserved.
+  *
+  * SPDX-License-Identifier: BSD-3-Clause
+  */
+@@ -755,29 +755,51 @@ static unsigned char mmc_current_boot_part(void)
+ 	return PART_CFG_CURRENT_BOOT_PARTITION(mmc_ext_csd[CMD_EXTCSD_PARTITION_CONFIG]);
+ }
+ 
+-size_t mmc_boot_part_read_blocks(int lba, uintptr_t buf, size_t size)
++int mmc_part_switch_current_boot(void)
+ {
+-	size_t size_read;
+-	int ret;
+ 	unsigned char current_boot_part = mmc_current_boot_part();
++	int ret;
+ 
+ 	if (current_boot_part != 1U &&
+ 	    current_boot_part != 2U) {
+ 		ERROR("Got unexpected value for active boot partition, %u\n", current_boot_part);
+-		return 0;
++		return -EIO;
+ 	}
+ 
+ 	ret = mmc_part_switch(current_boot_part);
+ 	if (ret < 0) {
+ 		ERROR("Failed to switch to boot partition, %d\n", ret);
++	}
++
++	return ret;
++}
++
++int mmc_part_switch_user(void)
++{
++	int ret;
++
++	ret = mmc_part_switch(0);
++	if (ret < 0) {
++		ERROR("Failed to switch to user partition, %d\n", ret);
++	}
++
++	return ret;
++}
++
++size_t mmc_boot_part_read_blocks(int lba, uintptr_t buf, size_t size)
++{
++	size_t size_read;
++	int ret;
++
++	ret = mmc_part_switch_current_boot();
++	if (ret < 0) {
+ 		return 0;
+ 	}
+ 
+ 	size_read = mmc_read_blocks(lba, buf, size);
+ 
+-	ret = mmc_part_switch(0);
++	ret = mmc_part_switch_user();
+ 	if (ret < 0) {
+-		ERROR("Failed to switch back to user partition, %d\n", ret);
+ 		return 0;
+ 	}
+ 
+diff --git a/include/drivers/mmc.h b/include/drivers/mmc.h
+index 834a80f4a..c4c5fead1 100644
+--- a/include/drivers/mmc.h
++++ b/include/drivers/mmc.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2021, ARM Limited and Contributors. All rights reserved.
++ * Copyright (c) 2021-2022, ARM Limited and Contributors. All rights reserved.
+  *
+  * SPDX-License-Identifier: BSD-3-Clause
+  */
+@@ -236,6 +236,8 @@ size_t mmc_erase_blocks(int lba, size_t size);
+ size_t mmc_rpmb_read_blocks(int lba, uintptr_t buf, size_t size);
+ size_t mmc_rpmb_write_blocks(int lba, const uintptr_t buf, size_t size);
+ size_t mmc_rpmb_erase_blocks(int lba, size_t size);
++int mmc_part_switch_current_boot(void);
++int mmc_part_switch_user(void);
+ size_t mmc_boot_part_read_blocks(int lba, uintptr_t buf, size_t size);
+ int mmc_init(const struct mmc_ops *ops_ptr, unsigned int clk,
+ 	     unsigned int width, unsigned int flags,
+-- 
+2.37.1
+

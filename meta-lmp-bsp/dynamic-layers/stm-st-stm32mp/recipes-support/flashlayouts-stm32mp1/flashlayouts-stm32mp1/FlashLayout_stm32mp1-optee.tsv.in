@@ -1,0 +1,7 @@
+#Opt	Id	Name		Type		IP	Offset		Binary
+-	0x01	fsbl-boot	Binary		none	0x0		tf-a-@@BOARD_NAME@@-usb.stm32
+-	0x03	fip-boot	Binary		none	0x0		fip-@@BOARD_NAME@@-optee.bin
+PD	0x04	fsbl1		Binary		mmc1	boot1		combo-emmc-tfa-fip-@@BOARD_NAME@@.bin
+PD	0x05	fsbl2		Binary		mmc1	boot2		combo-emmc-tfa-fip-@@BOARD_NAME@@.bin
+PED	0x06	u-boot-env	Binary		mmc1	0x00080000	none
+P	0x12	rootfs		FileSystem	mmc1	0x00100000	@@IMAGE@@-@@MACHINE@@.ext4

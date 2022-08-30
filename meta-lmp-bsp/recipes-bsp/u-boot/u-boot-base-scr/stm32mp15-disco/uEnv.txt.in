@@ -1,7 +1,7 @@
 devnum=0
 devtype=mmc
-bootcmd_args=setenv bootargs console=ttySTM0,115200 root=/dev/mmcblk0p6 rootfstype=ext4 rootwait rw
-bootcmd_dtb=fatload ${devtype} ${devnum}:5 ${fdt_addr_r} ${fdtfile}
-bootcmd_load_k=fatload ${devtype} ${devnum}:5 ${loadaddr} zImage
+bootcmd_args=setenv bootargs console=ttySTM0,115200 root=/dev/mmcblk0p7 rootfstype=ext4 rootwait rw
+bootcmd_dtb=fatload ${devtype} ${devnum}:6 ${fdt_addr_r} ${fdtfile}
+bootcmd_load_k=fatload ${devtype} ${devnum}:6 ${loadaddr} zImage
 bootcmd_run=bootz ${loadaddr} - ${fdt_addr_r}
 bootcmd=run bootcmd_args; run bootcmd_dtb; run bootcmd_load_k; run bootcmd_run

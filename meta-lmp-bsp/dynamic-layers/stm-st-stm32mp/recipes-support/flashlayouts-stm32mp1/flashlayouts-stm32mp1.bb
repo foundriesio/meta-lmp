@@ -10,7 +10,7 @@ DEPENDS = "sdcard-raw-tools-native"
 
 MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
-LMP_FLASHLAYOUT_TEMPLATE ?= "FlashLayout_stm32mp1-trusted.tsv.in"
+LMP_FLASHLAYOUT_TEMPLATE ?= "FlashLayout_stm32mp1-optee.tsv.in"
 LMP_FLASHLAYOUT_IMAGE = "${MFGTOOL_FLASH_IMAGE}-${MACHINE}.${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'ota-ext4', 'ext4', d)}"
 
 SRC_URI = "file://${LMP_FLASHLAYOUT_TEMPLATE}"
@@ -35,6 +35,14 @@ do_deploy() {
     install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/*.stm32 ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fip/*.bin ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/${LMP_FLASHLAYOUT_IMAGE} ${DEPLOYDIR}/${PN}/${MFGTOOL_FLASH_IMAGE}-${MACHINE}.ext4
+
+    if [ -f "${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32" ] && \
+       [ -f "${DEPLOYDIR}/${PN}/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin" ]; then
+        cp ${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32 \
+           ${DEPLOYDIR}/${PN}/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
+        dd if=${DEPLOYDIR}/${PN}/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
+           of=${DEPLOYDIR}/${PN}/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
+    fi
 
     tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \
 	    -C ${DEPLOYDIR} ${PN}

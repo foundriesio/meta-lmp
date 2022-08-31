@@ -5,6 +5,7 @@ SRC_URI:append:stm32mp1common = " \
      file://0002-feat-stm32mp1-check-for-fip-a-fip-b-partitions.patch \
      file://0004-refactor-mmc-export-user-boot-partition-switch-funct.patch \
      file://0005-feat-stm32mp1-extend-STM32MP_EMMC_BOOT-support-to-FI.patch \
+     file://0006-FIO-internal-io-remove-false-positives-asserts.patch \
      "
 
 SRC_URI:append:sota:stm32mp1common = " \

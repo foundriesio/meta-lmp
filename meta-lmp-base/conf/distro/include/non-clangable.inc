@@ -94,8 +94,9 @@ TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 # jetson-agx-xavier-devkit
 TOOLCHAIN:pn-cboot-t19x = "gcc"
 
-# stm32mp1-disco
+# stm32mp1
 TOOLCHAIN:pn-tf-a-stm32mp = "gcc"
+TOOLCHAIN:pn-tf-a-fio = "gcc"
 
 # qemuriscv64
 TOOLCHAIN:pn-opensbi = "gcc"

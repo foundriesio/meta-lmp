@@ -89,6 +89,7 @@ TOOLCHAIN:pn-arm-trusted-firmware = "gcc"
 
 # am64xx-evm
 TOOLCHAIN:pn-ti-sci-fw = "gcc"
+TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 
 # jetson-agx-xavier-devkit
 TOOLCHAIN:pn-cboot-t19x = "gcc"

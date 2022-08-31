@@ -473,6 +473,7 @@ LINUX_A7_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-a7-examples stm32m
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-m4-examples stm32mp157f-ev1-m4-examples"
 STM32MP_DT_FILES_EV:stm32mp15-eval = "stm32mp157c-ev1"
 STM32MP_DT_FILES_EV:remove:stm32mp15-eval = "stm32mp157f-ev1"
+SOTA_CLIENT_FEATURES:append:stm32mp15-eval = " ubootenv"
 IMAGE_FSTYPES:remove:stm32mp15-eval = "wic wic.gz wic.bmap"
 EXTRA_IMAGEDEPENDS:append:stm32mp15-eval = "flashlayouts-stm32mp1"
 LMP_FLASHLAYOUT:stm32mp15-eval = "FlashLayout_stm32mp1-optee.tsv"

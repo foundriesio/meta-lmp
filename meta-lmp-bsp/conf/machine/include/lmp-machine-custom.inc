@@ -477,6 +477,7 @@ IMAGE_FSTYPES:remove:stm32mp15-eval = "wic wic.gz wic.bmap"
 EXTRA_IMAGEDEPENDS:append:stm32mp15-eval = "flashlayouts-stm32mp1"
 LMP_FLASHLAYOUT:stm32mp15-eval = "FlashLayout_stm32mp1-optee.tsv"
 LMP_FLASHLAYOUT_BOARD_NAME:stm32mp15-eval = "stm32mp157c-ev1"
+LMP_BOOT_FIRMWARE_FILES:stm32mp15-eval = "arm-trusted-firmware/tf-a-stm32mp157c-ev1-emmc.stm32 fip/fip-stm32mp157c-ev1-optee.bin"
 ## stm32mp15-disco
 LINUX_A7_EXAMPLES_DT:remove:stm32mp15-disco = "stm32mp157c-dk2-a7-examples stm32mp157f-dk2-a7-examples"
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-disco = "stm32mp157c-dk2-m4-examples stm32mp157f-dk2-m4-examples"

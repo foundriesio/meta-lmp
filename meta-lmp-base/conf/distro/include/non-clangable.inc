@@ -105,14 +105,3 @@ TOOLCHAIN:pn-opensbi = "gcc"
 # | clang-14: error: unknown argument: '-fno-toplevel-reorder'
 # | clang-14: warning: optimization flag '-fno-merge-constants' is not supported [-Wignored-optimization-argument]
 TOOLCHAIN:pn-efitools = "gcc"
-
-# side efect of https://reviews.llvm.org/D53608
-# | configure: error: libmpfr not found or uses a different ABI (including static vs shared).
-# | NOTE: The following config.log files may provide further information.
-# | NOTE: /srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/libmpc/1.2.1-r0/build/config.log
-# | ERROR: configure failed
-# debug:
-# !/srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/libmpc/1.2.1-r0/recipe-sysroot-native/usr/bin/x86_64-lmp-linux/x86_64-lmp-linux-ld: /srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/libmpc/1.2.1-r0/recipe-sysroot//usr/lib/libmpfr.so: undefined reference to `__extendxftf2'
-# |/srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/libmpc/1.2.1-r0/recipe-sysroot-native/usr/bin/x86_64-lmp-linux/x86_64-lmp-linux-ld: /srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/libmpc/1.2.1-r0/recipe-sysroot//usr/lib/libmpfr.so: undefined reference to `__trunctfxf2'
-TOOLCHAIN:pn-mpfr:x86 = "gcc"
-TOOLCHAIN:pn-mpfr:x86-64 = "gcc"

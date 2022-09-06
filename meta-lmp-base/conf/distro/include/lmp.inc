@@ -113,6 +113,7 @@ BBMASK += " \
 BBMASK += " \
     /meta-st-stm32mp/recipes-core/busybox/busybox_%.bbappend \
     /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.110.bbappend \
+    /meta-st-stm32mp/recipes-kernel/make-mod-scripts/make-mod-scripts_%.bbappend \
 "
 
 # disable xsct tarball by default (xilinx)

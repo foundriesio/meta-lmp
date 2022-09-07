@@ -237,27 +237,32 @@ mkdir /tgt_root
 mkdir /src_root
 mkdir -p /boot
 
+# Path /rnu/media/<label>-sdX (check wks used)
+install_mount="install-${live_dev_name}1"
+otaboot_mount="otaboot-${live_dev_name}2"
+rootfs_mount="image-${live_dev_name}3"
+
 # Handling of the target root partition
 mount $rootfs /tgt_root
-mount -o rw,loop,noatime,nodiratime /run/media/${live_dev_name}3/rootfs.img /src_root
+mount -o rw,loop,noatime,nodiratime /run/media/${rootfs_mount}/rootfs.img /src_root
 echo "Copying rootfs files..."
 cp -a /src_root/* /tgt_root
 umount /src_root
 
 # LMP preloaded containers (containers and updated installed_versions)
-if [ -d /run/media/${live_dev_name}3/ostree/deploy/lmp/var/lib/docker ]; then
-    cp -a /run/media/${live_dev_name}3/ostree/deploy/lmp/var/lib/docker /tgt_root/ostree/deploy/lmp/var/lib/
-    cp -a /run/media/${live_dev_name}3/ostree/deploy/lmp/var/sota/import/installed_versions /tgt_root/ostree/deploy/lmp/var/sota/import/
+if [ -d /run/media/${rootfs_mount}/ostree/deploy/lmp/var/lib/docker ]; then
+    cp -a /run/media/${rootfs_mount}/ostree/deploy/lmp/var/lib/docker /tgt_root/ostree/deploy/lmp/var/lib/
+    cp -a /run/media/${rootfs_mount}/ostree/deploy/lmp/var/sota/import/installed_versions /tgt_root/ostree/deploy/lmp/var/sota/import/
 fi
-if [ -d /run/media/${live_dev_name}3/ostree/deploy/lmp/var/sota/compose-apps ]; then
+if [ -d /run/media/${rootfs_mount}/ostree/deploy/lmp/var/sota/compose-apps ]; then
     # Delete preloaded containers previously available as part of rootfs.img (platform build)
     rm -rf /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
-    cp -a /run/media/${live_dev_name}3/ostree/deploy/lmp/var/sota/compose-apps /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
+    cp -a /run/media/${rootfs_mount}/ostree/deploy/lmp/var/sota/compose-apps /tgt_root/ostree/deploy/lmp/var/sota/compose-apps
 fi
 
 # LMP specific customizations, if available (live media first partition, vfat)
-if [ -d /run/media/${live_dev_name}1/lmp ]; then
-    cp -a /run/media/${live_dev_name}1/lmp /tgt_root/ostree/deploy/lmp/var/
+if [ -d /run/media/${install_mount}/lmp ]; then
+    cp -a /run/media/${install_mount}/lmp /tgt_root/ostree/deploy/lmp/var/
 fi
 
 # Handling of the target boot partition
@@ -265,7 +270,7 @@ mount $bootfs /boot
 echo "Preparing boot partition..."
 
 echo "Copying boot files..."
-cp -rf /run/media/${live_dev_name}2/* /boot
+cp -rf /run/media/${otaboot_mount}/* /boot
 
 # Update boot args to include UUID and extra options
 rootfs_uuid=$(blkid -o value -s UUID ${rootfs})
@@ -274,11 +279,11 @@ sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" /boot/loade
 EFIDIR="/boot/EFI/BOOT"
 mkdir -p $EFIDIR
 # Copy the efi loader
-efiloader=`basename /run/media/${live_dev_name}3/EFI/BOOT/boot*.efi`
-cp /run/media/${live_dev_name}3/EFI/BOOT/${efiloader} $EFIDIR
+efiloader=`basename /run/media/${rootfs_mount}/EFI/BOOT/boot*.efi`
+cp /run/media/${rootfs_mount}/EFI/BOOT/${efiloader} $EFIDIR
 # Also duplicate systemd efi loader if available for compliance
-if [ -d /run/media/${live_dev_name}3/EFI/systemd ]; then
-    cp -rf /run/media/${live_dev_name}3/EFI/systemd /boot/EFI
+if [ -d /run/media/${rootfs_mount}/EFI/systemd ]; then
+    cp -rf /run/media/${rootfs_mount}/EFI/systemd /boot/EFI
 fi
 
 # Generate default loader.conf
@@ -287,8 +292,8 @@ timeout 1
 EOF
 
 # Make sure startup.nsh is also available at the boot partition
-if [ -f /run/media/${live_dev_name}3/startup.nsh ]; then
-    cp /run/media/${live_dev_name}3/startup.nsh /boot
+if [ -f /run/media/${rootfs_mount}/startup.nsh ]; then
+    cp /run/media/${rootfs_mount}/startup.nsh /boot
 fi
 
 # Set default EFI boot entry

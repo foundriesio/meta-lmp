@@ -17,3 +17,5 @@ SRC_URI:append:stm32mp1common = " \
 SRC_URI:append:sota:stm32mp1common = " \
      file://0003-FIO-interal-stm32mp1-support-for-boot-script-in-FIP.patch \
      "
+
+SRC_URI:append:stm32mp1common = " file://0001-Binutils-2.39-now-warns-when-a-segment-has-RXW-permi.patch"

@@ -76,6 +76,7 @@ configure_rootfs_nss_altfiles () {
 }
 
 fakeroot do_populate_rootfs_common_src () {
+    mkdir -p ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d
     # Allow sudo group users to use sudo
     install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/50-lmp
 

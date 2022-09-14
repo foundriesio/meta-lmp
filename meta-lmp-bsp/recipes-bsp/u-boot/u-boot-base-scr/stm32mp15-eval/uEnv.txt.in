@@ -1,0 +1,7 @@
+devnum=1
+devtype=mmc
+bootcmd_args=setenv bootargs root=/dev/mmcblk1p2 rootfstype=ext4 rootwait rw
+bootcmd_dtb=ext4load ${devtype} ${devnum}:2 ${fdt_addr_r} /boot/${fdtfile}
+bootcmd_load_k=ext4load ${devtype} ${devnum}:2 ${loadaddr} /boot/zImage
+bootcmd_run=bootz ${loadaddr} - ${fdt_addr_r}
+bootcmd=run bootcmd_args; run bootcmd_dtb; run bootcmd_load_k; run bootcmd_run

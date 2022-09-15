@@ -36,7 +36,7 @@ export IMAGE_BASENAME = "initramfs-ostree-lmp-recovery"
 LICENSE = "MIT"
 
 IMAGE_FSTYPES = "cpio.gz"
-IMAGE_FSTYPES:remove = "wic wic.gz wic.bmap wic.nopt ext4 ext4.gz"
+IMAGE_FSTYPES:remove = "wic wic.gz wic.bmap wic.img wic.nopt ext4 ext4.gz aioflash.tar"
 IMAGE_CLASSES:remove = "image_repo_manifest"
 
 # avoid circular dependencies

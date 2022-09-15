@@ -15,7 +15,7 @@ SRCREV = "f95ac027652a09359dac998eaf46bfe91c688610"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
-inherit go-mod systemd
+inherit go-mod-network systemd
 
 # Extend from go.bbclass to include internal.Commit and tags
 GO_LDFLAGS += "-tags vpn"

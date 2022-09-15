@@ -19,7 +19,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 GO_IMPORT = "github.com/docker/compose/v2"
 
-inherit go-mod
+inherit go-mod-network
 
 GO_EXTRA_LDFLAGS = "-w -X ${GO_IMPORT}/internal.Version=${PV}"
 

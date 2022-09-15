@@ -17,7 +17,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 SYSTEMD_SERVICE:${PN} = "fio-docker-fsck.service"
 
-inherit go-mod systemd
+inherit go-mod-network systemd
 
 do_install:append() {
 	install -d ${D}${systemd_system_unitdir}

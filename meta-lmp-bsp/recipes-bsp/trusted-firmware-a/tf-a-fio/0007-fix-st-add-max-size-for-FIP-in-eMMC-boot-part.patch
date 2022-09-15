@@ -1,0 +1,33 @@
+From ec722c5eb267d9be546ed9c235fc95b9728a7a1e Mon Sep 17 00:00:00 2001
+From: Yann Gautier <yann.gautier@st.com>
+Date: Fri, 2 Sep 2022 08:36:40 +0200
+Subject: [PATCH] fix(st): add max size for FIP in eMMC boot part
+
+When putting FIP binary in eMMC boot partition (with STM32MP_EMMC_BOOT),
+the FIP max size should be precised. If it is not, an assert fails in
+io_block driver, as cur->size will be zero.
+For this length, we then use the size of the eMMC boot partition minus
+STM32MP_EMMC_BOOT_FIP_OFFSET.
+
+Signed-off-by: Yann Gautier <yann.gautier@st.com>
+Change-Id: I48b7635cff64f52d4b337a4c8c3becd9a0be72e8
+Upstream-Status: Backport [https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/16505]
+---
+ plat/st/common/bl2_io_storage.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/plat/st/common/bl2_io_storage.c b/plat/st/common/bl2_io_storage.c
+index b13d70b71..ef7879de2 100644
+--- a/plat/st/common/bl2_io_storage.c
++++ b/plat/st/common/bl2_io_storage.c
+@@ -252,6 +252,7 @@ static void boot_mmc(enum mmc_device_type mmc_dev_type,
+ 		VERBOSE("%s: FIP header found on eMMC boot partition\n",
+ 			__func__);
+ 		image_block_spec.offset = STM32MP_EMMC_BOOT_FIP_OFFSET;
++		image_block_spec.length = mmc_boot_part_size() - STM32MP_EMMC_BOOT_FIP_OFFSET;
+ 	}
+ #endif
+ }
+-- 
+2.34.1
+

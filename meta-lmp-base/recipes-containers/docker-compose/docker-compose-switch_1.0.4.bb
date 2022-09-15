@@ -13,7 +13,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 GO_IMPORT = "github.com/docker/compose-switch"
 
-inherit go-mod update-alternatives
+inherit go-mod-network update-alternatives
 
 GO_EXTRA_LDFLAGS = "-w -X ${GO_IMPORT}/internal.Version=${PV}"
 

@@ -13,7 +13,7 @@ PV = "v2021.05.03+git${SRCPV}"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
-inherit go-mod dos2unix
+inherit go-mod-network dos2unix
 
 do_install:append() {
     install -d ${D}${datadir}/${BPN}/fusemaps

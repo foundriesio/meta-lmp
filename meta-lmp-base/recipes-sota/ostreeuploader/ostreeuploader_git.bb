@@ -13,7 +13,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 BBCLASSEXTEND = "native"
 
-inherit go-mod
+inherit go-mod-network
 
 go_do_compile() {
 	cd ${B}/src/github.com/foundriesio/ostreeuploader

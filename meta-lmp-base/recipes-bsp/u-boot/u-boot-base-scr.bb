@@ -31,13 +31,14 @@ do_deploy() {
 }
 
 do_install() {
+    mkdir -p ${D}/boot
     install -m 0644 boot.scr ${D}/boot.scr
-    install -m 0644 uEnv.txt ${D}/uEnv.txt
+    install -m 0644 uEnv.txt ${D}/boot/uEnv.txt
 }
 
 FILES:${PN} += " \
     boot.scr \
-    uEnv.txt \
+    boot/uEnv.txt \
 "
 addtask do_deploy after do_compile before do_build
 

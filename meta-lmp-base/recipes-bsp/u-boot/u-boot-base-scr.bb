@@ -42,3 +42,4 @@ FILES:${PN} += " \
 addtask do_deploy after do_compile before do_build
 
 PROVIDES += "u-boot-default-script"
+RPROVIDES:${PN} += "u-boot-default-script"

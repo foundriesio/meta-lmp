@@ -46,3 +46,4 @@ addtask do_deploy after do_compile before do_build
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 PROVIDES += "u-boot-default-script"
+RPROVIDES:${PN} += "u-boot-default-script"

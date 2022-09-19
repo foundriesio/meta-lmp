@@ -30,6 +30,15 @@ do_deploy() {
     install -m 0644 uEnv.txt ${DEPLOYDIR}
 }
 
+do_install() {
+    install -m 0644 boot.scr ${D}/boot.scr
+    install -m 0644 uEnv.txt ${D}/uEnv.txt
+}
+
+FILES:${PN} += " \
+    boot.scr \
+    uEnv.txt \
+"
 addtask do_deploy after do_compile before do_build
 
 PROVIDES += "u-boot-default-script"

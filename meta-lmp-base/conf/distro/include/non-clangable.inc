@@ -82,6 +82,9 @@ TOOLCHAIN:pn-optee-test = "gcc"
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-fiovb_git.bb:do_compile
 TOOLCHAIN:pn-optee-fiovb = "gcc"
 
+# lmp-mfgtool distro
+TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
+
 # kv260
 # vck190-versal
 # uz3eg-iocc-ebbr-sec

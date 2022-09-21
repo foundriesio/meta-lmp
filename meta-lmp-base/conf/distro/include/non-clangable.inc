@@ -108,3 +108,6 @@ TOOLCHAIN:pn-opensbi = "gcc"
 # | clang-14: error: unknown argument: '-fno-toplevel-reorder'
 # | clang-14: warning: optimization flag '-fno-merge-constants' is not supported [-Wignored-optimization-argument]
 TOOLCHAIN:pn-efitools = "gcc"
+
+# imx8m*
+TOOLCHAIN:pn-imx-atf = "gcc"

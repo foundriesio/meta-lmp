@@ -7,8 +7,7 @@ setenv ostree_deploy_usr "@@OSTREE_DEPLOY_USR_OSTREE_BOOT@@"
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootdir; setenv bootargs; setenv kernel_image2; setenv bootdir2; setenv bootargs2'
 setenv bootcmd_ostree_bootpart 'if test "${ostree_split_boot}" = "1"; then setenv ostree_bootpart "${bootpart}"; else setenv ostree_bootpart "${rootpart}"; fi'
 setenv bootcmd_otenv 'run bootcmd_resetvars; ext4load ${devtype} ${devnum}:${ostree_bootpart} ${loadaddr} /boot/loader/uEnv.txt; env import -t ${loadaddr} ${filesize} kernel_image bootdir bootargs kernel_image2 bootdir2 bootargs2'
-setenv bootcmd_bootenv 'setenv bootfirmware_version; if test "${ostree_deploy_usr}" = "1"; then ext4load ${devtype} ${devnum}:${ostree_bootpart} ${loadaddr} ${bootdir}/version.txt; else ext4load ${devtype} ${devnum}:${rootpart} ${loadaddr} ${ostree_root}/usr/lib/firmware/version.txt; fi; env import -t ${loadaddr} ${filesize} bootfirmware_version'
-setenv bootcmd_getroot 'setexpr ostree_root gsub "^.*ostree=([^ ]*).*$" "\\\\1" "${bootargs}"'
+setenv bootcmd_getroot 'setexpr ostree_root gsub "^.*ostree=([^ ]*).*$" "\\\\1" "${bootargs}"; setexpr ostree_root_prev gsub "^.*ostree=([^ ]*).*$" "\\\\1" "${bootargs2}"'
 
 # Env saving
 setenv saveenv_mmc 'if test -z "${fiovb_rpmb}"; then saveenv; fi;'
@@ -44,8 +43,6 @@ if fiovb init ${devnum} && test -n "${board_is_closed}"; then
 	if test ! $? -eq 0; then fiovb write_pvalue upgrade_available 0; fi
 	fiovb read_pvalue bootupgrade_available 4
 	if test ! $? -eq 0; then fiovb write_pvalue bootupgrade_available 0; fi
-	fiovb read_pvalue bootfirmware_version 128
-	if test ! $? -eq 0; then run bootcmd_bootenv; fiovb write_pvalue bootfirmware_version "${bootfirmware_version}"; fi
 	fiovb read_pvalue debug 4
 	if test ! $? -eq 0; then fiovb write_pvalue debug 0; fi
 	fiovb read_pvalue is_secondary_boot 4
@@ -58,7 +55,6 @@ else
 	if test -z "${upgrade_available}"; then setenv upgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_available}"; then setenv bootupgrade_available 0; setenv envsave 1; fi
 	if test -z "${debug}"; then setenv debug 0; setenv envsave 1; fi
-	if test -z "${bootfirmware_version}"; then run bootcmd_bootenv; setenv envsave 1; fi
 	# Call saveenv if not yet set (e.g. first boot after clean flash)
 	if test "${envsave}" = "1"; then setenv envsave; run saveenv_mmc; fi
 
@@ -77,7 +73,6 @@ if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} fiovb.upgrade_available = ${fiovb.upgrade_available}"
 	echo "${fio_msg} fiovb.bootupgrade_available = ${fiovb.bootupgrade_available}"
 	echo "${fio_msg} fiovb.is_secondary_boot = ${fiovb.is_secondary_boot}"
-	echo "${fio_msg} bootfirmware_version = ${bootfirmware_version}"
 	echo "${fio_msg}"
 	echo "${fio_msg} Other variables:"
 	echo "${fio_msg} ostree deploy usr = ${ostree_deploy_usr}"
@@ -114,6 +109,36 @@ if test ! "${fiovb.is_secondary_boot}" = "${fiovb.old_is_secondary_boot}"; then
 fi
 
 # Handle boot firmware updates
+if test ${fiovb.bootupgrade_available} -gt 1; then
+	if test -n "${fiovb_rpmb}"; then
+		fiovb write_pvalue bootupgrade_available 1;
+	else
+		setenv bootupgrade_available 1;
+	fi
+	echo "${fio_msg} update primary boot path with validated images from previous sysroot..."
+	if test "${ostree_deploy_usr}" = "1"; then
+		setenv image_path "${bootdir2}/${bootloader_image}"
+		setenv start_blk "${bootloader}"
+		run load_image
+		run update_primary_image
+
+		setenv image_path "${bootdir2}/${bootloader2_image}"
+		setenv start_blk "${bootloader2}"
+		run load_image
+		run update_primary_image2
+	else
+		setenv image_path "${ostree_root_prev}/usr/lib/firmware/${bootloader_image}"
+		setenv start_blk "${bootloader}"
+		run load_image
+		run update_primary_image
+
+		setenv image_path "${ostree_root_prev}/usr/lib/firmware/${bootloader2_image}"
+		setenv start_blk "${bootloader2}"
+		run load_image
+		run update_primary_image2
+	fi
+	reset
+fi
 if test "${fiovb.is_secondary_boot}" = "0"; then
 	# Only update bootcount when upgrade_available is set and boot mode is
 	# primary since counting on secondary would double count on upgrades
@@ -201,14 +226,10 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 			run custom_apply_stable
 		fi
 
-		run bootcmd_bootenv
-
 		if test -n "${fiovb_rpmb}"; then
 			fiovb write_pvalue bootupgrade_available 0;
-			fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
 		else
 			setenv bootupgrade_available 0;
-			setenv bootfirmware_version "${bootfirmware_version}";
 		fi
 
 		run saveenv_mmc

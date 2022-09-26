@@ -1,7 +1,8 @@
 [Unit]
 Description=Aktualizr Lite SOTA Client
-After=network.target boot-complete.target
+After=network.target boot-complete.target time-sync.target
 Requires=boot-complete.target
+Wants=time-sync.target
 ConditionPathExists=|/var/sota/sota.toml
 ConditionPathExists=|/usr/lib/sota/conf.d/10-lite-public-stream.toml
 ConditionPathExists=!/usr/bin/mbedCloudClient

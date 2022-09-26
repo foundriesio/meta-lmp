@@ -85,6 +85,9 @@ TOOLCHAIN:pn-optee-fiovb = "gcc"
 # lmp-mfgtool distro
 TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
 
+# imx targets (not reproducible)
+TOOLCHAIN:pn-imx-atf = "gcc"
+
 # kv260
 # vck190-versal
 # uz3eg-iocc-ebbr-sec

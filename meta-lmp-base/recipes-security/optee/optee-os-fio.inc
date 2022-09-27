@@ -21,7 +21,8 @@ CVE_PRODUCT = "linaro:op-tee op-tee:op-tee_os"
 PROVIDES = "virtual/optee-os"
 
 SRCBRANCH ?= "master"
-SRC_URI = "git://github.com/foundriesio/optee_os.git;protocol=https;branch=${SRCBRANCH}"
+OPTEE_OS_REPO ?= "git://github.com/foundriesio/optee_os.git"
+SRC_URI = "${OPTEE_OS_REPO};protocol=https;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

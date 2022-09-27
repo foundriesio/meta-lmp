@@ -53,6 +53,9 @@ do_install() {
             for file in `ls ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/`; do
                 version="${version}-`md5sum ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/${file} | cut -d' ' -f1`"
             done
+
+	    # limit the length of version
+	    version="`echo ${version} | md5sum | cut -d' ' -f1`"
         fi
         echo "bootfirmware_version=${version#-}" > version.txt
 

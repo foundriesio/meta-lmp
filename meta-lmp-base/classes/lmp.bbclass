@@ -189,6 +189,36 @@ IMAGE_CMD:ostree:append () {
        fi
 }
 
+# Post ext4 generation logic for luks2 based disk encryption
+IMAGE_CMD:ota-ext4:append () {
+	if [ "${OSTREE_OTA_EXT4_LUKS}" = "1" ]; then
+		if [ -z "${OSTREE_OTA_EXT4_LUKS_PASSPHRASE}" ]; then
+			bbfatal "Unable to find passphrase for LUKS-based ota-ext4 (define OSTREE_OTA_EXT4_LUKS_PASSPHRASE)"
+		fi
+		cp ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4-orig
+
+		block_size=`dumpe2fs -h ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 | grep "^Block size" | cut -d ':' -f 2 | tr -d ' '`
+		block_count=`dumpe2fs -h ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 | grep "^Block count" | cut -d ':' -f 2 | tr -d ' '`
+		luks_size=33554432 # 32m
+		new_block_count=$(expr ${block_count} - $(expr ${luks_size} / ${block_size}))
+		bbdebug 1 "Rootfs: block size: $block_size, block count: $block_count"
+		bbdebug 1 "Resizing Rootfs: old block count: $block_count, new block count: $new_block_count"
+		resize2fs -p ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 ${new_block_count}
+		# Error codes 0-3 indicate successfull operation of fsck (no errors or errors corrected)
+		fsck.ext4 -pvfD ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 || [ $? -le 3 ]
+		# After resize2fs we need to make sure the file size (simulating the block device) stays the same
+		dd if=/dev/zero of=${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 seek=$ROOTFS_SIZE count=0 bs=1024
+
+		echo ${OSTREE_OTA_EXT4_LUKS_PASSPHRASE} | cryptsetup reencrypt --encrypt --key-slot 31 --pbkdf-memory ${OSTREE_OTA_EXT4_LUKS_PBKDF2_MEM} --disable-locks --reduce-device-size 32m ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4
+		cryptsetup config --label otaroot ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4
+		cryptsetup luksDump ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4
+	fi
+}
+OSTREE_OTA_EXT4_LUKS ?= "0"
+OSTREE_OTA_EXT4_LUKS_PBKDF2_MEM ?= "524288"
+OSTREE_OTA_EXT4_LUKS_PASSPHRASE ?= "fiopassphrase"
+do_image_ota_ext4[depends] += "cryptsetup-native:do_populate_sysroot"
+
 run_fiotool_cmd () {
 	if [ -n "${SOTA_PACKED_CREDENTIALS}" ]; then
 		if [ -e "${SOTA_PACKED_CREDENTIALS}" ]; then

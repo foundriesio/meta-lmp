@@ -12,5 +12,5 @@ image_download_run() {
 	[ -z "$token" ] && fatal "Missing osf_token u-boot env definition"
 	source /etc/os-release
 	# Example for using wget to download via a token stored in u-boot env
-	wget --header="OSF-TOKEN: $token" https://api.foundries.io/projects/${LMP_FACTORY}/builds/${IMAGE_VERSION}/runs/${LMP_MACHINE}/lmp-factory-image-${LMP_MACHINE}.wic.gz
+	wget --header="OSF-TOKEN: $token" https://api.foundries.io/projects/${LMP_FACTORY}/lmp/builds/${IMAGE_VERSION}/runs/${LMP_MACHINE}/lmp-factory-image-${LMP_MACHINE}.wic.gz
 }

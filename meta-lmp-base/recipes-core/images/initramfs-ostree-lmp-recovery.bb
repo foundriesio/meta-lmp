@@ -3,8 +3,6 @@ DESCRIPTION = "Linux microPlatform OSTree initramfs recovery image"
 inherit core-image nopackages
 
 PACKAGE_INSTALL = " \
-	base-files \
-	base-passwd \
 	busybox \
 	initramfs-framework-base \
 	initramfs-module-ostree-recovery \

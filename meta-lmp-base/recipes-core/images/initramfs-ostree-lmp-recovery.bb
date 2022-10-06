@@ -20,7 +20,6 @@ PACKAGE_INSTALL = " \
 	initramfs-module-ostree-recovery \
 	initramfs-module-udev \
 	os-release \
-	udev \
 	util-linux-mount \
 	${@bb.utils.contains('MACHINE_FEATURES', 'fiovb', 'optee-fiovb', '' , d)} \
 	${@bb.utils.contains('SOTA_CLIENT_FEATURES', 'ubootenv', 'u-boot-default-env u-boot-fw-utils', '' , d)} \

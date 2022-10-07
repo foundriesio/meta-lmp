@@ -435,7 +435,7 @@ OSTREE_KERNEL_ARGS:imx8mn-ddr4-evk ?= "console=tty1 console=ttymxc1,115200 early
 SOTA_CLIENT_FEATURES:append:imx8mn-ddr4-evk = " ubootenv"
 UBOOT_MACHINE:imx8mn-ddr4-evk = "imx8mn_ddr4_evk_config"
 BOOTSCR_LOAD_ADDR:imx8mn-ddr4-evk = "0x44800000"
-MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach-conf"
+MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp"

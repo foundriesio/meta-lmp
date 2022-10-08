@@ -113,10 +113,11 @@ BBMASK += " \
     /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \
     /meta-xilinx-tools/recipes-bsp/u-boot/u-boot-xlnx_%.bbappend \
 "
-# meta-st-stm32mp: mask appends that are not required by lmp
+# meta-st-stm32mp: mask recipes and appends that are not required by lmp
 BBMASK += " \
     /meta-st-stm32mp/recipes-core/busybox/busybox_%.bbappend \
     /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.110.bbappend \
+    /meta-st-stm32mp/recipes-bsp/trusted-firmware-a/tf-a-stm32mp_2.6.bb \
     /meta-st-stm32mp/recipes-kernel/make-mod-scripts/make-mod-scripts_%.bbappend \
 "
 

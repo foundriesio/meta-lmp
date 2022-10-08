@@ -1,12 +1,16 @@
-From 63a65be730daef29e3fc9c09d765cc433aba9423 Mon Sep 17 00:00:00 2001
+From e9f9d3214ed68f5b05a420bb5c1b928f7295f790 Mon Sep 17 00:00:00 2001
 From: Igor Opaniuk <igor.opaniuk@foundries.io>
 Date: Fri, 19 Aug 2022 12:44:15 +0300
 Subject: [PATCH] [FIO interal] stm32mp1: support for boot script in FIP
 
 Add support for pre-loading boot script, added as a blob to FIP.
 
+Upstream-Status: Inappropriate [lmp specific]
+
 Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
+ drivers/auth/tbbr/tbbr_cot_bl2.c              | 10 ++++++++++
  fdts/stm32mp15-bl2.dtsi                       |  1 +
  fdts/stm32mp15-fw-config.dtsi                 |  5 +++++
  include/export/common/tbbr/tbbr_img_def_exp.h |  5 ++++-
@@ -14,10 +18,38 @@ Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
  plat/st/stm32mp1/bl2_plat_setup.c             |  2 ++
  plat/st/stm32mp1/plat_bl2_mem_params_desc.c   | 13 +++++++++++++
  plat/st/stm32mp1/stm32mp1_fip_def.h           |  3 +++
- 7 files changed, 30 insertions(+), 2 deletions(-)
+ 8 files changed, 40 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/auth/tbbr/tbbr_cot_bl2.c b/drivers/auth/tbbr/tbbr_cot_bl2.c
+index ca35dd976..8ebb7bfa6 100644
+--- a/drivers/auth/tbbr/tbbr_cot_bl2.c
++++ b/drivers/auth/tbbr/tbbr_cot_bl2.c
+@@ -556,6 +556,15 @@ static const auth_img_desc_t nt_fw_config = {
+ 		}
+ 	}
+ };
++/* BOOT SCR Config */
++static const auth_img_desc_t bootscr_config = {
++	.img_id = BOOTSCR_ID,
++	.img_type = IMG_RAW,
++	.parent = NULL,
++	.img_auth_methods = (const auth_method_desc_t[AUTH_METHOD_NUM]) {
++		[0] = { .type = AUTH_METHOD_NONE }
++	}
++};
+ /* Secure Partitions */
+ #if defined(SPD_spmd)
+ static const auth_img_desc_t sip_sp_content_cert = {
+@@ -671,6 +680,7 @@ static const auth_img_desc_t * const cot_desc[] = {
+ 	[NON_TRUSTED_FW_CONTENT_CERT_ID]	=	&non_trusted_fw_content_cert,
+ 	[BL33_IMAGE_ID]				=	&bl33_image,
+ 	[NT_FW_CONFIG_ID]			=	&nt_fw_config,
++	[BOOTSCR_ID]				=	&bootscr_config,
+ 	[FW_CONFIG_ID]				=	&fw_config,
+ #if defined(SPD_spmd)
+ 	[SIP_SP_CONTENT_CERT_ID]		=	&sip_sp_content_cert,
 diff --git a/fdts/stm32mp15-bl2.dtsi b/fdts/stm32mp15-bl2.dtsi
-index d00e35b29..1d89d536d 100644
+index 240952a86..5a8d158d7 100644
 --- a/fdts/stm32mp15-bl2.dtsi
 +++ b/fdts/stm32mp15-bl2.dtsi
 @@ -86,6 +86,7 @@
@@ -25,9 +57,9 @@ index d00e35b29..1d89d536d 100644
  			tos_fw_cfg_uuid = "26257c1a-dbc6-7f47-8d96-c4c4b0248021";
  			nt_fw_cfg_uuid = "28da9815-93e8-7e44-ac66-1aaf801550f9";
 +			boot_scr_uuid = "c75cd5f6-1f9c-11ed-861d-0242ac120002";
- 		};
- 	};
- #endif /* !STM32MP_USE_STM32IMAGE */
+ #if TRUSTED_BOARD_BOOT
+ 			t_key_cert_uuid = "827ee890-f860-e411-a1b4-777a21b4f94c";
+ 			t_boot_fw_cert_uuid = "d6e269ea-5d63-e411-8d8c-9fbabe9956a5";
 diff --git a/fdts/stm32mp15-fw-config.dtsi b/fdts/stm32mp15-fw-config.dtsi
 index 8aece289a..0ffa86d61 100644
 --- a/fdts/stm32mp15-fw-config.dtsi
@@ -61,31 +93,31 @@ index 98544c0ae..323940ec9 100644
  
  #endif /* ARM_TRUSTED_FIRMWARE_EXPORT_COMMON_TBBR_TBBR_IMG_DEF_EXP_H */
 diff --git a/plat/st/common/stm32mp_fconf_io.c b/plat/st/common/stm32mp_fconf_io.c
-index ca7195854..114664b7f 100644
+index 25b4d425d..665fb3d8b 100644
 --- a/plat/st/common/stm32mp_fconf_io.c
 +++ b/plat/st/common/stm32mp_fconf_io.c
 @@ -66,7 +66,7 @@ struct plat_io_policy policies[MAX_NUMBER_IDS] = {
  #endif /* (STM32MP_SDMMC || STM32MP_EMMC) && PSA_FWU_SUPPORT */
  };
  
--#define FCONF_ST_IO_UUID_NUMBER	U(8)
-+#define FCONF_ST_IO_UUID_NUMBER	U(9)
+-#define DEFAULT_UUID_NUMBER	U(8)
++#define DEFAULT_UUID_NUMBER	U(9)
  
- static io_uuid_spec_t fconf_stm32mp_uuids[FCONF_ST_IO_UUID_NUMBER];
- static OBJECT_POOL_ARRAY(fconf_stm32mp_uuids_pool, fconf_stm32mp_uuids);
-@@ -86,6 +86,7 @@ static const struct policies_load_info load_info[FCONF_ST_IO_UUID_NUMBER] = {
+ #if TRUSTED_BOARD_BOOT
+ #define TBBR_UUID_NUMBER	U(6)
+@@ -95,6 +95,7 @@ static const struct policies_load_info load_info[FCONF_ST_IO_UUID_NUMBER] = {
  	{HW_CONFIG_ID, "hw_cfg_uuid"},
  	{TOS_FW_CONFIG_ID, "tos_fw_cfg_uuid"},
  	{NT_FW_CONFIG_ID, "nt_fw_cfg_uuid"},
 +	{BOOTSCR_ID, "boot_scr_uuid"},
- };
- 
- int fconf_populate_stm32mp_io_policies(uintptr_t config)
+ #if TRUSTED_BOARD_BOOT
+ 	{TRUSTED_BOOT_FW_CERT_ID, "t_boot_fw_cert_uuid"},
+ 	{TRUSTED_KEY_CERT_ID, "t_key_cert_uuid"},
 diff --git a/plat/st/stm32mp1/bl2_plat_setup.c b/plat/st/stm32mp1/bl2_plat_setup.c
-index 6f5fcc78c..fd58bf941 100644
+index f052cdbbc..580038d3a 100644
 --- a/plat/st/stm32mp1/bl2_plat_setup.c
 +++ b/plat/st/stm32mp1/bl2_plat_setup.c
-@@ -423,6 +423,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
+@@ -418,6 +418,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
  		BL33_IMAGE_ID,
  		HW_CONFIG_ID,
  		TOS_FW_CONFIG_ID,
@@ -93,7 +125,7 @@ index 6f5fcc78c..fd58bf941 100644
  	};
  #endif /* !STM32MP_USE_STM32IMAGE */
  
-@@ -483,6 +484,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
+@@ -478,6 +479,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
  
  			case HW_CONFIG_ID:
  			case TOS_FW_CONFIG_ID:
@@ -126,10 +158,10 @@ index 7963c4a97..41b16ab8b 100644
  	{
  		.image_id = BL33_IMAGE_ID,
 diff --git a/plat/st/stm32mp1/stm32mp1_fip_def.h b/plat/st/stm32mp1/stm32mp1_fip_def.h
-index 7a277fdcb..3cdb51997 100644
+index 05fb259b1..7604670ce 100644
 --- a/plat/st/stm32mp1/stm32mp1_fip_def.h
 +++ b/plat/st/stm32mp1/stm32mp1_fip_def.h
-@@ -78,6 +78,9 @@
+@@ -83,6 +83,9 @@
  					 STM32MP_OPTEE_BASE)
  #endif
  

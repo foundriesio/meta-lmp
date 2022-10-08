@@ -1,0 +1,79 @@
+From d66f5804f13aa5e9c1fbcebd6472ce57fefc0206 Mon Sep 17 00:00:00 2001
+From: Nicolas Toromanoff <nicolas.toromanoff@foss.st.com>
+Date: Fri, 4 Feb 2022 09:35:35 +0100
+Subject: [PATCH 5/5] feat(stm32mp): anti rollback for TBB
+
+Use monotonic counter 1 as the nv_ctr (the counter is common with
+all images)
+
+Upstream-Status: Pending
+
+Signed-off-by: Nicolas Toromanoff <nicolas.toromanoff@foss.st.com>
+Change-Id: I4bfb4d02dad03a3348a8056fa96678fe1051493b
+Reviewed-on: https://gerrit.st.com/c/mpu/oe/st/tf-a/+/238698
+Reviewed-by: CITOOLS <MDG-smet-aci-reviews@list.st.com>
+Reviewed-by: Nicolas TOROMANOFF <nicolas.toromanoff@st.com>
+Reviewed-by: CIBUILD <MDG-smet-aci-builds@list.st.com>
+Reviewed-by: Lionel DEBIEVE <lionel.debieve@foss.st.com>
+Tested-by: Nicolas TOROMANOFF <nicolas.toromanoff@st.com>
+(cherry picked from commit 8e87b035c652ab08098ebbd97b35ea8bcc5f93c5)
+---
+ plat/st/common/stm32mp_trusted_boot.c | 17 ++++++++---------
+ plat/st/stm32mp1/stm32mp1_def.h       |  1 +
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/plat/st/common/stm32mp_trusted_boot.c b/plat/st/common/stm32mp_trusted_boot.c
+index ab7bebfb8..f579d18ce 100644
+--- a/plat/st/common/stm32mp_trusted_boot.c
++++ b/plat/st/common/stm32mp_trusted_boot.c
+@@ -13,6 +13,7 @@
+ #include <lib/fconf/fconf.h>
+ #include <lib/fconf/fconf_dyn_cfg_getter.h>
+ #include <lib/fconf/fconf_tbbr_getter.h>
++#include <lib/mmio.h>
+ #include <plat/common/platform.h>
+ 
+ #include <platform_def.h>
+@@ -31,20 +32,18 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
+ 
+ int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
+ {
+-	/*
+-	 * This monotonic counter is the counter used by ROM code
+-	 * to identify BL2.
+-	 */
+-	if (stm32_get_otp_value(MONOTONIC_OTP, nv_ctr) == 0) {
+-		return 0;
+-	}
++	*nv_ctr = mmio_read_32(TAMP_BASE + TAMP_COUNTR);
+ 
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ int plat_set_nv_ctr(void *cookie, unsigned int nv_ctr)
+ {
+-	return -EINVAL;
++	while (mmio_read_32(TAMP_BASE + TAMP_COUNTR) != nv_ctr) {
++		mmio_write_32(TAMP_BASE + TAMP_COUNTR, 1U);
++	}
++
++	return 0;
+ }
+ 
+ int plat_get_mbedtls_heap(void **heap_addr, size_t *heap_size)
+diff --git a/plat/st/stm32mp1/stm32mp1_def.h b/plat/st/stm32mp1/stm32mp1_def.h
+index 21e3b448b..5b0aa78e2 100644
+--- a/plat/st/stm32mp1/stm32mp1_def.h
++++ b/plat/st/stm32mp1/stm32mp1_def.h
+@@ -518,6 +518,7 @@ enum ddr_type {
+  ******************************************************************************/
+ #define TAMP_BASE			U(0x5C00A000)
+ #define TAMP_BKP_REGISTER_BASE		(TAMP_BASE + U(0x100))
++#define TAMP_COUNTR			U(0x40)
+ 
+ #if !(defined(__LINKER__) || defined(__ASSEMBLER__))
+ static inline uintptr_t tamp_bkpr(uint32_t idx)
+-- 
+2.34.1
+

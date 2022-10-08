@@ -1,0 +1,102 @@
+From fc2fe75f3385caefcca4e20d0674b5616f285874 Mon Sep 17 00:00:00 2001
+From: Lionel Debieve <lionel.debieve@st.com>
+Date: Tue, 29 Sep 2020 09:29:08 +0200
+Subject: [PATCH 1/5] auth: tbbr: move firmware configuration into common part
+
+Move the fw_config authentication structure into the common part.
+Without BL1, the fw_config will be added into the BL2 firmware.
+It will be loaded from FIP and authenticated in BL2.
+
+Upstream-Status: Pending
+
+Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+Change-Id: I3b8f8e99961d28d3d15a6dbff06b0d9cdda20881
+Reviewed-on: https://gerrit.st.com/c/mpu/oe/st/tf-a/+/184832
+Reviewed-by: CITOOLS <smet-aci-reviews@lists.codex.cro.st.com>
+Reviewed-by: Nicolas TOROMANOFF <nicolas.toromanoff@st.com>
+Reviewed-by: CIBUILD <smet-aci-builds@lists.codex.cro.st.com>
+Reviewed-by: Yann GAUTIER <yann.gautier@st.com>
+Tested-by: Nicolas TOROMANOFF <nicolas.toromanoff@st.com>
+(cherry picked from commit 09f1389e44bb6b3e619b5a500140ff59b051a981)
+---
+ drivers/auth/tbbr/tbbr_cot_bl1.c       | 15 ---------------
+ drivers/auth/tbbr/tbbr_cot_bl2.c       |  1 +
+ drivers/auth/tbbr/tbbr_cot_common.c    | 15 +++++++++++++++
+ include/drivers/auth/tbbr_cot_common.h |  1 +
+ 4 files changed, 17 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/auth/tbbr/tbbr_cot_bl1.c b/drivers/auth/tbbr/tbbr_cot_bl1.c
+index 44f86384f..e479c17d7 100644
+--- a/drivers/auth/tbbr/tbbr_cot_bl1.c
++++ b/drivers/auth/tbbr/tbbr_cot_bl1.c
+@@ -150,21 +150,6 @@ static const auth_img_desc_t tb_fw_config = {
+ 	}
+ };
+ 
+-static const auth_img_desc_t fw_config = {
+-	.img_id = FW_CONFIG_ID,
+-	.img_type = IMG_RAW,
+-	.parent = &trusted_boot_fw_cert,
+-	.img_auth_methods = (const auth_method_desc_t[AUTH_METHOD_NUM]) {
+-		[0] = {
+-			.type = AUTH_METHOD_HASH,
+-			.param.hash = {
+-				.data = &raw_data,
+-				.hash = &fw_config_hash
+-			}
+-		}
+-	}
+-};
+-
+ /*
+  * TBBR Chain of trust definition
+  */
+diff --git a/drivers/auth/tbbr/tbbr_cot_bl2.c b/drivers/auth/tbbr/tbbr_cot_bl2.c
+index 11e2f4678..ca35dd976 100644
+--- a/drivers/auth/tbbr/tbbr_cot_bl2.c
++++ b/drivers/auth/tbbr/tbbr_cot_bl2.c
+@@ -671,6 +671,7 @@ static const auth_img_desc_t * const cot_desc[] = {
+ 	[NON_TRUSTED_FW_CONTENT_CERT_ID]	=	&non_trusted_fw_content_cert,
+ 	[BL33_IMAGE_ID]				=	&bl33_image,
+ 	[NT_FW_CONFIG_ID]			=	&nt_fw_config,
++	[FW_CONFIG_ID]				=	&fw_config,
+ #if defined(SPD_spmd)
+ 	[SIP_SP_CONTENT_CERT_ID]		=	&sip_sp_content_cert,
+ 	[SP_PKG1_ID]				=	&sp_pkg1,
+diff --git a/drivers/auth/tbbr/tbbr_cot_common.c b/drivers/auth/tbbr/tbbr_cot_common.c
+index 0983d4219..c45144740 100644
+--- a/drivers/auth/tbbr/tbbr_cot_common.c
++++ b/drivers/auth/tbbr/tbbr_cot_common.c
+@@ -124,3 +124,18 @@ const auth_img_desc_t hw_config = {
+ 		}
+ 	}
+ };
++
++const auth_img_desc_t fw_config = {
++	.img_id = FW_CONFIG_ID,
++	.img_type = IMG_RAW,
++	.parent = &trusted_boot_fw_cert,
++	.img_auth_methods = (const auth_method_desc_t[AUTH_METHOD_NUM]) {
++		[0] = {
++			.type = AUTH_METHOD_HASH,
++			.param.hash = {
++				.data = &raw_data,
++				.hash = &fw_config_hash
++			}
++		}
++	}
++};
+diff --git a/include/drivers/auth/tbbr_cot_common.h b/include/drivers/auth/tbbr_cot_common.h
+index a51faee1a..21bcd520a 100644
+--- a/include/drivers/auth/tbbr_cot_common.h
++++ b/include/drivers/auth/tbbr_cot_common.h
+@@ -25,5 +25,6 @@ extern auth_param_type_desc_t fw_config_hash;
+ 
+ extern const auth_img_desc_t trusted_boot_fw_cert;
+ extern const auth_img_desc_t hw_config;
++extern const auth_img_desc_t fw_config;
+ 
+ #endif /* TBBR_COT_COMMON_H */
+-- 
+2.34.1
+

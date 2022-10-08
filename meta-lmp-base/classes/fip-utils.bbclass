@@ -55,61 +55,14 @@ FIP_DEPLOYDIR_UBOOT  ?= "${DEPLOY_DIR}/images/${MACHINE}/u-boot"
 FIP_DEPLOYDIR_BOOT_ITB  ?= "${DEPLOY_DIR}/images/${MACHINE}"
 
 # Set default configuration to allow FIP signing
-FIP_SIGN_ENABLE ??= ''
-FIP_SIGN_KEY ??= ''
-FIP_SIGN_KEY_EXTERNAL ??= ''
-FIP_SIGN_KEY_PASS ??= ''
-FIP_SIGN_SUFFIX ??= ''
-
+FIP_SIGN_ENABLE ?= "${@bb.utils.contains('TF_A_SIGN_ENABLE', '1', '1', '', d)}"
+FIP_SIGN_KEY_PATH ?= "${TF_A_SIGN_KEY_PATH}"
 
 # Define FIP dependency build
 FIP_DEPENDS += "virtual/bootloader"
 FIP_DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os', '', d)}"
 FIP_DEPENDS += "u-boot-default-script"
 FIP_DEPENDS:class-nativesdk = ""
-
-# -----------------------------------------------
-# Handle FIP config and set internal vars
-#   FIP_BL32_CONF
-def get_sign_key_path(d, relative_path):
-    if relative_path != None:
-        for p in d.getVar("BBPATH").split(":"):
-            file_path = os.path.join(p, relative_path)
-            if os.path.isfile(file_path):
-                bb.debug(1, "Set FIP_SIGN_KEY to '%s' path." % file_path)
-                return file_path
-    return None
-def generate_sign_key_path(d):
-    default_fip_signingkey = d.getVar('FIP_SIGN_KEY')
-    if not default_fip_signingkey:
-        bb.note("Please make sure to configure \"FIP_SIGN_KEY\" var to signing key file.")
-    else:
-        if d.getVar('FIP_SIGN_KEY_EXTERNAL') == '1':
-            default_fip_signingkey_path = get_sign_key_path(d, default_fip_signingkey)
-            if default_fip_signingkey_path:
-                d.setVar('FIP_SIGN_KEY_PATH', default_fip_signingkey_path)
-            else:
-                bbpaths = d.getVar('BBPATH').replace(':','\n\t')
-                bb.fatal('\nNot able to find "%s" path from current BBPATH var:\n\t%s.' % (default_fip_signingkey, bbpaths))
-        else:
-            d.setVar('FIP_SIGN_KEY_PATH', default_fip_signingkey)
-
-    socname_list = d.getVar('TF_A_SOC_NAME')
-    if socname_list and len(socname_list) > 0:
-        d.setVar('FIP_SIGN_KEY_PATH_SOC_LIST', '')
-        for socname in socname_list.split():
-            fip_signingkey = d.getVar('FIP_SIGN_KEY_%s' % socname)
-            if not fip_signingkey and not default_fip_signingkey:
-                bb.fatal("Please make sure to configure \"FIP_SIGN_KEY_%s\" var to signing key file." % socname)
-            if d.getVar('FIP_SIGN_KEY_EXTERNAL') == '1':
-                fip_signingkey_path = get_sign_key_path(d, fip_signingkey)
-                if fip_signingkey_path:
-                    d.appendVar('FIP_SIGN_KEY_PATH_SOC_LIST', fip_signingkey_path + ',')
-                else:
-                    bbpaths = d.getVar('BBPATH').replace(':','\n\t')
-                    bb.fatal('\nNot able to find "%s" (socname %s) path from current BBPATH var:\n\t%s.' % (fip_signingkey, socname, bbpaths))
-            else:
-                d.appendVar('FIP_SIGN_KEY_PATH_SOC_LIST', fip_signingkey + ',')
 
 python () {
     import re
@@ -153,7 +106,9 @@ python () {
                     d.appendVar('FIP_DEVICETREE', items[1] + ',')
                     break
     if d.getVar('FIP_SIGN_ENABLE') == '1':
-        generate_sign_key_path(d)
+        signature_key = d.getVar('FIP_SIGN_KEY_PATH')
+        if not signature_key:
+            bb.fatal("Please make sure to configure \"FIP_SIGN_KEY_PATH\" or \"TF_A_SIGN_KEY_PATH\" to a valid key")
 }
 
 # Deploy the fip binary for current target
@@ -218,20 +173,9 @@ do_deploy:append:class-target() {
             fi
             # Init certificate settings
             if [ "${FIP_SIGN_ENABLE}" = "1" ]; then
-                soc_sign_suffix=""
-                if [ -n "${TF_A_SOC_NAME}" ]; then
-                    unset k
-                    for soc in ${TF_A_SOC_NAME}; do
-                        k=$(expr $k + 1)
-                        if [ "$(echo ${dt} | grep -c ${soc})" -eq 1 ]; then
-                            sign_key=$(echo ${FIP_SIGN_KEY_PATH_SOC_LIST} | cut -d',' -f${k})
-                        fi
-                    done
-                else
-                    sign_key="${FIP_SIGN_KEY_PATH}"
-                fi
+                sign_key="${FIP_SIGN_KEY_PATH}"
                 if [ -z "${sign_key}" ]; then
-                    bbfatal "Please make sure to configure \"FIP_SIGN_KEY\" var to signing key file."
+                    bbfatal "Please make sure to configure \"FIP_SIGN_KEY_PATH\" var to signing key file."
                 fi
                 FIP_CERTCONF="\
                     --tb-fw-cert ${WORKDIR}/tb_fw.crt \
@@ -246,12 +190,10 @@ do_deploy:append:class-target() {
                 # Generate certificates
                 ${CERTTOOL} -n --tfw-nvctr 0 --ntfw-nvctr 0 --key-alg ecdsa --hash-alg sha256 \
                         --rot-key ${sign_key} \
-                        --rot-key-pwd ${FIP_SIGN_KEY_PASS} \
                         ${FIP_FWCONFIG} \
                         ${FIP_HWCONFIG} \
                         ${FIP_NTFW} \
                         ${FIP_EXTRACONF} \
-                        ${FIP_BOOT_ITB_CONF} \
                         ${FIP_CERTCONF} \
                         --tb-fw ${WORKDIR}/bl2-fake.bin
                 # Remove fake bl2 binary
@@ -268,7 +210,7 @@ do_deploy:append:class-target() {
                             ${FIP_EXTRACONF} \
                             ${FIP_BOOT_ITB_CONF} \
                             ${FIP_CERTCONF} \
-                            ${FIP_DEPLOYDIR_FIP}/${FIP_BASENAME}-${dt}-${config}${FIP_SIGN_SUFFIX}.${FIP_SUFFIX}"
+                            ${FIP_DEPLOYDIR_FIP}/${FIP_BASENAME}-${dt}-${config}.${FIP_SUFFIX}"
             ${FIPTOOL} create \
                             ${FIP_FWCONFIG} \
                             ${FIP_HWCONFIG} \
@@ -277,7 +219,7 @@ do_deploy:append:class-target() {
                             ${FIP_EXTRACONF} \
                             ${FIP_BOOT_ITB_CONF} \
                             ${FIP_CERTCONF} \
-                            ${FIP_DEPLOYDIR_FIP}/${FIP_BASENAME}-${dt}-${config}${FIP_SIGN_SUFFIX}.${FIP_SUFFIX}
+                            ${FIP_DEPLOYDIR_FIP}/${FIP_BASENAME}-${dt}-${config}.${FIP_SUFFIX}
         done
     done
 }

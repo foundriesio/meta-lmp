@@ -10,9 +10,9 @@ include ${@'recipes-bsp/trusted-firmware-a/tf-a-fio-st.inc' if 'stm32mp1common' 
 # ------------------------------------
 # Set MBEDTLS support
 TFA_MBEDTLS_DIR ?= "mbedtls"
-# MBEDTLS v2.24.0
-SRC_URI_MBEDTLS = "git://github.com/ARMmbed/mbedtls.git;protocol=https;destsuffix=git/${TFA_MBEDTLS_DIR};branch=master;name=mbedtls"
-SRCREV_mbedtls = "523f0554b6cdc7ace5d360885c3f5bbcc73ec0e8"
+# MBEDTLS v2.28.0
+SRC_URI_MBEDTLS = "git://github.com/ARMmbed/mbedtls.git;protocol=https;destsuffix=git/${TFA_MBEDTLS_DIR};branch=mbedtls-2.28;name=mbedtls"
+SRCREV_mbedtls = "8b3f26a5ac38d4fdccbc5c5366229f3e01dafcc0"
 LIC_FILES_CHKSUM_MBEDTLS = "file://mbedtls/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 LICENSE_MBEDTLS = "Apache-2.0"
 # Add MBEDTLS to our sources
@@ -97,6 +97,7 @@ TF_A_METADATA_JSON ?= ""
 # Configure specific build flags
 EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_SIGN_ENABLE', '1', 'TRUSTED_BOARD_BOOT=1', '', d)}"
 EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_SIGN_ENABLE', '1', 'MBEDTLS_DIR=${TFA_MBEDTLS_DIR}', '', d)}"
+EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_SIGN_ENABLE', '1', 'ROT_KEY=${TF_A_SIGN_KEY_PATH}', '', d)}"
 EXTRA_OEMAKE += "${@bb.utils.contains('TF_A_ENCRYPTED_ENABLE', '1', 'DECRYPTION_SUPPORT=aes_gcm ENCRYPT_BL32=1', '', d)}"
 
 # -----------------------------------------------
@@ -166,7 +167,10 @@ python () {
     # If signature are activated, for winning space, the debug parameter will be remove and levele of trace decrease
     signature_val = d.getVar('TF_A_SIGN_ENABLE')
     if signature_val and signature_val == "1":
-        bb.warn("TF-A SIGNATURE: force to disable DEBUG and decrease log level")
+        signature_key = d.getVar('TF_A_SIGN_KEY_PATH')
+        if not signature_key:
+            bb.fatal("Please make sure to configure \"TF_A_SIGN_KEY_PATH\" to a valid key")
+        bb.debug(1, "TF-A SIGNATURE: force to disable DEBUG and decrease log level")
         # force no debug and log level to release
         d.setVar('TF_A_DEBUG_TRACE', "0")
 }

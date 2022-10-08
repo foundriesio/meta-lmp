@@ -1,0 +1,51 @@
+From e067524458f45634fddbdfa7112d8474dd41fb99 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Thu, 6 Oct 2022 19:20:42 -0300
+Subject: [PATCH 2/5] mbedtls/fconf: fix compile warning
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ drivers/auth/mbedtls/mbedtls_x509_parser.c | 2 +-
+ lib/fconf/fconf_tbbr_getter.c              | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/auth/mbedtls/mbedtls_x509_parser.c b/drivers/auth/mbedtls/mbedtls_x509_parser.c
+index 129566bd6..27ac5e473 100644
+--- a/drivers/auth/mbedtls/mbedtls_x509_parser.c
++++ b/drivers/auth/mbedtls/mbedtls_x509_parser.c
+@@ -117,7 +117,7 @@ static int get_ext(const char *oid, void **ext, unsigned int *ext_len)
+ 		if (oid_len == MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+ 			return IMG_PARSER_ERR;
+ 		}
+-		if ((oid_len == strlen(oid_str)) && !strcmp(oid, oid_str)) {
++		if ((oid_len == (int)strlen(oid_str)) && !strcmp(oid, oid_str)) {
+ 			*ext = (void *)p;
+ 			*ext_len = (unsigned int)len;
+ 			return IMG_PARSER_OK;
+diff --git a/lib/fconf/fconf_tbbr_getter.c b/lib/fconf/fconf_tbbr_getter.c
+index 6f043e645..79e76f422 100644
+--- a/lib/fconf/fconf_tbbr_getter.c
++++ b/lib/fconf/fconf_tbbr_getter.c
+@@ -44,7 +44,7 @@ int fconf_populate_tbbr_dyn_config(uintptr_t config)
+ 	/* Check if the value is boolean */
+ 	if ((tbbr_dyn_config.disable_auth != 0U) &&
+ 	    (tbbr_dyn_config.disable_auth != 1U)) {
+-		WARN("Invalid value for `%s` cell %d\n",
++		WARN("Invalid value for `%s` cell %u\n",
+ 			"disable_auth", tbbr_dyn_config.disable_auth);
+ 		return -1;
+ 	}
+@@ -71,7 +71,7 @@ int fconf_populate_tbbr_dyn_config(uintptr_t config)
+ 	}
+ 	tbbr_dyn_config.mbedtls_heap_size = val32;
+ 
+-	VERBOSE("%s%s%s %d\n", "FCONF: `tbbr.", "disable_auth",
++	VERBOSE("%s%s%s %u\n", "FCONF: `tbbr.", "disable_auth",
+ 		"` cell found with value =", tbbr_dyn_config.disable_auth);
+ 	VERBOSE("%s%s%s %p\n", "FCONF: `tbbr.", "mbedtls_heap_addr",
+ 		"` cell found with value =", tbbr_dyn_config.mbedtls_heap_addr);
+-- 
+2.34.1
+

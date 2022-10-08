@@ -1,0 +1,1050 @@
+From 0125cf5940abf4c05b3f2e425a0f14c73c53a67f Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Sat, 8 Oct 2022 17:42:42 -0300
+Subject: [PATCH 4/5] plat: stm32mp1: add trusted boot support
+
+Enable TRUSTED_BOARD_BOOT. This change removes calls to
+stm32mp_check_header() and stm32mp_auth_image() when boot images
+are loaded since images are now verified from the authentication
+framework.
+
+This is heavily based on commit 3da06b222c755f34f86f8794da04368cf4eeab7f
+from the TF-A ST BSP tree, but customized to allow appending the ROT_PK
+HASH as part of the BL2 image, instead of assuming the hash is stored in
+OTP (for more flexibility and to avoid requiring the ROT key to be
+available during built time).
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ docs/plat/stm32mp1.rst                        |  35 ++
+ drivers/st/io/io_stm32image.c                 |  13 -
+ plat/st/common/include/stm32mp_auth.h         |  19 -
+ plat/st/common/include/stm32mp_common.h       |  10 -
+ plat/st/common/stm32mp_auth.c                 |  95 -----
+ plat/st/common/stm32mp_crypto_lib.c           | 339 ++++++++++++++++++
+ plat/st/common/stm32mp_fconf_io.c             |  19 +-
+ plat/st/common/stm32mp_trusted_boot.c         |  64 ++++
+ plat/st/stm32mp1/bl2_plat_setup.c             |  23 +-
+ plat/st/stm32mp1/include/boot_api.h           |  11 +-
+ .../include/stm32mp15_mbedtls_config.h        | 119 ++++++
+ plat/st/stm32mp1/platform.mk                  |  57 ++-
+ plat/st/stm32mp1/stm32mp1_def.h               |   1 -
+ plat/st/stm32mp1/stm32mp1_fip_def.h           |   5 +
+ plat/st/stm32mp1/stm32mp1_rotpk.S             |  15 +
+ 15 files changed, 660 insertions(+), 165 deletions(-)
+ delete mode 100644 plat/st/common/include/stm32mp_auth.h
+ delete mode 100644 plat/st/common/stm32mp_auth.c
+ create mode 100644 plat/st/common/stm32mp_crypto_lib.c
+ create mode 100644 plat/st/common/stm32mp_trusted_boot.c
+ create mode 100644 plat/st/stm32mp1/include/stm32mp15_mbedtls_config.h
+ create mode 100644 plat/st/stm32mp1/stm32mp1_rotpk.S
+
+diff --git a/docs/plat/stm32mp1.rst b/docs/plat/stm32mp1.rst
+index 7ae98b1d2..0b4cbfc1d 100644
+--- a/docs/plat/stm32mp1.rst
++++ b/docs/plat/stm32mp1.rst
+@@ -231,6 +231,41 @@ With OP-TEE:
+         BL32_EXTRA2=<optee_directory>/tee-pageable_v2.bin
+         fip
+ 
++Trusted Boot Board
++__________________
++
++.. code:: shell
++
++    tools/cert_create/cert_create -n --rot-key "build/stm32mp1/debug/rot_key.pem" \
++        --tfw-nvctr 0 \
++        --ntfw-nvctr 0 \
++        --key-alg ecdsa --hash-alg sha256 \
++        --trusted-key-cert build/stm32mp1/cert_images/trusted-key-cert.key-crt \
++        --tb-fw=build/stm32mp1/debug/bl2.bin \
++        --tb-fw-cert build/stm32mp1/cert_images/trusted-boot-fw.key-crt\
++        --tos-fw <optee_directory>/tee-header_v2.bin \
++        --tos-fw-cert build/stm32mp1/cert_images/tee-header_v2.bin.crt \
++        --tos-fw-key-cert build/stm32mp1/cert_images/tee-header_v2.bin.key-crt \
++        --tos-fw-extra1 <optee_directory>/tee-pager_v2.bin \
++        --tos-fw-extra2 <optee_directory>/tee-pageable_v2.bin \
++        --nt-fw <u-boot_directory>/u-boot-nodtb.bin \
++        --nt-fw-cert build/stm32mp1/cert_images/u-boot.bin.crt \
++        --nt-fw-key-cert build/stm32mp1/cert_images/u-boot.bin.key-crt \
++        --hw-config <u-boot_directory>/u-boot.dtb \
++        --fw-config build/stm32mp1/debug/fdts/fw-config.dtb
++
++    tools/fiptool/fiptool create --tos-fw <optee_directory>/tee-header_v2.bin \
++        --tos-fw-extra1 <optee_directory>/tee-pager_v2.bin \
++        --tos-fw-extra2 <optee_directory>/tee-pageable_v2.bin \
++        --nt-fw <u-boot_directory>/u-boot-nodtb.bin \
++        --hw-config <u-boot_directory>/u-boot.dtb \
++        --tos-fw-cert build/stm32mp1/cert_images/tee-header_v2.bin.crt \
++        --tos-fw-key-cert build/stm32mp1/cert_images/tee-header_v2.bin.key-crt \
++        --nt-fw-cert build/stm32mp1/cert_images/u-boot.bin.crt \
++        --nt-fw-key-cert build/stm32mp1/cert_images/u-boot.bin.key-crt \
++        --trusted-key-cert build/stm32mp1/cert_images/trusted-key-cert.key-crt \
++        --tb-fw-cert build/stm32mp1/cert_images/trusted-boot-fw.key-crt stm32mp1.fip
++
+ 
+ STM32IMAGE bootchain
+ ~~~~~~~~~~~~~~~~~~~~
+diff --git a/drivers/st/io/io_stm32image.c b/drivers/st/io/io_stm32image.c
+index 9fa0c50fd..d8b760a22 100644
+--- a/drivers/st/io/io_stm32image.c
++++ b/drivers/st/io/io_stm32image.c
+@@ -333,19 +333,6 @@ static int stm32image_partition_read(io_entity_t *entity, uintptr_t buffer,
+ 			continue;
+ 		}
+ 
+-		result = stm32mp_check_header(header, buffer);
+-		if (result != 0) {
+-			ERROR("Header check failed\n");
+-			*length_read = 0;
+-			header->magic = 0;
+-		}
+-
+-		result = stm32mp_auth_image(header, buffer);
+-		if (result != 0) {
+-			ERROR("Authentication Failed (%i)\n", result);
+-			return result;
+-		}
+-
+ 		inv_dcache_range(round_up((uintptr_t)(local_buffer + length - hdr_sz),
+ 					  CACHE_WRITEBACK_GRANULE), *length_read - length + hdr_sz);
+ 
+diff --git a/plat/st/common/include/stm32mp_auth.h b/plat/st/common/include/stm32mp_auth.h
+deleted file mode 100644
+index 3075d18ac..000000000
+--- a/plat/st/common/include/stm32mp_auth.h
++++ /dev/null
+@@ -1,19 +0,0 @@
+-/*
+- * Copyright (c) 2019, ARM Limited and Contributors. All rights reserved.
+- *
+- * SPDX-License-Identifier: BSD-3-Clause
+- */
+-
+-#ifndef STM32MP_AUTH_H
+-#define STM32MP_AUTH_H
+-
+-struct stm32mp_auth_ops {
+-	uint32_t (*check_key)(uint8_t *pubkey_in, uint8_t *pubkey_out);
+-	uint32_t (*verify_signature)(uint8_t *hash_in, uint8_t *pubkey_in,
+-				     uint8_t *signature, uint32_t ecc_algo);
+-};
+-
+-void stm32mp_init_auth(struct stm32mp_auth_ops *init_ptr);
+-int stm32mp_auth_image(boot_api_image_header_t *header, uintptr_t buffer);
+-
+-#endif /* STM32MP_AUTH_H */
+diff --git a/plat/st/common/include/stm32mp_common.h b/plat/st/common/include/stm32mp_common.h
+index 79f81dbb5..b8f6daf05 100644
+--- a/plat/st/common/include/stm32mp_common.h
++++ b/plat/st/common/include/stm32mp_common.h
+@@ -109,16 +109,6 @@ void stm32mp_print_boardinfo(void);
+ /* Initialise the IO layer and register platform IO devices */
+ void stm32mp_io_setup(void);
+ 
+-#if STM32MP_USE_STM32IMAGE
+-/*
+- * Check that the STM32 header of a .stm32 binary image is valid
+- * @param header: pointer to the stm32 image header
+- * @param buffer: address of the binary image (payload)
+- * @return: 0 on success, negative value in case of error
+- */
+-int stm32mp_check_header(boot_api_image_header_t *header, uintptr_t buffer);
+-#endif /* STM32MP_USE_STM32IMAGE */
+-
+ /* Functions to map DDR in MMU with non-cacheable attribute, and unmap it */
+ int stm32mp_map_ddr_non_cacheable(void);
+ int stm32mp_unmap_ddr(void);
+diff --git a/plat/st/common/stm32mp_auth.c b/plat/st/common/stm32mp_auth.c
+deleted file mode 100644
+index 97fbffa2e..000000000
+--- a/plat/st/common/stm32mp_auth.c
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/*
+- * Copyright (c) 2019-2022, STMicroelectronics - All Rights Reserved
+- *
+- * SPDX-License-Identifier: BSD-3-Clause
+- */
+-
+-#include <errno.h>
+-
+-#include <common/debug.h>
+-#include <drivers/io/io_storage.h>
+-#include <drivers/st/bsec.h>
+-#include <drivers/st/stm32_hash.h>
+-#include <lib/xlat_tables/xlat_tables_v2.h>
+-#include <plat/common/platform.h>
+-
+-#include <platform_def.h>
+-
+-static const struct stm32mp_auth_ops *auth_ops;
+-
+-void stm32mp_init_auth(struct stm32mp_auth_ops *init_ptr)
+-{
+-	if ((init_ptr == NULL) ||
+-	    (init_ptr->check_key == NULL) ||
+-	    (init_ptr->verify_signature == NULL) ||
+-	    (stm32_hash_register() != 0)) {
+-		panic();
+-	}
+-
+-	auth_ops = init_ptr;
+-}
+-
+-int stm32mp_auth_image(boot_api_image_header_t *header, uintptr_t buffer)
+-{
+-	int ret;
+-	uint8_t image_hash[BOOT_API_SHA256_DIGEST_SIZE_IN_BYTES];
+-	uint32_t header_skip_cksum = sizeof(header->magic) +
+-				     sizeof(header->image_signature) +
+-				     sizeof(header->payload_checksum);
+-
+-	/* Check Security Status */
+-	if (!stm32mp_is_closed_device()) {
+-		if (header->option_flags != 0U) {
+-			WARN("Skip signature check (header option)\n");
+-			return 0;
+-		}
+-		INFO("Check signature on Open device\n");
+-	}
+-
+-	if (auth_ops == NULL) {
+-		ERROR("Device doesn't support image authentication\n");
+-		return -EOPNOTSUPP;
+-	}
+-
+-	ret = mmap_add_dynamic_region(STM32MP_ROM_BASE, STM32MP_ROM_BASE,
+-				      STM32MP_ROM_SIZE_2MB_ALIGNED, MT_CODE | MT_SECURE);
+-	if (ret != 0) {
+-		return ret;
+-	}
+-
+-	/* Check Public Key */
+-	if (auth_ops->check_key(header->ecc_pubk, NULL) != BOOT_API_RETURN_OK) {
+-		ret = -EINVAL;
+-		goto err;
+-	}
+-
+-	/* Compute end of header hash and payload hash */
+-	stm32_hash_init(HASH_SHA256);
+-
+-	ret = stm32_hash_update((uint8_t *)&header->header_version,
+-				sizeof(boot_api_image_header_t) -
+-				header_skip_cksum);
+-	if (ret != 0) {
+-		ERROR("Hash of header failed, %i\n", ret);
+-		goto err;
+-	}
+-
+-	ret = stm32_hash_final_update((uint8_t *)buffer,
+-			       header->image_length, image_hash);
+-	if (ret != 0) {
+-		ERROR("Hash of payload failed\n");
+-		goto err;
+-	}
+-
+-	/* Verify signature */
+-	if (auth_ops->verify_signature(image_hash, header->ecc_pubk,
+-				       header->image_signature,
+-				       header->ecc_algo_type) !=
+-	    BOOT_API_RETURN_OK) {
+-		ret = -EINVAL;
+-	}
+-
+-err:
+-	mmap_remove_dynamic_region(STM32MP_ROM_BASE, STM32MP_ROM_SIZE_2MB_ALIGNED);
+-	return ret;
+-}
+diff --git a/plat/st/common/stm32mp_crypto_lib.c b/plat/st/common/stm32mp_crypto_lib.c
+new file mode 100644
+index 000000000..7bd9d848c
+--- /dev/null
++++ b/plat/st/common/stm32mp_crypto_lib.c
+@@ -0,0 +1,339 @@
++/*
++ * Copyright (c) 2020-2021, STMicroelectronics - All Rights Reserved
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <assert.h>
++#include <errno.h>
++
++#include <mbedtls/asn1.h>
++#include <mbedtls/md.h>
++#include <mbedtls/oid.h>
++#include <mbedtls/platform.h>
++#include <mbedtls/x509.h>
++
++#include <common/debug.h>
++#include <drivers/auth/crypto_mod.h>
++#include <drivers/io/io_storage.h>
++#include <drivers/st/bsec.h>
++#include <drivers/st/stm32_hash.h>
++#include <lib/xlat_tables/xlat_tables_v2.h>
++#include <plat/common/platform.h>
++
++#include <platform_def.h>
++
++#define CRYPTO_HASH_MAX_SIZE	32U
++#define CRYPTO_SIGN_MAX_SIZE	64U
++#define CRYPTO_PUBKEY_MAX_SIZE	64U
++
++struct stm32mp_auth_ops {
++	uint32_t (*verify_signature)(uint8_t *hash_in, uint8_t *pubkey_in,
++				     uint8_t *signature, uint32_t ecc_algo);
++};
++
++static struct stm32mp_auth_ops auth_ops;
++
++static void crypto_lib_init(void)
++{
++	boot_api_context_t *boot_context =
++		(boot_api_context_t *)stm32mp_get_boot_ctx_address();
++	int ret;
++
++	if (!stm32mp_is_auth_supported()) {
++		return;
++	}
++
++	auth_ops.verify_signature =
++		boot_context->bootrom_ecdsa_verify_signature;
++
++	ret = stm32_hash_register();
++	if (ret != 0) {
++		ERROR("HASH init (%d)\n", ret);
++		panic();
++	}
++}
++
++int get_plain_pk_from_asn1(void *pk_ptr, unsigned int pk_len, void **plain_pk,
++			   unsigned int *len, int *pk_alg)
++{
++	int ret;
++	mbedtls_pk_context mbedtls_pk = {0};
++	unsigned char *p, *end;
++	mbedtls_asn1_buf alg_params = {0};
++	mbedtls_asn1_buf alg_oid = {0};
++
++	*plain_pk = NULL;
++	*len = 0U;
++
++	/* Parse the public key */
++	mbedtls_pk_init(&mbedtls_pk);
++	p = (unsigned char *)pk_ptr;
++	end = (unsigned char *)(p + pk_len);
++
++	ret =  mbedtls_asn1_get_tag(&p, end, len,
++				    MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
++	if (ret != 0) {
++		return -EINVAL;
++	}
++
++	end = p + *len;
++	ret = mbedtls_asn1_get_alg(&p, end, &alg_oid, &alg_params);
++	if (ret != 0) {
++		VERBOSE("%s: mbedtls_asn1_get_alg (%d)\n", __func__, ret);
++		return -EINVAL;
++	}
++
++	if (pk_alg != NULL) {
++		if ((strlen(MBEDTLS_OID_EC_GRP_SECP256R1) == alg_params.len) &&
++		    (memcmp(MBEDTLS_OID_EC_GRP_SECP256R1, alg_params.p, alg_params.len) == 0)) {
++			*pk_alg = BOOT_API_ECDSA_ALGO_TYPE_P256NIST;
++		} else {
++			*pk_alg = BOOT_API_ECDSA_ALGO_TYPE_BRAINPOOL256;
++		}
++	}
++
++	ret = mbedtls_asn1_get_bitstring_null(&p, end, len);
++	if (ret != 0) {
++		VERBOSE("%s: mbedtls_asn1_get_bitstring_null (%d)\n", __func__, ret);
++		return -EINVAL;
++	}
++
++	/* we remove the ident (0x04) first byte.  */
++	if ((*len < 1U) || (p[0] !=  MBEDTLS_ASN1_OCTET_STRING)) {
++		VERBOSE("%s: not expected len or tag\n", __func__);
++		return -EINVAL;
++	}
++
++	*len = *len - 1U;
++	*plain_pk = p + 1U;
++
++	return 0;
++}
++
++uint32_t verify_signature(uint8_t *hash_in, uint8_t *pubkey_in,
++			  uint8_t *signature, uint32_t ecc_algo)
++{
++	int ret;
++
++	ret = mmap_add_dynamic_region(STM32MP_ROM_BASE, STM32MP_ROM_BASE,
++				      STM32MP_ROM_SIZE_2MB_ALIGNED, MT_CODE | MT_SECURE);
++	if (ret != 0) {
++		VERBOSE("%s: mmap_add_dynamic_region (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	ret = auth_ops.verify_signature(hash_in, pubkey_in, signature, ecc_algo);
++
++	if (ret != BOOT_API_RETURN_OK) {
++		VERBOSE("%s: auth_ops.verify_sign (%d)\n", __func__, ret);
++		ret = CRYPTO_ERR_SIGNATURE;
++	} else {
++		ret = 0;
++	}
++
++	mmap_remove_dynamic_region(STM32MP_ROM_BASE, STM32MP_ROM_SIZE_2MB_ALIGNED);
++
++	return ret;
++}
++
++static int get_plain_digest_from_asn1(void *digest_ptr, unsigned int digest_len,
++				      uint8_t **out, size_t *out_len, mbedtls_md_type_t *md_alg)
++{
++	int ret;
++	mbedtls_asn1_buf hash_oid, params;
++	size_t len;
++	unsigned char *p, *end;
++
++	*out = NULL;
++	*out_len = 0U;
++
++	/* Digest info should be an MBEDTLS_ASN1_SEQUENCE */
++	p = (unsigned char *)digest_ptr;
++	end = p + digest_len;
++	ret = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED |
++				   MBEDTLS_ASN1_SEQUENCE);
++	if (ret != 0) {
++		return ret;
++	}
++
++	/* Get the hash algorithm */
++	ret = mbedtls_asn1_get_alg(&p, end, &hash_oid, &params);
++	if (ret != 0) {
++		return ret;
++	}
++
++	ret = mbedtls_oid_get_md_alg(&hash_oid, md_alg);
++	if (ret != 0) {
++		return ret;
++	}
++
++	ret = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_OCTET_STRING);
++	if (ret != 0) {
++		return ret;
++	}
++
++	/* Length of hash must match the algorithm's size */
++	if (len != BOOT_API_SHA256_DIGEST_SIZE_IN_BYTES) {
++		return -1;
++	}
++
++	*out = p;
++	*out_len = len;
++
++	return 0;
++}
++
++static int crypto_verify_signature(void *data_ptr, unsigned int data_len,
++				   void *sig_ptr, unsigned int sig_len,
++				   void *sig_alg, unsigned int sig_alg_len,
++				   void *pk_ptr, unsigned int pk_len)
++{
++	uint8_t image_hash[CRYPTO_HASH_MAX_SIZE] = {0};
++	uint8_t sig[CRYPTO_SIGN_MAX_SIZE];
++	uint8_t my_pk[CRYPTO_PUBKEY_MAX_SIZE];
++	int ret;
++	size_t len;
++	mbedtls_asn1_sequence seq;
++	unsigned char *p, *end;
++	int curve_id;
++	mbedtls_asn1_buf sig_oid, sig_params;
++	mbedtls_md_type_t md_alg;
++	mbedtls_pk_type_t pk_alg;
++
++	/* Get pointers to signature OID and parameters */
++	p = (unsigned char *)sig_alg;
++	end = (unsigned char *)(p + sig_alg_len);
++	ret = mbedtls_asn1_get_alg(&p, end, &sig_oid, &sig_params);
++	if (ret != 0) {
++		VERBOSE("%s: mbedtls_asn1_get_alg (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	/* Get the actual signature algorithm (MD + PK) */
++	ret = mbedtls_oid_get_sig_alg(&sig_oid, &md_alg, &pk_alg);
++	if (ret != 0) {
++		VERBOSE("%s: mbedtls_oid_get_sig_alg (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	if ((md_alg != MBEDTLS_MD_SHA256) || (pk_alg != MBEDTLS_PK_ECDSA)) {
++		VERBOSE("%s: md_alg=%u pk_alg=%u\n", __func__, md_alg, pk_alg);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	ret = get_plain_pk_from_asn1(pk_ptr, pk_len, &pk_ptr, &pk_len, &curve_id);
++	if (ret != 0) {
++		VERBOSE("%s: get_plain_pk_from_asn1 (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	/* We expect a known pk_len */
++	if (pk_len != sizeof(my_pk)) {
++		VERBOSE("%s: pk_len=%u sizeof(my_pk)=%u)\n", __func__, pk_len, sizeof(my_pk));
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	/* Need to copy as auth_ops.verify_signature
++	 * expects aligned public key.
++	 */
++	memcpy(my_pk, pk_ptr, sizeof(my_pk));
++
++	/* Get the signature (bitstring) */
++	p = (unsigned char *)sig_ptr;
++	end = (unsigned char *)(p + sig_len);
++	ret = mbedtls_asn1_get_bitstring_null(&p, end, &len);
++	if (ret != 0) {
++		VERBOSE("%s: mbedtls_asn1_get_bitstring_null (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	/* Get r and s from sequence */
++	ret = mbedtls_asn1_get_sequence_of(&p, end, &seq, MBEDTLS_ASN1_INTEGER);
++	if (ret != 0) {
++		VERBOSE("%s: mbedtls_asn1_get_sequence_of (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	/* We expect only 2 integers (r and s) from the sequence */
++	if (seq.next->next != NULL) {
++		mbedtls_asn1_sequence *cur = seq.next;
++		mbedtls_asn1_sequence *next;
++
++		VERBOSE("%s: nb seq != 2\n", __func__);
++		/* Free all the sequences */
++		while (cur != NULL) {
++			next = cur->next;
++			mbedtls_free(cur);
++			cur = next;
++		}
++
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	/* Integer sequence may (sometime) start with 0x00 as MSB, but we can only
++	 * manage exactly 2*32 bytes, we remove this higher byte
++	 * if there are not 00, we will fail either.
++	 */
++	memcpy(sig, seq.buf.p + seq.buf.len - sizeof(sig) / 2U, sizeof(sig) / 2U);
++	memcpy(sig +  sizeof(sig) / 2U,
++	       seq.next->buf.p + seq.next->buf.len - sizeof(sig) / 2U,
++	       sizeof(sig) / 2U);
++	/* Need to free allocated 'next' in mbedtls_asn1_get_sequence_of */
++	mbedtls_free(seq.next);
++
++	/* Compute hash for the data covered by the signature */
++	stm32_hash_init(HASH_SHA256);
++
++	ret = stm32_hash_final_update((uint8_t *)data_ptr, data_len, image_hash);
++	if (ret != 0) {
++		VERBOSE("%s: stm32_hash_final_update (%d)\n", __func__, ret);
++		return CRYPTO_ERR_SIGNATURE;
++	}
++
++	return verify_signature(image_hash, my_pk, sig, curve_id);
++}
++
++static int crypto_verify_hash(void *data_ptr, unsigned int data_len,
++			      void *digest_info_ptr,
++			      unsigned int digest_info_len)
++{
++	int ret;
++	uint8_t calc_hash[BOOT_API_SHA256_DIGEST_SIZE_IN_BYTES];
++	unsigned char *p;
++	mbedtls_md_type_t md_alg;
++	size_t len;
++
++	/* we receive an asn1 encapsulated digest, we flatten it */
++	ret = get_plain_digest_from_asn1(digest_info_ptr,
++					 digest_info_len, &p, &len,
++					 &md_alg);
++	if ((ret != 0) || (md_alg != MBEDTLS_MD_SHA256) || (len != sizeof(calc_hash))) {
++		return CRYPTO_ERR_HASH;
++	}
++
++	digest_info_ptr = p;
++	digest_info_len = len;
++
++	stm32_hash_init(HASH_SHA256);
++
++	ret = stm32_hash_final_update(data_ptr, data_len, calc_hash);
++	if (ret != 0) {
++		VERBOSE("%s: hash failed\n", __func__);
++		return CRYPTO_ERR_HASH;
++	}
++
++	ret = memcmp(calc_hash, digest_info_ptr, digest_info_len);
++	if (ret != 0) {
++		VERBOSE("%s: not expected digest\n", __func__);
++		ret = CRYPTO_ERR_HASH;
++	}
++
++	return ret;
++}
++
++REGISTER_CRYPTO_LIB("stm32_crypto_lib",
++		    crypto_lib_init,
++		    crypto_verify_signature,
++		    crypto_verify_hash,
++		    NULL);
+diff --git a/plat/st/common/stm32mp_fconf_io.c b/plat/st/common/stm32mp_fconf_io.c
+index ca7195854..25b4d425d 100644
+--- a/plat/st/common/stm32mp_fconf_io.c
++++ b/plat/st/common/stm32mp_fconf_io.c
+@@ -66,7 +66,16 @@ struct plat_io_policy policies[MAX_NUMBER_IDS] = {
+ #endif /* (STM32MP_SDMMC || STM32MP_EMMC) && PSA_FWU_SUPPORT */
+ };
+ 
+-#define FCONF_ST_IO_UUID_NUMBER	U(8)
++#define DEFAULT_UUID_NUMBER	U(8)
++
++#if TRUSTED_BOARD_BOOT
++#define TBBR_UUID_NUMBER	U(6)
++#else
++#define TBBR_UUID_NUMBER	U(0)
++#endif
++
++#define FCONF_ST_IO_UUID_NUMBER	(DEFAULT_UUID_NUMBER + \
++				 TBBR_UUID_NUMBER)
+ 
+ static io_uuid_spec_t fconf_stm32mp_uuids[FCONF_ST_IO_UUID_NUMBER];
+ static OBJECT_POOL_ARRAY(fconf_stm32mp_uuids_pool, fconf_stm32mp_uuids);
+@@ -86,6 +95,14 @@ static const struct policies_load_info load_info[FCONF_ST_IO_UUID_NUMBER] = {
+ 	{HW_CONFIG_ID, "hw_cfg_uuid"},
+ 	{TOS_FW_CONFIG_ID, "tos_fw_cfg_uuid"},
+ 	{NT_FW_CONFIG_ID, "nt_fw_cfg_uuid"},
++#if TRUSTED_BOARD_BOOT
++	{TRUSTED_BOOT_FW_CERT_ID, "t_boot_fw_cert_uuid"},
++	{TRUSTED_KEY_CERT_ID, "t_key_cert_uuid"},
++	{TRUSTED_OS_FW_KEY_CERT_ID, "tos_fw_key_cert_uuid"},
++	{NON_TRUSTED_FW_KEY_CERT_ID, "nt_fw_key_cert_uuid"},
++	{TRUSTED_OS_FW_CONTENT_CERT_ID, "tos_fw_content_cert_uuid"},
++	{NON_TRUSTED_FW_CONTENT_CERT_ID, "nt_fw_content_cert_uuid"},
++#endif /* TRUSTED_BOARD_BOOT */
+ };
+ 
+ int fconf_populate_stm32mp_io_policies(uintptr_t config)
+diff --git a/plat/st/common/stm32mp_trusted_boot.c b/plat/st/common/stm32mp_trusted_boot.c
+new file mode 100644
+index 000000000..ab7bebfb8
+--- /dev/null
++++ b/plat/st/common/stm32mp_trusted_boot.c
+@@ -0,0 +1,64 @@
++/*
++ * Copyright (c) 2020-2021, STMicroelectronics - All Rights Reserved
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <endian.h>
++#include <errno.h>
++#include <limits.h>
++
++#include <common/debug.h>
++#include <common/tbbr/cot_def.h>
++#include <lib/fconf/fconf.h>
++#include <lib/fconf/fconf_dyn_cfg_getter.h>
++#include <lib/fconf/fconf_tbbr_getter.h>
++#include <plat/common/platform.h>
++
++#include <platform_def.h>
++
++extern char stm32mp1_rotpk_hash[], stm32mp1_rotpk_hash_end[];
++
++int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
++			unsigned int *flags)
++{
++	*key_ptr = stm32mp1_rotpk_hash;
++	*key_len = stm32mp1_rotpk_hash_end - stm32mp1_rotpk_hash;
++	*flags = ROTPK_IS_HASH;
++
++	return 0;
++}
++
++int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
++{
++	/*
++	 * This monotonic counter is the counter used by ROM code
++	 * to identify BL2.
++	 */
++	if (stm32_get_otp_value(MONOTONIC_OTP, nv_ctr) == 0) {
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++int plat_set_nv_ctr(void *cookie, unsigned int nv_ctr)
++{
++	return -EINVAL;
++}
++
++int plat_get_mbedtls_heap(void **heap_addr, size_t *heap_size)
++{
++	assert(heap_addr != NULL);
++	assert(heap_size != NULL);
++
++#if STM32MP_USE_EXTERNAL_HEAP
++	/* Retrieve the already allocated heap's info from DTB */
++	*heap_addr = FCONF_GET_PROPERTY(tbbr, dyn_config, mbedtls_heap_addr);
++	*heap_size = FCONF_GET_PROPERTY(tbbr, dyn_config, mbedtls_heap_size);
++
++	return 0;
++#else
++	return get_mbedtls_heap_helper(heap_addr, heap_size);
++#endif
++}
+diff --git a/plat/st/stm32mp1/bl2_plat_setup.c b/plat/st/stm32mp1/bl2_plat_setup.c
+index 059e1cfd6..f052cdbbc 100644
+--- a/plat/st/stm32mp1/bl2_plat_setup.c
++++ b/plat/st/stm32mp1/bl2_plat_setup.c
+@@ -47,10 +47,6 @@ static const char debug_msg[] = {
+ };
+ #endif
+ 
+-#if STM32MP15
+-static struct stm32mp_auth_ops stm32mp1_auth_ops;
+-#endif
+-
+ static void print_reset_reason(void)
+ {
+ 	uint32_t rstsr = mmio_read_32(stm32mp_rcc_base() + RCC_MP_RSTSCLRR);
+@@ -344,6 +340,14 @@ void bl2_el3_plat_arch_setup(void)
+ 	}
+ 
+ skip_console_init:
++#if !TRUSTED_BOARD_BOOT
++	if (stm32mp_is_closed_device()) {
++		/* Closed chip required authentication */
++		ERROR("Secured chip must enabled TRUSTED_BOARD_BOOT\n");
++		panic();
++	}
++#endif
++
+ 	if (fixed_regulator_register() != 0) {
+ 		panic();
+ 	}
+@@ -375,17 +379,6 @@ skip_console_init:
+ 		}
+ 	}
+ 
+-#if STM32MP15
+-	if (stm32mp_is_auth_supported()) {
+-		stm32mp1_auth_ops.check_key =
+-			boot_context->bootrom_ecdsa_check_key;
+-		stm32mp1_auth_ops.verify_signature =
+-			boot_context->bootrom_ecdsa_verify_signature;
+-
+-		stm32mp_init_auth(&stm32mp1_auth_ops);
+-	}
+-#endif
+-
+ 	stm32mp1_arch_security_setup();
+ 
+ 	print_reset_reason();
+diff --git a/plat/st/stm32mp1/include/boot_api.h b/plat/st/stm32mp1/include/boot_api.h
+index 763841823..0d397bdc0 100644
+--- a/plat/st/stm32mp1/include/boot_api.h
++++ b/plat/st/stm32mp1/include/boot_api.h
+@@ -232,21 +232,14 @@ typedef struct {
+ #if STM32MP15
+ 	/*
+ 	 * Pointers to bootROM External Secure Services
+-	 * - ECDSA check key
+ 	 * - ECDSA verify signature
+-	 * - ECDSA verify signature and go
+ 	 */
+-	uint32_t (*bootrom_ecdsa_check_key)(uint8_t *pubkey_in,
+-					    uint8_t *pubkey_out);
++	uint32_t reserved3;
+ 	uint32_t (*bootrom_ecdsa_verify_signature)(uint8_t *hash_in,
+ 						   uint8_t *pubkey_in,
+ 						   uint8_t *signature,
+ 						   uint32_t ecc_algo);
+-	uint32_t (*bootrom_ecdsa_verify_and_go)(uint8_t *hash_in,
+-						uint8_t *pub_key_in,
+-						uint8_t *signature,
+-						uint32_t ecc_algo,
+-						uint32_t *entry_in);
++	uint32_t reserved4;
+ #endif
+ 	/*
+ 	 * Information specific to an SD boot
+diff --git a/plat/st/stm32mp1/include/stm32mp15_mbedtls_config.h b/plat/st/stm32mp1/include/stm32mp15_mbedtls_config.h
+new file mode 100644
+index 000000000..0023fecd9
+--- /dev/null
++++ b/plat/st/stm32mp1/include/stm32mp15_mbedtls_config.h
+@@ -0,0 +1,119 @@
++/*
++ * Copyright (c) 2015-2020, Arm Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++#ifndef MBEDTLS_CONFIG_H
++#define MBEDTLS_CONFIG_H
++
++/*
++ * Key algorithms currently supported on mbed TLS libraries
++ */
++#define TF_MBEDTLS_USE_RSA	0
++#define TF_MBEDTLS_USE_ECDSA	1
++
++/*
++ * Hash algorithms currently supported on mbed TLS libraries
++ */
++#define TF_MBEDTLS_SHA256		1
++#define TF_MBEDTLS_SHA384		2
++#define TF_MBEDTLS_SHA512		3
++
++/*
++ * Configuration file to build mbed TLS with the required features for
++ * Trusted Boot
++ */
++
++#define MBEDTLS_PLATFORM_MEMORY
++#define MBEDTLS_PLATFORM_NO_STD_FUNCTIONS
++/* Prevent mbed TLS from using snprintf so that it can use tf_snprintf. */
++#define MBEDTLS_PLATFORM_SNPRINTF_ALT
++
++#define MBEDTLS_PKCS1_V21
++
++#define MBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION
++#define MBEDTLS_X509_CHECK_KEY_USAGE
++#define MBEDTLS_X509_CHECK_EXTENDED_KEY_USAGE
++
++#define MBEDTLS_ASN1_PARSE_C
++#define MBEDTLS_ASN1_WRITE_C
++
++#define MBEDTLS_BASE64_C
++#define MBEDTLS_BIGNUM_C
++
++#define MBEDTLS_ERROR_C
++#define MBEDTLS_MD_C
++
++#define MBEDTLS_MEMORY_BUFFER_ALLOC_C
++#define MBEDTLS_OID_C
++
++#define MBEDTLS_PK_C
++#define MBEDTLS_PK_PARSE_C
++#define MBEDTLS_PK_WRITE_C
++
++#define MBEDTLS_PLATFORM_C
++
++#if TF_MBEDTLS_USE_ECDSA
++#define MBEDTLS_ECDSA_C
++#define MBEDTLS_ECP_C
++#define MBEDTLS_ECP_DP_SECP256R1_ENABLED
++#define MBEDTLS_ECP_NO_INTERNAL_RNG
++#endif
++#if TF_MBEDTLS_USE_RSA
++#define MBEDTLS_RSA_C
++#define MBEDTLS_X509_RSASSA_PSS_SUPPORT
++#endif
++
++#define MBEDTLS_SHA256_C
++#if (TF_MBEDTLS_HASH_ALG_ID != TF_MBEDTLS_SHA256)
++#define MBEDTLS_SHA512_C
++#endif
++
++#define MBEDTLS_VERSION_C
++
++#define MBEDTLS_X509_USE_C
++#define MBEDTLS_X509_CRT_PARSE_C
++
++#if TF_MBEDTLS_USE_AES_GCM
++#define MBEDTLS_AES_C
++#define MBEDTLS_CIPHER_C
++#define MBEDTLS_GCM_C
++#endif
++
++/* MPI / BIGNUM options */
++#define MBEDTLS_MPI_WINDOW_SIZE			2
++
++#if TF_MBEDTLS_USE_RSA
++#if TF_MBEDTLS_KEY_SIZE <= 2048
++#define MBEDTLS_MPI_MAX_SIZE			256
++#else
++#define MBEDTLS_MPI_MAX_SIZE			512
++#endif
++#else
++#define MBEDTLS_MPI_MAX_SIZE			256
++#endif
++
++/* Memory buffer allocator options */
++#define MBEDTLS_MEMORY_ALIGN_MULTIPLE		8
++
++/*
++ * Prevent the use of 128-bit division which
++ * creates dependency on external libraries.
++ */
++#define MBEDTLS_NO_UDBL_DIVISION
++
++#ifndef __ASSEMBLER__
++/* System headers required to build mbed TLS with the current configuration */
++#include <stdlib.h>
++#include <mbedtls/check_config.h>
++#endif
++
++/*
++ * Mbed TLS heap size is smal as we only use the asn1
++ * parsing functions
++ * digest, signature and crypto algorithm are done by
++ * other library.
++ */
++
++#define TF_MBEDTLS_HEAP_SIZE           U(5120)
++#endif /* MBEDTLS_CONFIG_H */
+diff --git a/plat/st/stm32mp1/platform.mk b/plat/st/stm32mp1/platform.mk
+index 127e3183b..a5413d136 100644
+--- a/plat/st/stm32mp1/platform.mk
++++ b/plat/st/stm32mp1/platform.mk
+@@ -17,6 +17,9 @@ STM32MP_UART_BAUDRATE	?=	115200
+ # If it is set to 0, then FIP is used
+ STM32MP_USE_STM32IMAGE	?=	0
+ 
++TRUSTED_BOARD_BOOT	?=	0
++STM32MP_USE_EXTERNAL_HEAP ?=	0
++
+ # Please don't increment this value without good understanding of
+ # the monotonic counter
+ STM32_TF_VERSION	?=	0
+@@ -182,6 +185,11 @@ endif
+ $(eval $(call TOOL_ADD_PAYLOAD,${STM32MP_FW_CONFIG},--fw-config))
+ # Add the HW_CONFIG to FIP and specify the same to certtool
+ $(eval $(call TOOL_ADD_PAYLOAD,${STM32MP_HW_CONFIG},--hw-config))
++ifeq (${GENERATE_COT},1)
++$(eval $(call TOOL_ADD_PAYLOAD,${BUILD_PLAT}/tb_fw.crt,--tb-fw-cert))
++endif
++$(eval $(call CERT_ADD_CMD_OPT,${BUILD_PLAT}/bl2.bin,--tb-fw))
++CRT_DEPS+=${BUILD_PLAT}/bl2.bin
+ ifeq ($(AARCH32_SP),sp_min)
+ STM32MP_TOS_FW_CONFIG	:= $(addprefix ${BUILD_PLAT}/fdts/, $(patsubst %.dtb,%-bl32.dtb,$(DTB_FILE_NAME)))
+ $(eval $(call TOOL_ADD_PAYLOAD,${STM32MP_TOS_FW_CONFIG},--tos-fw-config))
+@@ -335,9 +343,54 @@ BL2_SOURCES		+=	drivers/io/io_block.c					\
+ 				drivers/st/crypto/stm32_hash.c				\
+ 				plat/st/stm32mp1/bl2_plat_setup.c
+ 
++ifeq (${TRUSTED_BOARD_BOOT},1)
++AUTH_SOURCES		:=	drivers/auth/auth_mod.c					\
++				drivers/auth/crypto_mod.c				\
++				drivers/auth/img_parser_mod.c
+ 
+-ifeq ($(STM32MP15),1)
+-BL2_SOURCES		+=	plat/st/common/stm32mp_auth.c
++ifeq (${GENERATE_COT},1)
++TFW_NVCTR_VAL		:=	0
++NTFW_NVCTR_VAL		:=	0
++KEY_SIZE		:=
++KEY_ALG			:=	ecdsa
++HASH_ALG		:=	sha256
++endif
++TF_MBEDTLS_KEY_ALG	:=	ecdsa
++MBEDTLS_CONFIG_FILE	?=	"<stm32mp15_mbedtls_config.h>"
++
++include drivers/auth/mbedtls/mbedtls_x509.mk
++
++
++AUTH_SOURCES		+=	drivers/auth/tbbr/tbbr_cot_common.c			\
++				lib/fconf/fconf_tbbr_getter.c				\
++				plat/st/common/stm32mp_crypto_lib.c
++
++BL2_SOURCES		+=	drivers/auth/tbbr/tbbr_cot_bl2.c
++
++BL2_SOURCES		+=	$(AUTH_SOURCES)						\
++				plat/st/common/stm32mp_trusted_boot.c			\
++				plat/st/stm32mp1/stm32mp1_rotpk.S
++
++ROT_KEY		=	$(BUILD_PLAT)/rot_key.pem
++ROTPK_HASH		=	$(BUILD_PLAT)/rotpk_sha256.bin
++
++$(eval $(call add_define_val,ROTPK_HASH,'"$(ROTPK_HASH)"'))
++$(eval $(call MAKE_LIB_DIRS))
++
++$(BUILD_PLAT)/bl2/stm32mp1_rotpk.o: $(ROTPK_HASH)
++
++certificates: $(ROT_KEY)
++
++$(ROT_KEY): | $(BUILD_PLAT)
++	@echo "  OPENSSL $@"
++	@if [ ! -f $(ROT_KEY) ]; then \
++		openssl ecparam -name prime256v1 -genkey -noout > $@ 2>/dev/null; \
++	fi
++
++$(ROTPK_HASH): $(ROT_KEY)
++	@echo "  OPENSSL $@"
++	$(Q)openssl ec -in $< -pubout -outform DER 2>/dev/null |\
++	openssl dgst -sha256 -binary > $@ 2>/dev/null
+ endif
+ 
+ ifneq ($(filter 1,${STM32MP_EMMC} ${STM32MP_SDMMC}),)
+diff --git a/plat/st/stm32mp1/stm32mp1_def.h b/plat/st/stm32mp1/stm32mp1_def.h
+index 7e0745a8e..21e3b448b 100644
+--- a/plat/st/stm32mp1/stm32mp1_def.h
++++ b/plat/st/stm32mp1/stm32mp1_def.h
+@@ -19,7 +19,6 @@
+ #include <drivers/st/stm32mp1_clk.h>
+ 
+ #include <boot_api.h>
+-#include <stm32mp_auth.h>
+ #include <stm32mp_common.h>
+ #include <stm32mp_dt.h>
+ #include <stm32mp1_dbgmcu.h>
+diff --git a/plat/st/stm32mp1/stm32mp1_fip_def.h b/plat/st/stm32mp1/stm32mp1_fip_def.h
+index 207617526..05fb259b1 100644
+--- a/plat/st/stm32mp1/stm32mp1_fip_def.h
++++ b/plat/st/stm32mp1/stm32mp1_fip_def.h
+@@ -16,8 +16,13 @@
+ #define STM32MP_BL2_DTB_SIZE		U(0x00004000)	/* 16 KB for DTB */
+ #endif /* STM32MP13 */
+ #if STM32MP15
++#if TRUSTED_BOARD_BOOT && !STM32MP_USE_EXTERNAL_HEAP
++#define STM32MP_BL2_RO_SIZE		U(0x00014000)	/* 80 KB */
++#define STM32MP_BL2_SIZE		U(0x0001B000)	/* 108 KB for BL2 */
++#else /* TRUSTED_BOARD_BOOT && !STM32MP_USE_EXTERNAL_HEAP */
+ #define STM32MP_BL2_RO_SIZE		U(0x00011000)	/* 68 KB */
+ #define STM32MP_BL2_SIZE		U(0x00016000)	/* 88 KB for BL2 */
++#endif /* TRUSTED_BOARD_BOOT && !STM32MP_USE_EXTERNAL_HEAP */
+ #define STM32MP_BL2_DTB_SIZE		U(0x00007000)	/* 28 KB for DTB */
+ #endif /* STM32MP15 */
+ #define STM32MP_BL32_SIZE		U(0x0001B000)	/* 108 KB for BL32 */
+diff --git a/plat/st/stm32mp1/stm32mp1_rotpk.S b/plat/st/stm32mp1/stm32mp1_rotpk.S
+new file mode 100644
+index 000000000..0d7307744
+--- /dev/null
++++ b/plat/st/stm32mp1/stm32mp1_rotpk.S
+@@ -0,0 +1,15 @@
++/*
++ * Copyright (c) 2021, Arm Limited and Contributors. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++	.global stm32mp1_rotpk_hash
++	.global stm32mp1_rotpk_hash_end
++stm32mp1_rotpk_hash:
++	/* DER header */
++	.byte 0x30, 0x31, 0x30, 0x0D, 0x06, 0x09, 0x60, 0x86, 0x48
++	.byte 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
++	/* SHA256 */
++	.incbin ROTPK_HASH
++stm32mp1_rotpk_hash_end:
+-- 
+2.34.1
+

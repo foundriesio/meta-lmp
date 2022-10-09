@@ -474,6 +474,7 @@ PREFERRED_PROVIDER_u-boot-default-script:sota:stm32mp1common = "u-boot-ostree-sc
 TOOLCHAIN_HOST_TASK:remove:stm32mp1common = "${ST_TOOLS_FOR_SDK} ${ST_DEPENDENCIES_BUILD_FOR_SDK}"
 ## stm32mp15-eval
 TF_A_SIGN_ENABLE:sota:stm32mp15-eval = "1"
+UBOOT_SIGN_ENABLE:sota:stm32mp15-eval = "1"
 BOOTDEVICE_LABELS:append:stm32mp15-eval = " emmc"
 LINUX_A7_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-a7-examples stm32mp157f-ev1-a7-examples"
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-eval = "stm32mp157c-ev1-m4-examples stm32mp157f-ev1-m4-examples"
@@ -491,6 +492,7 @@ MACHINE_ESSENTIAL_EXTRA_RDEPENDS:append:stm32mp15-eval = " kernel kernel-devicet
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:sota:stm32mp15-eval = "kernel kernel-devicetree u-boot-default-script"
 ## stm32mp15-disco
 TF_A_SIGN_ENABLE:sota:stm32mp15-disco = "1"
+UBOOT_SIGN_ENABLE:sota:stm32mp15-disco = "1"
 LINUX_A7_EXAMPLES_DT:remove:stm32mp15-disco = "stm32mp157c-dk2-a7-examples stm32mp157f-dk2-a7-examples"
 CUBE_M4_EXAMPLES_DT:remove:stm32mp15-disco = "stm32mp157c-dk2-m4-examples stm32mp157f-dk2-m4-examples"
 STM32MP_DT_FILES_DK:stm32mp15-disco = "stm32mp157c-dk2"

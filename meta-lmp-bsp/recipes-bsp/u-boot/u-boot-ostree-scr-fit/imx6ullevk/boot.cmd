@@ -12,7 +12,7 @@ setenv bootpart 1
 setenv rootpart 2
 
 setenv fdt_addr 85800000
-setenv optee_ovl_addr 0x86000000
+setenv optee_ovl_addr
 setenv fit_addr ${loadaddr}
 
 # Boot firmware updates

@@ -25,6 +25,7 @@ do_compile:prepend () {
     sed -e '/^LDLIBS/ s,$, \$\{BUILD_LDFLAGS},' \
         -e '/^INCLUDE_PATHS/ s,$, \$\{BUILD_CFLAGS},' \
         -i ${S}/tools/fiptool/Makefile
+    sed -i '/^LIB/ s,$, \$\{BUILD_LDFLAGS},' ${S}/tools/cert_create/Makefile
 }
 
 do_install() {

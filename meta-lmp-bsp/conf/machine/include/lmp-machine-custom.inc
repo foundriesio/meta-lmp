@@ -470,6 +470,8 @@ WKS_FILE_DEPENDS:append:stm32mp1common = " e2fsprogs-native"
 MACHINE_FEATURES:remove:stm32mp1common = "fw-update"
 PREFERRED_PROVIDER_u-boot-default-script:stm32mp1common = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:stm32mp1common = "u-boot-ostree-scr-fit"
+# Remove standard ST BSP from SDK
+TOOLCHAIN_HOST_TASK:remove:stm32mp1common = "${ST_TOOLS_FOR_SDK} ${ST_DEPENDENCIES_BUILD_FOR_SDK}"
 ## stm32mp15-eval
 TF_A_SIGN_ENABLE:sota:stm32mp15-eval = "1"
 BOOTDEVICE_LABELS:append:stm32mp15-eval = " emmc"

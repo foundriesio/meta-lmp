@@ -87,7 +87,7 @@ BUILDHISTORY_COMMIT = "1"
 TOOLCHAIN ?= "clang"
 RUNTIME = "llvm"
 
-PREMIRRORS ??= "\
+PREMIRRORS += "\
      git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
      ftp://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
      http://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \

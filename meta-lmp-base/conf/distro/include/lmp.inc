@@ -95,6 +95,7 @@ PREMIRRORS += "\
 "
 
 MIRRORS =+ "\
+     git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
      ftp://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
      http://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \
      https://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \

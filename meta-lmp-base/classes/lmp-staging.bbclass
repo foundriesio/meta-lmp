@@ -17,6 +17,9 @@ python __anonymous() {
 
     if bb.data.inherits_class('go-mod', d):
         d.appendVarFlag('do_compile', 'network', '1')
+
+    if pn in ["clang", "rust"]:
+        d.appendVarFlag('do_compile', 'lockfiles', " ${TMPDIR}/lmp-hack-avoid-oom-do_compile.lock")
 }
 
 inherit ${INHERIT_KERNEL_MODSIGN}

@@ -16,7 +16,11 @@ LIC_FILES_CHKSUM = "file://htpdate.c;beginline=26;endline=30;md5=2b6cdb94bd53496
 SRC_URI = "http://www.vervest.org/htp/archive/c/htpdate-${PV}.tar.gz"
 SRC_URI[sha256sum] = "3cdc558ec8e53ef374a42490b2f28c0b23981fa8754a6d7182044707828ad1e9"
 
+inherit systemd
+
 TARGET_CC_ARCH += "${LDFLAGS}"
+
+SYSTEMD_SERVICE:${PN} = "htpdate.service"
 
 do_configure () {
 	:
@@ -28,4 +32,8 @@ do_compile () {
 
 do_install () {
 	oe_runmake install 'INSTALL=install' 'STRIP=echo' 'DESTDIR=${D}'
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+		install -d ${D}${systemd_system_unitdir}
+		install -m 644 ${S}/scripts/htpdate.service ${D}${systemd_system_unitdir}
+	fi
 }

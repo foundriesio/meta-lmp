@@ -36,5 +36,5 @@ FB: ucmd fuse prog -y 0 735 0x8273EBD2
 FB: ucmd fuse prog -y 0 736 0x6E0B791C
 FB: ucmd fuse prog -y 0 737 0x6A558134
 
-FB: acmd reset
+FB: acmd reboot
 fb: done

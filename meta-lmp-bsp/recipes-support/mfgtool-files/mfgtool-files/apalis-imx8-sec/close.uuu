@@ -39,6 +39,6 @@ FB: ucmd setenv srk_14 0x6E0B791C
 FB: ucmd setenv srk_15 0x6A558134
 
 FB[-t 1000]: ucmd if fiohab_close; then echo Platform Secured; else echo Error, Can Not Secure the Platform; sleep 2; fi
-FB: acmd reset
+FB: acmd reboot
 
 FB: done

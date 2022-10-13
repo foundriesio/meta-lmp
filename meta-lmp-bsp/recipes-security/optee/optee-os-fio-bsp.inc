@@ -105,6 +105,9 @@ EXTRA_OEMAKE:append:apalis-imx6-sec = " \
 EXTRA_OEMAKE:append:apalis-imx8-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=0 \
 "
+EXTRA_OEMAKE:append:imx8qm-mek-sec = " \
+    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=0 \
+"
 EXTRA_OEMAKE:append:imx8mm-lpddr4-evk-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
 "

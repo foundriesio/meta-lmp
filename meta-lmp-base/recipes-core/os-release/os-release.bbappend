@@ -4,7 +4,7 @@ OS_RELEASE_UNQUOTED_FIELDS += "IMAGE_ID IMAGE_VERSION"
 # Default values when not built via our factory CI
 LMP_DEVICE_FACTORY ?= "lmp"
 LMP_DEVICE_REGISTER_TAG ?= "master"
-IMAGE ??= "lmp-factory-image"
+LMP_FACTORY_IMAGE ??= "lmp-factory-image"
 H_BUILD ??= "local-image"
 
 DEFAULT_HOSTNAME = "${MACHINE}"
@@ -13,7 +13,7 @@ SUPPORT_URL = "https://support.foundries.io/"
 LMP_MACHINE = "${MACHINE}"
 LMP_FACTORY = "${LMP_DEVICE_FACTORY}"
 LMP_FACTORY_TAG = "${LMP_DEVICE_REGISTER_TAG}"
-IMAGE_ID = "${IMAGE}"
+IMAGE_ID = "${LMP_FACTORY_IMAGE}"
 IMAGE_VERSION = "${H_BUILD}"
 
 inherit deploy

@@ -283,6 +283,9 @@ UBOOT_MACHINE:apalis-imx8 = "apalis-imx8_defconfig"
 # Toradex Apalis iMX8 with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:apalis-imx8-sec = "ubootenv"
 
+# NXP i.MX 8QuadMax MEK with secure boot support
+SOTA_CLIENT_FEATURES:remove:sota:imx8qm-mek-sec = "ubootenv"
+
 # iMX8MQ
 UBOOT_SIGN_ENABLE:sota:mx8mq-generic-bsp = "1"
 IMX_DEFAULT_BOOTLOADER:mx8mq-generic-bsp ?= "u-boot-fio"

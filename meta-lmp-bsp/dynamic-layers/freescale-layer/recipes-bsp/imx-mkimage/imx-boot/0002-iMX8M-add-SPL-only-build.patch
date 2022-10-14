@@ -1,4 +1,4 @@
-From f52428a1b2fc2a60ce5b01c0f39937cba18ce874 Mon Sep 17 00:00:00 2001
+From 5163b410a275021362cc4aeac77b6ea1737c0ee0 Mon Sep 17 00:00:00 2001
 From: Jorge Ramirez-Ortiz <jorge@foundries.io>
 Date: Thu, 11 Feb 2021 14:07:48 -0800
 Subject: [PATCH 2/2] iMX8M: add SPL-only build
@@ -14,10 +14,10 @@ Signed-off-by: Michael Scott <mike@foundries.io>
  1 file changed, 10 insertions(+)
 
 diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
-index b7b3986..aa83129 100644
+index a98195e..13a95a1 100644
 --- a/iMX8M/soc.mak
 +++ b/iMX8M/soc.mak
-@@ -88,6 +88,10 @@ lpddr4_dmem_1d = lpddr4_pmu_train_1d_dmem$(LPDDR_FW_VERSION).bin
+@@ -92,6 +92,10 @@ lpddr4_dmem_1d = lpddr4_pmu_train_1d_dmem$(LPDDR_FW_VERSION).bin
  lpddr4_imem_2d = lpddr4_pmu_train_2d_imem$(LPDDR_FW_VERSION).bin
  lpddr4_dmem_2d = lpddr4_pmu_train_2d_dmem$(LPDDR_FW_VERSION).bin
  
@@ -28,9 +28,9 @@ index b7b3986..aa83129 100644
  u-boot-spl-ddr.bin: u-boot-spl.bin $(lpddr4_imem_1d) $(lpddr4_dmem_1d) $(lpddr4_imem_2d) $(lpddr4_dmem_2d)
  	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(lpddr4_imem_1d) lpddr4_pmu_train_1d_imem_pad.bin
  	@objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 $(lpddr4_dmem_1d) lpddr4_pmu_train_1d_dmem_pad.bin
-@@ -214,6 +218,12 @@ flash_ddr4_val: flash_ddr4_val_no_hdmi
- 
+@@ -240,6 +244,12 @@ flash_evk_stmm: flash_evk
  endif
+ 
  
 +###############################
 +# Generate SPL-only bootable  #
@@ -42,5 +42,5 @@ index b7b3986..aa83129 100644
  	./mkimage_imx8 -version $(VERSION) -fit -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -second_loader u-boot.itb 0x40200000 0x60000 -out $(OUTIMG)
  
 -- 
-2.30.1
+2.34.1
 

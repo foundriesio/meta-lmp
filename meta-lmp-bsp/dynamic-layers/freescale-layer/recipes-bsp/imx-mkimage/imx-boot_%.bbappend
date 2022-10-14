@@ -3,8 +3,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 DEPENDS:remove = "optee-os"
 DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os', '', d)}"
 
-SRC_URI:remove = " file://0001-mkimage_fit_atf-fix-fit-generator-node-naming.patch"
-
 SRC_URI:append:mx8m-nxp-bsp = " \
      file://0002-iMX8M-add-SPL-only-build.patch \
      file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \

@@ -20,6 +20,11 @@ python __anonymous() {
 
     if pn in ["clang", "rust"]:
         d.appendVarFlag('do_compile', 'lockfiles', " ${TMPDIR}/lmp-hack-avoid-oom-do_compile.lock")
+
+    if bb.data.inherits_class('archiver', d) and is_work_shared(d) and \
+        d.getVarFlag('ARCHIVER_MODE', 'src') == "original" and \
+        d.getVarFlag('ARCHIVER_MODE', 'diff') == '1':
+            d.setVarFlag('do_deploy_archives', 'vardepvalue', '%s:do_unpack_and_patch' % pn)
 }
 
 inherit ${INHERIT_KERNEL_MODSIGN}

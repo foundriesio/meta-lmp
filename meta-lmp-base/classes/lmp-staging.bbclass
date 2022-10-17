@@ -8,6 +8,8 @@
 INHERIT_KERNEL_MODSIGN = ""
 
 python __anonymous() {
+    pn = d.getVar('PN')
+
     if bb.data.inherits_class('module', d):
         d.appendVar('DEPENDS', ' virtual/kernel')
         if 'modsign' in d.getVar('DISTRO_FEATURES'):

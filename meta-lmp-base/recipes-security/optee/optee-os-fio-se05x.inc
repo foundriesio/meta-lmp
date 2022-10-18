@@ -14,10 +14,16 @@ SRCREV_plug-and-trust ?= "5ec5efd9c8a69c143227bd6acdc4cd0664f8fb0f"
 # To be replaced based on the actual board OEFID
 SE05X_OEFID ?= "0xA1F4"
 
+# Some SE05X versions do not support the RSA cipher
+SE05X_HW_RSA ?= "y"
+
 python () {
     oefid = d.getVar("SE05X_OEFID")
     if oefid in ["0xA565", "0xA564"]:
         d.setVar('SE05X_VER', "06_00")
+    elif oefid == "0xA921":
+        d.setVar('SE05X_VER', "07_02")
+        d.setVar('SE05X_HW_RSA', "n")
     else:
         d.setVar('SE05X_VER', "03_XX")
 }
@@ -35,7 +41,7 @@ EXTRA_OEMAKE:append = " \
     CFG_CRYPTO_DRV_ACIPHER=y \
     CFG_NXP_SE05X_SCP03_DRV=y \
     CFG_NXP_SE05X_APDU_DRV=y \
-    CFG_NXP_SE05X_RSA_DRV=y \
+    CFG_NXP_SE05X_RSA_DRV=${SE05X_HW_RSA} \
     CFG_NXP_SE05X_ECC_DRV=y \
     CFG_NXP_SE05X_CTR_DRV=y \
     CFG_NXP_SE05X_DIEID_DRV=y \

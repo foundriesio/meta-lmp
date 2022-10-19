@@ -68,7 +68,7 @@ USERADD_GID_TABLES = "files/lmp-group-table"
 USERADD_ERROR_DYNAMIC = "error"
 
 # Default image formats
-IMAGE_FSTYPES = "wic wic.gz wic.bmap"
+IMAGE_FSTYPES += "wic wic.gz wic.bmap"
 IMAGE_FSTYPES:remove = "tar.gz tar.bz2"
 
 # No Ostree tarball by default (prefer ota instead)

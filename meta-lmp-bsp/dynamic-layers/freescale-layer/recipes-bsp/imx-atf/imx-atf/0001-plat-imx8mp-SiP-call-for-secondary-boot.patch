@@ -1,19 +1,20 @@
-From b86e3cf3748729533b0272f514a03f2372e1723f Mon Sep 17 00:00:00 2001
+From ffb218183337a08edb8fa33cdf0bc43d3f350959 Mon Sep 17 00:00:00 2001
 From: Vanessa Maegima <vanessa.maegima@foundries.io>
 Date: Fri, 18 Mar 2022 14:52:22 -0300
 Subject: [PATCH] plat: imx8mp: SiP call for secondary boot
 
 Signed-off-by: Vanessa Maegima <vanessa.maegima@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  plat/imx/imx8m/gpc_common.c                  | 13 +++++++++++++
  plat/imx/imx8m/imx8mp/include/platform_def.h |  2 ++
  2 files changed, 15 insertions(+)
 
 diff --git a/plat/imx/imx8m/gpc_common.c b/plat/imx/imx8m/gpc_common.c
-index 6ef4387e2..be1a650c8 100644
+index 9e5bfbb6c..9bb13b850 100644
 --- a/plat/imx/imx8m/gpc_common.c
 +++ b/plat/imx/imx8m/gpc_common.c
-@@ -414,6 +414,19 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
+@@ -436,6 +436,19 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
  		SMC_SET_GP(handle, CTX_GPREG_X1, ret1);
  		SMC_SET_GP(handle, CTX_GPREG_X2, ret2);
  		break;
@@ -26,7 +27,7 @@ index 6ef4387e2..be1a650c8 100644
 +			mmio_clrbits_32(IMX_SRC_BASE + SRC_GPR10_OFFSET,
 +					SRC_GPR10_PERSIST_SECONDARY_BOOT);
 +		break;
-+	case IMX_SIP_SRC_GET_SECONDARY_BOOT:
++	case IMX_SIP_SRC_IS_SECONDARY_BOOT:
 +		val = mmio_read_32(IMX_SRC_BASE + SRC_GPR10_OFFSET);
 +		return !!(val & SRC_GPR10_PERSIST_SECONDARY_BOOT);
 +#endif
@@ -34,10 +35,10 @@ index 6ef4387e2..be1a650c8 100644
  		return SMC_UNK;
  
 diff --git a/plat/imx/imx8m/imx8mp/include/platform_def.h b/plat/imx/imx8m/imx8mp/include/platform_def.h
-index 39f0bee4f..4b6d535dd 100644
+index 8a1f3bcdc..895cfbd51 100644
 --- a/plat/imx/imx8m/imx8mp/include/platform_def.h
 +++ b/plat/imx/imx8m/imx8mp/include/platform_def.h
-@@ -136,9 +136,11 @@
+@@ -165,9 +165,11 @@
  #define SRC_OTG1PHY_SCR			U(0x20)
  #define SRC_OTG2PHY_SCR			U(0x24)
  #define SRC_GPR1_OFFSET			U(0x74)
@@ -50,5 +51,5 @@ index 39f0bee4f..4b6d535dd 100644
  #define SNVS_LPCR			U(0x38)
  #define SNVS_LPCR_SRTC_ENV		BIT(0)
 -- 
-2.25.1
+2.34.1
 

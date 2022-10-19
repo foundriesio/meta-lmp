@@ -3,6 +3,8 @@ FIO_PUSH_CMD ?= "fiopush"
 FIO_CHECK_CMD ?= "fiocheck"
 SOTA_TUF_ROOT_DIR ?= "usr/lib/sota/tuf"
 
+IMAGE_FSTYPES += "${@bb.utils.contains('EFI_PROVIDER', 'systemd-boot', 'ota-esp', ' ', d)}"
+
 # Provided by meta-lmp-bsp or any other compatible BSP layer
 include conf/machine/include/lmp-machine-custom.inc
 
@@ -76,6 +78,8 @@ IMAGE_CMD:ota:append () {
 		touch ${OTA_SYSROOT}/boot/loader/loader.conf
 		# Remove boot symlink as partition is vfat/ESP
 		rm -f ${OTA_SYSROOT}/boot/boot
+		# Install systemd-boot EFI in ota-boot to allow consumption out of wic
+		cp -rf ${IMAGE_ROOTFS}/boot/EFI ${OTA_SYSROOT}/boot
 	fi
 
 	# Ostree /boot/loader as link (default) or as directory
@@ -105,6 +109,33 @@ IMAGE_CMD:ota:append () {
 OTA_BOOT = "${WORKDIR}/ota-boot"
 do_image_ota[dirs] += "${OTA_BOOT}"
 do_image_ota[cleandirs] += "${OTA_BOOT}"
+
+# Adapted from oe_mkext234fs in image_types.bbclass
+oe_mkotaespfs() {
+	fstype="$1"
+	extra_imagecmd=""
+
+	if [ $# -gt 1 ]; then
+		shift
+		extra_imagecmd=$@
+	fi
+
+	# Create a sparse image block. ESP partition must be 64K blocks.
+	bbdebug 1 Executing "dd if=/dev/zero of=${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype seek=65536 count=0 bs=1024"
+	dd if=/dev/zero of=${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype seek=65536 count=0 bs=1024
+	bbdebug 1 "Actual ESP size: `du -s ${OTA_BOOT}`"
+	bbdebug 1 "Actual Partition size: `stat -c '%s' ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype`"
+	bbdebug 1 Executing "mkfs.vfat -F 32 -I $extra_imagecmd ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype "
+	mkfs.vfat -F 32 -I $extra_imagecmd ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype
+	mcopy -i ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype -s ${OTA_BOOT}/* ::/
+	# Error codes 0-3 indicate successfull operation of fsck (no errors or errors corrected)
+	fsck.vfat -pvfV ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.$fstype
+}
+do_image_ota_esp[depends] += "dosfstools-native:do_populate_sysroot mtools-native:do_populate_sysroot"
+IMAGE_TYPEDEP:ota-esp = "ota"
+IMAGE_TYPES += "ota-esp"
+EXTRA_IMAGECMD:ota-esp ?= ""
+IMAGE_CMD:ota-esp = "oe_mkotaespfs ota-esp ${EXTRA_IMAGECMD}"
 
 # LMP specific cleanups after the main ostree image from meta-updater
 IMAGE_CMD:ostree:append () {

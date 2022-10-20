@@ -80,6 +80,10 @@ cryptfs_run() {
 
 	cryptfs_gen_passphrase
 
+	luks_name="`basename ${root_dev}`_crypt"
+
+	cryptfs_pre_${luks_token}
+
 	if ! cryptsetup isLuks ${root_dev}; then
 		# Partition not yet encrypted
 		msg "${root_dev} not yet encrypted, encrypting with LUKS2"
@@ -93,6 +97,7 @@ cryptfs_run() {
 			fatal "Failed to resize ${root_dev} to allow extra size required for luks support"
 		fi
 
+		# Blocking on-line reencryption in order to allow keyslots to be enrolled later in the boot
 		cat /run/cryptsetup/passphrase | cryptsetup -v reencrypt --encrypt --disable-locks --reduce-device-size 32m ${root_dev}
 
 		# Align label and UUID if used as boot parameter (not safe, better use the proper device path instead)
@@ -104,30 +109,35 @@ cryptfs_run() {
 		fi
 	fi
 
-	luks_name="`basename ${root_dev}`_crypt"
-
-	# Check if online encryption is still in progress
+	# Check if online encryption without enrolled keys is still in progress
 	if cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
-		# Run recovery process
-		cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name}
-		e2fsck_check /dev/mapper/${luks_name}
-		cat /run/cryptsetup/passphrase | cryptsetup -v reencrypt --resume-only ${root_dev}
-		cryptsetup close ${luks_name}
+		if ! cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
+			msg "${root_dev} encryption not yet finalized, running recovery"
+			# Run recovery process and wait until fully completed (encryption)
+			cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name}
+			cat /run/cryptsetup/passphrase | cryptsetup -v reencrypt --resume-only ${root_dev}
+			cryptsetup close ${luks_name}
+		fi
 	fi
 
-	cryptfs_pre_${luks_token}
+	! cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name} &&
+		fatal "Unable to open the LUKS partition ${root_dev}, invalid passphrase / ${luks_token} token"
+
+	e2fsck_check /dev/mapper/${luks_name}
 
 	if ! cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
 		msg "Enrolling LUKS2 keyslot based on ${luks_token} token"
 		cryptfs_enroll_${luks_token} ${root_dev}
 	fi
 
-	! cryptsetup luksOpen ${root_dev} ${luks_name} &&
-		fatal "Unable to open the LUKS partition ${root_dev} with the enrolled ${luks_token} token"
+	if ! cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
+		# CI encrypted uses keyslot 31 by default, forcing enrolled key to be 0
+		if cryptsetup luksDump ${root_dev} | grep -q "0: luks"; then
+			cryptsetup reencrypt --init-only ${root_dev}
+		fi
+	fi
 
 	cryptfs_post_${luks_token}
-
-	e2fsck_check /dev/mapper/${luks_name}
 
 	mount ${flags} /dev/mapper/${luks_name} ${ROOTFS_DIR} ||
 		(cryptsetup luksClose ${luks_name} && fatal "Failed to mount LUKS ${luks_name}")

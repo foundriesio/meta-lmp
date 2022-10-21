@@ -69,7 +69,7 @@ USERADD_ERROR_DYNAMIC = "error"
 
 # Default image formats
 IMAGE_FSTYPES += "wic wic.gz wic.bmap"
-IMAGE_FSTYPES:remove = "tar.gz tar.bz2"
+IMAGE_FSTYPES:remove = "tar.gz tar.xz tar.bz2 ext4 wic.xz wic.bz2"
 
 # No Ostree tarball by default (prefer ota instead)
 BUILD_OSTREE_TARBALL ?= "0"

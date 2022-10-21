@@ -98,7 +98,6 @@ TOOLCHAIN:pn-ti-sci-fw = "gcc"
 TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 
 # jetson-agx-xavier-devkit
-TOOLCHAIN:pn-cboot-t19x = "gcc"
 TOOLCHAIN:pn-nvdisp-init = "gcc"
 # edk2-tegra/edk2/MdeModulePkg/Include/Guid/ExtendedFirmwarePerformance.h:137:50: error: field Guid1 within 'FPDT_DUAL_GUID_STRING_EVENT_RECORD' is less aligned than 'EFI_GUID' (aka 'GUID') and is usually due to 'FPDT_DUAL_GUID_STRING_EVENT_RECORD' being packed, which can lead to unaligned accesses [-Werror,-Wunaligned-access]
 TOOLCHAIN:pn-edk2-firmware-tegra = "gcc"

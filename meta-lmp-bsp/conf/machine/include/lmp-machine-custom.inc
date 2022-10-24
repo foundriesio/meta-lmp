@@ -600,6 +600,8 @@ CORE_IMAGE_BASE_INSTALL:remove:tegra = "resize-helper"
 OSTREE_DEPLOY_DEVICETREE:tegra = "1"
 ## jetson-agx-xavier-devkit (tegra194)
 OSTREE_KERNEL_ARGS:tegra194 ?= "\${cbootargs} root=/dev/mmcblk0p1 rootwait rootfstype=ext4 mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 sdhci_tegra.en_boot_part_access=1"
+## jetson-agx-orin-devkit (tegra234)
+OSTREE_KERNEL_ARGS:tegra234 ?= "root=/dev/mmcblk0p1 rootwait rootfstype=ext4 mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0"
 
 # Allwinner (sun8i)
 PREFERRED_PROVIDER_virtual/bootloader:sun8i = "u-boot-fio"

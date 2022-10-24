@@ -177,6 +177,8 @@ IMAGE_CMD:ostreepush () {
     fi
 }
 
+GARAGE_PUSH_RETRIES ?= "3"
+
 IMAGE_TYPEDEP:garagesign = "ostreepush"
 do_image_garagesign[depends] += "unzip-native:do_populate_sysroot"
 # This lock solves OTA-1866, which is that removing GARAGE_SIGN_REPO while using
@@ -229,7 +231,7 @@ IMAGE_CMD:garagesign () {
             target_expiry="--expire-after 1M"
         fi
 
-        for push_retries in $( seq 3 ); do
+        for push_retries in $( seq "${GARAGE_PUSH_RETRIES}" ); do
             garage-sign targets pull --repo tufrepo \
                                      --home-dir ${GARAGE_SIGN_REPO}
             garage-sign targets add --repo tufrepo \

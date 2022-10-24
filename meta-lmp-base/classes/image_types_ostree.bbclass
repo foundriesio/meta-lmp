@@ -178,6 +178,7 @@ IMAGE_CMD:ostreepush () {
 }
 
 GARAGE_PUSH_RETRIES ?= "3"
+GARAGE_PUSH_RETRIES_SLEEP ?= "0"
 
 IMAGE_TYPEDEP:garagesign = "ostreepush"
 do_image_garagesign[depends] += "unzip-native:do_populate_sysroot"
@@ -260,7 +261,12 @@ IMAGE_CMD:garagesign () {
                 push_success=1
                 break
             else
-                bbwarn "Push to garage repository has failed with errcode ${errcode}, retrying"
+                bbwarn "Push to garage repository has failed with errcode ${errcode}, retrying ${push_retries}/${GARAGE_PUSH_RETRIES}"
+                if [ "${GARAGE_PUSH_RETRIES_SLEEP}" -ne "0" ]; then
+                    sleep="$(($RANDOM%${GARAGE_PUSH_RETRIES_SLEEP}+1))""
+                    bbdebug 1 "Push to garage repository in ${sleep} seconds"
+                    sleep ${sleep}
+                fi
             fi
         done
         rm -rf ${GARAGE_SIGN_REPO}

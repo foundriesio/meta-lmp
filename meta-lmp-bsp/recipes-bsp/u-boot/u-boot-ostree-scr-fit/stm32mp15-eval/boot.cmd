@@ -25,10 +25,38 @@ setenv bootloader_s_image ${bootloader_image}
 setenv bootloader2_image "fip-stm32mp157c-ev1-optee.bin"
 setenv bootloader2_s_image ${bootloader2_image}
 
-setenv update_image_boot0 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} 1 && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
+setenv update_image_boot0 '\
+	echo "${fio_msg} writing ${image_path} ..."; \
+	run set_blkcnt && \
+	mmc dev ${devnum} && \
+	mmc partconf ${devnum} 1 1 1 && \
+	mmc write ${loadaddr} ${start_blk} ${blkcnt} && \
+	mmc partconf ${devnum} 1 1 0 \
+'
 
-setenv backup_primary_image 'echo "${fio_msg} backing up primary boot image set ..."; mmc dev ${devnum} 1 && mmc read ${loadaddr} ${bootloader} ${bootloader_size} && mmc dev ${devnum} 2 && mmc write ${loadaddr} ${bootloader} ${bootloader_size}'
-setenv restore_primary_image 'echo "${fio_msg} restore primary boot image set ..."; mmc dev ${devnum} 2 && mmc read ${loadaddr} ${bootloader} ${bootloader_size} && mmc dev ${devnum} 1 && mmc write ${loadaddr} ${bootloader} ${bootloader_size}'
+setenv backup_primary_image '\
+	echo "${fio_msg} backing up primary boot image set ..."; \
+	mmc dev ${devnum} && \
+	mmc partconf ${devnum} 1 1 1 && \
+	mmc read ${loadaddr} ${bootloader} ${bootloader_size} && \
+	mmc partconf ${devnum} 1 1 0 && \
+	mmc dev ${devnum} && \
+	mmc partconf ${devnum} 1 1 2 && \
+	mmc write ${loadaddr} ${bootloader} ${bootloader_size} && \
+	mmc partconf ${devnum} 1 1 0 \
+'
+
+setenv restore_primary_image '\
+	echo "${fio_msg} restore primary boot image set ..." ; \
+	mmc dev ${devnum} && \
+	mmc partconf ${devnum} 1 1 2 && \
+	mmc read ${loadaddr} ${bootloader} ${bootloader_size} && \
+	mmc partconf ${devnum} 1 1 0 && \
+	mmc dev ${devnum} && \
+	mmc partconf ${devnum} 1 1 1 && \
+	mmc write ${loadaddr} ${bootloader} ${bootloader_size} && \
+	mmc partconf ${devnum} 1 1 0 \
+'
 
 setenv update_primary_image1 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_s_image}"; setenv start_blk "${bootloader_s}";  run load_image; run update_image_boot0'
 setenv update_primary_image2 'setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_s_image}"; setenv start_blk "${bootloader2_s}";  run load_image; run update_image_boot0'

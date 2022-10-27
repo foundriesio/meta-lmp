@@ -19,6 +19,9 @@ python () {
     oefid = d.getVar("SE05X_OEFID", "0xA1F4")
     if oefid in ["0xA565", "0xA564"]:
         d.setVar('SE05X_VER', "06_00")
+    elif oefid == "0xA921":
+        d.setVar('SE05X_VER', "07_02")
+        d.setVar('PTMW_APPLET', "SE050_E")
     else:
         d.setVar('SE05X_VER', "03_XX")
 }

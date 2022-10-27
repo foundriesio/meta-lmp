@@ -2,8 +2,8 @@ DESCRIPTION = "NXP Plug and Trust Middleware with SETEEC support"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-SRC_URI = "git://github.com/foundriesio/plug-and-trust-seteec;branch=main;protocol=https"
-SRCREV = "f9df65c413b64784fc096bb19b2b25c3b37b498c"
+SRC_URI = "git://github.com/foundriesio/plug-and-trust-seteec;branch=v04.02.00;protocol=https"
+SRCREV = "1fdf4ddda5eaf9152b1becd9354a0c69ea2655c1"
 
 DEPENDS = "openssl optee-client"
 
@@ -12,6 +12,7 @@ inherit cmake dos2unix pkgconfig
 S = "${WORKDIR}/git"
 
 EL2GO_HOSTNAME ?= "DEFAULTHOSTNAME"
+PTMW_APPLET ?= "SE05X_C"
 
 # Similar to optee-os-fio-se05x.inc
 python () {
@@ -23,8 +24,8 @@ python () {
 }
 
 EXTRA_OECMAKE += "\
-    -DWithSharedLIB=ON -DCMAKE_BUILD_TYPE=Debug -DHost=iMXLinux -DHostCrypto=OPENSSL \
-    -DSMCOM=T1oI2C -DSE05X_Auth=None -DApplet=SE05X_C -DSE05X_Ver=${SE05X_VER} \
+    -DWithSharedLIB=ON -DCMAKE_BUILD_TYPE=Debug -DPTMW_Host=iMXLinux -DPTMW_HostCrypto=OPENSSL \
+    -DPTMW_SMCOM=T1oI2C -DSE05X_Auth=None -DPTMW_Applet=${PTMW_APPLET} -DPTMW_SE05X_Ver=${SE05X_VER} \
     -DOPENSSL_INSTALL_PREFIX=${WORKDIR}/recipe-sysroot/usr \
     -DOPENSSL_ROOT_DIR=${WORKDIR}/recipe-sysroot/usr \
     -DPAHO_ENABLE_TESTING=FALSE -DPAHO_ENABLE_CPACK=FALSE -DPAHO_WITH_SSL=TRUE \

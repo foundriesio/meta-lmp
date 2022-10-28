@@ -1,0 +1,32 @@
+/dts-v1/;
+
+/ {
+	description = "Configuration to load non legacy U-Boot update script";
+	#address-cells = <1>;
+	images {
+		default = "updatescr";
+		updatescr {
+			description = "Update script with boot firmware update logi";
+			data = /incbin/("update.cmd");
+			type = "script";
+			os = "U-Boot";
+			arch = "arm";
+			compression = "none";
+			hash-1 {
+				algo = "@@FIT_HASH_ALG@@";
+			};
+		};
+	};
+	configurations {
+		default = "config-1";
+		config-1 {
+			description = "Execute update script with boot firmware update logic";
+			script = "updatescr";
+			signature {
+				algo = "@@FIT_HASH_ALG@@,rsa2048";
+				key-name-hint = "@@UBOOT_SIGN_KEYNAME@@";
+				sign-images = "script";
+			};
+		};
+	};
+};

@@ -82,6 +82,10 @@ TOOLCHAIN:pn-optee-test = "gcc"
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-fiovb_git.bb:do_compile
 TOOLCHAIN:pn-optee-fiovb = "gcc"
 
+# tegra (xavier and orin)
+TOOLCHAIN:pn-optee-os = "gcc"
+TOOLCHAIN:pn-optee-nvsamples = "gcc"
+
 # lmp-mfgtool distro
 TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
 

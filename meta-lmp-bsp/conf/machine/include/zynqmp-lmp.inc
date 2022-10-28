@@ -59,7 +59,7 @@ IMAGE_BOOT_FILES:sota = "boot.bin;boot0001.bin u-boot.itb;u-boot0001.itb boot.bi
 IMAGE_BOOT_FILES:sota:append = " ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'devicetree/system-top.dtb;system-top.dtb', '', d)}"
 
 # Boot firmware updates
-LMP_BOOT_FIRMWARE_FILES:sota = "boot.bin u-boot.itb"
+LMP_BOOT_FIRMWARE_FILES:sota = "boot.bin u-boot.itb update.itb"
 BOOTSCR_LOAD_ADDR:sota = "0x21000000"
 
 # Not building for QEMU standard Xinix build

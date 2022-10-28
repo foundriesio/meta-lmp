@@ -1,0 +1,31 @@
+From f4f6188862b5557f96581ce2d0fb6084e3f355e4 Mon Sep 17 00:00:00 2001
+From: "Mara Sophie Grosch via groups.io" <littlefox=lf-net.org@groups.io>
+Date: Wed, 23 Mar 2022 18:22:34 +0800
+Subject: [PATCH 2/2] MdeModulePkg/NvmExpressPei: fix check for NVM command set
+
+Previous commit fixed that check in DXE, this one now for PEI.
+
+Upstream-Status: Backport [https://github.com/tianocore/edk2/pull/2682]
+
+Signed-off-by: Mara Sophie Grosch <littlefox@lf-net.org>
+Reviewed-by: Hao A Wu <hao.a.wu@intel.com>
+---
+ MdeModulePkg/Bus/Pci/NvmExpressPei/NvmExpressPeiHci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MdeModulePkg/Bus/Pci/NvmExpressPei/NvmExpressPeiHci.c b/MdeModulePkg/Bus/Pci/NvmExpressPei/NvmExpressPeiHci.c
+index ac956bdce4..bff5cfd0d5 100644
+--- a/MdeModulePkg/Bus/Pci/NvmExpressPei/NvmExpressPeiHci.c
++++ b/MdeModulePkg/Bus/Pci/NvmExpressPei/NvmExpressPeiHci.c
+@@ -571,7 +571,7 @@ NvmeControllerInit (
+   // Read the controller Capabilities register and verify that the NVM command set is supported
+   //
+   NVME_GET_CAP (Private, &Private->Cap);
+-  if (Private->Cap.Css != 0x01) {
++  if ((Private->Cap.Css & BIT0) == 0) {
+     DEBUG ((DEBUG_ERROR, "%a: The NVME controller doesn't support NVMe command set.\n", __FUNCTION__));
+     return EFI_UNSUPPORTED;
+   }
+-- 
+2.34.1
+

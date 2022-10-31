@@ -18,6 +18,7 @@ SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANC
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
     file://0001-FIO-extras-arm64-dts-imx8mm-evk-use-imx8mm-evkb-for-.patch \
     file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
+    file://0001-FIO-fromlist-gpu-drm-imx-sec_mipi_dsim-imx-fix-probe.patch \
 "
 
 SRC_URI:append:imx8mp-lpddr4-evk = " \

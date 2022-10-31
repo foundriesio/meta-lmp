@@ -1,4 +1,4 @@
-From f4f6188862b5557f96581ce2d0fb6084e3f355e4 Mon Sep 17 00:00:00 2001
+From a9d844a413e04a36ca4cdf415a3d4aa7552ab37e Mon Sep 17 00:00:00 2001
 From: "Mara Sophie Grosch via groups.io" <littlefox=lf-net.org@groups.io>
 Date: Wed, 23 Mar 2022 18:22:34 +0800
 Subject: [PATCH 2/2] MdeModulePkg/NvmExpressPei: fix check for NVM command set

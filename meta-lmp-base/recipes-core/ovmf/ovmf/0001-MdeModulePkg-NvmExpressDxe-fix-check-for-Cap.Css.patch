@@ -1,4 +1,4 @@
-From da20ace9d582f61a0938cf53f10a4352400619a4 Mon Sep 17 00:00:00 2001
+From 9bea09034026f411531d103d422ca18f115f0df6 Mon Sep 17 00:00:00 2001
 From: "Mara Sophie Grosch via groups.io" <littlefox=lf-net.org@groups.io>
 Date: Wed, 23 Mar 2022 18:22:33 +0800
 Subject: [PATCH 1/2] MdeModulePkg/NvmExpressDxe: fix check for Cap.Css

@@ -327,6 +327,7 @@ WKS_FILE:sota:imx8mq-evk-ebbr ?= "efidisk-sota.wks.in"
 # iMX8MM
 UBOOT_SIGN_ENABLE:sota:mx8mm-generic-bsp = "1"
 IMX_DEFAULT_BOOTLOADER:mx8mm-generic-bsp ?= "u-boot-fio"
+UBOOT_ENTRYPOINT:mx8mm-generic-bsp = "0x40400000"
 UBOOT_DTB_LOADADDRESS:mx8mm-generic-bsp = "0x43000000"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a:mx8mm-nxp-bsp ?= "imx-atf"
 EXTRA_IMAGEDEPENDS:append:mx8mm-nxp-bsp = "virtual/trusted-firmware-a"

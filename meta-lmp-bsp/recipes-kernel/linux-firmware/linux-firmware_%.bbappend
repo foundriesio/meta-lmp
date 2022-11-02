@@ -17,11 +17,11 @@ SRC_URI:append = "\
 "
 SRCREV_TIInit_11.8.32 ?= "31a43dc1248a6c19bb886006f8c167e2fd21cb78"
 
-IMX_FIRMWARE_BRANCH ?= "lf-5.10.52_2.1.0"
+IMX_FIRMWARE_BRANCH ?= "lf-5.15.52_2.1.0"
 SRC_URI:append:imx-nxp-bsp = "\
     git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware; \
 "
-SRCREV_imx-firmware ?= "6d7f77b83164b08334806c4aa2034bc1f7da7b7d"
+SRCREV_imx-firmware ?= "b6f070e3d4cab23932d9e6bc29e3d884a7fd68f4"
 
 SRC_URI:append:beaglebone-yocto = "\
     https://github.com/beagleboard/beaglebone-black-wireless/raw/d9135000a223228158d92fd2e3f00e495f642fee/firmware/wl18xx-conf.bin;name=wl18xx-conf \

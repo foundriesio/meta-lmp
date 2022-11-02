@@ -1,0 +1,48 @@
+From a48aba8ed188ec94bbdf6f37bea3d94b4d9904fe Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Wed, 2 Nov 2022 20:08:21 -0300
+Subject: [PATCH] [FIO toup] arm64: dts: imx8mm-evk-qca-wifi: enable support
+ for bluetooth
+
+Add required changes to enable the qca bluetooth device.
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ .../dts/freescale/imx8mm-evk-qca-wifi.dts     | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
+index aa1a25f00f550..8749a92237dd4 100755
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
+@@ -13,6 +13,25 @@ / {
+ 
+ /delete-node/&pmic_nxp;
+ 
++&uart1 { /* BT */
++	bluetooth {
++		compatible = "qcom,qca9377-bt";
++		enable-gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
++	};
++};
++
++&iomuxc {
++	pinctrl_uart1: uart1grp {
++		fsl,pins = <
++			MX8MM_IOMUXC_UART1_RXD_UART1_DCE_RX     0x140
++			MX8MM_IOMUXC_UART1_TXD_UART1_DCE_TX     0x140
++			MX8MM_IOMUXC_UART3_RXD_UART1_DCE_CTS_B  0x140
++			MX8MM_IOMUXC_UART3_TXD_UART1_DCE_RTS_B  0x140
++			MX8MM_IOMUXC_SD1_DATA4_GPIO2_IO6        0x19
++		>;
++	};
++};
++
+ &i2c1 {
+ 	pmic_rohm: pmic@4b {
+ 		compatible = "rohm,bd71847";
+-- 
+2.38.1
+

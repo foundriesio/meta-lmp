@@ -25,6 +25,10 @@ SRC_URI:append:imx8mp-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'file://0001-FIO-internal-arch-arm64-dts-imx8mp-enable-I2C5-bus.patch', '', d)} \
 "
 
+# Add bluetooth support for QCA9377
+SRC_URI:append:imx8mm-lpddr4-evk = " \
+    file://0001-FIO-toup-arm64-dts-imx8mm-evk-qca-wifi-enable-suppor.patch \
+"
 # Fix bluetooth reset for Murata 1MW
 SRC_URI:append:imx8mn-ddr4-evk = " \
     file://0001-FIO-internal-arm64-dts-imx8mn-evk.dtsi-re-add-blueto.patch \

@@ -82,7 +82,6 @@ INHERIT += "lmp-staging"
 ## Create SPDX (SBOM) by default
 INHERIT += "create-spdx"
 INHERIT += "buildhistory"
-INHERIT += "image-buildinfo"
 BUILDHISTORY_COMMIT = "1"
 
 # Clang toolchain

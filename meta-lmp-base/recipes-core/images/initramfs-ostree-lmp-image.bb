@@ -44,3 +44,6 @@ IMAGE_ROOTFS_EXTRA_SPACE = "0"
 IMAGE_OVERHEAD_FACTOR = "1.0"
 
 BAD_RECOMMENDATIONS += "busybox-syslog"
+
+SSTATE_SKIP_CREATION:task-image-qa = "0"
+SSTATE_SKIP_CREATION:task-image-complete = "0"

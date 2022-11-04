@@ -8,6 +8,8 @@ OPTEEMACHINE:imx8mp-lpddr4-evk = "imx-mx8mpevk"
 OPTEEMACHINE:imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE:imx8mn-ddr4-evk = "imx-mx8mnevk"
 OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
+OPTEEMACHINE:stm32mp15-disco = "stm32mp1-157C_DK2"
+OPTEEMACHINE:stm32mp15-eval = "stm32mp1-157C_EV1"
 
 # SoC Settings
 EXTRA_OEMAKE:append:mx8m-nxp-bsp = " \
@@ -87,4 +89,16 @@ EXTRA_OEMAKE:append:imx8mp-lpddr4-evk-sec = " \
 "
 EXTRA_OEMAKE:append:imx8mn-ddr4-evk-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y CFG_RPMB_FS_DEV_ID=2 \
+"
+
+EXTRA_OEMAKE:append:stm32mp15-eval-sec = " \
+    CFG_STM32MP15_HUK=y \
+    CFG_STM32MP15_HUK_BSEC_KEY_0=60 \
+    CFG_STM32MP15_HUK_BSEC_KEY_1=61 \
+    CFG_STM32MP15_HUK_BSEC_KEY_2=62 \
+    CFG_STM32MP15_HUK_BSEC_KEY_3=63 \
+    CFG_REE_FS=n CFG_RPMB_FS=y \
+    CFG_STM32_BSEC_WRITE=y \
+    CFG_RPMB_WRITE_KEY=y \
+    CFG_RPMB_FS_DEV_ID=1 \
 "

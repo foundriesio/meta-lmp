@@ -1,0 +1,243 @@
+#!/bin/bash
+#
+# Copyright (C) 2021 Foundries.IO
+# Copyright (C) 2022 FORT Robotics
+#
+# SPDX-License-Identifier: MIT
+#
+
+# Name of the script
+scriptName="$(basename "$0")"
+
+#######################
+# Functions
+#######################
+function error_exit {
+	echo "ERROR:  ${1}"
+	exit 1
+}
+
+function usage {
+	echo "Usage: $scriptName"
+	echo
+	echo "Required Arguments:"
+	echo "  --pub-key-hash <file_path> Public Key Hash File binary (usually publicKeyhash.bin)"
+}
+
+# NOTE: use v1 of the STM32_Programmer_CLI OTP disp command which doesn't correctly use word= param
+stm32prog_otp_refresh_values () {
+	otp_list=$(STM32_Programmer_CLI -c port=USB1 -otp displ)
+}
+
+stm32prog_state_is_open () {
+	echo "${otp_list}" | grep "State *: Secure Open"
+}
+
+stm32prog_otp_get_value () {
+	echo "${otp_list}" | sed -n "/^    ${1}     | *\(0x[[:xdigit:]]\{8\}\)  |.*$/s//\1/p"
+}
+
+stm32prog_otp_set_value () {
+	STM32_Programmer_CLI -y -c port=USB1 -otp write word=${1} value=${2}
+}
+
+stm32prog_otp_lock () {
+	STM32_Programmer_CLI -y -c port=USB1 -otp lock word=${1}
+}
+
+#######################
+# Validate required commands are available
+#######################
+commands=("STM32_Programmer_CLI" "fastboot" "getopt")
+for cmd in "${commands[@]}"; do
+	if ! command -v "${cmd}" >/dev/null; then
+		error_exit "Missing ${cmd}"
+	fi
+done
+
+# Validate we are running as root
+#   Future improvement could be that checks for udev rules to allow
+#   non-root running
+if [ "${EUID}" -ne "0" ]; then
+	error_exit "ERROR: Script not running as root"
+fi
+
+#######################
+# Parse Args
+#######################
+# NOTE: This requires GNU getopt.
+PARSED_ARGS=$(getopt --longoptions "pub-key-hash:" \
+		--options "" --name "${scriptName}" -- "$@")
+VALID_ARGS=$?
+if [ "${VALID_ARGS}" != "0" ] ; then
+	usage
+	error_exit "Unable to parse arguments"
+fi
+
+# Note the quotes around '${PARSED_ARGS}' are essential
+eval set -- "${PARSED_ARGS}"
+
+# Sec Boot Public Key SHA256 Hash Binary
+pubKeyFile=
+while true; do
+	case "$1" in
+		--pub-key-hash) pubKeyFile="${2}"; shift 2 ;;
+		# -- means the end of the arguments; drop this, and break out of the while loop
+		--) shift; break ;;
+		* ) usage; error_exit "Unrecognized option - ${1}" ;;
+	esac
+done
+
+# Ensure no positions args were specified.
+if [ $# != 0 ]; then
+	usage
+	error_exit "No positional arguments allowed - $*"
+fi
+
+#######################
+# Validate Parameters
+#######################
+if [ ! -f "${pubKeyFile}" ]; then
+	error_exit "STM32 publicKeyhash file not found!"
+fi
+
+####
+# VALIDATE STM32 pubKeyFile
+####
+pubkeywords=$(hexdump -e '1/4 "%08x" " "' "${pubKeyFile}")
+echo "pubkey: ${pubkeywords}"
+
+pubkeyword_count=$(echo "${pubkeywords}" | wc -w)
+echo "count: ${pubkeyword_count}"
+
+if [ "${pubkeyword_count}" -ne "8" ]; then
+	error_exit "Bad pub key file.  Incorrect length!"
+fi
+
+need_reboot="0"
+
+####
+# Flash software image
+####
+# start USB download mode and flash primary eMMC partitions
+STM32_Programmer_CLI -c port=USB1 -d flashlayouts-stm32mp1/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+
+######
+# Program OTP
+# See https://docs.google.com/spreadsheets/d/1f7av3w-C7jSgS1uSVwqdDRjVFiGYxnI_GQkT8qKsW4I
+#
+# Only program CFG3 and MAC Address OTP Fuses for Production devices
+######
+
+# Read OTP value list
+stm32prog_otp_refresh_values
+
+# Only program OTP if not a closed device
+if stm32prog_state_is_open; then
+	####
+	# HUK KEY
+	####
+	echo "## Checking HUK key"
+	check=0
+	for i in 60 61 62 63; do
+		if [ "$(stm32prog_otp_get_value ${i})" != "0x00000000" ]; then
+			check=1
+			break
+		fi
+	done
+	if [ "${check}" -eq "0" ]; then
+		echo "HUK key is empty.  Programming ..."
+
+		# Programming HUK Words needs to be separated as fastboot oem keys are
+		# limited to 64 chars
+		for i in 60 61 62 63; do
+			# Write OTP for HUK word
+			# NOTE: make sure the hex value is all upper-case for comparison
+			huk_word="0x$(hexdump -e ' "%08X"' -n 4 /dev/urandom)"
+			stm32prog_otp_set_value ${i} "${huk_word}"
+			stm32prog_otp_refresh_values
+			if [ "$(stm32prog_otp_get_value ${i})" != "${huk_word}" ]; then
+				error_exit "HUK OTP ${i} Fuse not programmed successfully."
+			fi
+
+			# Lock OTP Fuse
+			stm32prog_otp_lock ${i}
+		done
+
+		# need to reboot the HW to set OTP
+		need_reboot="1"
+	else
+		echo "HUK key is already programmed, skipping."
+	fi
+fi # if not closed device
+
+# detach from stm32prog mode
+STM32_Programmer_CLI -c port=USB1 -detach
+
+# Only close the device if not already closed
+if ! fastboot oem ucmd:"test \"\${boot_auth}\" = \"2\"">/dev/null 2>&1; then
+	####
+	# Programming STM32 Sec Boot Pub Key Hash
+	#
+	# NOTE: This must be done last as this closes the device
+	####
+	echo "## Checking STM32 key"
+	for i in 24 25 26 27 28 29 30 31; do
+		fastboot oem ucmd:"fuse cmp 0 ${i} 00000000" > /dev/null 2>&1
+		check=$?
+		if [ "${check}" -ne "0" ]; then
+			break
+		fi
+	done
+	if [ "${check}" -eq "0" ]; then
+		echo "STM32 key is empty.  Programming ..."
+
+		# Address which fastboot stage loads to
+		addr=0xd0000000
+		fastboot stage "${pubKeyFile}"
+
+		# Read STM32 key from memory
+		fastboot oem ucmd:"stm32key read ${addr}"
+		fastboot oem ucmd:"stm32key fuse -y ${addr}"
+
+		# Validate that public key written successfully
+		i=24
+		for word in ${pubkeywords}; do
+			# Must compare in little endian
+			word_le="0x${word:6:2}${word:4:2}${word:2:2}${word:0:2}"
+			fastboot oem ucmd:"fuse sense 0 ${i}"
+			fastboot oem ucmd:"fuse cmp 0 ${i} ${word_le}" > /dev/null 2>&1
+			check=$?
+			if [ "${check}" -ne "0" ]; then
+				error_exit "STM32 Pub Key Hash was not programmed successfully. OTP ${i} is not correct"
+			fi
+			i=$(printf "%d" $((i + 1)))
+		done
+
+		####
+		# Close Board
+		####
+		fastboot oem ucmd:"stm32key close -y"
+
+		echo "Done."
+
+		# need to reboot the HW to set OTP
+		need_reboot="1"
+	else
+		echo "STM32 key is already  programmed, skipping."
+	fi
+fi # if not closed device
+
+if [ "${need_reboot}" -eq "1" ]; then
+	fastboot reboot
+	sleep 2
+	STM32_Programmer_CLI -c port=USB1 -d stm32-mfgtool-files/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+	STM32_Programmer_CLI -c port=USB1 -detach
+fi
+
+# make sure we initialize RPMB in u-boot regardless of Linux provisioning steps
+fastboot oem ucmd:"mmc dev 1" > /dev/null 2>&1
+fastboot oem ucmd:"fiovb init 1"
+fastboot oem ucmd:"fiovb write_pvalue bootcount 0"
+
+echo "Provision is finished"

@@ -1,0 +1,142 @@
+#!/bin/sh
+#
+# Copyright (C) 2022 Foundries.IO
+#
+# SPDX-License-Identifier: MIT
+#
+
+## $1 = publicKeyhash.bin location
+## $2 = key type (dev, prod)
+pubKeyFile=${1}
+keyType=${2}
+
+if [ ! -f ${pubKeyFile} ]; then
+	echo "STM32 publicKeyhash file not found!"
+	echo 1
+fi
+
+# TODO: implement keyType in secure storage
+if [ "${keyType}" != "dev" ] && [ "${keyType}" != "prod" ]; then
+	echo "Invalid STM32 key type!  Must be dev or prod."
+	echo 1
+fi
+
+## VALIDATE STM32 pubKeyFile
+
+pubkeywords=$(hexdump -e '1/4 "%08x" " "' ${publicKeyFile})
+echo "pubkey: ${pubkeywords}"
+
+pubkeyword_count=$(echo "${pubkeywords}" | wc -w)
+echo "count: ${pubkeyword_count}"
+
+if [ "${pubkeyword_count}" -ne "8" ]; then
+	echo "Bad pub key file.  Incorrect length!"
+	exit 1
+fi
+
+
+# FACTORY SETTINGS: .fiodata
+# This file format should be:
+# key=value
+echo "factory_keys=${keyType}" > .fiodata
+
+# export UTC time
+echo -n $(date --utc +"%Y-%m-%d %H:%M:%S") > .run.utc.dat
+
+# start USB download mode and flash primary eMMC partitions
+STM32_Programmer_CLI -c port=USB1 -d flashlayouts-stm32mp1/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+
+# detach from stm32prog mode
+STM32_Programmer_CLI -c port=USB1 -detach
+
+# make sure we refresh mmc
+fastboot oem ucmd:"mmc rescan" > /dev/null 2>&1
+
+
+## TODO: fuse settings
+
+
+need_reboot="0"
+
+
+## MAC ADDR 1/2
+
+# OTP_57[31:0]  = MAC_ADDR1[31:0]
+# OTP_58[15:0]  = MAC_ADDR1[47:32]
+# OTP_58[31:16] = MAC_ADDR2[15:0]
+# OTP_59[31:0]  = MAC_ADDR2[47:16]
+
+# TODO: Need Logic
+
+
+## HUK KEY
+
+echo "## Checking HUK key"
+for i in 60 61 62 63; do
+	fastboot oem ucmd:"fuse cmp 0 ${i} 00000000" > /dev/null 2>&1
+	check=$?
+	if [ "${check}" -ne "0" ]; then
+		break
+	fi
+done
+if [ "${check}" -eq "0" ]; then
+	echo "HUK key is empty.  Programming ..."
+	# generate HUK key for for OTP 60-63
+	uuidval=$(uuidgen | tr -d '-')
+	hukwords="$(echo $uuidval | cut -c1-8) $(echo $uuidval | cut -c9-16) $(echo $uuidval | cut -c17-24) $(echo $uuidval | cut -c25-32)"
+	# TODO disable this later
+	echo "Programming HUK key to: ${hukwords} (disable this print later)"
+	# WRITE OTP 60-63
+	sudo fastboot oem ucmd:"fuse prog -y 0 60 ${hukwords}"
+	# LOCK OTP 60-63
+	sudo fastboot oem ucmd:"fuse prog -y 0 0x1000003c 0x50000000 0x50000000 0x50000000 0x50000000"
+	# TODO check success?
+
+	# need to reboot the HW to set OTP
+	need_reboot="1"
+else
+	echo "HUK key is already programmed, skipping."
+fi
+
+
+## STM32 KEY
+
+echo "## Checking STM32 key"
+for i in 24 25 26 27 28 29 30 31; do
+	fastboot oem ucmd:"fuse cmp 0 ${i} 00000000" > /dev/null 2>&1
+	check=$?
+	if [ "${check}" -ne "0" ]; then
+		break
+	fi
+done
+if [ "${check}" -eq "0" ]; then
+	echo "STM32 key is empty.  Programming ..."
+
+	# TODO: Test load pubKeyFile via fastboot instead
+	# fastboot stage ${pubKeyFile}
+	addr=0xc0000000
+	i=0x0
+	for word in ${pubkeywords}; do
+		newaddr=$(printf "0x%X" $((${addr} + ${i})))
+		fastboot oem ucmd:"mw.l ${newaddr} ${word}"
+		i=$(printf "0x%X" $((${i} + 0x4)))
+	done
+	# Read STM32 key from memory
+	fastboot oem ucmd:"stm32key read 0xc0000000"
+	fastboot oem ucmd:"stm32key fuse -y 0xc0000000"
+	# TODO: close here(?)
+	# fastboot oem ucmd:"stm32key close"
+	echo "Done."
+
+	# need to reboot the HW to set OTP
+	need_reboot="1"
+else
+	echo "STM32 key is already  programmed, skipping."
+fi
+
+if [ "${need_reboot}" -eq "1" ]; then
+	sudo fastboot reboot
+	sleep 2
+	STM32_Programmer_CLI -c port=USB1 -d stm32-mfgtool-files/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+	STM32_Programmer_CLI -c port=USB1 -detach
+fi

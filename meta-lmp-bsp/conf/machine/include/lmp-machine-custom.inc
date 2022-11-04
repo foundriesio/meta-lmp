@@ -514,6 +514,10 @@ WKS_FILE_DEPENDS:remove:stm32mp15-disco = "st-image-bootfs st-image-userfs"
 WKS_FILE:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee.wks.in"
 WKS_FILE:sota:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee-sota.wks.in"
 LMP_BOOT_FIRMWARE_FILES:stm32mp15-disco = "arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32 fip/fip-stm32mp157c-dk2-optee.bin"
+## stm32mp15-disco-sec
+SOTA_CLIENT_FEATURES:remove:sota:stm32mp15-disco-sec = "ubootenv"
+LMP_FLASHLAYOUT:stm32mp15-disco-sec = "FlashLayout_stm32mp1-optee.tsv"
+LMP_FLASHLAYOUT_BOARD_NAME:stm32mp15-disco-sec = "stm32mp157c-dk2"
 
 # Xilinx
 USE_XSCT_TARBALL:zynqmp = "1"

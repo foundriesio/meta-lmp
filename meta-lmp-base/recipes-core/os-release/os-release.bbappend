@@ -16,6 +16,8 @@ LMP_FACTORY_TAG = "${LMP_DEVICE_REGISTER_TAG}"
 IMAGE_ID = "${LMP_FACTORY_IMAGE}"
 IMAGE_VERSION = "${H_BUILD}"
 
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
 inherit deploy
 
 do_deploy () {

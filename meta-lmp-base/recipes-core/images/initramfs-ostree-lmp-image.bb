@@ -27,9 +27,7 @@ IMAGE_LINGUAS = ""
 
 LICENSE = "MIT"
 
-IMAGE_FSTYPES = "cpio.gz"
-IMAGE_FSTYPES:remove = "wic wic.gz wic.bmap wic.nopt ext4 ext4.gz"
-IMAGE_CLASSES:remove = "image_repo_manifest"
+IMAGE_FSTYPES = "${INITRAMFS_FSTYPES}"
 
 # avoid circular dependencies
 EXTRA_IMAGEDEPENDS = ""
@@ -44,3 +42,10 @@ IMAGE_ROOTFS_EXTRA_SPACE = "0"
 IMAGE_OVERHEAD_FACTOR = "1.0"
 
 BAD_RECOMMENDATIONS += "busybox-syslog"
+
+python () {
+    initramfs_fstypes = d.getVar('INITRAMFS_FSTYPES')
+    image_fstypes = d.getVar('IMAGE_FSTYPES')
+    if image_fstypes != initramfs_fstypes:
+        bb.fatal('IMAGE_FSTYPES="%s" is not equal to INITRAMFS_FSTYPES="%s"' % (image_fstypes, initramfs_fstypes))
+}

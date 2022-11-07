@@ -70,6 +70,9 @@ EXTRA_OEMAKE:append:imx8mp-lpddr4-evk = " \
 EXTRA_OEMAKE:append:imx8mn-ddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
 "
+EXTRA_OEMAKE:append:stm32mp15-disco = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_STM32_CRYPTO_DRIVER=n CFG_STM32_CRYP=n CFG_STM32_I2C=y CFG_CORE_SE05X_I2C_BUS=5 CFG_WITH_NSEC_I2CS=y', '', d)} \
+"
 
 # Extra Settings for Secure Machines
 EXTRA_OEMAKE:append:apalis-imx6-sec = " \

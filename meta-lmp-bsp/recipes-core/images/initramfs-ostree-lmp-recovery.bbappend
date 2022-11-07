@@ -14,9 +14,11 @@ PACKAGE_INSTALL:append:stm32mp1common = " \
 SRC_URI:append:stm32mp1common = "\
     file://fw_env.config \
     file://start_adb.sh \
+    file://tee.sh \
 "
 
 fakeroot do_populate_recovery_rootfs_custom () {
+    install -m 0755 ${WORKDIR}/tee.sh ${IMAGE_ROOTFS}/recovery.d/80-tee
     # install custom recovery modules
     install -m 0755 ${WORKDIR}/start_adb.sh ${IMAGE_ROOTFS}/recovery.d/90-start_adb
 

@@ -39,7 +39,7 @@
 	usbhub: usb5744@2d { /* u43 */
 		compatible = "microchip,usb5744";
 		reg = <0x2d>;
-		reset-gpios = <&gpio 44 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio 44 GPIO_ACTIVE_LOW>;
 	};
 	/* u27 - 0xe0 - STDP4320 DP/HDMI splitter */
 };

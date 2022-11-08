@@ -64,3 +64,4 @@ BOOTSCR_LOAD_ADDR:sota = "0x21000000"
 
 # Not building for QEMU standard Xinix build
 EXTRA_IMAGEDEPENDS:remove = "qemu-devicetrees"
+KERNEL_MODULE_AUTOLOAD:k26 += "usb5744"

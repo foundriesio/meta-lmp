@@ -83,6 +83,8 @@ INHERIT += "lmp-staging"
 INHERIT += "archiver"
 ARCHIVER_MODE[src] ?= "original"
 ARCHIVER_MODE[diff] ?= "1"
+# disable archiver for all recipes
+COPYLEFT_RECIPE_TYPES ?= ""
 
 ## Create SPDX (SBOM) by default
 INHERIT += "create-spdx"

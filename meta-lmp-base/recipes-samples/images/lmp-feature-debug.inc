@@ -9,4 +9,5 @@ CORE_IMAGE_BASE_INSTALL += " \
     minicom \
     devmem2 \
     curl \
+    dtc \
 "

@@ -1,5 +1,8 @@
 {
   "log-driver": "journald",
+  "log-opts": {
+    "tag": "{{.Name}}"
+  },
   "max-concurrent-downloads": @@MAX_CONCURRENT_DOWNLOADS@@,
   "max-download-attempts": @@MAX_DOWNLOAD_ATTEMPTS@@
 }

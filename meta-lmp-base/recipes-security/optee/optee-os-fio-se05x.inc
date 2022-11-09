@@ -17,6 +17,9 @@ SE05X_OEFID ?= "0xA1F4"
 # Some SE05X versions do not support the RSA cipher
 SE05X_HW_RSA ?= "y"
 
+# Some SE05X versions do not support unauthenticated sessions
+SE05X_SCP03_ONLY ?= "n"
+
 python () {
     oefid = d.getVar("SE05X_OEFID")
     if oefid in ["0xA565", "0xA564"]:
@@ -24,6 +27,9 @@ python () {
     elif oefid == "0xA921":
         d.setVar('SE05X_VER', "07_02")
         d.setVar('SE05X_HW_RSA', "n")
+    elif oefid in ["0xA92A", "0xA77E"]:
+        d.setVar('SE05X_VER', "03_XX")
+        d.setVar('SE05X_SCP03_ONLY', "y")
     else:
         d.setVar('SE05X_VER', "03_XX")
 }
@@ -33,6 +39,7 @@ EXTRA_OEMAKE:append = " \
     CFG_STACK_THREAD_EXTRA=8192 \
     CFG_STACK_TMP_EXTRA=8192 \
     CFG_NXP_SE05X=y \
+    CFG_CORE_SCP03_ONLY=${SE05X_SCP03_ONLY} \
     CFG_CORE_SE05X_VER=${SE05X_VER} \
     CFG_CORE_SE05X_DISPLAY_INFO=1 \
     CFG_CORE_SE05X_SCP03_EARLY=y \

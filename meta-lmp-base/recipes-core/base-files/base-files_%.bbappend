@@ -9,3 +9,5 @@ do_install:append () {
 }
 
 FILES:${PN} += "${nonarch_libdir}/tmpfiles.d/${PN}.conf"
+
+BASEFILESISSUEINSTALL = ""

@@ -101,6 +101,8 @@ setenv fiovb.old_is_secondary_boot ${fiovb.is_secondary_boot}
 # Check state of SECONDARY_BOOT bit
 run check_secondary_boot
 
+if test "${ostree_deploy_usr}" = "1"; then setenv image_dir_path "${bootdir}"; else setenv image_dir_path "${ostree_root}/usr/lib/firmware"; fi;
+
 # Check if we store correct secondary boot value in ubootenv/fiovb storage
 # if not - we should update it
 if test ! "${fiovb.is_secondary_boot}" = "${fiovb.old_is_secondary_boot}"; then
@@ -137,31 +139,17 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		else
 			if test "${fiovb.bootupgrade_available}" = "1"; then
 				run set_secondary_boot;
-				if test "${ostree_deploy_usr}" = "1"; then
-					echo "${fio_msg} updating secondary boot images from ${bootdir} ..."
+				echo "${fio_msg} updating secondary boot images from ${image_dir_path} ..."
 
-					setenv image_path "${bootdir}/${bootloader_s_image}"
-					setenv start_blk "${bootloader_s}"
-					run load_image
-					run update_secondary_image
+				setenv image_path "${image_dir_path}/${bootloader_s_image}"
+				setenv start_blk "${bootloader_s}"
+				run load_image
+				run update_secondary_image
 
-					setenv image_path "${bootdir}/${bootloader2_s_image}"
-					setenv start_blk "${bootloader2_s}"
-					run load_image
-					run update_secondary_image2
-				else
-					echo "${fio_msg} updating secondary boot images from ${ostree_root} ..."
-
-					setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_s_image}"
-					setenv start_blk "${bootloader_s}"
-					run load_image
-					run update_secondary_image
-
-					setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_s_image}"
-					setenv start_blk "${bootloader2_s}"
-					run load_image
-					run update_secondary_image2
-				fi
+				setenv image_path "${image_dir_path}/${bootloader2_s_image}"
+				setenv start_blk "${bootloader2_s}"
+				run load_image
+				run update_secondary_image2
 
 				run saveenv_mmc
 				echo "${fio_msg} doing warm reset to boot into secondary boot path..."
@@ -174,28 +162,18 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 	# So we can update stable primary path with that images
 	if test "${fiovb.bootupgrade_available}" = "1" && test "${fiovb.upgrade_available}" = "0"; then
 		if test -z "${custom_apply_stable}"; then
-			echo "${fio_msg} update primary boot path with validated images ..."
-			if test "${ostree_deploy_usr}" = "1"; then
-				setenv image_path "${bootdir}/${bootloader_image}"
-				setenv start_blk "${bootloader}"
-				run load_image
-				run update_primary_image
+			echo "${fio_msg} update primary boot path with validated images from ${image_dir_path} ..."
 
-				setenv image_path "${bootdir}/${bootloader2_image}"
-				setenv start_blk "${bootloader2}"
-				run load_image
-				run update_primary_image2
-			else
-				setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_image}"
-				setenv start_blk "${bootloader}"
-				run load_image
-				run update_primary_image
+			setenv image_path "${image_dir_path}/${bootloader_image}"
+			setenv start_blk "${bootloader}"
+			run load_image
+			run update_primary_image
 
-				setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_image}"
-				setenv start_blk "${bootloader2}"
-				run load_image
-				run update_primary_image2
-			fi
+			setenv image_path "${image_dir_path}/${bootloader2_image}"
+			setenv start_blk "${bootloader2}"
+			run load_image
+			run update_primary_image2
+
 			run set_primary_boot
 		else
 			run custom_apply_stable

@@ -15,10 +15,13 @@ setenv optee_ovl_addr 0x16000000
 setenv fit_addr ${loadaddr}
 
 # Boot firmware updates
-setenv bootloader 2
-setenv bootloader2 100
-setenv bootloader_s 802
-setenv bootloader2_s 900
+
+# Offsets are in blocks (512 bytes each)
+setenv bootloader 0x2
+setenv bootloader2 0x100
+setenv bootloader_s 0x802
+setenv bootloader2_s 0x900
+
 setenv bootloader_image "SPL"
 setenv bootloader_s_image ${bootloader_image}
 setenv bootloader2_image "u-boot.itb"

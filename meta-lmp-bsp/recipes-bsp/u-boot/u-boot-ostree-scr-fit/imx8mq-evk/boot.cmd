@@ -11,10 +11,13 @@ setenv rootpart 2
 setenv fit_addr 0x43800000
 
 # Boot firmware updates
-setenv bootloader 42
-setenv bootloader2 300
-setenv bootloader_s 1042
-setenv bootloader2_s 1300
+
+# Offsets are in blocks (512 bytes each)
+setenv bootloader 0x42
+setenv bootloader2 0x300
+setenv bootloader_s 0x1042
+setenv bootloader2_s 0x1300
+
 setenv bootloader_image "imx-boot"
 setenv bootloader_s_image "imx-boot-nohdmi"
 setenv bootloader2_image "u-boot.itb"

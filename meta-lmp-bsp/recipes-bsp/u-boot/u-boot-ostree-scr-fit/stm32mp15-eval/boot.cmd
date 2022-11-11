@@ -15,8 +15,8 @@ setenv check_board_closed 'if test "${boot_auth}" = "2"; then setenv board_is_cl
 setenv check_secondary_boot 'if test "${boot_part}" = "2"; then setenv fiovb.is_secondary_boot 1; else setenv fiovb.is_secondary_boot 0; fi;'
 
 # All values are provided in blocks (512 bytes each)
-setenv bootloader 0
-setenv bootloader2 200
+setenv bootloader 0x0
+setenv bootloader2 0x200
 setenv bootloader_size 0x1000
 setenv bootloader_s ${bootloader}
 setenv bootloader2_s ${bootloader2}

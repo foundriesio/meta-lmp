@@ -12,10 +12,13 @@ setenv fdt_file_final freescale_${fdt_file}
 setenv fit_addr ${initrd_addr}
 
 # Boot firmware updates
-setenv bootloader 42
-setenv bootloader2 300
-setenv bootloader_s 1042
-setenv bootloader2_s 1300
+
+# Offsets are in blocks (512KB each)
+setenv bootloader 0x42
+setenv bootloader2 0x300
+setenv bootloader_s 0x1042
+setenv bootloader2_s 0x1300
+
 setenv bootloader_image "imx-boot"
 setenv bootloader_s_image ${bootloader_image}
 setenv bootloader2_image "u-boot.itb"

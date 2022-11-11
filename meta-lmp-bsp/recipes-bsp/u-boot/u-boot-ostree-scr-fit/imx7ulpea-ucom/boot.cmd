@@ -16,10 +16,13 @@ setenv fit_addr ${initrd_addr}
 setenv loadaddr ${fit_addr}
 
 # Boot firmware updates
-setenv bootloader 2
-setenv bootloader2 180
-setenv bootloader_s 1002
-setenv bootloader2_s 1180
+
+# Offsets are in blocks (512 bytes each)
+setenv bootloader 0x2
+setenv bootloader2 0x180
+setenv bootloader_s 0x1002
+setenv bootloader2_s 0x1180
+
 setenv bootloader_image "SPL"
 setenv bootloader_s_image ${bootloader_image}
 setenv bootloader2_image "u-boot.itb"

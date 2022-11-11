@@ -27,8 +27,10 @@ setenv bootcmd_load_m4_1 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR
 setenv bootcmd_load_fw 'run bootcmd_load_hdmi; run bootcmd_load_m4_0; run bootcmd_load_m4_1;'
 
 # Boot firmware updates
-setenv bootloader 0
-setenv bootloader2 400
+
+# Offsets are in blocks (512 bytes each)
+setenv bootloader 0x0
+setenv bootloader2 0x400
 setenv bootloader_s ${bootloader}
 setenv bootloader2_s ${bootloader2}
 setenv bootloader_image "imx-boot"

@@ -17,6 +17,7 @@ require ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'lmp-feature-se05x.inc
 require ${@bb.utils.contains('MACHINE_FEATURES', 'tpm2', 'lmp-feature-tpm2.inc', '', d)}
 require ${@bb.utils.contains('MACHINE_FEATURES', 'efi', 'lmp-feature-efi.inc', '', d)}
 require ${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'lmp-feature-ima.inc', '', d)}
+require ${@bb.utils.contains('DISTRO_FEATURES', 'lmpdebug', 'lmp-feature-debug.inc', '', d)}
 
 IMAGE_FEATURES += "ssh-server-openssh"
 

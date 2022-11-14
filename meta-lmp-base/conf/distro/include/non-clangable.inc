@@ -66,6 +66,13 @@ OBJCOPY:pn-docker-ce:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-docker-compose:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-docker-compose:toolchain-clang = "${HOST_PREFIX}objcopy"
 
+# ERROR: mcumgr-v0.0.1+git-r0 do_package: Fatal errors occurred in subprocesses:
+# Command '['x86_64-lmp-linux-llvm-strip', '--remove-section=.comment', '--remove-section=.note', '/srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/mcumgr/v0.0.1+git-r0/package/usr/bin/mcumgr']' returned non-zero exit status 1.
+# Subprocess output:x86_64-lmp-linux-llvm-strip: error: SHT_STRTAB string table section [index 9] is non-null terminated
+# ERROR: Task (/srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-devtools/mcumgr/mcumgr_git.bb:do_package) failed with exit code '1'
+STRIP:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}strip"
+OBJCOPY:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}objcopy"
+
 # qemuarm64-secureboot
 # | ld.lld: error: cannot open /usr/lib/clang/14.0.3/lib/linux/libclang_rt.builtins-aarch64.a: No such file or directory
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-os-fio_3.17.0.bb:do_compile

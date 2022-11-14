@@ -11,7 +11,7 @@ SRCREV = "0ba791a8d336bc751598be36099998439184b033"
 UPSTREAM_CHECK_COMMITS = "1"
 PV = "v0.0.1+git"
 
-inherit go goarch
+inherit go
 
 # OE build default do_compile recipe is creating oddly broken binary
 # To fix this, let's use the same as manual build steps

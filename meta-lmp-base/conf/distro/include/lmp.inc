@@ -79,11 +79,6 @@ BUILD_OSTREE_TARBALL ?= "0"
 INHERIT += "lmp"
 INHERIT += "lmp-staging"
 
-# Archive sources (for license compliance)
-INHERIT += "archiver"
-ARCHIVER_MODE[src] ?= "original"
-ARCHIVER_MODE[diff] ?= "1"
-
 ## Create SPDX (SBOM) by default
 INHERIT += "create-spdx"
 INHERIT += "buildhistory"

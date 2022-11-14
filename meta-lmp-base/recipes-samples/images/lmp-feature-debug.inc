@@ -10,4 +10,5 @@ CORE_IMAGE_BASE_INSTALL += " \
     devmem2 \
     curl \
     dtc \
+    i2c-tools \
 "

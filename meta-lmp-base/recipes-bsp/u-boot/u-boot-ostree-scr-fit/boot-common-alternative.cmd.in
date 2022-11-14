@@ -76,6 +76,7 @@ fi
 if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} ################ Debug info ###############"
 	echo "${fio_msg} State machine variables:"
+	echo "${fio_msg} fiovb.is_secondary_boot = ${fiovb.is_secondary_boot}"
 	echo "${fio_msg} fiovb.bootcount = ${fiovb.bootcount}"
 	echo "${fio_msg} fiovb.rollback = ${fiovb.rollback}"
 	echo "${fio_msg} fiovb.upgrade_available = ${fiovb.upgrade_available}"

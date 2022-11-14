@@ -35,7 +35,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     mtd-utils \
     sudo \
     zram \
-    i2c-tools \
 "
 
 # Additional packages when sota is available

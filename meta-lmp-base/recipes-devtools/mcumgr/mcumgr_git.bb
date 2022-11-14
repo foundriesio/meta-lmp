@@ -13,6 +13,9 @@ PV = "v0.0.1+git"
 
 inherit go goarch
 
+# Go modules are currently downloaded during build step
+do_compile[network] = "1"
+
 # OE build default do_compile recipe is creating oddly broken binary
 # To fix this, let's use the same as manual build steps
 # NOTE: The binary is much larger than default recipe

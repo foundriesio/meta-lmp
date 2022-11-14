@@ -3,10 +3,10 @@ include recipes-kernel/linux/kmeta-linux-lmp-5.15.y.inc
 # Use Freescale kernel by default
 KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_REPO_PROTOCOL ?= "https"
-LINUX_VERSION ?= "5.15.60"
+LINUX_VERSION ?= "5.15.77"
 KERNEL_BRANCH ?= "5.15-2.1.x-imx"
 
-SRCREV_machine = "e1b43282a845dfb78e115a8e2dc4144ce0d335b5"
+SRCREV_machine = "0dbb0e28ad332aa0955b873beb91190ae05ac655"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

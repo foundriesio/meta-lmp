@@ -17,6 +17,11 @@ IMAGE_ID = "${LMP_FACTORY_IMAGE}"
 IMAGE_VERSION = "${H_BUILD}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+# to set the PACKAGE_ARCH we need to bypass
+# the allarch_package_arch_handler from allarch.bbclass
+python allarch_package_arch_handler () {
+    pass
+}
 
 inherit deploy
 

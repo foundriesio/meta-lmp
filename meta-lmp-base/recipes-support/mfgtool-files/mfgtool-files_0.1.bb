@@ -9,7 +9,7 @@ inherit deploy nopackages
 INITRAMFS_IMAGE = "fsl-image-mfgtool-initramfs"
 DEPENDS = "${INITRAMFS_IMAGE}"
 
-UUU_RELEASE = "1.4.193"
+UUU_RELEASE = "1.4.243"
 MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
 SRC_URI = " \
@@ -20,9 +20,9 @@ SRC_URI = " \
     file://full_image.uuu.in \
 "
 
-SRC_URI[Linux.sha256sum] = "b9be424fd7fb3e7a79fd92996637f5ba45328b42fb96d8338976770c3bb1d594"
-SRC_URI[Mac.sha256sum] = "179488da2381c71b4b651f1e46ad27e4c46192a96e79a24bd52a5fbb54a0c6b6"
-SRC_URI[Windows.sha256sum] = "376f617a28b41cf1e9882c2dd9299f78a747bd72fc8a942758d4a3ae214cdc1e"
+SRC_URI[Linux.sha256sum] = "dfb2a6dca337ebd59675ea5ce7f1bce6724e3b901bcb455126d4bf9bdfa2e585"
+SRC_URI[Mac.sha256sum] = "399efa4bc7e3eb452fefe89ef5e2e453b516ea716658a963a890c430ad81a471"
+SRC_URI[Windows.sha256sum] = "f3f178e7be161c7dc058dbcd35c8cfa1516981e7c4f915fe0256ae4cda7f101e"
 
 S = "${WORKDIR}"
 

@@ -289,6 +289,7 @@ SOTA_CLIENT_FEATURES:remove:sota:imx8qm-mek-sec = "ubootenv"
 # iMX8MQ
 UBOOT_SIGN_ENABLE:sota:mx8mq-generic-bsp = "1"
 IMX_DEFAULT_BOOTLOADER:mx8mq-generic-bsp ?= "u-boot-fio"
+UBOOT_ENTRYPOINT:mx8mq-generic-bsp = "0x40400000"
 UBOOT_DTB_LOADADDRESS:mx8mq-generic-bsp = "0x43000000"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a:mx8mq-nxp-bsp ?= "imx-atf"
 EXTRA_IMAGEDEPENDS:append:mx8mq-generic-bsp = "virtual/trusted-firmware-a"

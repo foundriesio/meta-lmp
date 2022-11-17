@@ -82,9 +82,6 @@ INHERIT += "lmp"
 INHERIT += "lmp-staging"
 INHERIT += "uninative"
 
-INHERIT += "buildhistory"
-BUILDHISTORY_COMMIT = "1"
-
 # Clang toolchain
 TOOLCHAIN ?= "clang"
 RUNTIME = "llvm"

@@ -8,7 +8,7 @@ inherit pkgconfig
 DEPENDS = "optee-client openssl"
 
 SRC_URI = "git://github.com/foundriesio/fio-se05x-cli.git;protocol=https;branch=main"
-SRCREV = "4456480b913afbd00de3e613c7b023a415fcbae8"
+SRCREV = "1e170cd3d8a0f46920073565115ee19b694ab64a"
 
 S = "${WORKDIR}/git"
 

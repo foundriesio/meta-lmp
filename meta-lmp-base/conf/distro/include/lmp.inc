@@ -79,9 +79,6 @@ BUILD_OSTREE_TARBALL ?= "0"
 INHERIT += "lmp"
 INHERIT += "lmp-staging"
 
-INHERIT += "buildhistory"
-BUILDHISTORY_COMMIT = "1"
-
 # Clang toolchain
 TOOLCHAIN ?= "clang"
 RUNTIME = "llvm"

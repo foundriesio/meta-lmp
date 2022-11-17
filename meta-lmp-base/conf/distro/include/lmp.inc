@@ -82,8 +82,6 @@ INHERIT += "lmp"
 INHERIT += "lmp-staging"
 INHERIT += "uninative"
 
-## Create SPDX (SBOM) by default
-INHERIT += "create-spdx"
 INHERIT += "buildhistory"
 BUILDHISTORY_COMMIT = "1"
 

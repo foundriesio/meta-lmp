@@ -79,8 +79,6 @@ BUILD_OSTREE_TARBALL ?= "0"
 INHERIT += "lmp"
 INHERIT += "lmp-staging"
 
-## Create SPDX (SBOM) by default
-INHERIT += "create-spdx"
 INHERIT += "buildhistory"
 BUILDHISTORY_COMMIT = "1"
 

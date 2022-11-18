@@ -8,20 +8,17 @@ Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
  git/cli/scripts/build/binary | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git git/cli/scripts/build/binary git/cli/scripts/build/binary
-index e4c5e12a6b..7c47b75c2f 100755
---- git/cli/scripts/build/binary
+Index: git/cli/scripts/build/binary
+===================================================================
+--- git.orig/cli/scripts/build/binary
 +++ git/cli/scripts/build/binary
-@@ -73,8 +73,7 @@ fi
+@@ -73,8 +73,7 @@
  
  echo "Building $GO_LINKMODE $(basename "${TARGET}")"
  
 -export GO111MODULE=auto
  
--go build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
-+${GO} build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
+-go build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${GO_LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
++${GO} build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${GO_LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
  
  ln -sf "$(basename "${TARGET}")" "$(dirname "${TARGET}")/docker"
--- 
-2.19.1
-

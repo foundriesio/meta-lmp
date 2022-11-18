@@ -5,8 +5,8 @@ DESCRIPTION = "containerd is a daemon to control runC, built for performance and
                support as well as checkpoint and restore for cloning and live migration of containers."
 
 
-SRCREV = "3df54a852345ae127d1fa3092b95168e4a88e2f8"
-SRC_URI = "git://github.com/containerd/containerd;branch=release/1.5;protocol=https \
+SRCREV = "1c90a442489720eec95342e1789ee8a5e1b9536f"
+SRC_URI = "git://github.com/containerd/containerd;branch=release/1.6;protocol=https \
            file://0001-Add-build-option-GODEBUG-1.patch \
            file://0001-Makefile-allow-GO_BUILD_FLAGS-to-be-externally-speci.patch \
           "
@@ -15,7 +15,8 @@ SRC_URI = "git://github.com/containerd/containerd;branch=release/1.5;protocol=ht
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=1269f40c0d099c21a871163984590d89"
 
-CONTAINERD_VERSION = "v1.5.11"
+CONTAINERD_VERSION = "v1.6.9"
+CVE_VERSION = "1.6.9"
 
 EXTRA_OEMAKE += "GODEBUG=1"
 
@@ -54,7 +55,8 @@ do_compile() {
 		     protobuf reference diff platforms runtime remotes version archive dialer gc metadata \
 		     metrics filters identifiers labels leases plugin server services \
 		     cmd cio containers namespaces oci events log reaper sys rootfs nvidia seed apparmor seccomp \
-		     cap cri userns atomic ioutil os registrar seutil runtimeoptions netns; do
+		     cap cri userns atomic ioutil os registrar seutil runtimeoptions netns \
+                     shutdown schedcore tracing kmutex; do
         if [ -d ${S}/src/import/${c} ]; then
 	    ln -sfn ${S}/src/import/${c} ${S}/src/import/vendor/github.com/containerd/containerd/${c}
         fi

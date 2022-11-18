@@ -124,3 +124,8 @@ TOOLCHAIN:pn-opensbi = "gcc"
 # | clang-14: error: unknown argument: '-fno-toplevel-reorder'
 # | clang-14: warning: optimization flag '-fno-merge-constants' is not supported [-Wignored-optimization-argument]
 TOOLCHAIN:pn-efitools = "gcc"
+
+# github.com/seccomp/libseccomp-golang
+# vendor/github.com/seccomp/libseccomp-golang/seccomp_internal.go:619:2: duplicate case _Ciconst_C_ACT_KILL_THREAD (value 0) in switch
+#        previous case at vendor/github.com/seccomp/libseccomp-golang/seccomp_internal.go:615:2
+TOOLCHAIN:pn-runc-opencontainers = "gcc"

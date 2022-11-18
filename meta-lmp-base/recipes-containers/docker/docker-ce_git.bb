@@ -31,9 +31,9 @@ DESCRIPTION = "Linux container runtime \
 # so we get that tag, and make it our SRCREVS:
 #
 
-SRCREV_docker = "87a90dc786bda134c9eb02adbae2c6a7342fb7f6"
-SRCREV_libnetwork = "64b7a4574d1426139437d20e81c0b6d391130ec8"
-SRCREV_cli = "a224086349269551becacce16e5842ceeb2a98d6"
+SRCREV_docker = "3056208812eb5e792fa99736c9167d1e10f4ab49"
+SRCREV_libnetwork = "0dde5c895075df6e3630e76f750a447cf63f4789"
+SRCREV_cli = "baeda1f82a10204ec5708d5fbba130ad76cfee49"
 SRCREV_FORMAT = "docker_libnetwork"
 SRC_URI = "\
 	git://github.com/docker/docker.git;branch=20.10;name=docker;protocol=https \
@@ -47,6 +47,7 @@ SRC_URI = "\
 	file://increase_containerd_timeouts.patch \
 	file://0001-registry-increase-TLS-and-connection-timeouts.patch \
 	file://0001-overlay2-fsync-layer-metadata-files.patch \
+	file://0001-Revert-20.10-vendor-update-archive-tar-for-go-1.18.patch \
 	"
 
 require recipes-containers/docker/docker.inc
@@ -56,7 +57,7 @@ require docker-lmp.inc
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=4859e97a9c7780e77972d989f0823f28"
 
-DOCKER_VERSION = "20.10.14-ce"
+DOCKER_VERSION = "20.10.21-ce"
 PV = "${DOCKER_VERSION}+git${SRCREV_docker}"
 
 CVE_PRODUCT = "docker"

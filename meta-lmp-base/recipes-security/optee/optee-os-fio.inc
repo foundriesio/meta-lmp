@@ -71,6 +71,11 @@ do_deploy() {
 
     # Link tee.bin so it can be consumed by recipes such as imx-boot
     ln -sf optee/tee-pager_v2.bin ${DEPLOYDIR}/tee.bin
+
+    # Deploy optee_os config used during build
+    install -D -m 644 ${B}/conf.mk ${DEPLOYDIR}/${PN}-config-${MACHINE}-${PV}-${PR}
+    ln -sf ${PN}-config-${MACHINE}-${PV}-${PR} ${DEPLOYDIR}/${PN}-config-${MACHINE}
+    ln -sf ${PN}-config-${MACHINE}-${PV}-${PR} ${DEPLOYDIR}/${PN}-config
 }
 
 addtask deploy before do_build after do_install

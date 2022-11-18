@@ -305,6 +305,7 @@ KERNEL_IMAGETYPE:sota:mx8mq-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mq-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mq-nxp-bsp ?= "linux-lmp-fslc-imx"
+PREFERRED_VERSION_linux-lmp-fslc-imx:mx8mq-nxp-bsp ?= "5.15%"
 WKS_FILE:sota:mx8mq-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mq-nxp-bsp = "flash_evk_spl"
 PREFERRED_VERSION_u-boot-fio:mx8mq-nxp-bsp ?= "imx-2022.04"

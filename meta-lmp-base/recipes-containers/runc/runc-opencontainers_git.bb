@@ -1,10 +1,10 @@
 include recipes-containers/runc/runc.inc
 
-SRCREV = "e0124d569cb2dfe93bd9fb8d7f4ade461e006464"
+SRCREV = "5fd4c4d144137e991c4acebb2146ab1483a97925"
 SRC_URI = " \
-    git://github.com/opencontainers/runc;branch=release-1.0;protocol=https \
+    git://github.com/opencontainers/runc;branch=release-1.1;protocol=https \
     file://0001-Makefile-respect-GOBUILDFLAGS-for-runc-and-remove-re.patch \
     "
-RUNC_VERSION = "1.0.3"
+RUNC_VERSION = "1.1.4"
 
 CVE_PRODUCT = "runc"

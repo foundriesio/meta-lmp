@@ -12,7 +12,7 @@ SRC_URI = "\
 	file://cli-config-support-default-system-config.patch \
 	"
 
-SRCREV_compose = "6756732fe45285f61d459809c36eed0f28fdd58b"
+SRCREV_compose = "36926c41c6ff719b376a42f7aa6c1eae98f1ae7e"
 SRCREV_cli = "2b52f62e962783ef39b53d1cb95e1d435b33f3cd"
 SRCREV_FORMAT = "compose_cli"
 

@@ -1,0 +1,24 @@
+From 0e6809ea075acd3edf7de197cd4e190ccdad6361 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Mon, 29 Mar 2021 20:50:47 -0400
+Subject: [PATCH] Makefile: allow external specification of build settings
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: nerdctl-v0.17.0/src/import/Makefile
+===================================================================
+--- nerdctl-v0.17.0.orig/src/import/Makefile
++++ nerdctl-v0.17.0/src/import/Makefile
+@@ -31,7 +31,8 @@
+ VERSION_TRIMMED := $(VERSION:v%=%)
+ REVISION=$(shell git rev-parse HEAD)$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)
+ 
+-export GO_BUILD=GO111MODULE=on CGO_ENABLED=0 GOOS=$(GOOS) $(GO) build -ldflags "-s -w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
++#export GO_BUILD=GO111MODULE=on CGO_ENABLED=0 GOOS=$(GOOS) $(GO) build -ldflags "-s -w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
++export GO_BUILD=$(GO) build -ldflags "-s -w -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
+ 
+ ifdef VERBOSE
+ 	VERBOSE_FLAG := -v

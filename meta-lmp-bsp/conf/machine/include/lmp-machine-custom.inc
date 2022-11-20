@@ -188,6 +188,7 @@ BOOTSCR_LOAD_ADDR:imx6ulevk = "0x85000000"
 # iMX6ULL
 UBOOT_SIGN_ENABLE:sota:mx6ull-generic-bsp = "1"
 PREFERRED_PROVIDER_virtual/kernel:mx6ull-nxp-bsp ?= "linux-lmp-fslc-imx"
+PREFERRED_VERSION_linux-lmp-fslc-imx:mx6ull-nxp-bsp ?= "5.15%"
 IMX_DEFAULT_BOOTLOADER:mx6ull-generic-bsp ?= "u-boot-fio"
 WKS_FILE_DEPENDS:append:mx6ull-generic-bsp = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script:mx6ull-generic-bsp = "u-boot-base-scr"

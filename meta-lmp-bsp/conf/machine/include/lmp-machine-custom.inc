@@ -389,6 +389,7 @@ MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
 # iMX8MP
 UBOOT_SIGN_ENABLE:sota:mx8mp-generic-bsp = "1"
 IMX_DEFAULT_BOOTLOADER:mx8mp-generic-bsp ?= "u-boot-fio"
+UBOOT_ENTRYPOINT:mx8mp-generic-bsp = "0x40400000"
 UBOOT_DTB_LOADADDRESS:mx8mp-generic-bsp = "0x43000000"
 PREFERRED_PROVIDER_virtual/trusted-firmware-a:mx8mp-nxp-bsp ?= "imx-atf"
 EXTRA_IMAGEDEPENDS:append:mx8mp-nxp-bsp = "virtual/trusted-firmware-a"

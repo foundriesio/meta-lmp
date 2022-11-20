@@ -452,6 +452,7 @@ PREFERRED_PROVIDER_virtual/kernel:mx8mn-generic-bsp ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE:mx8mn-generic-bsp = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mn-generic-bsp = "flash_evk_spl_ddr4"
+PREFERRED_VERSION_u-boot-fio:mx8mn-nxp-bsp ?= "imx-2022.04"
 # iMX8MN DDR4 EVK
 KMACHINE:imx8mn-ddr4-evk = "imx8mn-evk"
 OSTREE_KERNEL_ARGS:imx8mn-ddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"

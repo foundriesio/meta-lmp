@@ -25,4 +25,4 @@ do_install () {
 
 SYSTEMD_SERVICE:${PN} = "btattach.service"
 
-FILES_${PN} += "${sysconfdir}/bluetooth/btattach.conf"
+FILES:${PN} += "${sysconfdir}/bluetooth/btattach.conf"

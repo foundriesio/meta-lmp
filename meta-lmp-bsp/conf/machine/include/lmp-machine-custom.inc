@@ -265,6 +265,7 @@ PREFERRED_PROVIDER_u-boot-default-script:sota:mx8qm-generic-bsp = "u-boot-ostree
 UBOOT_CLASSES:mx8qm-generic-bsp = "uboot-fitimage"
 IMXBOOT_TARGETS:mx8qm-nxp-bsp = "flash_evk_spl"
 PREFERRED_VERSION_u-boot-fio:mx8qm-nxp-bsp ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8qm-nxp-bsp ?= "imx-2022.04"
 ATF_BINARY:mx8qm-generic-bsp = "arm-trusted-firmware.bin"
 EXTRA_IMAGEDEPENDS:append:mx8qm-generic-bsp = "virtual/trusted-firmware-a"
 UBOOT_ENTRYPOINT:mx8qm-generic-bsp = "0x80280000"

@@ -61,6 +61,12 @@ do_install:append:imx-nxp-bsp () {
     # Install Murata 1MW NVRAM and HCD files
     install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1MW_CYW43455/BCM4345C0.1MW.hcd ${D}${nonarch_base_libdir}/firmware/brcm/BCM4345C0.hcd
     install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1MW_CYW43455/brcmfmac43455-sdio.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43455-sdio.fsl,${MACHINE}.txt
+
+    # Install Murata CYW4356 firmware
+    install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1CX_CYW4356/brcmfmac4356-pcie.bin ${D}${nonarch_base_libdir}/firmware/brcm
+    install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1CX_CYW4356/brcmfmac4356-pcie.clm_blob ${D}${nonarch_base_libdir}/firmware/brcm
+    install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1CX_CYW4356/brcmfmac4356-pcie.txt ${D}${nonarch_base_libdir}/firmware/brcm
+    install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1CX_CYW4356/BCM4354A2.1CX.hcd ${D}${nonarch_base_libdir}/firmware/brcm/BCM4356A2.hcd
 }
 
 do_install:append:stm32mpcommon() {
@@ -83,4 +89,10 @@ FILES:${PN}-nxp89xx = " \
 FILES:${PN}-bcm43455 += " \
        ${nonarch_base_libdir}/firmware/brcm/BCM4345C0.hcd \
        ${nonarch_base_libdir}/firmware/brcm/brcmfmac43455-sdio.fsl,${MACHINE}.txt \
+"
+
+FILES:${PN}-bcm4356-pcie += " \
+       ${nonarch_base_libdir}/firmware/brcm/brcmfmac4356-pcie.clm_blob \
+       ${nonarch_base_libdir}/firmware/brcm/brcmfmac4356-pcie.txt \
+       ${nonarch_base_libdir}/firmware/brcm/BCM4356A2.hcd \
 "

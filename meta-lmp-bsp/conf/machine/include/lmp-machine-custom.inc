@@ -161,6 +161,7 @@ UBOOT_CONFIG:imx7ulpea-ucom = ""
 # iMX6UL
 UBOOT_SIGN_ENABLE:sota:mx6ul-generic-bsp = "1"
 PREFERRED_PROVIDER_virtual/kernel:mx6ul-nxp-bsp ?= "linux-lmp-fslc-imx"
+PREFERRED_VERSION_linux-lmp-fslc-imx:mx6ul-nxp-bsp ?= "5.15%"
 IMX_DEFAULT_BOOTLOADER:mx6ul-generic-bsp ?= "u-boot-fio"
 WKS_FILE_DEPENDS:append:mx6ul-generic-bsp = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script:mx6ul-generic-bsp = "u-boot-base-scr"

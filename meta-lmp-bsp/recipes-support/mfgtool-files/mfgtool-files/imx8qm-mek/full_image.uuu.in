@@ -1,11 +1,6 @@
 uuu_version 1.3.102
 
 SDPS: boot -f imx-boot-mfgtool
-CFG: FB: -vid 0x0525 -pid 0x4000
-CFG: FB: -vid 0x0525 -pid 0x4025
-CFG: FB: -vid 0x0525 -pid 0x402F
-CFG: FB: -vid 0x0525 -pid 0x4030
-CFG: FB: -vid 0x0525 -pid 0x4031
 
 SDPU: delay 1000
 SDPU: write -f imx-boot-mfgtool -offset 0x57c00

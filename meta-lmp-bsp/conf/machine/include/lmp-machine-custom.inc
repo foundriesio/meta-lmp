@@ -329,6 +329,7 @@ MACHINE_FEATURES:append:imx8mq-evk = " bcm4356"
 UBOOT_MACHINE:imx8mq-evk ?= "imx8mq_evk_config"
 BOOTSCR_LOAD_ADDR:imx8mq-evk = "0x44800000"
 MACHINE_EXTRA_RRECOMMENDS:append:imx8mq-evk = " bluetooth-attach"
+MACHINE_FIRMWARE:append:imx8mq-evk = " linux-firmware-bcm4356-pcie"
 ## iMX8MQ EVK with EBBR / SystemReady
 UBOOT_SIGN_ENABLE:sota:imx8mq-evk-ebbr = ""
 KERNEL_IMAGETYPE:sota:imx8mq-evk-ebbr ?= "Image"

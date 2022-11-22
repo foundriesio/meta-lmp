@@ -86,7 +86,7 @@ EXTRA_OEMAKE:append:imx6ullevk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=1', '', d)} \
 "
 EXTRA_OEMAKE:append:imx8mm-lpddr4-evk = " \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2 CFG_PKCS11_TA_HEAP_SIZE=262144', '', d)} \
 "
 EXTRA_OEMAKE:append:imx8mp-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=4', '', d)} \

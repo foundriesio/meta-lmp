@@ -16,6 +16,7 @@ KERNEL_CLASSES:imx7ulpea-ucom = " kernel-lmp-fitimage "
 # iMX6UL
 UBOOT_SIGN_ENABLE:mx6ul-generic-bsp = "1"
 PREFERRED_PROVIDER_virtual/kernel:mx6ul-nxp-bsp = "linux-lmp-dev-mfgtool"
+PREFERRED_VERSION_linux-lmp-dev-mfgtool:mx6ul-nxp-bsp = "5.15%"
 IMX_DEFAULT_BOOTLOADER:mx6ul-generic-bsp ?= "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script:mx6ul-generic-bsp = "u-boot-ostree-scr-fit"
 UBOOT_CLASSES:mx6ul-generic-bsp = "uboot-fitimage"

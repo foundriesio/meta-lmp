@@ -3,15 +3,15 @@ uuu_version 1.2.39
 SDP: boot -f SPL-mfgtool.signed
 
 # Add Toradex PID for Fastboot in u-boot
-CFG: FB: -vid 0x0525 -pid 0x4000
-CFG: FB: -vid 0x0525 -pid 0x401b
-CFG: FB: -vid 0x0525 -pid 0x401c
-CFG: FB: -vid 0x0525 -pid 0x401d
-CFG: FB: -vid 0x0525 -pid 0x4023
-CFG: FB: -vid 0x0525 -pid 0x4025
-CFG: FB: -vid 0x0525 -pid 0x402F
-CFG: FB: -vid 0x0525 -pid 0x4030
-CFG: FB: -vid 0x0525 -pid 0x4031
+CFG: FB: -vid 0x1fc9 -pid 0x4000
+CFG: FB: -vid 0x1fc9 -pid 0x401b
+CFG: FB: -vid 0x1fc9 -pid 0x401c
+CFG: FB: -vid 0x1fc9 -pid 0x401d
+CFG: FB: -vid 0x1fc9 -pid 0x4023
+CFG: FB: -vid 0x1fc9 -pid 0x4025
+CFG: FB: -vid 0x1fc9 -pid 0x402F
+CFG: FB: -vid 0x1fc9 -pid 0x4030
+CFG: FB: -vid 0x1fc9 -pid 0x4031
 
 SDPV: delay 1000
 SDPV: write -f u-boot-mfgtool.itb

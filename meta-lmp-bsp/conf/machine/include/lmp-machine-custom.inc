@@ -146,6 +146,7 @@ OSTREE_KERNEL_ARGS:mx7ulp-generic-bsp ?= "console=tty1 console=ttyLP0,115200 ${O
 UBOOT_SIGN_ENABLE:sota:imx7ulpea-ucom = "1"
 PREFERRED_PROVIDER_u-boot-default-script:imx7ulpea-ucom = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:imx7ulpea-ucom = "u-boot-ostree-scr-fit"
+PREFERRED_VERSION_u-boot-fio:imx7ulpea-ucom ?= "imx-2022.04"
 LMP_BOOT_FIRMWARE:imx7ulpea-ucom = "SPL u-boot.itb"
 IMAGE_BOOT_FILES:imx7ulpea-ucom = "boot.scr uEnv.txt zImage ${@make_dtb_boot_files(d)}"
 IMAGE_BOOT_FILES:sota:imx7ulpea-ucom = "boot.itb"

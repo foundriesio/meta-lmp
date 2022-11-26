@@ -4,14 +4,14 @@
 
 DESCRIPTION = "i.MX System Controller Firmware for Toradex hardware"
 LICENSE = "Proprietary"
-LIC_FILES_CHKSUM = "file://COPYING;md5=94c5a3fc041e195df67fde3979a5e14e"
+LIC_FILES_CHKSUM = "file://COPYING;md5=5a0bf11f745e68024f37b4724a5364fe"
 SECTION = "BSP"
 
 inherit deploy
 
 SRC_URI = "git://github.com/toradex/i.MX-System-Controller-Firmware.git;branch=master;protocol=https;fsl-eula=true"
 
-SRCREV = "60d8c942f49012b6620f34800e2e9f11e45a9ef5"
+SRCREV = "9141880041424696f162d46abaca13a956bceeb1"
 SRCREV_use-head-next = "${AUTOREV}"
 
 S = "${WORKDIR}/git"

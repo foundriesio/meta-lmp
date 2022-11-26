@@ -1,6 +1,6 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/linux-lmp-fslc-imx:${THISDIR}/linux-lmp-fslc-imx/5.15:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/linux-lmp-fslc-imx:"
 
-include linux-lmp-fslc-imx_5.15_git.bb
+include linux-lmp-fslc-imx_git.bb
 
 KERNEL_REPO = "git://github.com/foundriesio/linux.git"
 LINUX_VERSION = "5.15.76"

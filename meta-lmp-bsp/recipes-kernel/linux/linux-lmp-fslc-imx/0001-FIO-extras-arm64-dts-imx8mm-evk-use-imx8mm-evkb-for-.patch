@@ -1,4 +1,4 @@
-From 0f03bc70b5c57920cb42dbb78578272be60ac4fe Mon Sep 17 00:00:00 2001
+From 8a2f1d22445868e0220a8b9e62e592562834dc1c Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Fri, 14 May 2021 13:36:10 -0300
 Subject: [PATCH] arm64: dts: imx8mm-evk: use imx8mm-evkb for the new EVKs
@@ -17,7 +17,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  .../dts/freescale/imx8mm-evk-ecspi-slave.dts  |   2 +-
  .../imx8mm-evk-hifiberry-dacplus.dts          |   2 +-
  .../freescale/imx8mm-evk-iqaudio-dacplus.dts  |   2 +-
- .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |   2 +-
+ .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |  69 +++++++-
  .../boot/dts/freescale/imx8mm-evk-lk.dts      |   2 +-
  .../boot/dts/freescale/imx8mm-evk-pcie-ep.dts |   2 +-
  .../dts/freescale/imx8mm-evk-qca-wifi.dts     |   2 +-
@@ -27,11 +27,11 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  .../dts/freescale/imx8mm-evk-usd-wifi.dts     |   2 +-
  arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 159 +----------------
  arch/arm64/boot/dts/freescale/imx8mm-evkb.dts | 163 ++++++++++++++++++
- 17 files changed, 180 insertions(+), 172 deletions(-)
+ 17 files changed, 247 insertions(+), 172 deletions(-)
  create mode 100755 arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
-index ec4108c4c2178..4b79d0e6b2cfc 100644
+index 7d0b347be7ed..f0aa85f97f2b 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
 @@ -3,7 +3,7 @@
@@ -44,7 +44,7 @@ index ec4108c4c2178..4b79d0e6b2cfc 100644
  / {
  	mic_leds {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts
-index 18aacba546f63..e2611cc23a286 100644
+index 18aacba546f6..e2611cc23a28 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts
 @@ -3,7 +3,7 @@
@@ -57,7 +57,7 @@ index 18aacba546f63..e2611cc23a286 100644
  / {
  	sound-ak4458 {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts
-index 4d3da8e33688c..149b5cf67ce76 100644
+index 4d3da8e33688..149b5cf67ce7 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts
 @@ -4,7 +4,7 @@
@@ -70,7 +70,7 @@ index 4d3da8e33688c..149b5cf67ce76 100644
  / {
  	sound-ak5558 {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts
-index 3b5503933a35a..ff497006ca07a 100644
+index 3b5503933a35..ff497006ca07 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts
 @@ -3,7 +3,7 @@
@@ -83,7 +83,7 @@ index 3b5503933a35a..ff497006ca07a 100644
  &fec1 {
  	compatible = "fsl,imx8mm-fec-uio";
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts
-index e06dbc00d9dc7..b0670f2cde372 100644
+index e06dbc00d9dc..b0670f2cde37 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts
 @@ -2,7 +2,7 @@
@@ -96,7 +96,7 @@ index e06dbc00d9dc7..b0670f2cde372 100644
  /delete-node/&spidev0;
  
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts
-index 847ce29dbaf24..57b1ccb82ad98 100644
+index 9115dd67eb70..47273b11ec6c 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts
 @@ -3,7 +3,7 @@
@@ -109,7 +109,7 @@ index 847ce29dbaf24..57b1ccb82ad98 100644
  / {
  	ext_osc_22m: ext-osc-22m {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts
-index 170db23316572..8b152d2a44362 100644
+index 3a1ccd204a5a..e5df1348c8e3 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts
 @@ -3,7 +3,7 @@
@@ -122,20 +122,90 @@ index 170db23316572..8b152d2a44362 100644
  / {
  	reg_3v3_vext: regulator-3v3-vext {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts
-index 3d1398c1280bc..85b3ec59fef30 100644
+index ce99f4338cd2..85b3ec59fef3 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts
-@@ -3,7 +3,7 @@
+@@ -3,10 +3,77 @@
   * Copyright 2020 NXP.
   */
  
--#include "imx8mm-evk.dts"
+-#include "imx8mm-evk-iqaudio-dacplus.dts"
 +#include "imx8mm-evkb.dts"
++
++/ {
++	reg_3v3_vext: regulator-3v3-vext {
++		compatible = "regulator-fixed";
++		regulator-name = "3V3_VEXT";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	sound-ak4458 {
++		status = "disabled";
++	};
++
++	sound-micfil {
++		status = "disabled";
++	};
++
++	sound-pcm512x {
++		compatible = "fsl,imx-audio-pcm512x";
++		model = "pcm512x-audio";
++		audio-cpu = <&sai5>;
++		audio-codec = <&pcm512x>;
++		format = "i2s";
++		audio-widgets =
++			"Line", "Left Line Out Jack",
++			"Line", "Right Line Out Jack";
++		audio-routing =
++			"Left Line Out Jack", "OUTL",
++			"Right Line Out Jack", "OUTR";
++		dac,24db_digital_gain;
++	};
++};
  
- / {
- 	reg_3v3_vext: regulator-3v3-vext {
+ &i2c3 {
++	ak4458_1: ak4458@10 {
++		status = "disabled";
++	};
++
++	ak4458_2: ak4458@12 {
++		status = "disabled";
++	};
++
++	ak4497: ak4497@11 {
++		status = "disabled";
++	};
++
+ 	pcm512x: pcm512x@4c {
+ 		compatible = "ti,pcm5142";
++		reg = <0x4c>;
++		AVDD-supply = <&reg_3v3_vext>;
++		DVDD-supply = <&reg_3v3_vext>;
++		CPVDD-supply = <&reg_3v3_vext>;
+ 	};
+ };
++
++&iomuxc {
++	pinctrl_sai5: sai5grp {
++		fsl,pins = <
++			MX8MM_IOMUXC_SAI5_RXD1_SAI5_TX_SYNC	0xd6
++			MX8MM_IOMUXC_SAI5_RXD2_SAI5_TX_BCLK	0xd6
++			MX8MM_IOMUXC_SAI5_RXD3_SAI5_TX_DATA0	0xd6
++			MX8MM_IOMUXC_SAI5_RXD0_SAI5_RX_DATA0	0xd6
++		>;
++	};
++};
++
++&micfil {
++	status = "disabled";
++};
++
++&sai5 {
++	status = "okay";
++};
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts
-index ccf3e9901e323..16e32e7f1aed0 100644
+index ccf3e9901e32..16e32e7f1aed 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts
 @@ -3,7 +3,7 @@
@@ -148,7 +218,7 @@ index ccf3e9901e323..16e32e7f1aed0 100644
  / {
  	interrupt-parent = <&gic>;
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts
-index 2f96420e3230e..61202cae7f3b8 100644
+index 2f96420e3230..61202cae7f3b 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts
 @@ -5,7 +5,7 @@
@@ -161,7 +231,7 @@ index 2f96420e3230e..61202cae7f3b8 100644
  &pcie0{
  	status = "disabled";
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
-index a5965c6875e1e..1b271d1babaa9 100755
+index a5965c6875e1..1b271d1babaa 100755
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
 @@ -5,7 +5,7 @@
@@ -174,7 +244,7 @@ index a5965c6875e1e..1b271d1babaa9 100755
  / {
  	model = "FSL i.MX8MM LPDDR4 EVK with QCA WIFI revC board ";
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts
-index 925f67255b9bd..83855ae5ca55c 100644
+index 958912c409b2..d6563b7a41da 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts
 @@ -3,7 +3,7 @@
@@ -187,7 +257,7 @@ index 925f67255b9bd..83855ae5ca55c 100644
  &adv_bridge {
  	status = "disabled";
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts
-index 426b0adc31ce6..3986daaec096f 100644
+index 426b0adc31ce..3986daaec096 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts
 @@ -3,7 +3,7 @@
@@ -200,7 +270,7 @@ index 426b0adc31ce6..3986daaec096f 100644
  / {
  	interrupt-parent = <&gic>;
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
-index 89ba5b6fb4d0a..bc4f1483f7187 100644
+index 0b10547edd52..47417d0771c7 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
 @@ -5,7 +5,7 @@
@@ -213,7 +283,7 @@ index 89ba5b6fb4d0a..bc4f1483f7187 100644
  / {
  	reserved-memory {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts
-index d6a5cfcf580ab..893daae1230f5 100644
+index 9bf4ce755d5c..c9c792ca4c3d 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts
 @@ -5,7 +5,7 @@
@@ -226,7 +296,7 @@ index d6a5cfcf580ab..893daae1230f5 100644
  &pinctrl_usdhc2 {
  	fsl,pins = <
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
-index 86922c4520663..c5e542942aaf6 100755
+index 8540d71b5eef..1252aaeceeb7 100755
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
 @@ -1,163 +1,8 @@
@@ -303,7 +373,7 @@ index 86922c4520663..c5e542942aaf6 100755
 -	non-removable;
 -	wakeup-source;
 -	mmc-pwrseq = <&usdhc1_pwrseq>;
--	fsl,sdio-interrupt-enabled;
+-	fsl,sdio-async-interrupt-enabled;
 -	status = "okay";
 -
 -	wifi_wake_host {
@@ -395,9 +465,10 @@ index 86922c4520663..c5e542942aaf6 100755
 -	};
 -};
 +#include "imx8mm-evk-qca-wifi.dts"
+\ No newline at end of file
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
 new file mode 100755
-index 0000000000000..86922c4520663
+index 000000000000..86922c452066
 --- /dev/null
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
 @@ -0,0 +1,163 @@
@@ -565,5 +636,5 @@ index 0000000000000..86922c4520663
 +	};
 +};
 -- 
-2.33.0
+2.34.1
 

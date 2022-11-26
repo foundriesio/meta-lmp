@@ -73,6 +73,7 @@ KERNEL_CLASSES:mx8mn-generic-bsp = " kernel-lmp-fitimage "
 # Apalis-iMX6
 UBOOT_SIGN_ENABLE:apalis-imx6 = "1"
 PREFERRED_PROVIDER_virtual/kernel:apalis-imx6 = "linux-lmp-dev-mfgtool"
+PREFERRED_VERSION_linux-lmp-dev-mfgtool:apalis-imx6 = "5.15%"
 IMX_DEFAULT_BOOTLOADER:apalis-imx6 ?= "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_u-boot-default-script:apalis-imx6 = "u-boot-ostree-scr-fit"
 UBOOT_CLASSES:apalis-imx6 = "uboot-fitimage"

@@ -8,7 +8,6 @@ DEPENDS = "dtc-native u-boot-mkimage-native"
 
 SRC_URI = "file://boot.cmd \
 	file://boot-common.cmd.in \
-	file://boot-common-imx.cmd.in \
 	file://boot-common-alternative.cmd.in \
 	file://boot.its.in \
 "
@@ -27,8 +26,11 @@ inherit deploy
 do_configure[noexec] = "1"
 
 do_compile() {
-	sed -e '/@@INCLUDE_COMMON_IMX@@/ {' -e 'r ${S}/boot-common-imx.cmd.in' -e 'd' -e '}' \
-			"${S}/boot.cmd" > boot.cmd.in
+	# Handle a case where there is no BSP modification and
+	# the original boot.cmd is used
+	if [ ! -f boot.cmd.in ]; then
+		cp "${S}/boot.cmd" boot.cmd.in
+	fi
 	sed -i -e '/@@INCLUDE_COMMON@@/ {' -e 'r ${S}/boot-common.cmd.in' -e 'd' -e '}' \
 			boot.cmd.in
 	sed -i -e '/@@INCLUDE_COMMON_ALTERNATIVE@@/ {' -e 'r ${S}/boot-common-alternative.cmd.in' -e 'd' -e '}' \

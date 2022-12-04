@@ -12,11 +12,12 @@ UBOOT_REPO ??= "git://github.com/foundriesio/u-boot.git"
 
 SRC_URI = "${UBOOT_REPO};protocol=https;branch=${SRCBRANCH} \
     file://fw_env.config \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg file://lmp-common.cfg', d)} \
 "
 # LMP base requires a different u-boot configuration fragment
 SRC_URI:append:lmp-base = " file://lmp-base.cfg "
 SRC_URI:remove:lmp-base = "file://lmp.cfg"
+SRC_URI:remove:lmp-base = "file://lmp-common.cfg"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

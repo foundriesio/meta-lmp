@@ -5,7 +5,7 @@ SECTION = "kernel/network"
 LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://${S}/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
-SRC_URI = "git://github.com/NICMx/Jool.git;protocol=https;branch=master"
+SRC_URI = "git://github.com/NICMx/Jool.git;protocol=https;branch=main"
 
 PV = "4.0.4"
 SRCREV = "4c3e99d00242cf54832985fbe5374225512de3d5"

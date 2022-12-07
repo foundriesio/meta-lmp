@@ -81,6 +81,7 @@ OBJCOPY:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}objcopy"
 TOOLCHAIN:pn-optee-os-fio = "gcc"
 TOOLCHAIN:pn-optee-os-tadevkit = "gcc"
 TOOLCHAIN:pn-optee-test = "gcc"
+TOOLCHAIN:pn-optee-sks = "gcc"
 
 # apalis-imx6-sec
 # imx8mm-lpddr4-evk-sec

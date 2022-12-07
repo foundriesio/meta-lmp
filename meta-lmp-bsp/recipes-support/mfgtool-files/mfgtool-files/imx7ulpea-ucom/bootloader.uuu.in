@@ -11,7 +11,7 @@ FB: ucmd setenv emmc_dev 0
 FB: ucmd mmc dev ${emmc_dev}
 FB: ucmd setenv emmc_cmd mmc partconf ${emmc_dev} 0 1 0;
 FB: ucmd if test "${emmc_skip_fb}" != "yes"; then run emmc_cmd; fi
-FB: ucmd setenv emmc_cmd mmc bootbus ${emmc_dev} 2 2 1;
+FB: ucmd setenv emmc_cmd mmc bootbus ${emmc_dev} 2 1 1;
 FB: ucmd if test "${emmc_skip_fb}" != "yes"; then run emmc_cmd; fi
 
 FB: ucmd setenv loadaddr 0x61000000

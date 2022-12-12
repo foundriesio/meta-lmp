@@ -23,7 +23,7 @@ EXTRA_OEMAKE:append:mx8qm-nxp-bsp = " \
 
 # Machine Settings
 EXTRA_OEMAKE:append:apalis-imx6 = " \
-    CFG_NS_ENTRY_ADDR=0x17800000 CFG_NXP_CAAM=y \
+    CFG_DDR_SIZE=0x80000000 CFG_NS_ENTRY_ADDR=0x17800000 CFG_NXP_CAAM=y \
     CFG_TZDRAM_START=0x4e000000 CFG_DT=y CFG_OVERLAY_ADDR=0x16000000 \
 "
 EXTRA_OEMAKE:append:apalis-imx8 = " \

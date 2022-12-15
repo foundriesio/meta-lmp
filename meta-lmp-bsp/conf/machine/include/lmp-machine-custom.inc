@@ -448,6 +448,15 @@ BOOTSCR_LOAD_ADDR:imx8mn-ddr4-evk = "0x44800000"
 MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach"
 ## iMX8MN DDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-ddr4-evk-sec = "ubootenv"
+# iMX8MN LPDDR4 EVK
+KMACHINE:imx8mn-lpddr4-evk = "imx8mn-evk"
+OSTREE_KERNEL_ARGS:imx8mn-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
+SOTA_CLIENT_FEATURES:append:imx8mn-lpddr4-evk = " ubootenv"
+UBOOT_MACHINE:imx8mn-lpddr4-evk = "imx8mn_evk_config"
+BOOTSCR_LOAD_ADDR:imx8mn-lpddr4-evk = "0x44800000"
+MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-lpddr4-evk = " bluetooth-attach"
+## iMX8MN LPDDR4 EVK with secure boot support
+SOTA_CLIENT_FEATURES:remove:sota:imx8mn-lpddr4-evk-sec = "ubootenv"
 
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp"

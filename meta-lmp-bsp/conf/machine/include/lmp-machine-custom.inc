@@ -438,7 +438,6 @@ KERNEL_CLASSES:sota:mx8mn-generic-bsp = " kernel-lmp-fitimage "
 PREFERRED_PROVIDER_virtual/kernel:mx8mn-generic-bsp ?= "linux-lmp-fslc-imx"
 MACHINE_FIRMWARE:mx8mn-generic-bsp = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
-IMXBOOT_TARGETS:mx8mn-generic-bsp = "flash_evk_spl_ddr4"
 # iMX8MN DDR4 EVK
 KMACHINE:imx8mn-ddr4-evk = "imx8mn-evk"
 OSTREE_KERNEL_ARGS:imx8mn-ddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 root=/dev/mmcblk2p2 rootfstype=ext4"
@@ -446,6 +445,7 @@ SOTA_CLIENT_FEATURES:append:imx8mn-ddr4-evk = " ubootenv"
 UBOOT_MACHINE:imx8mn-ddr4-evk = "imx8mn_ddr4_evk_config"
 BOOTSCR_LOAD_ADDR:imx8mn-ddr4-evk = "0x44800000"
 MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach"
+IMXBOOT_TARGETS:imx8mn-ddr4-evk = "flash_evk_spl_ddr4"
 ## iMX8MN DDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-ddr4-evk-sec = "ubootenv"
 # iMX8MN LPDDR4 EVK
@@ -455,6 +455,7 @@ SOTA_CLIENT_FEATURES:append:imx8mn-lpddr4-evk = " ubootenv"
 UBOOT_MACHINE:imx8mn-lpddr4-evk = "imx8mn_evk_config"
 BOOTSCR_LOAD_ADDR:imx8mn-lpddr4-evk = "0x44800000"
 MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-lpddr4-evk = " bluetooth-attach"
+IMXBOOT_TARGETS:imx8mn-lpddr4-evk = "flash_evk_spl"
 ## iMX8MN LPDDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-lpddr4-evk-sec = "ubootenv"
 

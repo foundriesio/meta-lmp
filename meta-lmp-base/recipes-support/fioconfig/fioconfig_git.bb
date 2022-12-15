@@ -11,7 +11,7 @@ SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=main \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \
 "
-SRCREV = "f95ac027652a09359dac998eaf46bfe91c688610"
+SRCREV = "9fd137b5f3afa32a580c4f89e390dae9287a8196"
 
 UPSTREAM_CHECK_COMMITS = "1"
 
@@ -33,6 +33,7 @@ do_install:append() {
 	install -d ${D}${datadir}/fioconfig/handlers
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/aktualizr-toml-update ${D}${datadir}/fioconfig/handlers
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/factory-config-vpn ${D}${datadir}/fioconfig/handlers
+	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/renew-client-cert ${D}${datadir}/fioconfig/handlers
 }
 
 # We need aktualizr because we uses its device gateway connectivity and keys,

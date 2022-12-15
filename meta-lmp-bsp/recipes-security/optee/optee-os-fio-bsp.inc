@@ -9,6 +9,7 @@ OPTEEMACHINE:imx8mm-lpddr4-evk = "imx-mx8mmevk"
 OPTEEMACHINE:imx8mp-lpddr4-evk = "imx-mx8mpevk"
 OPTEEMACHINE:imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE:imx8mn-ddr4-evk = "imx-mx8mnevk"
+OPTEEMACHINE:imx8mn-lpddr4-evk = "imx-mx8mnevk"
 OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
 OPTEEMACHINE:qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE:zynqmp = "zynqmp-zcu102"
@@ -76,6 +77,9 @@ EXTRA_OEMAKE:append:imx8mp-lpddr4-evk = " \
 EXTRA_OEMAKE:append:imx8mn-ddr4-evk = " \
     CFG_TZDRAM_START=0x56000000 \
 "
+EXTRA_OEMAKE:append:imx8mn-lpddr4-evk = " \
+    CFG_TZDRAM_START=0x56000000 \
+"
 EXTRA_OEMAKE:append:qemuarm64 = " \
     CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
 "
@@ -91,6 +95,9 @@ EXTRA_OEMAKE:append:imx8mp-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=4', '', d)} \
 "
 EXTRA_OEMAKE:append:imx8mn-ddr4-evk = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
+"
+EXTRA_OEMAKE:append:imx8mn-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'CFG_IMX_I2C=y CFG_CORE_SE05X_I2C_BUS=2', '', d)} \
 "
 EXTRA_OEMAKE:append:stm32mp15-disco = " \
@@ -114,6 +121,9 @@ EXTRA_OEMAKE:append:imx8mp-lpddr4-evk-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
 "
 EXTRA_OEMAKE:append:imx8mn-ddr4-evk-sec = " \
+    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
+"
+EXTRA_OEMAKE:append:imx8mn-lpddr4-evk-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
 "
 EXTRA_OEMAKE:append:uz3eg-iocc-sec = " \

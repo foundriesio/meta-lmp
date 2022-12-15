@@ -56,7 +56,12 @@ else
 fi
 
 echo "Updating system hostname to ${NEW_HOSTNAME}"
-/usr/bin/hostnamectl --static --transient set-hostname ${NEW_HOSTNAME}
+if [ -x /usr/bin/hostnamectl ]; then
+    /usr/bin/hostnamectl --static --transient set-hostname ${NEW_HOSTNAME}
+else
+    echo ${NEW_HOSTNAME} > /etc/hostname
+    /usr/bin/hostname -F /etc/hostname
+fi
 
 echo "Updating /etc/hosts with hostname ${NEW_HOSTNAME}"
 if grep -q "^127.0.1.1" /etc/hosts; then

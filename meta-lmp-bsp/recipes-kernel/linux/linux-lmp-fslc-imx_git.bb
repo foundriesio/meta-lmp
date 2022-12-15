@@ -28,7 +28,7 @@ SRC_URI:append:imx8mm-lpddr4-evk = " \
     file://0001-FIO-toup-arm64-dts-imx8mm-evk-qca-wifi-enable-suppor.patch \
 "
 # Fix bluetooth reset for Murata 1MW
-SRC_URI:append:imx8mn-ddr4-evk = " \
+SRC_URI:append:mx8mn-nxp-bsp = " \
     file://0001-FIO-internal-arm64-dts-imx8mn-evk.dtsi-re-add-blueto.patch \
 "
 

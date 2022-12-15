@@ -42,6 +42,12 @@ SRC_URI:append:imx8mn-ddr4-evk-sec = " \
     file://readme.md \
 "
 
+SRC_URI:append:imx8mn-lpddr4-evk-sec = " \
+    file://fuse.uuu \
+    file://close.uuu \
+    file://readme.md \
+"
+
 # Machine specific dependencies
 def get_do_deploy_depends(d):
     imxboot_families = ['mx8-nxp-bsp']
@@ -160,5 +166,15 @@ do_deploy:prepend:imx8mn-ddr4-evk-sec() {
     install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
     install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu
     install -m 0644 ${WORKDIR}/readme.md ${DEPLOYDIR}/${PN}/readme.md
+}
 
+do_compile:append:imx8mn-lpddr4-evk-sec() {
+    sed -i 's/imx-boot.*/&.signed/g' bootloader.uuu
+}
+
+do_deploy:prepend:imx8mn-lpddr4-evk-sec() {
+    install -d ${DEPLOYDIR}/${PN}
+    install -m 0644 ${WORKDIR}/fuse.uuu ${DEPLOYDIR}/${PN}/fuse.uuu
+    install -m 0644 ${WORKDIR}/close.uuu ${DEPLOYDIR}/${PN}/close.uuu
+    install -m 0644 ${WORKDIR}/readme.md ${DEPLOYDIR}/${PN}/readme.md
 }

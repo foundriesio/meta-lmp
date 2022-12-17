@@ -1,7 +1,8 @@
-From 8a2f1d22445868e0220a8b9e62e592562834dc1c Mon Sep 17 00:00:00 2001
+From a11faaaf345da8f047129744c6e5b17e417addf7 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Fri, 14 May 2021 13:36:10 -0300
-Subject: [PATCH] arm64: dts: imx8mm-evk: use imx8mm-evkb for the new EVKs
+Subject: [PATCH] [FIO extras] arm64: dts: imx8mm-evk: use imx8mm-evkb for the
+ new EVKs
 
 Allow older EVKs to be transitioned properly by using a new dtb for the
 EVKB variant.
@@ -9,7 +10,9 @@ EVKB variant.
 Main difference is the pmic used (bd71847 -> pca9450).
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 ---
+
  .../dts/freescale/imx8mm-evk-8mic-revE.dts    |   2 +-
  .../boot/dts/freescale/imx8mm-evk-ak4497.dts  |   2 +-
  .../boot/dts/freescale/imx8mm-evk-ak5558.dts  |   2 +-
@@ -17,7 +20,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  .../dts/freescale/imx8mm-evk-ecspi-slave.dts  |   2 +-
  .../imx8mm-evk-hifiberry-dacplus.dts          |   2 +-
  .../freescale/imx8mm-evk-iqaudio-dacplus.dts  |   2 +-
- .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |  69 +++++++-
+ .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |  75 +++++++-
  .../boot/dts/freescale/imx8mm-evk-lk.dts      |   2 +-
  .../boot/dts/freescale/imx8mm-evk-pcie-ep.dts |   2 +-
  .../dts/freescale/imx8mm-evk-qca-wifi.dts     |   2 +-
@@ -26,12 +29,14 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  .../boot/dts/freescale/imx8mm-evk-rpmsg.dts   |   2 +-
  .../dts/freescale/imx8mm-evk-usd-wifi.dts     |   2 +-
  arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 159 +----------------
- arch/arm64/boot/dts/freescale/imx8mm-evkb.dts | 163 ++++++++++++++++++
- 17 files changed, 247 insertions(+), 172 deletions(-)
- create mode 100755 arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
+ arch/arm64/boot/dts/freescale/imx8mm-evkb.dts | 162 ++++++++++++++++++
+ 17 files changed, 249 insertions(+), 175 deletions(-)
+ mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
+ mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
-index 7d0b347be7ed..f0aa85f97f2b 100644
+index ba397b00a033..bd08a6f4f335 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
 @@ -3,7 +3,7 @@
@@ -131,7 +136,10 @@ index ce99f4338cd2..85b3ec59fef3 100644
  
 -#include "imx8mm-evk-iqaudio-dacplus.dts"
 +#include "imx8mm-evkb.dts"
-+
+ 
+-&i2c3 {
+-	pcm512x: pcm512x@4c {
+-		compatible = "ti,pcm5142";
 +/ {
 +	reg_3v3_vext: regulator-3v3-vext {
 +		compatible = "regulator-fixed";
@@ -161,10 +169,10 @@ index ce99f4338cd2..85b3ec59fef3 100644
 +			"Left Line Out Jack", "OUTL",
 +			"Right Line Out Jack", "OUTR";
 +		dac,24db_digital_gain;
-+	};
-+};
- 
- &i2c3 {
+ 	};
+ };
++
++&i2c3 {
 +	ak4458_1: ak4458@10 {
 +		status = "disabled";
 +	};
@@ -177,14 +185,14 @@ index ce99f4338cd2..85b3ec59fef3 100644
 +		status = "disabled";
 +	};
 +
- 	pcm512x: pcm512x@4c {
- 		compatible = "ti,pcm5142";
++	pcm512x: pcm512x@4c {
++		compatible = "ti,pcm5142";
 +		reg = <0x4c>;
 +		AVDD-supply = <&reg_3v3_vext>;
 +		DVDD-supply = <&reg_3v3_vext>;
 +		CPVDD-supply = <&reg_3v3_vext>;
- 	};
- };
++	};
++};
 +
 +&iomuxc {
 +	pinctrl_sai5: sai5grp {
@@ -231,7 +239,9 @@ index 2f96420e3230..61202cae7f3b 100644
  &pcie0{
  	status = "disabled";
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
-index a5965c6875e1..1b271d1babaa 100755
+old mode 100755
+new mode 100644
+index aa1a25f00f55..b5cbf6882e5e
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
 @@ -5,7 +5,7 @@
@@ -270,7 +280,7 @@ index 426b0adc31ce..3986daaec096 100644
  / {
  	interrupt-parent = <&gic>;
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
-index 0b10547edd52..47417d0771c7 100644
+index dc3e2ef9347d..0b74c2efea1c 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
 @@ -5,7 +5,7 @@
@@ -296,7 +306,9 @@ index 9bf4ce755d5c..c9c792ca4c3d 100644
  &pinctrl_usdhc2 {
  	fsl,pins = <
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
-index 8540d71b5eef..1252aaeceeb7 100755
+old mode 100755
+new mode 100644
+index 8540d71b5eef..c5e542942aaf
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
 @@ -1,163 +1,8 @@
@@ -465,13 +477,12 @@ index 8540d71b5eef..1252aaeceeb7 100755
 -	};
 -};
 +#include "imx8mm-evk-qca-wifi.dts"
-\ No newline at end of file
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
-new file mode 100755
-index 000000000000..86922c452066
+new file mode 100644
+index 000000000000..8663b3ddc103
 --- /dev/null
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,162 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright 2019-2020 NXP
@@ -483,8 +494,8 @@ index 000000000000..86922c452066
 +#include "imx8mm-evk.dtsi"
 +
 +/ {
-+	model = "FSL i.MX8MM EVK board";
-+	compatible = "fsl,imx8mm-evk", "fsl,imx8mm";
++	model = "FSL i.MX8MM EVKB board";
++	compatible = "fsl,imx8mm-evkb", "fsl,imx8mm-evk", "fsl,imx8mm";
 +
 +	aliases {
 +		spi0 = &flexspi;
@@ -539,12 +550,11 @@ index 000000000000..86922c452066
 +	pinctrl-0 = <&pinctrl_usdhc1>, <&pinctrl_wlan>;
 +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>, <&pinctrl_wlan>;
 +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>, <&pinctrl_wlan>;
-+	bus-width = <4>;
 +	keep-power-in-suspend;
 +	non-removable;
 +	wakeup-source;
 +	mmc-pwrseq = <&usdhc1_pwrseq>;
-+	fsl,sdio-interrupt-enabled;
++	fsl,sdio-async-interrupt-enabled;
 +	status = "okay";
 +
 +	wifi_wake_host {
@@ -636,5 +646,5 @@ index 000000000000..86922c452066
 +	};
 +};
 -- 
-2.34.1
+2.38.1
 

@@ -145,3 +145,9 @@ TOOLCHAIN:pn-efitools = "gcc"
 # vendor/github.com/seccomp/libseccomp-golang/seccomp_internal.go:619:2: duplicate case _Ciconst_C_ACT_KILL_THREAD (value 0) in switch
 #        previous case at vendor/github.com/seccomp/libseccomp-golang/seccomp_internal.go:615:2
 TOOLCHAIN:pn-runc-opencontainers = "gcc"
+
+# U-boot does compile with clang but clang-15 crashes compiling it :(
+TOOLCHAIN:pn-u-boot-fio = "gcc"
+TOOLCHAIN:pn-u-boot-fio-mfgtool = "gcc"
+TOOLCHAIN:pn-u-boot-xlnx = "gcc"
+TOOLCHAIN:pn-u-boot-ti-staging = "gcc"

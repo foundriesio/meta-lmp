@@ -73,6 +73,21 @@ OBJCOPY:pn-docker-compose:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}objcopy"
 
+# | /lmp/build-imx6ullevk/tmp-lmp/work/imx6ullevk-lmp-linux-gnueabi/linux-lmp-fslc-imx/5.15.77+gitAUTOINC+d7be55c190_9dcc132b0c-r0/temp/run.do_assemble_fitimage.520200: 841: arm-lmp-linux-gnueabi-llvm-objcopy: not found
+OBJCOPY:pn-linux-lmp-dev:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-dev-mfgtool:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-lts:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-ea-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-toradex-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-lmp-xlnx:toolchain-clang = "${HOST_PREFIX}objcopy"
+OBJCOPY:pn-linux-tegra:toolchain-clang = "${HOST_PREFIX}objcopy"
+
 # qemuarm64-secureboot
 # | ld.lld: error: cannot open /usr/lib/clang/14.0.3/lib/linux/libclang_rt.builtins-aarch64.a: No such file or directory
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-os-fio_3.17.0.bb:do_compile

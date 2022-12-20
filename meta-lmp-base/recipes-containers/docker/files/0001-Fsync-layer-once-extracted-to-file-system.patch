@@ -1,0 +1,37 @@
+From aef0dbdaeef9a2e56f0df3a9dfa41d4cdb88f108 Mon Sep 17 00:00:00 2001
+From: Mike Sul <mike.sul@foundries.io>
+Date: Tue, 20 Dec 2022 11:45:13 +0100
+Subject: [PATCH] Fsync layer once extracted to file system
+
+- Sync an overall file system just after layer unpack while the control
+  flow is within the layer "change root".
+
+Signed-off-by: Mike <mike.sul@foundries.io>
+---
+ pkg/chrootarchive/diff_unix.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/pkg/chrootarchive/diff_unix.go b/pkg/chrootarchive/diff_unix.go
+index f0e9233ba3..9b8835949d 100644
+--- a/src/import/pkg/chrootarchive/diff_unix.go
++++ b/src/import/pkg/chrootarchive/diff_unix.go
+@@ -13,6 +13,7 @@ import (
+ 	"os"
+ 	"path/filepath"
+ 	"runtime"
++	"syscall"
+ 
+ 	"github.com/containerd/containerd/sys"
+ 	"github.com/docker/docker/pkg/archive"
+@@ -77,6 +78,8 @@ func applyLayer() {
+ 		fatal(err)
+ 	}
+ 
++	syscall.Sync()
++
+ 	os.Exit(0)
+ }
+ 
+-- 
+2.37.3
+

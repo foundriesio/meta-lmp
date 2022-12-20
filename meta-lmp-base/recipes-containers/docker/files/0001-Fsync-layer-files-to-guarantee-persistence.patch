@@ -1,0 +1,59 @@
+From a2332fc1c722d36e21ea5435ce6ea0a2a168efe0 Mon Sep 17 00:00:00 2001
+From: Mike Sul <mike.sul@foundries.io>
+Date: Tue, 20 Dec 2022 11:45:13 +0100
+Subject: [PATCH] Fsync layer files to guarantee persistence
+
+- Fsync each layer file file they are being extracted and written on
+  storage.
+- Sync an overall file system just after layer unpack while the control
+  flow is within the layer "change root".
+
+Signed-off-by: Mike <mike.sul@foundries.io>
+---
+ pkg/archive/archive.go         | 3 +++
+ pkg/chrootarchive/diff_unix.go | 5 +++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/pkg/archive/archive.go b/pkg/archive/archive.go
+index 50b83c62c6..f95fb81a17 100644
+--- a/src/import/pkg/archive/archive.go
++++ b/src/import/pkg/archive/archive.go
+@@ -612,6 +612,9 @@ func createTarFile(path, extractDir string, hdr *tar.Header, reader io.Reader, L
+ 			file.Close()
+ 			return err
+ 		}
++		if syncErr := file.Sync(); syncErr != nil {
++			logrus.Errorf(">>> FIO: failed to sync the extracted file; path: %s, err: %s", path, syncErr.Error())
++		}
+ 		file.Close()
+ 
+ 	case tar.TypeBlock, tar.TypeChar:
+diff --git a/pkg/chrootarchive/diff_unix.go b/pkg/chrootarchive/diff_unix.go
+index f0e9233ba3..01e60fcf22 100644
+--- a/src/import/pkg/chrootarchive/diff_unix.go
++++ b/src/import/pkg/chrootarchive/diff_unix.go
+@@ -8,9 +8,11 @@ import (
+ 	"encoding/json"
+ 	"flag"
+ 	"fmt"
++	"github.com/sirupsen/logrus"
+ 	"io"
+ 	"io/ioutil"
+ 	"os"
++	"os/exec"
+ 	"path/filepath"
+ 	"runtime"
+ 
+@@ -77,6 +79,9 @@ func applyLayer() {
+ 		fatal(err)
+ 	}
+ 
++	if syncErr := exec.Command("/bin/sync").Run(); syncErr != nil {
++		logrus.Errorf(">>> FIO: failed to sync the extracted layer directory")
++	}
+ 	os.Exit(0)
+ }
+ 
+-- 
+2.37.3
+

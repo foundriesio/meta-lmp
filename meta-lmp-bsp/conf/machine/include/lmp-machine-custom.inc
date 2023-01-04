@@ -415,7 +415,6 @@ WKS_FILE:sota:imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 KERNEL_MODULE_AUTOLOAD:append:imx8mm-lpddr4-evk = " moal"
 KERNEL_MODULE_PROBECONF:append:imx8mm-lpddr4-evk = " moal"
 module_conf_moal:imx8mm-lpddr4-evk = "options moal mod_para=nxp/wifi_mod_para.conf drvdbg=0x6"
-MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " mxm-mwifiex-load"
 
 # iMX8MP
 UBOOT_SIGN_ENABLE:sota:mx8mp-generic-bsp = "1"
@@ -458,7 +457,6 @@ WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 KERNEL_MODULE_AUTOLOAD:append:imx8mp-lpddr4-evk = " moal"
 KERNEL_MODULE_PROBECONF:append:imx8mp-lpddr4-evk = " moal"
 module_conf_moal:imx8mp-lpddr4-evk = "options moal mod_para=nxp/wifi_mod_para.conf drvdbg=0x6"
-MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " mxm-mwifiex-load"
 
 # iMX8MN
 UBOOT_SIGN_ENABLE:sota:mx8mn-generic-bsp = "1"

@@ -373,7 +373,7 @@ OSTREE_BOOTLOADER:imx8mm-lpddr4-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mm-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
 WKS_FILE:sota:imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # iMX8MM EVKB revision
-MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
+MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " mxm-mwifiex-load"
 
 # iMX8MP
 UBOOT_SIGN_ENABLE:sota:mx8mp-generic-bsp = "1"
@@ -414,7 +414,7 @@ OSTREE_BOOTLOADER:imx8mp-lpddr4-evk-ebbr ?= "grub"
 IMAGE_EFI_BOOT_FILES:sota:imx8mp-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
 WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # imx8mp comes with an AzureWave CM276MA PCIe Card
-MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " nxp89xx mxm-mwifiex-load"
+MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " mxm-mwifiex-load"
 
 # iMX8MN
 UBOOT_SIGN_ENABLE:sota:mx8mn-generic-bsp = "1"

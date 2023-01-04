@@ -379,6 +379,9 @@ OSTREE_KERNEL_ARGS:append:imx8mm-lpddr4-evk-ebbr = " root=LABEL=otaroot"
 IMAGE_EFI_BOOT_FILES:sota:imx8mm-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
 WKS_FILE:sota:imx8mm-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # iMX8MM EVKB revision
+KERNEL_MODULE_AUTOLOAD:append:imx8mm-lpddr4-evk = " moal"
+KERNEL_MODULE_PROBECONF:append:imx8mm-lpddr4-evk = " moal"
+module_conf_moal:imx8mm-lpddr4-evk = "options moal mod_para=nxp/wifi_mod_para.conf drvdbg=0x6 sta_name=wlan drv_mode=3"
 MACHINE_FEATURES:append:imx8mm-lpddr4-evk = " mxm-mwifiex-load"
 
 # iMX8MP
@@ -422,6 +425,9 @@ OSTREE_KERNEL_ARGS:append:imx8mp-lpddr4-evk-ebbr = " root=LABEL=otaroot"
 IMAGE_EFI_BOOT_FILES:sota:imx8mp-lpddr4-evk-ebbr ?= "${@make_efi_dtb_boot_files(d)}"
 WKS_FILE:sota:imx8mp-lpddr4-evk-ebbr ?= "efidisk-sota.wks.in"
 # imx8mp comes with an AzureWave CM276MA PCIe Card
+KERNEL_MODULE_AUTOLOAD:append:imx8mp-lpddr4-evk = " moal"
+KERNEL_MODULE_PROBECONF:append:imx8mp-lpddr4-evk = " moal"
+module_conf_moal:imx8mp-lpddr4-evk = "options moal mod_para=nxp/wifi_mod_para.conf drvdbg=0x6 sta_name=wlan drv_mode=3"
 MACHINE_FEATURES:append:imx8mp-lpddr4-evk = " mxm-mwifiex-load"
 
 # iMX8MN

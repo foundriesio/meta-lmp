@@ -16,6 +16,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 LMP_HOSTNAME_MACHINE ?= "${MACHINE}"
 LMP_HOSTNAME_MODE ?= "serial"
 LMP_HOSTNAME_NETDEVICE ?= ""
+LMP_HOSTNAME_FIOVB_VAR ?= ""
 
 SYSTEMD_SERVICE:${PN} = "lmp-auto-hostname.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
@@ -24,6 +25,7 @@ do_compile() {
 	sed -e 's/@@LMP_HOSTNAME_MACHINE@@/${LMP_HOSTNAME_MACHINE}/' \
 		-e 's/@@LMP_HOSTNAME_MODE@@/${LMP_HOSTNAME_MODE}/' \
 		-e 's/@@LMP_HOSTNAME_NETDEVICE@@/${LMP_HOSTNAME_NETDEVICE}/' \
+		-e 's/@@LMP_HOSTNAME_FIOVB_VAR@@/${LMP_HOSTNAME_FIOVB_VAR}/' \
 		${WORKDIR}/lmp-auto-hostname.service.in > lmp-auto-hostname.service
 
 	# Force job to wait for the network interface to show up if used

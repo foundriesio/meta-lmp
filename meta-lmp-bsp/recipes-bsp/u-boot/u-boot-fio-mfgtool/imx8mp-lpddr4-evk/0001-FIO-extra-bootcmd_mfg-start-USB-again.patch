@@ -1,0 +1,36 @@
+From cdd18de2c16f4dc32c579ea40744f7ccf5e739eb Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Thu, 5 Jan 2023 14:03:15 +0200
+Subject: [PATCH] [FIO extra] bootcmd_mfg: start USB again
+
+Sometimes (on imx8mp) u-boot got USB stack stopped, which causes
+to fail starting fastboot and flash a board:
+-----
+Run fastboot ...
+USB init failed: -62
+-----
+
+As a workaround, start usb right before running fastboot.
+
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ include/configs/imx_env.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/imx_env.h b/include/configs/imx_env.h
+index 35e68803d57..8f93c328db5 100644
+--- a/include/configs/imx_env.h
++++ b/include/configs/imx_env.h
+@@ -57,7 +57,7 @@
+ 		"rdinit=/linuxrc " \
+ 		"clk_ignore_unused "\
+ 		"\0" \
+-	"bootcmd_mfg=run mfgtool_args;" \
++	"bootcmd_mfg=usb start; run mfgtool_args;" \
+ 	FASTBOOT_CMD \
+ 	"\0" \
+ 	MFG_NAND_FIT_PARTITION \
+-- 
+2.39.0
+

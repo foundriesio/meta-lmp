@@ -5,7 +5,7 @@ Before=network-pre.target avahi-daemon.service
 After=local-fs.target dbus.service
 
 [Service]
-Environment=MACHINE=@@LMP_HOSTNAME_MACHINE@@ MODE=@@LMP_HOSTNAME_MODE@@ NETDEVICE=@@LMP_HOSTNAME_NETDEVICE@@
+Environment=MACHINE=@@LMP_HOSTNAME_MACHINE@@ MODE=@@LMP_HOSTNAME_MODE@@ NETDEVICE=@@LMP_HOSTNAME_NETDEVICE@@ FIOVB_VAR=@@LMP_HOSTNAME_FIOVB_VAR@@
 ExecStart=/usr/bin/lmp-update-hostname
 ExecStartPost=/usr/bin/systemctl disable lmp-auto-hostname.service
 Type=oneshot

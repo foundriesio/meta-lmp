@@ -33,6 +33,12 @@ if [ -f ${MODEL_SOURCE} ]; then
 	# Lowercase and no spaces (can generate bad values with special chars)
 	MODEL=$(sed -e 's/ /-/g' -e 's/+/plus/g' ${MODEL_SOURCE} | tr '[:upper:]' '[:lower:]' | tr -d '\0')
 fi
+if [ -x /usr/bin/fiovb_printenv ] && [ -n "${FIOVB_VAR}" ]; then
+	# Fetch the serial number in the fiovb variable named "${FIOVB_VAR}".
+	SERIAL_TMP=$(mktemp /tmp/lmp-update-hostname-fiovb.XXXXXXXXXX)
+	trap 'rm -f ${SERIAL_TMP}' EXIT
+	fiovb_printenv "${FIOVB_VAR}" > ${SERIAL_TMP} && SERIAL_SOURCE="${SERIAL_TMP}"
+fi
 if [ -f ${SERIAL_SOURCE} ]; then
 	# Lowercase and no leading zeros
 	SERIAL=$(sed -e 's/^0*//' ${SERIAL_SOURCE} | tr '[:upper:]' '[:lower:]' | tr -d '\0')

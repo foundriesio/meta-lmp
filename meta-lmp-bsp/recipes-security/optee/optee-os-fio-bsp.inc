@@ -86,6 +86,9 @@ EXTRA_OEMAKE:append:qemuarm64 = " \
 EXTRA_OEMAKE:append:stm32mp15-disco = " \
     CFG_OVERLAY_ADDR=0xC4300000 \
 "
+EXTRA_OEMAKE:append:stm32mp15-eval = " \
+    CFG_OVERLAY_ADDR=0xC4300000 \
+"
 
 # Additional Settings for SE05X
 EXTRA_OEMAKE:append:imx6ullevk = " \

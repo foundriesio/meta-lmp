@@ -8,6 +8,7 @@ setenv rootpart 2
 setenv fit_addr ${ramdisk_addr_r}
 setenv fdt_file_final ${fdtfile}
 setenv fdt_addr ${fdt_addr_r}
+setenv optee_ovl_addr 0xc4300000
 
 setenv loadaddr ${ramdisk_addr_r}
 setenv do_reboot "reset"

@@ -83,6 +83,9 @@ EXTRA_OEMAKE:append:imx8mn-lpddr4-evk = " \
 EXTRA_OEMAKE:append:qemuarm64 = " \
     CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
 "
+EXTRA_OEMAKE:append:stm32mp15-disco = " \
+    CFG_OVERLAY_ADDR=0xC4300000 \
+"
 
 # Additional Settings for SE05X
 EXTRA_OEMAKE:append:imx6ullevk = " \

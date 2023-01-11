@@ -618,6 +618,7 @@ OSTREE_BOOTLOADER:tegra ?= "syslinux"
 CORE_IMAGE_BASE_INSTALL:remove:tegra = "resize-helper"
 OSTREE_DEPLOY_DEVICETREE:tegra = "1"
 PREFERRED_PROVIDER_virtual/optee-os:tegra = "optee-os"
+MACHINE_EXTRA_RDEPENDS:remove:tegra = "tegra-redundant-boot"
 MACHINE_FEATURES:append:tegra = " optee"
 ## jetson-agx-xavier-devkit (tegra194)
 OSTREE_KERNEL_ARGS:tegra194 ?= "\${cbootargs} root=/dev/mmcblk0p1 rootwait rootfstype=ext4 mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 sdhci_tegra.en_boot_part_access=1"

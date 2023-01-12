@@ -3,10 +3,10 @@ include recipes-kernel/linux/kmeta-linux-lmp-5.15.y.inc
 # Use Freescale kernel by default
 KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_REPO_PROTOCOL ?= "https"
-LINUX_VERSION ?= "5.15.81"
-KERNEL_BRANCH ?= "5.15-2.1.x-imx"
+LINUX_VERSION ?= "5.15.87"
+KERNEL_BRANCH ?= "5.15-2.2.x-imx"
 
-SRCREV_machine = "34103ef81ca9e76eb67da3d21fa054280df5c28e"
+SRCREV_machine = "3ff5eb3ff57e665c47c072284d7f624e5452b85d"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
@@ -16,7 +16,6 @@ SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANC
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
     file://0001-FIO-extras-arm64-dts-imx8mm-evk-use-imx8mm-evkb-for-.patch \
     file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
-    file://0001-FIO-fromlist-gpu-drm-imx-sec_mipi_dsim-imx-fix-probe.patch \
 "
 
 SRC_URI:append:imx8mp-lpddr4-evk = " \

@@ -12,7 +12,6 @@ Main difference is the pmic used (bd71847 -> pca9450).
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 ---
-
  .../dts/freescale/imx8mm-evk-8mic-revE.dts    |   2 +-
  .../boot/dts/freescale/imx8mm-evk-ak4497.dts  |   2 +-
  .../boot/dts/freescale/imx8mm-evk-ak5558.dts  |   2 +-
@@ -20,7 +19,7 @@ Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
  .../dts/freescale/imx8mm-evk-ecspi-slave.dts  |   2 +-
  .../imx8mm-evk-hifiberry-dacplus.dts          |   2 +-
  .../freescale/imx8mm-evk-iqaudio-dacplus.dts  |   2 +-
- .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |  75 +++++++-
+ .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |  69 ++++++++-
  .../boot/dts/freescale/imx8mm-evk-lk.dts      |   2 +-
  .../boot/dts/freescale/imx8mm-evk-pcie-ep.dts |   2 +-
  .../dts/freescale/imx8mm-evk-qca-wifi.dts     |   2 +-
@@ -28,9 +27,9 @@ Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
  .../boot/dts/freescale/imx8mm-evk-root.dts    |   2 +-
  .../boot/dts/freescale/imx8mm-evk-rpmsg.dts   |   2 +-
  .../dts/freescale/imx8mm-evk-usd-wifi.dts     |   2 +-
- arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 159 +----------------
- arch/arm64/boot/dts/freescale/imx8mm-evkb.dts | 162 ++++++++++++++++++
- 17 files changed, 249 insertions(+), 175 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 139 +----------------
+ arch/arm64/boot/dts/freescale/imx8mm-evkb.dts | 142 ++++++++++++++++++
+ 17 files changed, 226 insertions(+), 152 deletions(-)
  mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
  mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8mm-evk.dts
  create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
@@ -136,10 +135,7 @@ index ce99f4338cd2..85b3ec59fef3 100644
  
 -#include "imx8mm-evk-iqaudio-dacplus.dts"
 +#include "imx8mm-evkb.dts"
- 
--&i2c3 {
--	pcm512x: pcm512x@4c {
--		compatible = "ti,pcm5142";
++
 +/ {
 +	reg_3v3_vext: regulator-3v3-vext {
 +		compatible = "regulator-fixed";
@@ -169,10 +165,10 @@ index ce99f4338cd2..85b3ec59fef3 100644
 +			"Left Line Out Jack", "OUTL",
 +			"Right Line Out Jack", "OUTR";
 +		dac,24db_digital_gain;
- 	};
- };
-+
-+&i2c3 {
++	};
++};
+ 
+ &i2c3 {
 +	ak4458_1: ak4458@10 {
 +		status = "disabled";
 +	};
@@ -185,14 +181,14 @@ index ce99f4338cd2..85b3ec59fef3 100644
 +		status = "disabled";
 +	};
 +
-+	pcm512x: pcm512x@4c {
-+		compatible = "ti,pcm5142";
+ 	pcm512x: pcm512x@4c {
+ 		compatible = "ti,pcm5142";
 +		reg = <0x4c>;
 +		AVDD-supply = <&reg_3v3_vext>;
 +		DVDD-supply = <&reg_3v3_vext>;
 +		CPVDD-supply = <&reg_3v3_vext>;
-+	};
-+};
+ 	};
+ };
 +
 +&iomuxc {
 +	pinctrl_sai5: sai5grp {
@@ -308,10 +304,10 @@ index 9bf4ce755d5c..c9c792ca4c3d 100644
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
 old mode 100755
 new mode 100644
-index 8540d71b5eef..c5e542942aaf
+index bd7705d6d7a5..c5e542942aaf
 --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
-@@ -1,163 +1,8 @@
+@@ -1,143 +1,8 @@
  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
  /*
 - * Copyright 2019-2020 NXP
@@ -336,26 +332,6 @@ index 8540d71b5eef..c5e542942aaf
 -		pinctrl-names = "default";
 -		pinctrl-0 = <&pinctrl_usdhc1_gpio>;
 -		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
--	};
--};
--
--&ddrc {
--	operating-points-v2 = <&ddrc_opp_table>;
--
--	ddrc_opp_table: opp-table {
--		compatible = "operating-points-v2";
--
--		opp-25M {
--			opp-hz = /bits/ 64 <25000000>;
--		};
--
--		opp-100M {
--			opp-hz = /bits/ 64 <100000000>;
--		};
--
--		opp-750M {
--			opp-hz = /bits/ 64 <750000000>;
--		};
 -	};
 -};
 -
@@ -479,10 +455,10 @@ index 8540d71b5eef..c5e542942aaf
 +#include "imx8mm-evk-qca-wifi.dts"
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
 new file mode 100644
-index 000000000000..8663b3ddc103
+index 000000000000..7129fbb7c228
 --- /dev/null
 +++ b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,142 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright 2019-2020 NXP
@@ -506,26 +482,6 @@ index 000000000000..8663b3ddc103
 +		pinctrl-names = "default";
 +		pinctrl-0 = <&pinctrl_usdhc1_gpio>;
 +		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&ddrc {
-+	operating-points-v2 = <&ddrc_opp_table>;
-+
-+	ddrc_opp_table: opp-table {
-+		compatible = "operating-points-v2";
-+
-+		opp-25M {
-+			opp-hz = /bits/ 64 <25000000>;
-+		};
-+
-+		opp-100M {
-+			opp-hz = /bits/ 64 <100000000>;
-+		};
-+
-+		opp-750M {
-+			opp-hz = /bits/ 64 <750000000>;
-+		};
 +	};
 +};
 +
@@ -646,5 +602,5 @@ index 000000000000..8663b3ddc103
 +	};
 +};
 -- 
-2.38.1
+2.34.1
 

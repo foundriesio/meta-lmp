@@ -1,8 +1,8 @@
 include recipes-kernel/linux/kmeta-linux-lmp-5.10.y.inc
 
-LINUX_VERSION ?= "5.10.120"
+LINUX_VERSION ?= "5.10.158"
 KBRANCH = "ti-linux-5.10.y"
-SRCREV_machine = "95b90aa828165df6c45d6bb0e1cce905e83a66a7"
+SRCREV_machine = "58c3afb61814c1271156d6ace8d0550475268d3f"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 TI_DEFCONFIG_BUILDER_TARGET ?= "ti_sdk_arm64_release"
@@ -15,14 +15,6 @@ RDEPENDS:${KERNEL_PACKAGE_NAME}-base:append:lmp-base = " kernel-devicetree"
 
 SRC_URI = "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git;protocol=git;branch=${KBRANCH};name=machine; \
     ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \
-"
-
-SRC_URI:append:am64xx-evm = " \
-    file://0001-arm64-dts-ti-k3-am642-sk-Enable-WLAN-connected-to-SD.patch \
-"
-
-SRC_URI:append:am62xx-evm = " \
-    file://tiL5.10-P-1-1-arm64-dts-ti-k3-am625-sk-fix-wlan_en.patch \
 "
 
 KMETA = "kernel-meta"

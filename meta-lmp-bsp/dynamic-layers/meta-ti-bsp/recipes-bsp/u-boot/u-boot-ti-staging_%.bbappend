@@ -1,5 +1,8 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
+# From the cicd.dunfell.202301120721 dunfell tag
+SRCREV = "bd53c102458cc39a8b2ab68e19996a2280a4d509"
+
 SRC_URI:append:am64xx-evm = " \
     file://fw_env.config \
     file://lmp.cfg \

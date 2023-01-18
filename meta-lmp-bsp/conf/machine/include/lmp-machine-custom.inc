@@ -561,6 +561,10 @@ KERNEL_CLASSES:sota:versal = "kernel-lmp-fitimage"
 IMAGE_BOOT_FILES:sota:versal = "boot.bin boot.itb"
 WKS_FILES:sota:versal = "sdimage-sota.wks"
 
+# TI Generic (BSP) - dunfell cicd.dunfell.202301130746
+TI_LINUX_FW_SRCREV:ti-soc = "ffc26c21d93d28e17eb3d32dc65adc9f50ede61a"
+K3_IMAGE_GEN_SRCREV:ti-soc = "840b06f2624f7ea8a49ec1637cd8574165ad786f"
+
 # TI AM62x
 MACHINE_FEATURES:append:am62xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"

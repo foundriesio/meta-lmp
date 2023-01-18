@@ -564,44 +564,41 @@ WKS_FILES:sota:versal = "sdimage-sota.wks"
 # TI Generic (BSP) - dunfell cicd.dunfell.202301130746
 TI_LINUX_FW_SRCREV:ti-soc = "ffc26c21d93d28e17eb3d32dc65adc9f50ede61a"
 K3_IMAGE_GEN_SRCREV:ti-soc = "840b06f2624f7ea8a49ec1637cd8574165ad786f"
+KERNEL_IMAGETYPE:sota:k3 = "fitImage"
+KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE}"
+PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
+# multiconfig with the same TMP fails in the rm_work.bbclass
+RM_WORK_EXCLUDE:append:k3 = " texinfo-dummy-native gettext-minimal-native gnu-config"
 
 # TI AM62x
 MACHINE_FEATURES:append:am62xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
-PREFERRED_PROVIDER_virtual/kernel:am62xx-evm ?= "linux-lmp-ti-staging"
 PREFERRED_PROVIDER_u-boot-fw-utils:am62xx-evm = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils:am62xx-evm = "libubootenv"
 # only need boot script for sota builds
 WKS_FILE_DEPENDS:append:sota:am62xx-evm = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script:sota:am62xx-evm = "u-boot-ostree-scr-fit"
-KERNEL_IMAGETYPE:sota:am62xx-evm = "fitImage"
 KERNEL_CLASSES:sota:am62xx-evm = " kernel-lmp-fitimage "
 IMAGE_BOOT_FILES:append:am62xx-evm = " boot.itb"
 UBOOT_ENTRYPOINT:am62xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am62xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am62xx-evm = "0x88000000"
 EFI_PROVIDER:am62xx-evm = ""
-# multiconfig with the same TMP fails in the rm_work.bbclass
-RM_WORK_EXCLUDE:append:am62xx-evm = " texinfo-dummy-native gettext-minimal-native gnu-config"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"
-PREFERRED_PROVIDER_virtual/kernel:am64xx-evm ?= "linux-lmp-ti-staging"
 PREFERRED_PROVIDER_u-boot-fw-utils:am64xx-evm = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils:am64xx-evm = "libubootenv"
 # only need boot script for sota builds
 WKS_FILE_DEPENDS:append:sota:am64xx-evm = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script:sota:am64xx-evm = "u-boot-ostree-scr-fit"
-KERNEL_IMAGETYPE:sota:am64xx-evm = "fitImage"
 KERNEL_CLASSES:sota:am64xx-evm = " kernel-lmp-fitimage "
 IMAGE_BOOT_FILES:append:am64xx-evm = " boot.itb"
 UBOOT_ENTRYPOINT:am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am64xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx-evm = "0x88000000"
 EFI_PROVIDER:am64xx-evm = ""
-# multiconfig with the same TMP fails in the rm_work.bbclass
-RM_WORK_EXCLUDE:append:am64xx-evm = " texinfo-dummy-native gettext-minimal-native gnu-config"
 
 # Nvidia Tegra
 DISTRO_FEATURES:append:tegra = " opengl"

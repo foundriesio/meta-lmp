@@ -128,6 +128,14 @@ BBMASK += " \
     /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.110.bbappend \
     /meta-st-stm32mp/recipes-bsp/trusted-firmware-a/tf-a-stm32mp_2.6.bb \
 "
+# meta-ti-bsp: mask optee related recipes as they are provided by lmp
+BBMASK += " \
+    /meta-ti/meta-ti-bsp/recipes-security/optee/optee-test_%.bbappend \
+    /meta-ti/meta-ti-bsp/recipes-security/optee/optee-client_3.16%.bbappend \
+    /meta-ti/meta-ti-bsp/recipes-security/optee/optee-os_3.16%.bbappend \
+    /meta-ti/meta-ti-bsp/recipes-security/optee/optee-os-tadevkit_%.bbappend \
+    /meta-ti/meta-ti-bsp/recipes-security/optee/optee-examples_%.bbappend \
+"
 
 # disable xsct tarball by default (xilinx)
 USE_XSCT_TARBALL = "0"

@@ -1,6 +1,6 @@
 require optee-client-fio.inc
 
-SRCREV = "e7cba71cc6e2ecd02f412c7e9ee104f0a5dffc6f"
+SRCREV = "dd2d39b49975d2ada7870fe2b7f5a84d0d3860dc"
 
 SRC_URI += " \
 	file://0001-FIO-extras-pkcs11-change-UUID-to-avoid-conflict-with.patch \

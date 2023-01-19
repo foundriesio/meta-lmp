@@ -21,7 +21,7 @@ CVE_PRODUCT = "linaro:op-tee op-tee:op-tee_os"
 PROVIDES = "virtual/optee-os"
 
 SRCBRANCH ?= "master"
-OPTEE_OS_REPO ?= "git://github.com/foundriesio/optee_os.git"
+OPTEE_OS_REPO ?= "git://github.com/igoropaniuk/optee_os.git"
 SRC_URI = "${OPTEE_OS_REPO};protocol=https;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git"
@@ -34,6 +34,7 @@ EXTRA_OEMAKE += " \
     CROSS_COMPILE_ta_${OPTEE_ARCH}=${HOST_PREFIX} \
     CFG_WERROR=y DEBUG=0 CFG_OPTEE_REVISION_EXTRA=+fio \
     CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_TA_LOG_LEVEL=2 \
+    CFG_ENABLE_EMBEDDED_TESTS=y \
     ta-targets=ta_${OPTEE_ARCH} \
     O=${B} \
 "

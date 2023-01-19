@@ -1,6 +1,6 @@
 require optee-examples-fio.inc
 
-SRCREV = "f301ee9df2129c0db683e726c91dc2cefe4cdb65"
+SRCREV = "a98d01e1b9168eaed96bcd0bac0df67c44a81081"
 
 SRC_URI += "\
 	file://0001-Makefile-Fix-non-portable-sh-check-for-plugins.patch \

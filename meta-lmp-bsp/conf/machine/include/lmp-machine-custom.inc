@@ -641,9 +641,9 @@ OSTREE_KERNEL_ARGS:sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio:imx-nxp-bsp ?= "imx-2022.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
-PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.18.0"
-PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.18.0"
-PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.18.0"
+PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.20.0"
+PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.20.0"
+PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.20.0"
 ## We don't use imx-boot-container just yet
 UBOOT_PROVIDES_BOOT_CONTAINER:mx8-generic-bsp = ""
 ## No need to install u-boot, already a WKS dependency

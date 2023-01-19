@@ -5,7 +5,9 @@ HOMEPAGE = "https://www.op-tee.org/"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=69663ab153298557a59c67a60a743e5b"
 
-inherit systemd cmake
+inherit systemd cmake pkgconfig
+
+DEPENDS = "util-linux-libuuid"
 
 SRC_URI = " \
     git://github.com/OP-TEE/optee_client.git;protocol=https;branch=master \

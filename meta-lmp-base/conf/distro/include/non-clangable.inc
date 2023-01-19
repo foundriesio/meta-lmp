@@ -118,6 +118,7 @@ TOOLCHAIN:pn-jailhouse = "gcc"
 TOOLCHAIN:pn-optee-os-fio = "gcc"
 TOOLCHAIN:pn-optee-os-tadevkit = "gcc"
 TOOLCHAIN:pn-optee-test = "gcc"
+TOOLCHAIN:pn-optee-client = "gcc"
 TOOLCHAIN:pn-optee-sks = "gcc"
 
 # qemuarm64

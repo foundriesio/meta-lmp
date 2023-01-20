@@ -1,0 +1,57 @@
+From d139fa10eab8fb04180624ab12f336a3221a38b8 Mon Sep 17 00:00:00 2001
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Date: Tue, 4 Jun 2019 14:40:09 +0200
+Subject: [PATCH 06/14] uio: Enable read-only mappings
+
+This allows to tag memory regions read-only, denying userspace to map
+them writable. Default remains read/write.
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/uio/uio.c          | 9 +++++++++
+ include/linux/uio_driver.h | 2 ++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index be06f1a961c2..970045c37e46 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -790,6 +790,15 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
+ 		goto out;
+ 	}
+ 
++	if (idev->info->mem[mi].readonly) {
++		if (vma->vm_flags & VM_WRITE) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		vma->vm_flags &= ~VM_MAYWRITE;
++	}
++
+ 	if (idev->info->mmap) {
+ 		ret = idev->info->mmap(idev->info, vma);
+ 		goto out;
+diff --git a/include/linux/uio_driver.h b/include/linux/uio_driver.h
+index 54bf6b118401..baa6f1fee94e 100644
+--- a/include/linux/uio_driver.h
++++ b/include/linux/uio_driver.h
+@@ -31,6 +31,7 @@ struct uio_map;
+  * @offs:               offset of device memory within the page
+  * @size:		size of IO (multiple of page size)
+  * @memtype:		type of memory addr points to
++ * @readonly:		true of region is read-only
+  * @internal_addr:	ioremap-ped version of addr, for driver internal use
+  * @map:		for use by the UIO core only.
+  */
+@@ -40,6 +41,7 @@ struct uio_mem {
+ 	unsigned long		offs;
+ 	resource_size_t		size;
+ 	int			memtype;
++	bool			readonly;
+ 	void __iomem		*internal_addr;
+ 	struct uio_map		*map;
+ };
+-- 
+2.30.2
+

@@ -1,0 +1,72 @@
+From f4fffd9b33cc2b6a87eaa28bdede274f59499a20 Mon Sep 17 00:00:00 2001
+From: Lokesh Vutla <lokeshvutla@ti.com>
+Date: Tue, 7 Jan 2020 17:48:18 +0530
+Subject: [PATCH 01/14] arm64: dts: am654-base-board: Reserve memory for
+ jailhouse
+
+This has to be in sync with jailhouse cell configurations.
+
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+---
+ arch/arm64/boot/dts/ti/Makefile               |  1 +
+ .../dts/ti/k3-am654-base-board-jailhouse.dts  | 22 +++++++++++++++++++
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts |  2 +-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+index d30b73e4d6a1..a455c01509f6 100644
+--- a/arch/arm64/boot/dts/ti/Makefile
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -19,6 +19,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am654-idk-sr1.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am654-evm-tc358876.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am654-evm-oldi-lcd1evm.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am654-evm-ov5640.dtbo
++dtb-$(CONFIG_ARCH_K3) += k3-am654-base-board-jailhouse.dtbo
+ 
+ dtb-$(CONFIG_ARCH_K3) += k3-j721e-common-proc-board.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-j721e-proc-board-tps65917.dtb
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+new file mode 100644
+index 000000000000..ec29d6c97b5c
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2016-2020 Texas Instruments Incorporated - http://www.ti.com/
++ */
++
++/dts-v1/;
++/plugin/;
++
++&reserved_memory {
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	/*
++	 * Reserve for Jailhouse hypervisor firmware and inmates.
++	 * Must be in sync with jailhouse cell configurations.
++	 */
++	hyp_mem: jailhouse@8dfb00000 {
++		reg = <0x8 0xdfb00000 0x0 0x20500000>;
++		alignment = <0x1000>;
++		no-map;
++	};
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+index 8a11d5c08407..e69e4d400438 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -30,7 +30,7 @@ memory@80000000 {
+ 		      <0x00000008 0x80000000 0x00000000 0x80000000>;
+ 	};
+ 
+-	reserved-memory {
++	reserved_memory: reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+ 		ranges;
+-- 
+2.30.2
+

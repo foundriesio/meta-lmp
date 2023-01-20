@@ -1,0 +1,28 @@
+From 9255c72fb06e6164f8677abcd86a03a7c9da7d3b Mon Sep 17 00:00:00 2001
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Date: Tue, 7 Feb 2017 17:52:00 +0100
+Subject: [PATCH 03/14] mm: Re-export ioremap_page_range
+
+We need this in Jailhouse to map at specific virtual addresses, at
+least for the moment.
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ mm/ioremap.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/ioremap.c b/mm/ioremap.c
+index 5fa1ab41d152..d63c4ba067f9 100644
+--- a/mm/ioremap.c
++++ b/mm/ioremap.c
+@@ -248,6 +248,7 @@ int ioremap_page_range(unsigned long addr,
+ 
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(ioremap_page_range);
+ 
+ #ifdef CONFIG_GENERIC_IOREMAP
+ void __iomem *ioremap_prot(phys_addr_t addr, size_t size, unsigned long prot)
+-- 
+2.30.2
+

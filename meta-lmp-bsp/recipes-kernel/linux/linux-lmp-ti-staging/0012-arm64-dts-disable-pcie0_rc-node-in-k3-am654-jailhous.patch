@@ -1,0 +1,33 @@
+From a908c3e392e1d31fdf409e174732fd6d85749dbb Mon Sep 17 00:00:00 2001
+From: Matt Ranostay <mranostay@ti.com>
+Date: Wed, 16 Feb 2022 01:20:02 +0200
+Subject: [PATCH 12/14] arm64: dts: disable pcie0_rc node in k3-am654 jailhouse
+ root
+
+Currently drivers/pci/pci.c enumeration of virtual PCI busses
+created by device tree overlays from the Jailhouse hypervisor
+is broken when there are real PCI busses enabled.
+
+Disable pcie0_rc for now to avoid virtual PCI busses having invalid
+domain of 0xffffffff (-1)
+
+Signed-off-by: Matt Ranostay <mranostay@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+index 2da45b18ae68..941e1bed750a 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+@@ -28,3 +28,7 @@ &mcu_uart0 {
+ &sdhci0 {
+ 	status = "disabled";
+ };
++
++&pcie0_rc {
++	status = "disabled";
++};
+-- 
+2.30.2
+

@@ -1,0 +1,71 @@
+From 7d70f91089f6a55e06892b924d63e2e3515b1519 Mon Sep 17 00:00:00 2001
+From: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+Date: Wed, 7 Jun 2017 15:48:43 +0200
+Subject: [PATCH 05/14] arm, arm64: export __hyp_stub_vectors
+
+HVC_GET_VECTORS got removed. External hypervisors, like Jailhouse, need
+this address when they are deactivated, in order to restore original
+state.
+
+Signed-off-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ arch/arm/kernel/hyp-stub.S      | 2 ++
+ arch/arm64/include/asm/ptrace.h | 2 ++
+ arch/arm64/kernel/hyp-stub.S    | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
+index 26d8e03b1dd3..c2ef9b474f64 100644
+--- a/arch/arm/kernel/hyp-stub.S
++++ b/arch/arm/kernel/hyp-stub.S
+@@ -6,6 +6,7 @@
+ #include <linux/init.h>
+ #include <linux/irqchip/arm-gic-v3.h>
+ #include <linux/linkage.h>
++#include <asm-generic/export.h>
+ #include <asm/assembler.h>
+ #include <asm/virt.h>
+ 
+@@ -245,4 +246,5 @@ __hyp_stub_trap:	W(b)	__hyp_stub_do_trap
+ __hyp_stub_irq:		W(b)	.
+ __hyp_stub_fiq:		W(b)	.
+ ENDPROC(__hyp_stub_vectors)
++EXPORT_SYMBOL_GPL(__hyp_stub_vectors)
+ 
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index d3106f5e121f..2726277fde91 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -252,6 +252,8 @@ extern int regs_query_register_offset(const char *name);
+ extern unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+ 					       unsigned int n);
+ 
++extern char __hyp_stub_vectors[];
++
+ /**
+  * regs_get_register() - get register value from its offset
+  * @regs:	pt_regs from which register value is gotten
+diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
+index 160f5881a0b7..a055e28be5c2 100644
+--- a/arch/arm64/kernel/hyp-stub.S
++++ b/arch/arm64/kernel/hyp-stub.S
+@@ -10,6 +10,7 @@
+ #include <linux/linkage.h>
+ #include <linux/irqchip/arm-gic-v3.h>
+ 
++#include <asm-generic/export.h>
+ #include <asm/assembler.h>
+ #include <asm/kvm_arm.h>
+ #include <asm/kvm_asm.h>
+@@ -42,6 +43,7 @@ SYM_CODE_START(__hyp_stub_vectors)
+ 	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
+ 	ventry	el1_error_invalid		// Error 32-bit EL1
+ SYM_CODE_END(__hyp_stub_vectors)
++EXPORT_SYMBOL_GPL(__hyp_stub_vectors)
+ 
+ 	.align 11
+ 
+-- 
+2.30.2
+

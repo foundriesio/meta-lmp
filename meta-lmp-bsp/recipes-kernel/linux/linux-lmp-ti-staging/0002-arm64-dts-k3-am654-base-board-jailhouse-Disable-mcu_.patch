@@ -1,0 +1,31 @@
+From b4e59345d5efd009452bcc5a800ad3323a7021d1 Mon Sep 17 00:00:00 2001
+From: Nikhil Devshatwar <nikhil.nd@ti.com>
+Date: Mon, 23 Mar 2020 11:50:52 +0530
+Subject: [PATCH 02/14] arm64: dts: k3-am654-base-board-jailhouse: Disable
+ mcu_uart0
+
+When using Jailhouse hypervisor, the mcu_uart0 is being used by
+other virtual machines non root cells.
+
+Disable this from the root cell DTS overlay.
+
+Signed-off-by: Nikhil Devshatwar <nikhil.nd@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+index ec29d6c97b5c..5c0492fbbcfe 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+@@ -20,3 +20,7 @@ hyp_mem: jailhouse@8dfb00000 {
+ 		no-map;
+ 	};
+ };
++
++&mcu_uart0 {
++	status = "disabled";
++};
+-- 
+2.30.2
+

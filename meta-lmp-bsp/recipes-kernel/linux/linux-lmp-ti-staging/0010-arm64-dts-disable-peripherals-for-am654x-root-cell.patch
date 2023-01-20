@@ -1,0 +1,41 @@
+From 8242bad03c4f73daa2b837fdc6d3d488f0c1687d Mon Sep 17 00:00:00 2001
+From: Matt Ranostay <mranostay@ti.com>
+Date: Thu, 10 Feb 2022 20:49:18 +0200
+Subject: [PATCH 10/14] arm64: dts: disable peripherals for am654x root cell
+
+eMMC is needed within inmate so disable root cell access.
+mcu_r5fss0 node is also disabled from root cell access.
+
+Signed-off-by: Matt Ranostay <mranostay@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts | 4 ++++
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts           | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+index 5c0492fbbcfe..762bce28fb9e 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board-jailhouse.dts
+@@ -24,3 +24,7 @@ hyp_mem: jailhouse@8dfb00000 {
+ &mcu_uart0 {
+ 	status = "disabled";
+ };
++
++&sdhci0 {
++	status = "disabled";
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+index e69e4d400438..ddec5dbc70a7 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -664,3 +664,7 @@ icssg2_phy1: ethernet-phy@3 {
+ 		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+ 	};
+ };
++
++&mcu_r5fss0 {
++	status = "disabled";
++};
+-- 
+2.30.2
+

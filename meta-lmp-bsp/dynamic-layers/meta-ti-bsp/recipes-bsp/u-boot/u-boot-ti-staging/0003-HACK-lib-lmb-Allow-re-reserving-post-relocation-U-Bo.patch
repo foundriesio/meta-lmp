@@ -1,0 +1,97 @@
+From 84d73d8433704c58d86e70330493c41da394d945 Mon Sep 17 00:00:00 2001
+From: Andreas Dannenberg <dannenberg@ti.com>
+Date: Fri, 16 Sep 2022 16:23:39 -0500
+Subject: [PATCH] HACK: lib: lmb: Allow re-reserving post-relocation U-Boot
+ memory
+
+Doing this allows that memory to be reserved for example for later HLOS
+use via DTS entry without conflicting with temporary U-Boot usage, which
+would normally result in an error like "ERROR: reserving fdt memory region
+failed" shown during Linux Kernel boot preparations.
+
+WARNING: The user must ensure with their U-Boot usage and DTS setup to
+not use the newly-extended reserved memory region during U-Boot runtime,
+otherwise U-Boot corruption could occur. This includes but is not limited
+to attempting to load binary files that would overlap U-Boot's after-
+relocation's memory region, for which now no error would be shown.
+
+Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
+---
+ lib/lmb.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/lib/lmb.c b/lib/lmb.c
+index d126f8dc04..a52340d4fc 100644
+--- a/lib/lmb.c
++++ b/lib/lmb.c
+@@ -12,6 +12,8 @@
+ #include <log.h>
+ #include <malloc.h>
+ 
++DECLARE_GLOBAL_DATA_PTR;
++
+ #define LMB_ALLOC_ANYWHERE	0
+ 
+ void lmb_dump_all_force(struct lmb *lmb)
+@@ -162,6 +164,59 @@ static long lmb_add_region(struct lmb_region *rgn, phys_addr_t base, phys_size_t
+ 			/* Already have this region, so we're done */
+ 			return 0;
+ 
++		/*
++		 * See if the memory region being checked against is U-Boot's
++		 * own after-relocation region. If it is and the newly added
++		 * region overlaps U-Boot's own region adjust it in size and/
++		 * or location to make it adjacent to U-Boot's own region,
++		 * essentially allowing for U-Boot's own region to be extended
++		 * in the next step to also cover the newly added region.
++		 *
++		 * Doing this allows that memory to be reserved for example for
++		 * later HLOS use via DTS entry without conflicting with
++		 * temporary U-Boot usage, which would normally result in an
++		 * error like "ERROR: reserving fdt memory region failed" shown
++		 * during Linux Kernel boot preparations.
++		 *
++		 * WARNING: The user must ensure with their U-Boot usage and
++		 * DTS setup to not use the newly-extended reserved memory
++		 * region during U-Boot runtime, otherwise U-Boot corruption
++		 * could occur. This includes but is not limited to attempting
++		 * to load binary files that would overlap U-Boot's after-
++		 * relocation's memory region, for which now no error would be
++		 * shown.
++		 */
++		if ((rgnbase <= gd->relocaddr) &&
++		    (gd->relocaddr < rgnbase + rgnsize)) {
++			if ((base > rgnbase) &&
++			    (base + size < rgnbase + rgnsize)) {
++				/*
++				 * New region is within U-Boot's region,
++				 * so we're done.
++				 */
++				return 0;
++			}
++			else if ((base < rgnbase) && (base + size > rgnbase) &&
++				 (base + size <= rgnbase + rgnsize)) {
++				/*
++				 * New region starts below U-Boot's region and
++				 * reaches into it. Shorten it to make it
++				 * adjacent.
++				 */
++				size -= base + size - rgnbase;
++			}
++			else if ((base >= rgnbase) && (base < rgnbase + rgnsize)) {
++				/*
++				 * New region starts within U-Boot's region and
++				 * reaches beyond it. Move its start address and
++				 * shorten it to make it adjacent.
++				 */
++				size -= rgnbase + rgnsize - base;
++				base = rgnbase + rgnsize;
++
++			}
++		}
++
+ 		adjacent = lmb_addrs_adjacent(base, size, rgnbase, rgnsize);
+ 		if (adjacent > 0) {
+ 			rgn->region[i].base -= size;
+-- 
+2.34.1

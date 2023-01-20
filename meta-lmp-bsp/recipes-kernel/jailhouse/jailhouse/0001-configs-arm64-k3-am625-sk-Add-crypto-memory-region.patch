@@ -1,0 +1,50 @@
+From 723ca87d25c1f8bac68d2608dbc3b5e8caba69ca Mon Sep 17 00:00:00 2001
+From: Andreas Dannenberg <dannenberg@ti.com>
+Date: Mon, 12 Sep 2022 13:22:04 -0500
+Subject: [PATCH] configs: arm64: k3-am625-sk: Add crypto memory region
+
+Add the memory region for the AM62x crypto accelerator to the device-
+specific config file. This fixes a runtime exception when the kernel
+accesses that memory region:
+
+<snip>
+Unhandled data read at 0x40910010(4)
+
+FATAL: unhandled trap (exception class 0x24)
+<snip>
+
+Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
+---
+ configs/arm64/k3-am625-sk.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configs/arm64/k3-am625-sk.c b/configs/arm64/k3-am625-sk.c
+index 2e5c3aef..4b0b8043 100644
+--- a/configs/arm64/k3-am625-sk.c
++++ b/configs/arm64/k3-am625-sk.c
+@@ -18,7 +18,7 @@
+ struct {
+ 	struct jailhouse_system header;
+ 	__u64 cpus[1];
+-	struct jailhouse_memory mem_regions[31];
++	struct jailhouse_memory mem_regions[32];
+ 	struct jailhouse_irqchip irqchips[5];
+ 	struct jailhouse_pci_device pci_devices[2];
+ } __attribute__((packed)) config = {
+@@ -231,6 +231,13 @@ struct {
+ 			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
+ 				JAILHOUSE_MEM_IO,
+ 		},
++		/* CRYPTO */ {
++			.phys_start = 0x40900000,
++			.virt_start = 0x40900000,
++			.size = 0x0030000,
++			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
++				JAILHOUSE_MEM_IO,
++		},
+ 		/* First Wake Up Domain */ {
+ 			.phys_start = 0x2b000000,
+ 			.virt_start = 0x2b000000,
+-- 
+2.34.1
+

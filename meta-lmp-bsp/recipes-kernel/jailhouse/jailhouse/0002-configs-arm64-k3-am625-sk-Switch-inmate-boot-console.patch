@@ -1,0 +1,60 @@
+From dbc02104bb469f68034b84f293583df413b8ca56 Mon Sep 17 00:00:00 2001
+From: Andreas Dannenberg <dannenberg@ti.com>
+Date: Mon, 12 Sep 2022 16:08:12 -0500
+Subject: [PATCH] configs: arm64: k3-am625-sk: Switch inmate boot console alias
+ to serial3
+
+Traditionally the serial3 DTS alias is used for the 2nd main-domain UART
+on K3 devices so go ahead and update the alias and its usage accordingly
+for better consistency.
+
+While at it also do a minor cleanup of the UART's DTS node to use the
+TISCI standard definitions as used in the corresponding Kernel DTS files.
+
+Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
+---
+ configs/arm64/dts/inmate-k3-am625-sk.dts | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/configs/arm64/dts/inmate-k3-am625-sk.dts b/configs/arm64/dts/inmate-k3-am625-sk.dts
+index c1455073..8e1bebb8 100644
+--- a/configs/arm64/dts/inmate-k3-am625-sk.dts
++++ b/configs/arm64/dts/inmate-k3-am625-sk.dts
+@@ -1,6 +1,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+ / {
+ 	model = "Texas Instruments AM625 Inmate Model";
+@@ -10,11 +11,11 @@
+ 	#size-cells = <2>;
+ 
+ 	aliases {
+-		serial1 = &main_uart1;
++		serial3 = &main_uart1;
+ 	};
+ 
+ 	chosen {
+-		stdout-path = "serial1:115200n8";
++		stdout-path = "serial3:115200n8";
+ 	};
+ 
+ 	memory@e0000000 {
+@@ -91,9 +92,9 @@
+ 			compatible = "ti,am64-uart", "ti,am654-uart";
+ 			reg = <0x00 0x02810000 0x00 0x100>;
+ 			interrupts = <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+-			power-domains = <&k3_pds 152 1>;
+-			current-speed = <115200>;
+-			clock-frequency = <48000000>;
++			power-domains = <&k3_pds 152 TI_SCI_PD_EXCLUSIVE>;
++			clocks = <&k3_clks 152 0>;
++			clock-names = "fclk";
+ 		};
+ 
+ 		pci@76000000 {
+-- 
+2.34.1
+

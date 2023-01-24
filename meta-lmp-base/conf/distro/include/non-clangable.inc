@@ -106,6 +106,10 @@ STRIP:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-tegra:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-tegra:toolchain-clang = "${HOST_PREFIX}strip"
 
+# jailhouse (includes kernel module)
+# | warning: the compiler differs from the one used to build the kernel
+TOOLCHAIN:pn-jailhouse = "gcc"
+
 # qemuarm64-secureboot
 # | ld.lld: error: cannot open /usr/lib/clang/14.0.3/lib/linux/libclang_rt.builtins-aarch64.a: No such file or directory
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-os-fio_3.17.0.bb:do_compile

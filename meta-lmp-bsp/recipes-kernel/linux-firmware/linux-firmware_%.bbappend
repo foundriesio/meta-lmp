@@ -13,11 +13,11 @@ SRC_URI:append = "\
     https://git.ti.com/ti-bt/service-packs/blobs/raw/31a43dc1248a6c19bb886006f8c167e2fd21cb78/initscripts/TIInit_11.8.32.bts;name=TIInit_11.8.32 \
 "
 
-IMX_FIRMWARE_BRANCH ?= "lf-5.15.52_2.1.0"
+IMX_FIRMWARE_BRANCH ?= "lf-5.15.71_2.2.0"
 SRC_URI:append:imx-nxp-bsp = "\
     git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware; \
 "
-SRCREV_imx-firmware ?= "b6f070e3d4cab23932d9e6bc29e3d884a7fd68f4"
+SRCREV_imx-firmware ?= "982bb10dfabfb9e7b9dc106c59a4fbb2c45bfb44"
 
 SRC_URI:append:beaglebone-yocto = "\
     https://github.com/beagleboard/beaglebone-black-wireless/raw/d9135000a223228158d92fd2e3f00e495f642fee/firmware/wl18xx-conf.bin;name=wl18xx-conf \

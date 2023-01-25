@@ -36,7 +36,6 @@ SRC_URI_JAILHOUSE = " \
     file://0012-arm64-dts-disable-pcie0_rc-node-in-k3-am654-jailhous.patch \
     file://0013-arm64-dts-am625-base-board-Reserve-memory-for-jailho.patch \
     file://0014-arm64-dts-add-reserved_memory-label-for-CMA-regions-.patch \
-    file://jailhouse.cfg \
 "
 
 KMETA = "kernel-meta"

@@ -2,6 +2,8 @@ DESCRIPTION = "Common Foundries.io Linux microPlatform Kernel"
 
 PV = "${LINUX_VERSION}+git${SRCPV}"
 
+KERNEL_FEATURES += "${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', ' features/jailhouse/jailhouse.scc', '', d)}"
+
 DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
 DEPENDS += "openssl-native util-linux-native"
 

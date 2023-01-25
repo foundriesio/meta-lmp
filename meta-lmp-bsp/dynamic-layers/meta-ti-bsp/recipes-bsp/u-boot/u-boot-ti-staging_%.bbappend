@@ -1,5 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
+include recipes-bsp/u-boot/u-boot-lmp-common.inc
+
 # From the cicd.dunfell.202301120721 dunfell tag
 SRCREV = "bd53c102458cc39a8b2ab68e19996a2280a4d509"
 

@@ -584,6 +584,7 @@ UBOOT_ENTRYPOINT:am62xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am62xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am62xx-evm = "0x88000000"
 EFI_PROVIDER:am62xx-evm = ""
+KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx-evm = " optee"
@@ -599,7 +600,6 @@ UBOOT_ENTRYPOINT:am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am64xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx-evm = "0x88000000"
 EFI_PROVIDER:am64xx-evm = ""
-KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
 
 # Nvidia Tegra
 DISTRO_FEATURES:append:tegra = " opengl"

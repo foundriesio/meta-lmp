@@ -577,8 +577,6 @@ OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "1"
 SSTATE_ALLOW_OVERLAP_FILES_K3R5 = " ${DEPLOY_DIR_IPK}/armv7at2hf-vfp"
 SSTATE_ALLOW_OVERLAP_FILES_K3R5:am62xx-evm-k3r5 = ""
 SSTATE_ALLOW_OVERLAP_FILES:append:k3r5 = "${SSTATE_ALLOW_OVERLAP_FILES_K3R5}"
-# multiconfig with the same TMP fails in the rm_work.bbclass
-RM_WORK_EXCLUDE:append:k3 = " texinfo-dummy-native gettext-minimal-native gnu-config"
 
 # TI AM62x
 BBMULTICONFIG:remove:am62xx-evm = "k3r5"

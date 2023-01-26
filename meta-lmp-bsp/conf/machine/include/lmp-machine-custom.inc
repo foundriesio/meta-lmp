@@ -567,6 +567,7 @@ K3_IMAGE_GEN_SRCREV:ti-soc = "840b06f2624f7ea8a49ec1637cd8574165ad786f"
 KERNEL_IMAGETYPE:sota:k3 = "fitImage"
 KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE}"
 PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
+WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
 # multiconfig with the same TMP fails in the rm_work.bbclass
 RM_WORK_EXCLUDE:append:k3 = " texinfo-dummy-native gettext-minimal-native gnu-config"
 

@@ -16,6 +16,9 @@ setenv altbootcmd 'run bootcmd_otenv; run bootcmd_set_rollback; if test -n "${ke
 
 if test ! -e ${devtype} ${devnum}:1 uboot.env; then saveenv; fi
 
+# Boot firmware upgrade is not yet supported (set to 0 to unblock ak-lite)
+if test "${bootupgrade_available}" = "1"; then setenv bootupgrade_available 0; saveenv; fi
+
 if test "${rollback}" = "1"; then run altbootcmd; else run bootcmd_otenv; run bootostree; if test ! "${upgrade_available}" = "1"; then setenv upgrade_available 1; saveenv; fi; reset; fi
 
 reset

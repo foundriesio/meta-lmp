@@ -25,14 +25,103 @@ function usage {
 }
 
 # NOTE: use v1 of the STM32_Programmer_CLI OTP disp command which doesn't correctly use word= param
+# Typical output of "STM32_Programmer_CLI -c port=USB1 -otp displ":
+# For v2.12:
+#       -------------------------------------------------------------------
+#                         STM32CubeProgrammer v2.12.0                  
+#       -------------------------------------------------------------------
+# [...]
+# OTP Partition read successfully
+#
+# OTP DATA WORDS : 
+#
+# STRUCT VERSION           :
+#                          | version    : 0x00000002
+# GLOBAL STATE             :
+#                          | Status     : 0x00000000
+#                          |_ State            : Secure Open
+#                          |_ Hardware Key Set : N
+#                          |_ Encrypted data   : N
+#
+# OTP REGISTERS:
+#
+# ---------------------------------------------------------------------------
+#     ID      |        value    |     status
+# ---------------------------------------------------------------------------
+#     000     |     0x00000017  |  0x30000000
+#                                  |_[28] Shadow write sticky lock
+#                                  |_[29] Shadow read sticky lock
+#             |                 |          
+#     001     |     0x00008024  |  0x50000000
+#                                  |_[28] Shadow write sticky lock
+#                                  |_[30] Permanent write lock
+#             |                 |          
+#
+# For v2.11 and before, the "ID" contains 2 digits:
+#       -------------------------------------------------------------------
+#                         STM32CubeProgrammer v2.11.0                  
+#       -------------------------------------------------------------------
+# [...]
+# OTP Partition read successfully
+#
+# OTP DATA WORDS : 
+#
+# Struct_version           :
+#                          | none       : 0x00000002
+# BSEC_OTP_CONFIG          :
+#                          |_ State            : Secure Open
+#                          |_ Hardware Key Set : N
+#                          |_ Encrypted data   : N
+#
+# OTP REGISTERS:
+# 
+# ---------------------------------------------------------------------------
+#     ID     |        value    |     status
+# ---------------------------------------------------------------------------
+#     00     |     0x00000017  |  0x30000000
+#                                  |_[28] Shadow write sticky lock
+#                                  |_[29] Shadow read sticky lock
+#            |                 |          
+#     01     |     0x00008024  |  0x50000000
+#                                  |_[28] Shadow write sticky lock
+#                                  |_[30] Permanent write lock
+#            |                 |          
+# [...]
+
 stm32prog_otp_refresh_values () {
-	otp_list=$(STM32_Programmer_CLI -c port=USB1 -otp displ)
+	otp_displ=$(STM32_Programmer_CLI -c port=USB1 -otp displ)
+	# Make some validity tests on the "STM32_Programmer_CLI"
+	# output. Match the version after "STM32CubeProgrammer v":
+	stm32prog_vers=$(echo "$otp_displ" | sed -n -e '/.*[[:blank:]]*STM32CubeProgrammer v\([0-9][0-9]*\.[0-9][0-9\.]*\)[[:blank:]]*$/s//\1/p')
+	# If not a version 2, print an error and stop.
+	if [ "${stm32prog_vers%%\.*}" != "2" ] ; then
+		error_exit "detected STM32CubeProgrammer version ${stm32prog_vers}, we support only v2.x.y"
+	fi
+	# If not a version 2.11 or 2.12, exit with an error.
+	case "${stm32prog_vers}" in
+	2.11.*)
+	  ;;
+	2.12.*)
+	  ;;
+	*)
+		echo "Detected STM32CubeProgrammer version ${stm32prog_vers}"
+		error_exit "We support only STM32CubeProgrammer v2.11 and v2.12."
+	  ;;
+	esac
+	# Make sure we match the "OTP Partition read successfully" line.
+	# Keep that line and the rest:
+	otp_list=$(echo "${otp_displ}" | sed -ne "/OTP Partition read successfully/,$ p")
+	if [ -z "${otp_list}" ] ; then
+		echo "Warning: failed to read the OTP partition"
+	fi
 }
 
 stm32prog_state_is_open () {
 	echo "${otp_list}" | grep "State *: Secure Open"
 }
 
+# "stm32prog_otp_get_value()"'s argument should contain 2 digits, to
+# be compatible with the STM32CubeProgrammer v2.11 and v2.12.
 stm32prog_otp_get_value () {
 	echo "${otp_list}" | sed -n "/^  *0\?${1}  *| *\(0x[[:xdigit:]]\{8\}\)  *|.*$/s//\1/p"
 }

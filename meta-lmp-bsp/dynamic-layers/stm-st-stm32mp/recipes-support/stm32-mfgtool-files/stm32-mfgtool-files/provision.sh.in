@@ -34,7 +34,7 @@ stm32prog_state_is_open () {
 }
 
 stm32prog_otp_get_value () {
-	echo "${otp_list}" | sed -n "/^    ${1}     | *\(0x[[:xdigit:]]\{8\}\)  |.*$/s//\1/p"
+	echo "${otp_list}" | sed -n "/^  *0\?${1}  *| *\(0x[[:xdigit:]]\{8\}\)  *|.*$/s//\1/p"
 }
 
 stm32prog_otp_set_value () {

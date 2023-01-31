@@ -1,0 +1,52 @@
+From a171d7378f9688268f985777a1dbc4fc19c2e493 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Mon, 30 Jan 2023 23:10:49 -0300
+Subject: [PATCH] k3-am625-sk: add vtm memory node
+
+Add the memory region for VTM to the device-specific config
+file. This fixes a runtime exception when the kernel accesses
+that memory region:
+
+<snip>
+Unhandled data read at 0xb00308(4)
+
+FATAL: unhandled trap (exception class 0x24)
+<snip>
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ configs/arm64/k3-am625-sk.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configs/arm64/k3-am625-sk.c b/configs/arm64/k3-am625-sk.c
+index cfc8dc8d..d6096e8f 100644
+--- a/configs/arm64/k3-am625-sk.c
++++ b/configs/arm64/k3-am625-sk.c
+@@ -18,7 +18,7 @@
+ struct {
+ 	struct jailhouse_system header;
+ 	__u64 cpus[1];
+-	struct jailhouse_memory mem_regions[32];
++	struct jailhouse_memory mem_regions[33];
+ 	struct jailhouse_irqchip irqchips[5];
+ 	struct jailhouse_pci_device pci_devices[2];
+ } __attribute__((packed)) config = {
+@@ -232,6 +232,13 @@ struct {
+ 			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
+ 				JAILHOUSE_MEM_IO,
+ 		},
++		/* VTM */ {
++			.phys_start = 0x00b00000,
++			.virt_start = 0x00b00000,
++			.size = 0x00002400,
++			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
++				JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_UNALIGNED,
++		},
+ 		/* CRYPTO */ {
+ 			.phys_start = 0x40900000,
+ 			.virt_start = 0x40900000,
+-- 
+2.34.1
+

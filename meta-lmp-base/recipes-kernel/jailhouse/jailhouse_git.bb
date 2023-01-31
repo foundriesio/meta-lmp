@@ -42,6 +42,10 @@ JH_DATADIR ?= "${datadir}/jailhouse"
 CELL_DIR ?= "${JH_DATADIR}/cells"
 CELLCONF_DIR ?= "${JH_DATADIR}/configs"
 INMATES_DIR ?= "${JH_DATADIR}/inmates"
+INMATES_DTB_DIR ?= "${JH_DATADIR}/inmates/dtb"
+
+# Inmate dtbs are manually installed (empty == all)
+JH_INMATE_DTB ?= ""
 
 do_configure() {
    if [ -d ${STAGING_DIR_HOST}/${CELLCONF_DIR} ];
@@ -84,6 +88,16 @@ do_install:prepend() {
     install ${B}/tools/jailhouse-gcov-extract ${D}${JH_DATADIR}/tools
     install ${B}/tools/jailhouse-hardware-check ${D}${JH_DATADIR}/tools
     install ${B}/inmates/tools/${JH_ARCH}/linux-loader.bin ${D}${INMATES_DIR}/tools/${JH_ARCH}
+
+    # inmate dtbs
+    if [ -d ${B}/configs/${JH_ARCH}/dts ]; then
+        install -d ${D}${INMATES_DTB_DIR}
+        if [ -z "${JH_INMATE_DTB}" ]; then
+            install ${B}/configs/${JH_ARCH}/dts/*.dtb ${D}${INMATES_DTB_DIR}
+        else
+            install ${B}/configs/${JH_ARCH}/dts/${JH_INMATE_DTB} ${D}${INMATES_DTB_DIR}
+        fi
+    fi
 }
 
 PACKAGE_BEFORE_PN = "pyjailhouse"

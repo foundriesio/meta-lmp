@@ -7,6 +7,8 @@
 
 LMPSTAGING_INHERIT_KERNEL_MODSIGN = ""
 
+LMPSTAGING_LOCK_TO_AVOID_OOM = "clang-native rust-native rust-llvm-native"
+
 python __anonymous() {
     pn = d.getVar('PN')
 
@@ -18,7 +20,7 @@ python __anonymous() {
     if bb.data.inherits_class('go-mod', d):
         d.setVarFlag('do_compile', 'network', '1')
 
-    if pn in ["clang", "rust"]:
+    if pn in d.getVar('LMPSTAGING_LOCK_TO_AVOID_OOM').split():
         d.appendVarFlag('do_compile', 'lockfiles', " ${TMPDIR}/lmp-hack-avoid-oom-do_compile.lock")
 }
 

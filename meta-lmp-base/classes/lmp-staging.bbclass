@@ -5,7 +5,7 @@
 #
 # Copyright 2022 (C) Foundries.IO LTD
 
-INHERIT_KERNEL_MODSIGN = ""
+LMPSTAGING_INHERIT_KERNEL_MODSIGN = ""
 
 python __anonymous() {
     pn = d.getVar('PN')
@@ -13,7 +13,7 @@ python __anonymous() {
     if bb.data.inherits_class('module', d):
         d.appendVar('DEPENDS', ' virtual/kernel')
         if 'modsign' in d.getVar('DISTRO_FEATURES'):
-            d.setVar('INHERIT_KERNEL_MODSIGN', 'kernel-modsign')
+            d.setVar('LMPSTAGING_INHERIT_KERNEL_MODSIGN', 'kernel-modsign')
 
     if bb.data.inherits_class('go-mod', d):
         d.setVarFlag('do_compile', 'network', '1')
@@ -27,4 +27,4 @@ python __anonymous() {
             d.setVarFlag('do_deploy_archives', 'vardepvalue', '%s:do_unpack_and_patch' % pn)
 }
 
-inherit ${INHERIT_KERNEL_MODSIGN}
+inherit ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}

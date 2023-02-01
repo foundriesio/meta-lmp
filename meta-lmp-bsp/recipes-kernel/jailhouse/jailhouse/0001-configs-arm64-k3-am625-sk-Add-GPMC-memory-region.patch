@@ -1,0 +1,50 @@
+From f7b3da5fce889cc56b89c8b6823e93bae587ded4 Mon Sep 17 00:00:00 2001
+From: Andreas Dannenberg <dannenberg@ti.com>
+Date: Thu, 19 Jan 2023 09:43:55 -0600
+Subject: [PATCH] configs: arm64: k3-am625-sk: Add GPMC memory region
+
+Upstream-Status: Pending
+
+Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ configs/arm64/k3-am625-sk.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/configs/arm64/k3-am625-sk.c b/configs/arm64/k3-am625-sk.c
+index d6096e8f..230d6a4a 100644
+--- a/configs/arm64/k3-am625-sk.c
++++ b/configs/arm64/k3-am625-sk.c
+@@ -18,7 +18,7 @@
+ struct {
+ 	struct jailhouse_system header;
+ 	__u64 cpus[1];
+-	struct jailhouse_memory mem_regions[33];
++	struct jailhouse_memory mem_regions[35];
+ 	struct jailhouse_irqchip irqchips[5];
+ 	struct jailhouse_pci_device pci_devices[2];
+ } __attribute__((packed)) config = {
+@@ -225,6 +225,20 @@ struct {
+ 			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
+ 				JAILHOUSE_MEM_IO,
+ 		},
++		/* GPMC */ {
++			.phys_start = 0x3b000000,
++			.virt_start = 0x3b000000,
++			.size = 0x00000400,
++			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
++				JAILHOUSE_MEM_IO,
++		},
++		/* GPMC */ {
++			.phys_start = 0x50000000,
++			.virt_start = 0x50000000,
++			.size = 0x08000000,
++			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
++				JAILHOUSE_MEM_IO,
++		},
+ 		/* CPSW */ {
+ 			.phys_start = 0x08000000,
+ 			.virt_start = 0x08000000,
+-- 
+2.34.1
+

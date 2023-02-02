@@ -3,7 +3,7 @@
 # This class will implement some pending patches that we have
 # and some workarounds needed in LmP.
 #
-# Copyright 2022 (C) Foundries.IO LTD
+# Copyright 2022-2023 (C) Foundries.IO LTD
 
 LMPSTAGING_INHERIT_KERNEL_MODSIGN = ""
 

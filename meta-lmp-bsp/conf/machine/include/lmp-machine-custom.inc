@@ -576,9 +576,9 @@ KERNEL_CLASSES:sota:versal = "kernel-lmp-fitimage"
 IMAGE_BOOT_FILES:sota:versal = "boot.bin boot.itb"
 WKS_FILES:sota:versal = "sdimage-sota.wks"
 
-# TI Generic (BSP) - dunfell cicd.dunfell.202301130746
-TI_LINUX_FW_SRCREV:ti-soc = "ffc26c21d93d28e17eb3d32dc65adc9f50ede61a"
-K3_IMAGE_GEN_SRCREV:ti-soc = "840b06f2624f7ea8a49ec1637cd8574165ad786f"
+# TI Generic (BSP) - dunfell 08.06.00.004
+TI_LINUX_FW_SRCREV:ti-soc = "e13f60459c72a315ff63d9800e8abb0d88bf45fc"
+K3_IMAGE_GEN_SRCREV:ti-soc = "69250070a328f7a658a3d5cb4b8ca8f81947e8ac"
 KERNEL_IMAGETYPE:sota:k3 = "fitImage"
 KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE} ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'Image', '', d)}"
 PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"

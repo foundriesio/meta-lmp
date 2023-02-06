@@ -1,7 +1,7 @@
-From 4db0d7e240865d4a5cc13b492b38c6ff34f468ab Mon Sep 17 00:00:00 2001
+From ad0935d15c994e4e80d8a7932fa30bf41ddb82eb Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
-Subject: [PATCH 1/2] Allow updating files in the /boot directory
+Subject: [PATCH 1/5] Allow updating files in the /boot directory
 
 This patch adds support for copying (or hardlinking on
 single partition systems) all files from the deployment's
@@ -21,10 +21,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index efbcad9a..5193a224 100644
+index 470eec25..f1a915ce 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -147,6 +147,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -149,6 +149,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-signed-pull.sh \
  	tests/test-pre-signed-pull.sh \
  	tests/test-signed-pull-summary.sh \
@@ -33,10 +33,10 @@ index efbcad9a..5193a224 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index a8bf9f44..2793617b 100644
+index 26b07080..309c23ce 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -285,6 +285,37 @@ checksum_dir_recurse (int          dfd,
+@@ -284,6 +284,37 @@ checksum_dir_recurse (int          dfd,
    return TRUE;
  }
  
@@ -74,7 +74,7 @@ index a8bf9f44..2793617b 100644
  static gboolean
  copy_dir_recurse (int              src_parent_dfd,
                    int              dest_parent_dfd,
-@@ -292,6 +323,18 @@ copy_dir_recurse (int              src_parent_dfd,
+@@ -291,6 +322,18 @@ copy_dir_recurse (int              src_parent_dfd,
                    OstreeSysrootDebugFlags flags,
                    GCancellable    *cancellable,
                    GError         **error)
@@ -93,7 +93,7 @@ index a8bf9f44..2793617b 100644
  {
    g_auto(GLnxDirFdIterator) src_dfd_iter = { 0, };
    glnx_autofd int dest_dfd = -1;
-@@ -326,17 +369,28 @@ copy_dir_recurse (int              src_parent_dfd,
+@@ -325,17 +368,28 @@ copy_dir_recurse (int              src_parent_dfd,
  
        if (S_ISDIR (child_stbuf.st_mode))
          {
@@ -129,7 +129,7 @@ index a8bf9f44..2793617b 100644
          }
      }
  
-@@ -1749,6 +1803,7 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1816,6 +1870,7 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -137,7 +137,7 @@ index a8bf9f44..2793617b 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -1895,6 +1950,76 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1964,6 +2019,76 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  
@@ -260,5 +260,5 @@ index 00000000..f69c1253
 +
 +echo "ok boot dir with .ostree-bootcsumdir-source"
 -- 
-2.34.1
+2.25.1
 

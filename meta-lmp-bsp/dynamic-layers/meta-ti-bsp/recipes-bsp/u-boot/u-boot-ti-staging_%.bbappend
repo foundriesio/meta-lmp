@@ -2,8 +2,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 include recipes-bsp/u-boot/u-boot-lmp-common.inc
 
-# From the cicd.dunfell.202301120721 dunfell tag
-SRCREV = "bd53c102458cc39a8b2ab68e19996a2280a4d509"
+# From the 08.06.00.004 dunfell tag
+SRCREV = "072a9b409c15bfd1e0de99b2b0e7c06f850a32df"
 
 SRC_URI:append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'file://0003-HACK-lib-lmb-Allow-re-reserving-post-relocation-U-Bo.patch', '', d)} \

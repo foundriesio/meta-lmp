@@ -1,7 +1,7 @@
-From 40795e2dcf1bbb0a4c1e3a4b53925d970fb5c9ff Mon Sep 17 00:00:00 2001
+From 4d6007d7102be66bf5e9574c47f7a4a7fe61a943 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
-Subject: [PATCH 2/2] u-boot: add 'bootdir' to the generated uEnv.txt
+Subject: [PATCH 2/5] u-boot: add 'bootdir' to the generated uEnv.txt
 
 When doing a full copy of:
 
@@ -32,10 +32,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  2 files changed, 5 insertions(+)
 
 diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
-index 7e23001e..0ccb739f 100644
+index fb2c2fcf..20691346 100644
 --- a/src/libostree/ostree-bootloader-uboot.c
 +++ b/src/libostree/ostree-bootloader-uboot.c
-@@ -113,6 +113,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
+@@ -111,6 +111,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
    g_autoptr(GPtrArray) boot_loader_configs = NULL;
    OstreeBootconfigParser *config;
    const char *val;
@@ -43,7 +43,7 @@ index 7e23001e..0ccb739f 100644
  
    if (!_ostree_sysroot_read_boot_loader_configs (self->sysroot, bootversion, &boot_loader_configs,
                                                   cancellable, error))
-@@ -136,6 +137,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
+@@ -134,6 +135,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
          }
        g_ptr_array_add (new_lines, g_strdup_printf ("kernel_image%s=/boot%s", index_suffix, val));
  
@@ -65,5 +65,5 @@ index f69c1253..9365b29e 100755
  
  echo "ok boot dir with .ostree-bootcsumdir-source"
 -- 
-2.34.1
+2.25.1
 

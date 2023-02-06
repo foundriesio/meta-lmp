@@ -2,9 +2,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 include recipes-kernel/linux/kmeta-linux-lmp-5.10.y.inc
 
-LINUX_VERSION ?= "5.10.158"
+LINUX_VERSION ?= "5.10.162"
 KBRANCH = "ti-linux-5.10.y"
-SRCREV_machine = "58c3afb61814c1271156d6ace8d0550475268d3f"
+SRCREV_machine = "2927372e2c7cc3782c07b1896757962bc346d4c5"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

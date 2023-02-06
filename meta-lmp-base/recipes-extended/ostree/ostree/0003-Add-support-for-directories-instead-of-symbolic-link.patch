@@ -1,8 +1,8 @@
-From 93d5e2c397e861557bc1d609c850f69b2ce7d9e0 Mon Sep 17 00:00:00 2001
+From 1e514e5bf27c9eb5a7a93a57ff1eef598addc78f Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Wed, 1 Jun 2022 17:18:06 -0300
-Subject: [PATCH] Add support for directories instead of symbolic links in boot
- partition
+Subject: [PATCH 3/5] Add support for directories instead of symbolic links in
+ boot partition
 
 Allow manipulating and updating /boot/loader entries under a normal
 directory, as well as using symbolic links.
@@ -42,7 +42,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  create mode 100755 tests/test-admin-deploy-dir-uboot.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index 5193a224..7c780c2f 100644
+index f1a915ce..d6863482 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
 @@ -106,6 +106,10 @@ _installed_or_uninstalled_test_scripts = \
@@ -54,13 +54,13 @@ index 5193a224..7c780c2f 100644
 +	tests/test-admin-deploy-dir-grub2.sh \
 +	tests/test-admin-deploy-dir-none.sh \
  	tests/test-admin-deploy-bootid-gc.sh \
+ 	tests/test-admin-deploy-whiteouts.sh \
  	tests/test-osupdate-dtb.sh \
- 	tests/test-admin-instutil-set-kargs.sh \
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index 2793617b..37ddab25 100644
+index 309c23ce..fbcfdb25 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -2183,10 +2183,61 @@ prepare_new_bootloader_link (OstreeSysroot  *sysroot,
+@@ -2265,10 +2265,61 @@ prepare_new_bootloader_link (OstreeSysroot  *sysroot,
    return TRUE;
  }
  
@@ -122,7 +122,7 @@ index 2793617b..37ddab25 100644
                   int             current_bootversion,
                   int             new_bootversion,
                   GCancellable   *cancellable,
-@@ -2200,12 +2251,22 @@ swap_bootloader (OstreeSysroot  *sysroot,
+@@ -2282,12 +2333,22 @@ swap_bootloader (OstreeSysroot  *sysroot,
    if (!_ostree_sysroot_ensure_boot_fd  (sysroot, error))
      return FALSE;
  
@@ -151,7 +151,7 @@ index 2793617b..37ddab25 100644
  
    /* Now we explicitly fsync this directory, even though it
     * isn't required for atomicity, for two reasons:
-@@ -2442,15 +2503,51 @@ write_deployments_bootswap (OstreeSysroot     *self,
+@@ -2517,15 +2578,51 @@ write_deployments_bootswap (OstreeSysroot     *self,
          return glnx_prefix_error (error, "Bootloader write config");
      }
  
@@ -208,10 +208,10 @@ index 2793617b..37ddab25 100644
  
    if (out_subbootdir)
 diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
-index 04432cbc..f783eb47 100644
+index 4c63a657..e91e6b78 100644
 --- a/src/libostree/ostree-sysroot.c
 +++ b/src/libostree/ostree-sysroot.c
-@@ -557,6 +557,12 @@ compare_loader_configs_for_sorting (gconstpointer  a_pp,
+@@ -619,6 +619,12 @@ compare_loader_configs_for_sorting (gconstpointer  a_pp,
    return compare_boot_loader_configs (a, b);
  }
  
@@ -224,7 +224,7 @@ index 04432cbc..f783eb47 100644
  /* Read all the bootconfigs from `/boot/loader/`. */
  gboolean
  _ostree_sysroot_read_boot_loader_configs (OstreeSysroot *self,
-@@ -571,7 +577,16 @@ _ostree_sysroot_read_boot_loader_configs (OstreeSysroot *self,
+@@ -633,7 +639,16 @@ _ostree_sysroot_read_boot_loader_configs (OstreeSysroot *self,
    g_autoptr(GPtrArray) ret_loader_configs =
      g_ptr_array_new_with_free_func ((GDestroyNotify)g_object_unref);
  
@@ -242,7 +242,7 @@ index 04432cbc..f783eb47 100644
    gboolean entries_exists;
    g_auto(GLnxDirFdIterator) dfd_iter = { 0, };
    if (!ot_dfd_iter_init_allow_noent (self->sysroot_fd, entries_path,
-@@ -616,7 +631,7 @@ _ostree_sysroot_read_boot_loader_configs (OstreeSysroot *self,
+@@ -678,7 +693,7 @@ _ostree_sysroot_read_boot_loader_configs (OstreeSysroot *self,
    return TRUE;
  }
  
@@ -251,7 +251,7 @@ index 04432cbc..f783eb47 100644
  static gboolean
  read_current_bootversion (OstreeSysroot *self,
                            int           *out_bootversion,
-@@ -630,24 +645,44 @@ read_current_bootversion (OstreeSysroot *self,
+@@ -692,24 +707,44 @@ read_current_bootversion (OstreeSysroot *self,
      return FALSE;
    if (errno == ENOENT)
      {
@@ -310,10 +310,10 @@ index 04432cbc..f783eb47 100644
  
    *out_bootversion = ret_bootversion;
 diff --git a/src/switchroot/ostree-prepare-root.c b/src/switchroot/ostree-prepare-root.c
-index f48fc528..a0b037f3 100644
+index a5fbc8a8..e86a3927 100644
 --- a/src/switchroot/ostree-prepare-root.c
 +++ b/src/switchroot/ostree-prepare-root.c
-@@ -270,7 +270,7 @@ main(int argc, char *argv[])
+@@ -268,7 +268,7 @@ main(int argc, char *argv[])
     * at /boot inside the deployment. */
    if (snprintf (srcpath, sizeof(srcpath), "%s/boot/loader", root_mountpoint) < 0)
      err (EXIT_FAILURE, "failed to assemble /boot/loader path");
@@ -997,5 +997,5 @@ index 00000000..febd6d41
 +
 +echo "ok deploying fdtdir"
 -- 
-2.34.1
+2.25.1
 

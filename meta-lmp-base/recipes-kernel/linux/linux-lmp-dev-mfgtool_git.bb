@@ -5,9 +5,9 @@ compatible Linux Kernel to be used in updater environment"
 # Use Freescale kernel by default
 KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_REPO_PROTOCOL ?= "https"
-LINUX_VERSION ?= "5.15.81"
-KERNEL_BRANCH ?= "5.15-2.1.x-imx"
-KERNEL_COMMIT ?= "34103ef81ca9e76eb67da3d21fa054280df5c28e"
+LINUX_VERSION ?= "5.15.87"
+KERNEL_BRANCH ?= "5.15-2.2.x-imx"
+KERNEL_COMMIT ?= "3248ffcb12d15a0e40b9a020ba362591b8137923"
 
 # Drop features that are appended by other layers (not required here)
 KERNEL_FEATURES:remove = "cfg/fs/vfat.scc"

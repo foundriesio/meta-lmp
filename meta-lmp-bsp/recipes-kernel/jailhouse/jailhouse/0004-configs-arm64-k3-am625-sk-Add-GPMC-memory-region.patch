@@ -1,9 +1,11 @@
-From f7b3da5fce889cc56b89c8b6823e93bae587ded4 Mon Sep 17 00:00:00 2001
+From 6b5282f0a9f4cd576ab9743c21181a2decdb4aca Mon Sep 17 00:00:00 2001
 From: Andreas Dannenberg <dannenberg@ti.com>
 Date: Thu, 19 Jan 2023 09:43:55 -0600
-Subject: [PATCH] configs: arm64: k3-am625-sk: Add GPMC memory region
+Subject: [PATCH 4/4] configs: arm64: k3-am625-sk: Add GPMC memory region
 
-Upstream-Status: Pending
+Add the memory region for GPMC, used by the AM62Q NAND card.
+
+Upstream-Status: Submitted
 
 Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>

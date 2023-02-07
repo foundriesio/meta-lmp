@@ -1,7 +1,7 @@
-From 723ca87d25c1f8bac68d2608dbc3b5e8caba69ca Mon Sep 17 00:00:00 2001
+From 81cdbe3a3910a992ecaffb1464eb874f6661c1ff Mon Sep 17 00:00:00 2001
 From: Andreas Dannenberg <dannenberg@ti.com>
 Date: Mon, 12 Sep 2022 13:22:04 -0500
-Subject: [PATCH] configs: arm64: k3-am625-sk: Add crypto memory region
+Subject: [PATCH 1/4] configs: arm64: k3-am625-sk: Add crypto memory region
 
 Add the memory region for the AM62x crypto accelerator to the device-
 specific config file. This fixes a runtime exception when the kernel
@@ -13,13 +13,16 @@ Unhandled data read at 0x40910010(4)
 FATAL: unhandled trap (exception class 0x24)
 <snip>
 
+Upstream-Status: Submitted
+
 Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  configs/arm64/k3-am625-sk.c | 9 ++++++++-
  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/configs/arm64/k3-am625-sk.c b/configs/arm64/k3-am625-sk.c
-index 2e5c3aef..4b0b8043 100644
+index 4c77e7fe..cfc8dc8d 100644
 --- a/configs/arm64/k3-am625-sk.c
 +++ b/configs/arm64/k3-am625-sk.c
 @@ -18,7 +18,7 @@
@@ -31,7 +34,7 @@ index 2e5c3aef..4b0b8043 100644
  	struct jailhouse_irqchip irqchips[5];
  	struct jailhouse_pci_device pci_devices[2];
  } __attribute__((packed)) config = {
-@@ -231,6 +231,13 @@ struct {
+@@ -232,6 +232,13 @@ struct {
  			.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
  				JAILHOUSE_MEM_IO,
  		},

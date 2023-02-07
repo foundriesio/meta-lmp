@@ -1,7 +1,7 @@
-From a171d7378f9688268f985777a1dbc4fc19c2e493 Mon Sep 17 00:00:00 2001
+From 4e3ec2473b760f79f41558517f06300e3503ba0d Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Mon, 30 Jan 2023 23:10:49 -0300
-Subject: [PATCH] k3-am625-sk: add vtm memory node
+Subject: [PATCH 3/4] configs: arm64: k3-am625-sk: add vtm memory node
 
 Add the memory region for VTM to the device-specific config
 file. This fixes a runtime exception when the kernel accesses
@@ -13,7 +13,7 @@ Unhandled data read at 0xb00308(4)
 FATAL: unhandled trap (exception class 0x24)
 <snip>
 
-Upstream-Status: Pending
+Upstream-Status: Submitted
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---

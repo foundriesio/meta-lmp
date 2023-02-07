@@ -1,8 +1,8 @@
-From dbc02104bb469f68034b84f293583df413b8ca56 Mon Sep 17 00:00:00 2001
+From e89b2dfc08254cf62d0beffeed258ed362897635 Mon Sep 17 00:00:00 2001
 From: Andreas Dannenberg <dannenberg@ti.com>
 Date: Mon, 12 Sep 2022 16:08:12 -0500
-Subject: [PATCH] configs: arm64: k3-am625-sk: Switch inmate boot console alias
- to serial3
+Subject: [PATCH 2/4] configs: arm64: k3-am625-sk: Switch inmate boot console
+ alias to serial3
 
 Traditionally the serial3 DTS alias is used for the 2nd main-domain UART
 on K3 devices so go ahead and update the alias and its usage accordingly
@@ -11,7 +11,10 @@ for better consistency.
 While at it also do a minor cleanup of the UART's DTS node to use the
 TISCI standard definitions as used in the corresponding Kernel DTS files.
 
+Upstream-Status: Submitted
+
 Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  configs/arm64/dts/inmate-k3-am625-sk.dts | 11 ++++++-----
  1 file changed, 6 insertions(+), 5 deletions(-)

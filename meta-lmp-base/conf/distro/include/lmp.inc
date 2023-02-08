@@ -16,6 +16,7 @@ TCLIBCAPPEND = ""
 require conf/distro/include/arm-defaults.inc
 require conf/distro/include/non-clangable.inc
 require conf/distro/include/security_flags.inc
+require conf/distro/include/yocto-uninative.inc
 
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/optee-os ?= "optee-os-fio"
@@ -78,6 +79,7 @@ BUILD_OSTREE_TARBALL ?= "0"
 # LMP default classes and overwrites
 INHERIT += "lmp"
 INHERIT += "lmp-staging"
+INHERIT += "uninative"
 
 # Archive sources (for license compliance)
 INHERIT += "archiver"

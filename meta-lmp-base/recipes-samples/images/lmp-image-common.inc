@@ -34,6 +34,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     resize-helper \
     mtd-utils \
     sudo \
+    tzdata \
     zram \
 "
 

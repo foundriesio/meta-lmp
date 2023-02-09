@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MIT
 #
+set -e
 
 # Name of the script
 scriptName="$(basename "$0")"
@@ -13,7 +14,11 @@ scriptName="$(basename "$0")"
 # Functions
 #######################
 function error_exit {
-	echo "ERROR:  ${1}"
+	if [ -n "${1}" ] ; then
+		echo "ERROR:  ${1}"
+	else
+		echo "ERROR: Command execution failure"
+	fi
 	exit 1
 }
 
@@ -134,6 +139,8 @@ stm32prog_otp_lock () {
 	STM32_Programmer_CLI -y -c port=USB1 -otp lock word=${1}
 }
 
+trap error_exit ERR
+
 #######################
 # Validate required commands are available
 #######################
@@ -155,16 +162,20 @@ fi
 # Parse Args
 #######################
 # NOTE: This requires GNU getopt.
-PARSED_ARGS=$(getopt --longoptions "pub-key-hash:" \
-		--options "" --name "${scriptName}" -- "$@")
-VALID_ARGS=$?
-if [ "${VALID_ARGS}" != "0" ] ; then
+if ! PARSED_ARGS=$(getopt --longoptions "pub-key-hash:" \
+		--options "" --name "${scriptName}" -- "$@") ; then
 	usage
 	error_exit "Unable to parse arguments"
 fi
 
 # Note the quotes around '${PARSED_ARGS}' are essential
 eval set -- "${PARSED_ARGS}"
+
+# Make sure required option is defined
+if [ $# = 1 ]; then
+	usage
+	error_exit "Required option missing"
+fi
 
 # Sec Boot Public Key SHA256 Hash Binary
 pubKeyFile=
@@ -264,7 +275,10 @@ fi # if not closed device
 STM32_Programmer_CLI -c port=USB1 -detach
 
 # Only close the device if not already closed
-if ! fastboot oem ucmd:"test \"\${boot_auth}\" = \"2\"">/dev/null 2>&1; then
+if stm32prog_state_is_open; then
+	if fastboot oem ucmd:"test \"\${boot_auth}\" = \"2\"">/dev/null 2>&1; then
+		error_exit "Device in inconsistent state"
+	fi
 	####
 	# Programming STM32 Sec Boot Pub Key Hash
 	#
@@ -272,9 +286,8 @@ if ! fastboot oem ucmd:"test \"\${boot_auth}\" = \"2\"">/dev/null 2>&1; then
 	####
 	echo "## Checking STM32 key"
 	for i in 24 25 26 27 28 29 30 31; do
-		fastboot oem ucmd:"fuse cmp 0 ${i} 00000000" > /dev/null 2>&1
-		check=$?
-		if [ "${check}" -ne "0" ]; then
+		if ! fastboot oem ucmd:"fuse cmp 0 ${i} 00000000" > /dev/null 2>&1 ; then
+			check=1
 			break
 		fi
 	done
@@ -295,12 +308,10 @@ if ! fastboot oem ucmd:"test \"\${boot_auth}\" = \"2\"">/dev/null 2>&1; then
 			# Must compare in little endian
 			word_le="0x${word:6:2}${word:4:2}${word:2:2}${word:0:2}"
 			fastboot oem ucmd:"fuse sense 0 ${i}"
-			fastboot oem ucmd:"fuse cmp 0 ${i} ${word_le}" > /dev/null 2>&1
-			check=$?
-			if [ "${check}" -ne "0" ]; then
+			if ! fastboot oem ucmd:"fuse cmp 0 ${i} ${word_le}" > /dev/null 2>&1 ; then
 				error_exit "STM32 Pub Key Hash was not programmed successfully. OTP ${i} is not correct"
 			fi
-			i=$(printf "%d" $((i + 1)))
+			i=$((i + 1))
 		done
 
 		####

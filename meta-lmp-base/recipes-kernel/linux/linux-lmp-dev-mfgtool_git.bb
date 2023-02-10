@@ -7,7 +7,7 @@ KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_REPO_PROTOCOL ?= "https"
 LINUX_VERSION ?= "5.15.87"
 KERNEL_BRANCH ?= "5.15-2.2.x-imx"
-KERNEL_COMMIT ?= "3248ffcb12d15a0e40b9a020ba362591b8137923"
+KERNEL_COMMIT ?= "0eb4504bd3b8fd125e83ec62da9ba039519f96c8"
 
 # Drop features that are appended by other layers (not required here)
 KERNEL_FEATURES:remove = "cfg/fs/vfat.scc"

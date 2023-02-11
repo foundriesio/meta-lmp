@@ -1,0 +1,85 @@
+From 60b9532c150e146439ff87099e33c13d00efc44c Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Sun, 5 Feb 2023 18:57:20 +0200
+Subject: [PATCH 2/2] build: support choosing libedit instead readline
+
+Support --with-readline option to choose readline or libedit for
+interactive interface of client and/or mesh.
+
+Upstream-Status: Pending
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ configure.ac | 55 ++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 26cd04f3b..4e90c0288 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -287,13 +287,56 @@ AC_ARG_ENABLE(client, AS_HELP_STRING([--disable-client],
+ 		[disable command line client]), [enable_client=${enableval}])
+ AM_CONDITIONAL(CLIENT, test "${enable_client}" != "no")
+ 
+-if (test "${enable_client}" != "no" || test "${enable_mesh}" = "yes"); then
+-        AC_CHECK_HEADERS(readline/readline.h, enable_readline=yes,
+-                AC_MSG_ERROR(readline header files are required))
+-        READLINE_LIBS=-lreadline
++AC_ARG_WITH(readline,
++            AS_HELP_STRING([--with-readline=auto|readline|libedit|none], [use readline or libedit as readline library]),
++            [], [with_readline=auto])
++
++if (test "${with_readline}" != "none" &&
++    test "${with_readline}" != "auto" &&
++    test "${with_readline}" != "readline" &&
++    test "${with_readline}" != "libedit"); then
++        AC_MSG_ERROR([invalid --with-readline option])
+ fi
+-AM_CONDITIONAL(READLINE, test "${enable_readline}" = "yes")
+-AC_SUBST(READLINE_LIBS)
++
++if (test "${enable_client}" != "no" ||
++    test "${enable_mesh}" = "yes"); then
++    if (test "${with_readline}" = "none"); then
++        AC_MSG_ERROR([--with-readline should not be "none" if client and/or mesh enabled])
++    fi
++else
++    if (test "${with_readline}" = "auto"); then
++        with_readline=none
++    fi
++fi
++
++if (test "${with_readline}" != "none"); then
++    if (test "${with_readline}" = "auto"); then
++        PKG_CHECK_MODULES(READLINE, readline >= 8.1,
++            with_readline=readline,
++            PKG_CHECK_MODULES(READLINE, libedit >= 3.1,
++                with_readline=libedit,
++                found_readline=no))
++    else if (test "${with_readline}" = "readline"); then
++        PKG_CHECK_MODULES(READLINE, readline >= 8.1,
++            with_readline=readline,
++            found_readline=no)
++        else
++            PKG_CHECK_MODULES(READLINE, libedit >= 3.1,
++                with_readline=libedit,
++                found_readline=no)
++        fi
++    fi
++
++    if (test "${found_readline}" = "no"); then
++        AC_MSG_ERROR(library not found for --with-readline=$with_readline)
++    fi
++    AC_SUBST(READLINE_LIBS)
++    if (test "${with_readline}" = "libedit"); then
++        AC_DEFINE(HAVE_EDITLINE_READLINE, 1,
++                  [Explicitly set to 1 if libedit is used])
++    fi
++fi
++AM_CONDITIONAL(READLINE, test "${with_readline}" != "none")
+ 
+ AC_ARG_ENABLE(systemd, AS_HELP_STRING([--disable-systemd],
+ 		[disable systemd integration]), [enable_systemd=${enableval}])
+-- 
+2.39.1
+

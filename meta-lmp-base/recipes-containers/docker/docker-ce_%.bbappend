@@ -3,12 +3,12 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRC_URI:append = " \
     file://daemon.json.in \
     file://docker.service \
-    file://dockerd-daemon-use-default-system-config-when-none-i.patch \
-    file://cli-config-support-default-system-config.patch \
-    file://increase_containerd_timeouts.patch \
-    file://0001-registry-increase-TLS-and-connection-timeouts.patch \
-    file://0001-overlay2-fsync-layer-metadata-files.patch \
-    file://0001-Fsync-layer-once-extracted-to-file-system.patch \
+    file://0001-cli-config-support-default-system-config.patch;patchdir=cli \
+    file://0001-dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
+    file://0002-remote_daemon-Bump-healthcheck-startup-and-shutdown-.patch;patchdir=src/import \
+    file://0003-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
+    file://0004-overlay2-fsync-layer-metadata-files.patch;patchdir=src/import \
+    file://0005-Fsync-layer-once-extracted-to-file-system.patch;patchdir=src/import \
 "
 
 DOCKER_MAX_CONCURRENT_DOWNLOADS ?= "3"

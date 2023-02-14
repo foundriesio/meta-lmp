@@ -1,29 +1,30 @@
-From dad27a99a51fa58c26bef209f2370d85992a2895 Mon Sep 17 00:00:00 2001
+From e916d026698bee9a3b25afb140c6636cac34d4e3 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
-Date: Wed, 30 Jun 2021 15:06:05 +0300
-Subject: [PATCH] registry: increase TLS and connection timeouts
+Date: Tue, 14 Feb 2023 12:21:02 +0000
+Subject: [PATCH 3/5] registry: increase TLS and connection timeouts
 
 Signed-off-by: Mike Sul <mike.sul@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
  distribution/registry.go | 4 ++--
  registry/auth.go         | 4 ++--
  registry/registry.go     | 4 ++--
  3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/src/import/distribution/registry.go b/src/import/distribution/registry.go
-index 2e031847c0..bae5df68a2 100644
---- a/src/import/distribution/registry.go
-+++ b/src/import/distribution/registry.go
-@@ -66,7 +66,7 @@ func NewV2Repository(
+diff --git a/distribution/registry.go b/distribution/registry.go
+index eaf86a262e..74ad7f4b2c 100644
+--- a/distribution/registry.go
++++ b/distribution/registry.go
+@@ -83,7 +83,7 @@ func newRepository(
  	}
  
  	direct := &net.Dialer{
 -		Timeout:   30 * time.Second,
 +		Timeout:   60 * time.Second,
  		KeepAlive: 30 * time.Second,
- 		DualStack: true,
  	}
-@@ -75,7 +75,7 @@ func NewV2Repository(
+ 
+@@ -91,7 +91,7 @@ func newRepository(
  	base := &http.Transport{
  		Proxy:               http.ProxyFromEnvironment,
  		DialContext:         direct.DialContext,
@@ -32,21 +33,21 @@ index 2e031847c0..bae5df68a2 100644
  		TLSClientConfig:     endpoint.TLSConfig,
  		// TODO(dmcgowan): Call close idle connections when complete and use keep alive
  		DisableKeepAlives: true,
-diff --git a/src/import/registry/auth.go b/src/import/registry/auth.go
-index 2d0ecde2d4..3541cb0de2 100644
---- a/src/import/registry/auth.go
-+++ b/src/import/registry/auth.go
-@@ -146,7 +146,7 @@ func v2AuthHTTPClient(endpoint *url.URL, authTransport http.RoundTripper, modifi
+diff --git a/registry/auth.go b/registry/auth.go
+index 38f41db221..4f0ce79928 100644
+--- a/registry/auth.go
++++ b/registry/auth.go
+@@ -121,7 +121,7 @@ func v2AuthHTTPClient(endpoint *url.URL, authTransport http.RoundTripper, modifi
  
  	return &http.Client{
- 		Transport: tr,
+ 		Transport: transport.NewTransport(authTransport, modifiers...),
 -		Timeout:   15 * time.Second,
 +		Timeout:   60 * time.Second,
- 	}, foundV2, nil
- 
+ 	}, nil
  }
-@@ -211,7 +211,7 @@ func PingV2Registry(endpoint *url.URL, transport http.RoundTripper) (challenge.M
  
+@@ -173,7 +173,7 @@ func (err PingResponseError) Error() string {
+ func PingV2Registry(endpoint *url.URL, transport http.RoundTripper) (challenge.Manager, error) {
  	pingClient := &http.Client{
  		Transport: transport,
 -		Timeout:   15 * time.Second,
@@ -54,21 +55,20 @@ index 2d0ecde2d4..3541cb0de2 100644
  	}
  	endpointStr := strings.TrimRight(endpoint.String(), "/") + "/v2/"
  	req, err := http.NewRequest(http.MethodGet, endpointStr, nil)
-diff --git a/src/import/registry/registry.go b/src/import/registry/registry.go
-index 7a70bf28b5..60c8cae303 100644
---- a/src/import/registry/registry.go
-+++ b/src/import/registry/registry.go
-@@ -181,7 +181,7 @@ func NewTransport(tlsConfig *tls.Config) *http.Transport {
+diff --git a/registry/registry.go b/registry/registry.go
+index 5ff39ce5e7..4c943e3f43 100644
+--- a/registry/registry.go
++++ b/registry/registry.go
+@@ -165,14 +165,14 @@ func newTransport(tlsConfig *tls.Config) *http.Transport {
  	}
  
  	direct := &net.Dialer{
 -		Timeout:   30 * time.Second,
 +		Timeout:   60 * time.Second,
  		KeepAlive: 30 * time.Second,
- 		DualStack: true,
  	}
-@@ -189,7 +189,7 @@ func NewTransport(tlsConfig *tls.Config) *http.Transport {
- 	base := &http.Transport{
+ 
+ 	return &http.Transport{
  		Proxy:               http.ProxyFromEnvironment,
  		DialContext:         direct.DialContext,
 -		TLSHandshakeTimeout: 10 * time.Second,
@@ -77,5 +77,5 @@ index 7a70bf28b5..60c8cae303 100644
  		// TODO(dmcgowan): Call close idle connections when complete and use keep alive
  		DisableKeepAlives: true,
 -- 
-2.17.1
+2.34.1
 

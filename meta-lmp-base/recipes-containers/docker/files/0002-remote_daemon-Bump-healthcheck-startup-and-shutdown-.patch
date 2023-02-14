@@ -1,0 +1,34 @@
+From fe61ffd855ddd36aa5288c8e5c1f8ded3ce3cfc3 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 14 Feb 2023 12:19:36 +0000
+Subject: [PATCH 2/5] remote_daemon: Bump healthcheck, startup and shutdown
+ timeout values for containerd.
+
+This is required for slower systems in order to avoid a dockerd restart.
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ libcontainerd/supervisor/remote_daemon.go | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/libcontainerd/supervisor/remote_daemon.go b/libcontainerd/supervisor/remote_daemon.go
+index 60ec588ac6..4e4eba2da0 100644
+--- a/libcontainerd/supervisor/remote_daemon.go
++++ b/libcontainerd/supervisor/remote_daemon.go
+@@ -22,9 +22,9 @@ import (
+ 
+ const (
+ 	maxConnectionRetryCount = 3
+-	healthCheckTimeout      = 3 * time.Second
+-	shutdownTimeout         = 15 * time.Second
+-	startupTimeout          = 15 * time.Second
++	healthCheckTimeout      = 6 * time.Second
++	shutdownTimeout         = 30 * time.Second
++	startupTimeout          = 30 * time.Second
+ 	configFile              = "containerd.toml"
+ 	binaryName              = "containerd"
+ 	pidFile                 = "containerd.pid"
+-- 
+2.34.1
+

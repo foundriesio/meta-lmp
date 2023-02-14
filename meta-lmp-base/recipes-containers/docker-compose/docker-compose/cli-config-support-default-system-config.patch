@@ -1,32 +1,33 @@
-From 15e560830117514adc825c80326e7db66192e717 Mon Sep 17 00:00:00 2001
+From 6385df5e8c5c4f3eeff0962ce7a182e9aac68f2c Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
-Date: Wed, 25 Sep 2019 17:08:35 -0300
+Date: Tue, 14 Feb 2023 12:17:26 +0000
 Subject: [PATCH] cli/config: support default system config
 
 Support reading configuration from system config when available. This
 allows the OS to control and update a base config.
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
- cli/cli/cli/config/config.go | 10 ++++++++++
+ cli/config/config.go | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/src/import/vendor.fetch/github.com/docker/cli/cli/config/config.go b/src/import/vendor.fetch/github.com/docker/cli/cli/config/config.go
-index 703fa30f48..79c324bfb1 100644
---- a/src/import/vendor.fetch/github.com/docker/cli/cli/config/config.go
-+++ b/src/import/vendor.fetch/github.com/docker/cli/cli/config/config.go
+diff --git a/cli/config/config.go b/cli/config/config.go
+index b7c05c3f86..1f56eb11ba 100644
+--- a/cli/config/config.go
++++ b/cli/config/config.go
 @@ -21,6 +21,7 @@ const (
  	configFileDir  = ".docker"
- 	oldConfigfile  = ".dockercfg"
+ 	oldConfigfile  = ".dockercfg" // Deprecated: remove once we stop printing deprecation warning
  	contextsDir    = "contexts"
 +	defaultSystemConfig = "/usr/lib/docker/config.json"
  )
-
+ 
  var (
-@@ -94,6 +95,15 @@ func Load(configDir string) (*configfile.ConfigFile, error) {
+@@ -114,6 +115,15 @@ func load(configDir string) (*configfile.ConfigFile, bool, error) {
  	filename := filepath.Join(configDir, ConfigFileName)
  	configFile := configfile.New(filename)
-
+ 
 +	// LmP: Load values from system config by default
 +	if _, err := os.Stat(defaultSystemConfig); err == nil {
 +		file, err := os.Open(defaultSystemConfig)
@@ -39,3 +40,6 @@ index 703fa30f48..79c324bfb1 100644
  	// Try happy path first - latest config file
  	if file, err := os.Open(filename); err == nil {
  		defer file.Close()
+-- 
+2.34.1
+

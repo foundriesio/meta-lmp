@@ -94,7 +94,7 @@ function usage {
 # [...]
 
 stm32prog_otp_refresh_values () {
-	otp_displ=$(STM32_Programmer_CLI -c port=USB1 -otp displ)
+	otp_displ=$(STM32_Programmer_CLI -c port=USB1 -otp displ || echo "STM32_Programmer_CLI -otp displ returned an error")
 	# Make some validity tests on the "STM32_Programmer_CLI"
 	# output. Match the version after "STM32CubeProgrammer v":
 	stm32prog_vers=$(echo "$otp_displ" | sed -n -e '/.*[[:blank:]]*STM32CubeProgrammer v\([0-9][0-9]*\.[0-9][0-9\.]*\)[[:blank:]]*$/s//\1/p')

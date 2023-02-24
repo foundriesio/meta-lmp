@@ -1,7 +1,7 @@
-From ad0935d15c994e4e80d8a7932fa30bf41ddb82eb Mon Sep 17 00:00:00 2001
+From 3919d3bda5bde664b8b594dbb8502aeffa289b31 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
-Subject: [PATCH 1/5] Allow updating files in the /boot directory
+Subject: [PATCH] Allow updating files in the /boot directory
 
 This patch adds support for copying (or hardlinking on
 single partition systems) all files from the deployment's
@@ -13,6 +13,7 @@ be enabled by 'touch .ostree-bootcsumdir-source' in
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+
 ---
  Makefile-tests.am                     |   1 +
  src/libostree/ostree-sysroot-deploy.c | 139 ++++++++++++++++++++++++--
@@ -21,10 +22,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index 470eec25..f1a915ce 100644
+index 01ed0bd..9bfb1b5 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -149,6 +149,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -150,6 +150,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-signed-pull.sh \
  	tests/test-pre-signed-pull.sh \
  	tests/test-signed-pull-summary.sh \
@@ -33,7 +34,7 @@ index 470eec25..f1a915ce 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index 26b07080..309c23ce 100644
+index cd191d3..7c4aceb 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -284,6 +284,37 @@ checksum_dir_recurse (int          dfd,
@@ -129,7 +130,7 @@ index 26b07080..309c23ce 100644
          }
      }
  
-@@ -1816,6 +1870,7 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1835,6 +1889,7 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -137,7 +138,7 @@ index 26b07080..309c23ce 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -1964,6 +2019,76 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1998,6 +2053,76 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  
@@ -216,7 +217,7 @@ index 26b07080..309c23ce 100644
      return FALSE;
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
 new file mode 100755
-index 00000000..f69c1253
+index 0000000..f69c125
 --- /dev/null
 +++ b/tests/test-bootdir-update.sh
 @@ -0,0 +1,39 @@
@@ -259,6 +260,3 @@ index 00000000..f69c1253
 +assert_file_has_content sysroot/boot/ostree/testos-${bootcsum}/subdir/2 "2"
 +
 +echo "ok boot dir with .ostree-bootcsumdir-source"
--- 
-2.25.1
-

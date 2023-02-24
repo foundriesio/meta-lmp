@@ -81,8 +81,6 @@ OBJCOPY:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}objcopy"
 # do_assemble_fitimage.520200: 841: arm-lmp-linux-gnueabi-llvm-objcopy: not found
 OBJCOPY:pn-linux-lmp-dev-mfgtool:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-dev-mfgtool:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-lts:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-lts:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp:toolchain-clang = "${HOST_PREFIX}objcopy"

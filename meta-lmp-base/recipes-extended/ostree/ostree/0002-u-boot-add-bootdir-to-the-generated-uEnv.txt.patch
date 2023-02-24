@@ -1,7 +1,7 @@
-From 4d6007d7102be66bf5e9574c47f7a4a7fe61a943 Mon Sep 17 00:00:00 2001
+From 0282a84916af342f315006607aaacfda160d8137 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
-Subject: [PATCH 2/5] u-boot: add 'bootdir' to the generated uEnv.txt
+Subject: [PATCH] u-boot: add 'bootdir' to the generated uEnv.txt
 
 When doing a full copy of:
 
@@ -26,13 +26,14 @@ bootdir=/boot/ostree/$os-$bootcsum/ is a better approach here, as
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+
 ---
  src/libostree/ostree-bootloader-uboot.c | 4 ++++
  tests/test-bootdir-update.sh            | 1 +
  2 files changed, 5 insertions(+)
 
 diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
-index fb2c2fcf..20691346 100644
+index d0207ad..bfcd7bd 100644
 --- a/src/libostree/ostree-bootloader-uboot.c
 +++ b/src/libostree/ostree-bootloader-uboot.c
 @@ -111,6 +111,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
@@ -54,7 +55,7 @@ index fb2c2fcf..20691346 100644
        if (val)
          g_ptr_array_add (new_lines, g_strdup_printf ("ramdisk_image%s=/boot%s", index_suffix, val));
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
-index f69c1253..9365b29e 100755
+index f69c125..9365b29 100755
 --- a/tests/test-bootdir-update.sh
 +++ b/tests/test-bootdir-update.sh
 @@ -35,5 +35,6 @@ assert_has_file sysroot/boot/ostree/testos-${bootcsum}/1
@@ -64,6 +65,3 @@ index f69c1253..9365b29e 100755
 +assert_file_has_content sysroot/boot/uEnv.txt "bootdir="
  
  echo "ok boot dir with .ostree-bootcsumdir-source"
--- 
-2.25.1
-

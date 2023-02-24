@@ -21,7 +21,6 @@ inherit go-mod systemd
 GO_LDFLAGS += "-tags vpn"
 GO_EXTRA_LDFLAGS = "-X ${GO_IMPORT}/internal.Commit=${SRCREV}"
 
-SYSTEMD_PACKAGES += "${PN}"
 SYSTEMD_SERVICE:${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"
 
 

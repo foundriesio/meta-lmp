@@ -1,7 +1,8 @@
 BOOT_TOOLS:mx8-nxp-bsp = "imx-boot-tools"
+BOOT_TOOLS:mx9-nxp-bsp = "imx-boot-tools"
 
-# From u-boot-imx/meta-freescale
-do_deploy:append:mx8-nxp-bsp() {
+# From u-boot-imx/meta-freescale (do_deploy)
+deploy_nxp_imx() {
     # Deploy u-boot-nodtb.bin and XX.dtb for mkimage to generate boot binary
     if [ -n "${UBOOT_CONFIG}" ]; then
         for config in ${UBOOT_MACHINE}; do
@@ -37,6 +38,12 @@ do_deploy:append:mx8-nxp-bsp() {
         ln -sf u-boot-${MACHINE}.bin u-boot-${MACHINE}.bin-
         ln -sf u-boot-spl.bin-${MACHINE} u-boot-spl.bin-${MACHINE}-
     fi
+}
+do_deploy:append:mx8-nxp-bsp() {
+    deploy_nxp_imx
+}
+do_deploy:append:mx9-nxp-bsp() {
+    deploy_nxp_imx
 }
 
 do_deploy:append:stm32mp1common() {

@@ -496,6 +496,37 @@ IMXBOOT_TARGETS:imx8mn-lpddr4-evk = "flash_evk_spl"
 ## iMX8MN LPDDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-lpddr4-evk-sec = "ubootenv"
 
+# iMX93
+MACHINE_FEATURES:remove:mx93-generic-bsp = "jailhouse optee"
+UBOOT_SIGN_ENABLE:sota:mx93-generic-bsp = "1"
+IMX_DEFAULT_BOOTLOADER:mx93-generic-bsp ?= "u-boot-fio"
+UBOOT_ENTRYPOINT:mx93-generic-bsp = "0x80400000"
+UBOOT_DTB_LOADADDRESS:mx93-generic-bsp = "0x83000000"
+PREFERRED_PROVIDER_virtual/trusted-firmware-a:mx93-generic-bsp ?= "imx-atf"
+EXTRA_IMAGEDEPENDS:append:mx93-generic-bsp = "virtual/trusted-firmware-a"
+UBOOT_CLASSES:mx93-generic-bsp = "uboot-fitimage"
+ATF_BINARY:mx93-generic-bsp = "arm-trusted-firmware.bin"
+UBOOT_CONFIG:mx93-generic-bsp = ""
+LMP_BOOT_FIRMWARE_FILES:mx93-generic-bsp = "imx-boot u-boot.itb"
+IMAGE_BOOT_FILES:mx93-generic-bsp = "imx-boot u-boot.itb ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+IMAGE_BOOT_FILES:sota:mx93-generic-bsp = "boot.itb"
+WKS_FILE_DEPENDS:append:mx93-generic-bsp = " u-boot-default-script imx-boot"
+PREFERRED_PROVIDER_u-boot-default-script:mx93-generic-bsp = "u-boot-base-scr"
+PREFERRED_PROVIDER_u-boot-default-script:sota:mx93-generic-bsp = "u-boot-ostree-scr-fit"
+KERNEL_IMAGETYPE:sota:mx93-generic-bsp = "fitImage"
+KERNEL_CLASSES:sota:mx93-generic-bsp = " kernel-lmp-fitimage "
+# iMX93: Use latest NXP BSP downstream kernel
+PREFERRED_PROVIDER_virtual/kernel:mx93-generic-bsp ?= "linux-lmp-fslc-imx"
+WKS_FILE:sota:mx93-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
+
+# iMX93 DDR4 EVK
+KMACHINE:imx93-11x11-lpddr4x-evk = "imx93-11x11-lpddr4x-evk"
+OSTREE_KERNEL_ARGS:imx93-11x11-lpddr4x-evk ?= "console=tty1 console=ttyLP0,115200 earlycon root=/dev/mmcblk0p2 rootfstype=ext4"
+SOTA_CLIENT_FEATURES:append:imx93-11x11-lpddr4x-evk = " ubootenv"
+UBOOT_MACHINE:imx93-11x11-lpddr4x-evk = "imx93_11x11_evk_defconfig"
+BOOTSCR_LOAD_ADDR:imx93-11x11-lpddr4x-evk = "0x82500000"
+IMXBOOT_TARGETS:imx93-lpddr4-evk = "flash_singleboot"
+
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/bootloader:stm32mp1common ?= "u-boot-fio"
@@ -700,6 +731,7 @@ PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.20.0"
 PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.20.0"
 ## We don't use imx-boot-container just yet
 UBOOT_PROVIDES_BOOT_CONTAINER:mx8-generic-bsp = ""
+UBOOT_PROVIDES_BOOT_CONTAINER:mx9-generic-bsp = ""
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:imx-generic-bsp = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

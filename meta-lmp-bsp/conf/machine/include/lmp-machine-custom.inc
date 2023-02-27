@@ -496,6 +496,39 @@ IMXBOOT_TARGETS:imx8mn-lpddr4-evk = "flash_evk_spl"
 ## iMX8MN LPDDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-lpddr4-evk-sec = "ubootenv"
 
+# iMX93
+UBOOT_SIGN_ENABLE:sota:mx93-generic-bsp = "1"
+IMX_DEFAULT_BOOTLOADER:mx93-generic-bsp ?= "u-boot-fio"
+UBOOT_ENTRYPOINT:mx93-generic-bsp = "0x80400000"
+UBOOT_LOADADDRESS:mx93-generic-bsp = "0x80400000"
+UBOOT_DTB_LOADADDRESS:mx93-generic-bsp = "0x83000000"
+PREFERRED_PROVIDER_virtual/trusted-firmware-a:mx93-nxp-bsp ?= "imx-atf"
+UBOOT_CLASSES:mx93-generic-bsp = "uboot-fitimage"
+IMXBOOT_TARGETS:mx93-nxp-bsp ?= "flash_singleboot_spl"
+ATF_BINARY:mx93-generic-bsp = "arm-trusted-firmware.bin"
+EXTRA_IMAGEDEPENDS:append:mx93-generic-bsp = "virtual/trusted-firmware-a"
+KERNEL_IMAGETYPE:sota:mx93-generic-bsp = "fitImage"
+KERNEL_CLASSES:sota:mx93-generic-bsp = " kernel-lmp-fitimage "
+WKS_FILE:sota:mx93-generic-bsp = "emmc-imx-gpt-sota.wks"
+WKS_FILE_DEPENDS:append:mx93-generic-bsp = " u-boot-default-script imx-boot"
+IMAGE_BOOT_FILES:mx93-generic-bsp = "${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
+IMAGE_BOOT_FILES:sota:mx93-generic-bsp = "boot.itb"
+PREFERRED_PROVIDER_u-boot-default-script:mx93-generic-bsp = "u-boot-base-scr"
+PREFERRED_PROVIDER_u-boot-default-script:sota:mx93-generic-bsp = "u-boot-ostree-scr-fit"
+SOTA_CLIENT_FEATURES:append:mx93-generic-bsp = " ubootenv"
+LMP_BOOT_FIRMWARE_FILES:mx93-nxp-bsp = "imx-boot u-boot.itb"
+PREFERRED_VERSION_optee-os-fio:mx93-nxp-bsp = "3.20.0-imx"
+PREFERRED_VERSION_optee-os-fio-mfgtool:mx93-nxp-bsp = "3.20.0-imx"
+PREFERRED_VERSION_optee-os-tadevkit:mx93-nxp-bsp = "3.20.0-imx"
+PREFERRED_PROVIDER_virtual/kernel:mx93-nxp-bsp ?= "linux-lmp-fslc-imx"
+## iMX93 DDR4 EVK
+OSTREE_KERNEL_ARGS:imx93-11x11-lpddr4x-evk ?= "console=tty1 console=ttyLP0,115200 earlycon rootfstype=ext4"
+BOOTSCR_LOAD_ADDR:imx93-11x11-lpddr4x-evk = "0x83500000"
+UBOOT_CONFIG:imx93-11x11-lpddr4x-evk = ""
+UBOOT_SUFFIX:imx93-11x11-lpddr4x-evk = "bin"
+UBOOT_MACHINE:imx93-11x11-lpddr4x-evk = "imx93_11x11_evk_defconfig"
+UBOOT_DTB_NAME:imx93-11x11-lpddr4x-evk ?= "imx93-11x11-evk.dtb"
+
 # STM32MP1
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/bootloader:stm32mp1common ?= "u-boot-fio"
@@ -696,10 +729,14 @@ OSTREE_KERNEL_ARGS:sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_
 PREFERRED_VERSION_u-boot-fio:imx-nxp-bsp ?= "imx-2022.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
 PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.20.0"
+PREFERRED_VERSION_optee-client:mx9-nxp-bsp = "3.20.0"
 PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.20.0"
+PREFERRED_VERSION_optee-examples:mx9-nxp-bsp = "3.20.0"
 PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.20.0"
+PREFERRED_VERSION_optee-test:mx9-nxp-bsp = "3.20.0"
 ## We don't use imx-boot-container just yet
 UBOOT_PROVIDES_BOOT_CONTAINER:mx8-generic-bsp = ""
+UBOOT_PROVIDES_BOOT_CONTAINER:mx9-generic-bsp = ""
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:imx-generic-bsp = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

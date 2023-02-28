@@ -1,3 +1,3 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI:append = " file://docker-config-support-default-system-config.patch"
+SRC_URI += "file://docker-config-support-default-system-config.patch;patchdir=src/import"

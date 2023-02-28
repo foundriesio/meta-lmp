@@ -50,6 +50,7 @@ shutdown:x:70:
 nobody:*:99:
 users:x:100:
 pulse:x:171:
+ptest:x:968:
 sgx:x:969:
 lpadmin:x:970:
 ntp:x:971:

@@ -1,28 +1,40 @@
-Support docker system config
+From 18eae8460fad9641e3a40f117765ad8a5b1d21dd Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 28 Feb 2023 12:32:09 +0000
+Subject: [PATCH] Support docker system config
 
 LmP maintains a system docker configuration which should also be added
 to the default config search path.
 
 Upstream-Status: Inappropriate [lmp specific]
 
-diff --git a/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go b/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
-index c82a9e1a..552f9431 100644
---- a/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
-+++ b/src/import/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
-@@ -41,6 +41,7 @@ var (
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ .../github.com/containers/image/v5/pkg/docker/config/config.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/vendor/github.com/containers/image/v5/pkg/docker/config/config.go b/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
+index 0e3003ce..706cf17a 100644
+--- a/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
++++ b/vendor/github.com/containers/image/v5/pkg/docker/config/config.go
+@@ -37,6 +37,7 @@ var (
  	defaultPerUIDPathFormat = filepath.FromSlash("/run/containers/%d/auth.json")
  	xdgConfigHomePath       = filepath.FromSlash("containers/auth.json")
  	xdgRuntimeDirPath       = filepath.FromSlash("containers/auth.json")
-+	dockerSystemConfigPath  = filepath.FromSlash("/usr/lib/docker/config.json")
++	dockerSystemConfigPath	= filepath.FromSlash("/usr/lib/docker/config.json")
  	dockerHomePath          = filepath.FromSlash(".docker/config.json")
  	dockerLegacyHomePath    = ".dockercfg"
  	nonLinuxAuthFilePath    = filepath.FromSlash(".config/containers/auth.json")
-@@ -215,6 +216,8 @@ func getAuthFilePaths(sys *types.SystemContext, homeDir string) []authPath {
- 		xdgCfgHome = filepath.Join(homeDir, ".config")
- 	}
- 	paths = append(paths, authPath{path: filepath.Join(xdgCfgHome, xdgConfigHomePath), legacyFormat: false})
-+	// LmP: Load values from system config by default
-+	paths = append(paths, authPath{path: dockerSystemConfigPath, legacyFormat: false})
- 	if dockerConfig := os.Getenv("DOCKER_CONFIG"); dockerConfig != "" {
- 		paths = append(paths,
- 			authPath{path: filepath.Join(dockerConfig, "config.json"), legacyFormat: false},
+@@ -229,6 +230,8 @@ func getAuthFilePaths(sys *types.SystemContext, homeDir string) []authPath {
+ 			xdgCfgHome = filepath.Join(homeDir, ".config")
+ 		}
+ 		paths = append(paths, newAuthPathDefault(filepath.Join(xdgCfgHome, xdgConfigHomePath)))
++		// LmP: Load values from system config by default
++		paths = append(paths, newAuthPathDefault(dockerSystemConfigPath))
+ 		if dockerConfig := os.Getenv("DOCKER_CONFIG"); dockerConfig != "" {
+ 			paths = append(paths, newAuthPathDefault(filepath.Join(dockerConfig, "config.json")))
+ 		} else {
+-- 
+2.34.1
+

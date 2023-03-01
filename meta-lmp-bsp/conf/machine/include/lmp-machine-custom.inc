@@ -362,7 +362,6 @@ KERNEL_IMAGETYPE:sota:mx8mm-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mm-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mm-nxp-bsp ?= "linux-lmp-fslc-imx"
-MACHINE_FIRMWARE:mx8mm-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
 IMXBOOT_TARGETS:mx8mm-nxp-bsp = "flash_evk_spl"
 ## LUKS
 OSTREE_SPLIT_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
@@ -410,7 +409,6 @@ KERNEL_IMAGETYPE:sota:mx8mp-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mp-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mp-nxp-bsp ?= "linux-lmp-fslc-imx"
-MACHINE_FIRMWARE:mx8mp-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE:sota:mx8mp-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mp-nxp-bsp = "flash_evk_spl"
 ## iMX8MP EVK
@@ -451,7 +449,6 @@ KERNEL_IMAGETYPE:sota:mx8mn-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mn-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mn-generic-bsp ?= "linux-lmp-fslc-imx"
-MACHINE_FIRMWARE:mx8mn-generic-bsp = "linux-firmware-imx-sdma-imx7d"
 WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
 # iMX8MN DDR4 EVK
 KMACHINE:imx8mn-ddr4-evk = "imx8mn-evk"
@@ -676,3 +673,8 @@ UBOOT_PROVIDES_BOOT_CONTAINER:mx8-generic-bsp = ""
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:imx-generic-bsp = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS
 OPTEE_WKS_FILE_DEPENDS:imx-generic-bsp = ""
+# Use latest SDMA firmware from firmware-imx instead of upstream linux-firmware
+MACHINE_FIRMWARE:remove:mx6-nxp-bsp = "linux-firmware-imx-sdma-imx6q"
+MACHINE_FIRMWARE:remove:mx8-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
+MACHINE_FIRMWARE:append:mx6-nxp-bsp = " firmware-imx-sdma-imx6q firmwared"
+MACHINE_FIRMWARE:append:mx8-nxp-bsp = " firmware-imx-sdma-imx7d firmwared"

@@ -103,6 +103,8 @@ OBJCOPY:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-tegra:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-tegra:toolchain-clang = "${HOST_PREFIX}strip"
+OBJCOPY:pn-linux-tegra-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
+STRIP:pn-linux-tegra-rt:toolchain-clang = "${HOST_PREFIX}strip"
 
 # jailhouse (includes kernel module)
 # | warning: the compiler differs from the one used to build the kernel

@@ -1,0 +1,45 @@
+From 4e17314c73ba7d50dacd74615d7db9d226085282 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Thu, 2 Mar 2023 15:45:40 +0000
+Subject: [PATCH] configure.ac: fix libsoftokn3 detection when cross compiling
+
+These fix cross compilation with bitbake:
+
+| checking for /build/tmp-lmp/work/corei7-64-lmp-linux/pkcs11-provider/0.1+git999-r0/recipe-sysroot/usr/lib/libsoftokn3.so... configure: error: cannot check for file existence when cross compiling
+
+Upstream-Status: Pending
+
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ configure.ac | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 7d3f163..0f66844 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -95,11 +95,17 @@ PKG_CHECK_EXISTS(
+         )]
+ )
+ 
+-AC_CHECK_FILE($SOFTOKENDIR/libsoftokn3$SHARED_EXT, [],
+-    [AC_CHECK_FILE($SOFTOKENDIR/nss/libsoftokn3$SHARED_EXT,
+-        [AC_SUBST([SOFTOKEN_SUBDIR], "nss/")],
++if test "$cross_compiling" != "yes"; then
++    AC_CHECK_FILE($SOFTOKENDIR/libsoftokn3$SHARED_EXT, [],
++        [AC_CHECK_FILE($SOFTOKENDIR/nss/libsoftokn3$SHARED_EXT,
++            [AC_SUBST([SOFTOKEN_SUBDIR], "nss/")],
++            [AC_MSG_WARN([Softoken library missing, tests will fail!])])
++        ])
++else
++    AS_IF([test -a "$SOFTOKENDIR/libsoftokn3$SHARED_EXT"],
++        [],
+         [AC_MSG_WARN([Softoken library missing, tests will fail!])])
+-    ])
++fi
+ 
+ # find p11-kit-client to separate softhsm openssl context from our tests
+ PKG_CHECK_EXISTS([p11-kit-1],
+-- 
+2.34.1
+

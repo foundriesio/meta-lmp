@@ -1,6 +1,9 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://tmpfiles.conf"
+SRC_URI += " \
+	file://0001-lib-ecdh1-derive-simple-implementation-for-KDF-null.patch \
+	file://tmpfiles.conf \
+"
 
 EXTRA_OECONF += "--with-storedir=${localstatedir}/tpm2_pkcs11"
 

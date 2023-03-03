@@ -6,7 +6,17 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=0fc19f620a102768d6dbd1e7166e78ab"
 
 DEPENDS = "autoconf-archive pkgconfig sqlite3 openssl libtss2-dev tpm2-tools libyaml p11-kit python3-setuptools-native"
 
-SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz"
+SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz \
+           file://0001-lib-ecdh1-derive-simple-implementation-for-KDF-null.patch \
+           file://0002-test-pkcs11-tool.sh-ECDH1-shared-secret-generation.patch \
+           file://0003-test-pkcs11-tool.sh-replace-call-to-pkcs11-tool-for-.patch \
+           file://0004-test-integration-validate-ECDH-1-with-EC-NIST-P256.patch \
+           file://0005-Fix-failing-database-upgrade.patch \
+           file://0006-db-add-test-for-building-lock-file-path.patch \
+           file://0007-db-fix-PKCS11_SQL_LOCK-usage.patch \
+           file://0008-configure-update-with-fapi-configure-option.patch \
+           file://0009-test-use-default-not-base-in-openssl-provider.patch \
+           "
 
 SRC_URI[sha256sum] = "35bf06c30cfa76fc0eba2c5f503cf7dd0d34a66afb2d292fee896b90362f633b"
 

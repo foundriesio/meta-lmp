@@ -1,0 +1,29 @@
+From 9230de009e3e37a27927c241e3a70a6330ccbdbf Mon Sep 17 00:00:00 2001
+From: Tobias Wackenhut <tobias@wackenhut.at>
+Date: Fri, 17 Feb 2023 00:15:43 +0100
+Subject: [PATCH] Fix failing database upgrade
+
+Fix double conversion to int, causing a failing database upgrade
+
+Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-pkcs11/commit/2d97e4cb40ca2d5becb5a2e7adbf0eca2f067efe]
+
+Signed-off-by: Tobias Wackenhut <tobias@wackenhut.at>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ tools/tpm2_pkcs11/db.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/tpm2_pkcs11/db.py b/tools/tpm2_pkcs11/db.py
+index 6d5fa68..36edc7e 100644
+--- a/tools/tpm2_pkcs11/db.py
++++ b/tools/tpm2_pkcs11/db.py
+@@ -557,8 +557,7 @@ class Db(object):
+                 if attr == CKA_ALLOWED_MECHANISMS and \
+                     isinstance(attrs[attr], str):
+                         list_hexa = [socket.ntohl(int(attrs[attr][i:i+long_size], 16)) for i in range(0, len(attrs[attr]), long_size)]
+-                        list_int = [int(x,16) for x in list_hexa]
+-                        attrs[attr] = list_int
++                        attrs[attr] = list_hexa
+ 
+             Db._updatetertiary(dbbakcon, t['id'], attrs)
+ 

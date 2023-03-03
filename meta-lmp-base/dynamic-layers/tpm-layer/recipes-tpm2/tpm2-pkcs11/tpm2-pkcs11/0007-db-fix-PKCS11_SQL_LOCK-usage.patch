@@ -1,0 +1,33 @@
+From 5ef1c96324e28c6cfafb322c461e4e9bf97105f3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?P=C3=A9ter=20V=C3=A1g=C3=A1ny?= <pevagany@gmail.com>
+Date: Thu, 23 Feb 2023 17:53:37 +0200
+Subject: [PATCH] db: fix PKCS11_SQL_LOCK usage
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add parentheses for explicit order of preference.
+
+Fixes: #820
+
+Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-pkcs11/commit/e8a3efd61736325a0296a4d9cf2c90c0f7144a2f]
+
+Signed-off-by: Péter Vágány <pevagany@gmail.com>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ src/lib/db.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/lib/db.c b/src/lib/db.c
+index d7792ea..b4bbd1b 100644
+--- a/src/lib/db.c
++++ b/src/lib/db.c
+@@ -2394,7 +2394,7 @@ DEBUG_VISIBILITY int get_lock_path(const char *path, char *lockpath) {
+     size_t lenv_lock = 0;
+     char *env_lock = getenv("PKCS11_SQL_LOCK");
+ 
+-    if (env_lock && (lenv_lock = strlen(env_lock) > 0)) {
++    if (env_lock && ((lenv_lock = strlen(env_lock)) > 0)) {
+         /*
+          * lock file shall be "PKCS11_SQL_LOCK" + '/' + path + ".lock", but
+          * path's '/' will be substituted by '_'.

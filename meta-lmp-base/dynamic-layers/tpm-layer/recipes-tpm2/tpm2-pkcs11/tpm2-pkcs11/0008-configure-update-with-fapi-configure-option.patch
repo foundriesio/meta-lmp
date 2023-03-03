@@ -1,0 +1,50 @@
+From dc423b6913dcc1e96aee006c42b8c2a7d6f39de6 Mon Sep 17 00:00:00 2001
+From: William Roberts <william.c.roberts@intel.com>
+Date: Mon, 27 Feb 2023 12:14:05 -0600
+Subject: [PATCH] configure: update --with-fapi configure option
+
+Update configure.ac to use AC_ARG_WITH and update the docs to the proper
+argument. Keep the option the same for downstream packagers.
+
+Fixes: #822
+
+Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-pkcs11/commit/7ad56b0faa30691e22a110b4ddc91251846d48a4]
+
+Signed-off-by: William Roberts <william.c.roberts@intel.com>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ configure.ac     | 4 ++--
+ docs/BUILDING.md | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d31f854..771004b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -114,11 +114,11 @@ AC_ARG_ENABLE(
+ AS_IF([test "x$esapi_sf" = "xyes"],
+        [do_esapi_manage_flags])
+ 
+-AC_ARG_ENABLE(
++AC_ARG_WITH(
+   [fapi],
+   [AS_HELP_STRING([--with-fapi],
+     [enable or disable the fapi backend. Default is "auto" to autodetect])],
+-    [enable_fapi=$enableval],
++    [enable_fapi=$withval],
+     [enable_fapi=auto])
+ 
+ AC_DEFUN([do_fapi_configure], [
+diff --git a/docs/BUILDING.md b/docs/BUILDING.md
+index e0bf9fd..5c725d2 100644
+--- a/docs/BUILDING.md
++++ b/docs/BUILDING.md
+@@ -120,7 +120,7 @@ Building the project and running tests can be also done with specific shell comm
+ ```sh
+ # Configure tpm2-pkcs11 to build unit and integration tests
+ ./bootstrap
+-./configure --enable-fapi --enable-unit --enable-integration
++./configure --with-fapi --enable-unit --enable-integration
+ 
+ # Build the project and run tests
+ make -j $(nproc)

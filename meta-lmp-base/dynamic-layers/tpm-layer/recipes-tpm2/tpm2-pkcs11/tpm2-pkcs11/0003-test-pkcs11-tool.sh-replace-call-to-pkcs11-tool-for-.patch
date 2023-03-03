@@ -1,0 +1,28 @@
+From 00da5d5e8ec1c15f67b548b6f11f243c3affa977 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Thu, 16 Feb 2023 17:48:42 +0100
+Subject: [PATCH] test/pkcs11-tool.sh: replace call to pkcs11-tool for wrap
+
+Replace the last instance of the pkcs11-tool call for its wrapped version.
+
+Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-pkcs11/commit/7ea26bb5f68f8a64faf215173d25c9996a5bdcf9]
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ test/integration/pkcs11-tool.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/integration/pkcs11-tool.sh b/test/integration/pkcs11-tool.sh
+index b5919fd..afd7e4a 100755
+--- a/test/integration/pkcs11-tool.sh
++++ b/test/integration/pkcs11-tool.sh
+@@ -38,7 +38,7 @@ echo "Found privkey"
+ 
+ # test pin change
+ echo "Attempting pin change"
+-pkcs11-tool --module "$modpath" --slot=1 --login --pin myuserpin --change-pin --new-pin mynewpin
++pkcs11_tool --slot=1 --login --pin myuserpin --change-pin --new-pin mynewpin
+ echo "Pin changed"
+ 
+ # change userpin from sopin

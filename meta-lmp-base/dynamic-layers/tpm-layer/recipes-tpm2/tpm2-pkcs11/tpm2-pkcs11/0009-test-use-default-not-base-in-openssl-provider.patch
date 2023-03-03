@@ -1,0 +1,49 @@
+From 574e17cfae790bf3227f8e4a25cabe59822a462e Mon Sep 17 00:00:00 2001
+From: William Roberts <william.c.roberts@intel.com>
+Date: Wed, 1 Mar 2023 12:14:47 -0600
+Subject: [PATCH] test: use default not base in openssl provider
+
+Fixes things like:
+openssl req -provider tpm2 -provider base -new -x509 -days 365 -subj '/CN=my key/' -sha256 -key /tmp/tpm_simulator_TKIAAZ/14.pem --passin pass:1a4b7d67c5a2cce3f2a04cdaf1c062e3 -out /tmp/tpm_simulator_TKIAAZ/cert.pem.ec1
+Error adding x509 extensions from section v3_ca
+809BACAF177F0000:error:0308010C:digital envelope routines:inner_evp_generic_fetch:unsupported:../crypto/evp/evp_fetch.c:349:Global default library context, Algorithm (SHA1 : 94), Properties (<null>)
+809BACAF177F0000:error:11000080:X509 V3 routines:X509V3_EXT_nconf_int:error in extension:../crypto/x509/v3_conf.c:48:section=v3_ca, name=subjectKeyIdentifier, value=hash
+
+Upstream-Status: Backport [https://github.com/tpm2-software/tpm2-pkcs11/commit/1b3aab90ee5f7debbce82c7e229aa2950a9e8f0d]
+
+Signed-off-by: William Roberts <william.c.roberts@intel.com>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ test/integration/scripts/create_pkcs_store.sh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/integration/scripts/create_pkcs_store.sh b/test/integration/scripts/create_pkcs_store.sh
+index c7699d5..2b03ea7 100755
+--- a/test/integration/scripts/create_pkcs_store.sh
++++ b/test/integration/scripts/create_pkcs_store.sh
+@@ -181,21 +181,21 @@ if [ "$OSSL3_DETECTED" -eq "1" ]; then
+     setup_asan
+ 
+     TPM2OPENSSL_PARENT_AUTH="mypobjpin" openssl \
+-        req -provider tpm2 -provider base -new -x509 -days 365 -subj '/CN=my key/' -sha256 \
++        req -provider tpm2 -provider default -new -x509 -days 365 -subj '/CN=my key/' -sha256 \
+             -key "$TPM2_PKCS11_STORE/14.pem" --passin "pass:$auth_14" -out "$cert.ec1"
+ 
+     TPM2OPENSSL_PARENT_AUTH="mypobjpin" openssl \
+-        req -provider tpm2 -provider base -new -x509 -days 365 -subj '/CN=my key/' -sha256 \
++        req -provider tpm2 -provider default -new -x509 -days 365 -subj '/CN=my key/' -sha256 \
+         -key "$TPM2_PKCS11_STORE/6.pem" --passin "pass:$auth_6" \
+         -config "$TEST_FIXTURES/ossl-req-ca.cnf" -extensions ca_ext -out "$cert.rsa1"
+ 
+ 	# sign a certificate for rsa2 using the rsa1 key
+ 	TPM2OPENSSL_PARENT_AUTH="mypobjpin" openssl \
+-	    req -provider tpm2 -provider base -new -subj '/CN=my sub key/' -sha256 \
++	    req -provider tpm2 -provider default -new -subj '/CN=my sub key/' -sha256 \
+ 	    -key "$TPM2_PKCS11_STORE/8.pem" --passin "pass:$auth_8" -out "$cert.csr.rsa2"
+ 
+ 	TPM2OPENSSL_PARENT_AUTH="mypobjpin" openssl \
+-    	x509 -provider tpm2 -provider base -req -days 365 -sha256 -in "$cert.csr.rsa2" \
++        x509 -provider tpm2 -provider default -req -days 365 -sha256 -in "$cert.csr.rsa2" \
+     	-CA "$cert.rsa1" -CAkey "$TPM2_PKCS11_STORE/6.pem" --passin "pass:$auth_6"\
+     	-CAcreateserial -extfile "$TEST_FIXTURES/ossl-req-cert.cnf" -extensions cert_ext \
+     	-out "$cert.rsa2"

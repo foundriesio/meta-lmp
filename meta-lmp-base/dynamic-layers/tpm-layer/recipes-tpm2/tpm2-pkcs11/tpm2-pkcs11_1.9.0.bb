@@ -24,7 +24,7 @@ UPSTREAM_CHECK_URI = "https://github.com/tpm2-software/${BPN}/releases"
 
 inherit autotools-brokensep pkgconfig python3native
 
-PACKAGECONFIG ?= ""
+PACKAGECONFIG ?= "fapi"
 PACKAGECONFIG[fapi] = "--with-fapi=yes,--with-fapi=no,tpm2-tss"
 
 EXTRA_OECONF += "--disable-ptool-checks"

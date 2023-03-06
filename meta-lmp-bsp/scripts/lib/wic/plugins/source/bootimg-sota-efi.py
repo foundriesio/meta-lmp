@@ -256,5 +256,11 @@ class BootimgSotaEFIPlugin(SourcePlugin):
         """
         full_path = creator._full_path(workdir, disk_name, "direct")
         if creator.ptable_format == 'gpt':
-            exec_native_cmd("parted -s %s set 1 boot on" % \
-                            full_path, native_sysroot)
+            # Set firt partition or first active partition as bootable
+            for part in [p for p in disk.partitions if p.active]:
+                esp_part_num = part.num
+                break
+            else:
+                esp_part_num = 1
+            exec_native_cmd("parted -s %s set %s boot on" % \
+                            (full_path, esp_part_num), native_sysroot)

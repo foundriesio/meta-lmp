@@ -196,11 +196,13 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 fi
 
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:${ostree_bootpart} ${fit_addr} "/boot"${kernel_image}'
+setenv bootcmd_bootargs_add_root 'setenv bootargs "${bootargs} root=/dev/mmcblk${devnum}p${rootpart}"'
 setenv bootcmd_tee_ovy 'if test -n ${optee_ovl_addr}; then imxtract ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final} fdt@@FIT_NODE_SEPARATOR@@${fdt_file_final} ${fdt_addr}; fdt addr ${fdt_addr}; fdt resize 0x1000; fdt apply ${optee_ovl_addr}; fi'
 if test -z "${bootcmd_custom_run}"; then setenv bootcmd_run 'if test -n ${optee_ovl_addr}; then bootm ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final} ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final} ${fdt_addr}; else echo "${fio_msg} loading ${fdt_file_final}"; bootm ${fit_addr}#conf@@FIT_NODE_SEPARATOR@@${fdt_file_final}; fi'; else setenv bootcmd_run ${bootcmd_custom_run}; setenv bootcmd_custom_run; fi
 setenv bootcmd_rollback 'if test -n "${kernel_image2}" && test "${fiovb.is_secondary_boot}" = "0" && test "${fiovb.rollback}" = "1"; then setenv kernel_image "${kernel_image2}"; setenv bootdir "${bootdir2}"; setenv bootargs "${bootargs2}"; fi;'
 
 run bootcmd_rollback
+run bootcmd_bootargs_add_root
 run bootcmd_load_f
 run bootcmd_tee_ovy
 if test -n "${bootcmd_load_fw}"; then

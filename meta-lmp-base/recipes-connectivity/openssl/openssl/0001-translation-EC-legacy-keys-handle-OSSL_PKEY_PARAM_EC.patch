@@ -1,0 +1,109 @@
+From dac5f70e5b8a3a533fe712f490938c1ab69314eb Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Wed, 8 Mar 2023 12:50:25 +0100
+Subject: [PATCH] translation: EC legacy keys, handle
+ OSSL_PKEY_PARAM_EC_PUB_X,Y requests
+
+Required by tpm2-tss to load legacy EC keys using the OpenSSL engine.
+
+Fixes: https://github.com/tpm2-software/tpm2-tss/issues/2581
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+
+Upstream-Status: Submitted
+---
+ crypto/evp/ctrl_params_translate.c | 72 ++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
+
+diff --git a/crypto/evp/ctrl_params_translate.c b/crypto/evp/ctrl_params_translate.c
+index c767c31..ba9806f 100644
+--- a/crypto/evp/ctrl_params_translate.c
++++ b/crypto/evp/ctrl_params_translate.c
+@@ -1644,6 +1644,72 @@ static int get_payload_public_key(enum state state,
+     return ret;
+ }
+ 
++static int get_payload_public_key_ec(enum state state,
++                                     const struct translation_st* translation,
++                                     struct translation_ctx_st* ctx)
++{
++    EVP_PKEY* pkey = ctx->p2;
++    unsigned char* buf = NULL;
++    BIGNUM* bn = NULL;
++    int ret = 0;
++
++    ctx->p2 = NULL;
++    switch (EVP_PKEY_get_base_id(pkey)) {
++#ifndef OPENSSL_NO_EC
++        case EVP_PKEY_EC:
++            if (ctx->params->data_type != OSSL_PARAM_UNSIGNED_INTEGER)
++                return 0;
++
++            const EC_KEY* eckey = EVP_PKEY_get0_EC_KEY(pkey);
++            BN_CTX* bnctx = BN_CTX_new_ex(ossl_ec_key_get_libctx(eckey));
++            const EC_GROUP* ecg = EC_KEY_get0_group(eckey);
++            const EC_POINT* point = EC_KEY_get0_public_key(eckey);
++            if (bnctx == NULL)
++                return 0;
++            size_t len = EC_POINT_point2buf(ecg, point,
++                                            POINT_CONVERSION_UNCOMPRESSED,
++                                            &buf, bnctx);
++            if (!len) {
++                ret = 0;
++                goto out;
++            }
++
++            /* skip tag */
++            len = len - 1;
++
++            if (!memcmp(ctx->params->key, OSSL_PKEY_PARAM_EC_PUB_X,
++                        strnlen(OSSL_PKEY_PARAM_EC_PUB_X, 2))) {
++                bn = BN_new();
++                BN_bin2bn(buf + 1, len / 2, bn);
++            }
++
++            if (!memcmp(ctx->params->key, OSSL_PKEY_PARAM_EC_PUB_Y,
++                             strnlen(OSSL_PKEY_PARAM_EC_PUB_Y, 2))) {
++                bn = BN_new();
++                BN_bin2bn(buf + 1 + len / 2, len / 2, bn);
++            }
++
++            if (bn)
++                ctx->p2 = bn;
++
++            BN_CTX_free(bnctx);
++            break;
++#endif
++        default:
++            ERR_raise(ERR_LIB_EVP, EVP_R_UNSUPPORTED_KEY_TYPE);
++            return 0;
++    }
++
++    if (ctx->p2)
++        ret = default_fixup_args(state, translation, ctx);
++out:
++    OPENSSL_free(buf);
++    if (bn)
++        BN_free(bn);
++
++    return ret;
++}
++
+ static int get_payload_bn(enum state state,
+                           const struct translation_st *translation,
+                           struct translation_ctx_st *ctx, const BIGNUM *bn)
+@@ -2330,6 +2396,12 @@ static const struct translation_st evp_pkey_translations[] = {
+       OSSL_PKEY_PARAM_PUB_KEY,
+       0 /* no data type, let get_payload_public_key() handle that */,
+       get_payload_public_key },
++    { GET, -1, -1, -1, 0, NULL, NULL,
++        OSSL_PKEY_PARAM_EC_PUB_X, OSSL_PARAM_UNSIGNED_INTEGER,
++        get_payload_public_key_ec },
++    { GET, -1, -1, -1, 0, NULL, NULL,
++        OSSL_PKEY_PARAM_EC_PUB_Y, OSSL_PARAM_UNSIGNED_INTEGER,
++        get_payload_public_key_ec },
+ 
+     /* DH and DSA */
+     { GET, -1, -1, -1, 0, NULL, NULL,
+-- 
+2.34.1
+

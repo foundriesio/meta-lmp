@@ -54,6 +54,7 @@ PACKAGECONFIG:append:pn-kmod = " openssl"
 PACKAGECONFIG:append:pn-kmod-native = " openssl"
 PACKAGECONFIG:append:pn-cryptsetup = " luks2"
 PACKAGECONFIG:append:pn-cryptsetup-native = " luks2"
+PACKAGECONFIG:pn-tpm2-tss = "policy"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"

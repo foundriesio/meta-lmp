@@ -2,6 +2,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
 	file://0001-lib-ecdh1-derive-simple-implementation-for-KDF-null.patch \
+	file://0001-backend-do-not-initialize-fapi-when-not-enabled.patch \
+	file://0002-db-don-t-warn-the-user-when-db-is-not-found.patch \
 	file://tmpfiles.conf \
 "
 

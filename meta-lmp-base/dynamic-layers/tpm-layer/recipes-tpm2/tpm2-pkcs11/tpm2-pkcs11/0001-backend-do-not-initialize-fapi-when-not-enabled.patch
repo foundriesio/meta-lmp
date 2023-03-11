@@ -1,0 +1,48 @@
+From aa02338802fde3be72ed509f7a7fb3cccd5ddbe2 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Sat, 11 Mar 2023 13:00:37 -0300
+Subject: [PATCH 1/2] backend: do not initialize fapi when not enabled
+
+Remove warning caused by a failure when trying to initialize the fapi
+backend, which runs even when fapi is not enabled during the build.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/lib/backend.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/lib/backend.c b/src/lib/backend.c
+index ca5e2cc..9e64b76 100644
+--- a/src/lib/backend.c
++++ b/src/lib/backend.c
+@@ -39,6 +39,7 @@ static bool esysdb_init = false;
+ 
+ CK_RV backend_init(void) {
+     LOGV("Initializing backends");
++    CK_RV rv = CKR_OK;
+ 
+     enum backend backend = get_backend();
+ 
+@@ -46,7 +47,8 @@ CK_RV backend_init(void) {
+         return CKR_GENERAL_ERROR;
+     }
+ 
+-    CK_RV rv = backend_fapi_init();
++#ifdef HAVE_FAPI
++    rv = backend_fapi_init();
+     if (rv) {
+         static const char *msg = "FAPI backend was not initialized.";
+         if (backend == backend_fapi) {
+@@ -57,6 +59,7 @@ CK_RV backend_init(void) {
+     } else {
+         fapi_init = true;
+     }
++#endif
+ 
+     rv = backend_esysdb_init();
+     if (rv) {
+-- 
+2.34.1
+

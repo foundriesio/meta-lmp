@@ -148,23 +148,36 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 				run do_reboot
 			fi;
 		fi
-	fi
-	# That means that ak-lite confirmed successful boot, so we can now reset
-	# fiovb.bootupgrade_available variable, confirming that everything is ok
-	# about boot firmware
-	if test "${fiovb.bootupgrade_primary_updated}" = "1" && test "${fiovb.upgrade_available}" = "0"; then
-		echo "${fio_msg} finishing boot firmware update..."
-		run bootcmd_bootenv
-		if test -n "${fiovb_rpmb}"; then
-			fiovb write_pvalue bootupgrade_available 0;
-			fiovb write_pvalue bootupgrade_primary_updated 0;
-			fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
-		else
-			setenv bootupgrade_available 0;
-			setenv bootupgrade_primary_updated 0;
-			setenv bootfirmware_version "${bootfirmware_version}";
+	else
+
+		# Handle case, when bootupgrade_available is mistakenly set (manually using fiovb/ubootenv)
+		# and this prevents aklite to start new update
+		if test "${fiovb.bootupgrade_primary_updated}" = "0" && test "${fiovb.bootupgrade_available}" = "1"; then
+			if test -n "${fiovb_rpmb}"; then
+				fiovb write_pvalue bootupgrade_available 0;
+			else
+				setenv bootupgrade_available 0;
+			fi
+			run saveenv_mmc
 		fi
-		run saveenv_mmc
+
+		# That means that ak-lite confirmed successful boot, so we can now reset
+		# fiovb.bootupgrade_available variable, confirming that everything is ok
+		# about boot firmware
+		if test "${fiovb.bootupgrade_primary_updated}" = "1"; then
+			echo "${fio_msg} finishing boot firmware update..."
+			run bootcmd_bootenv
+			if test -n "${fiovb_rpmb}"; then
+				fiovb write_pvalue bootupgrade_available 0;
+				fiovb write_pvalue bootupgrade_primary_updated 0;
+				fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
+			else
+				setenv bootupgrade_available 0;
+				setenv bootupgrade_primary_updated 0;
+				setenv bootfirmware_version "${bootfirmware_version}";
+			fi
+			run saveenv_mmc
+		fi
 	fi
 
 else

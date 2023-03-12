@@ -20,6 +20,9 @@ SE05X_HW_RSA ?= "y"
 # Some SE05X versions do not support unauthenticated sessions
 SE05X_SCP03_ONLY ?= "n"
 
+# Increase PKCS11 TA size, as se05x requires larger heap pool
+PKCS11_TA_HEAP_SIZE = "262144"
+
 python () {
     oefid = d.getVar("SE05X_OEFID")
     if oefid in ["0xA565", "0xA564"]:

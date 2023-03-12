@@ -524,6 +524,7 @@ LMP_FLASHLAYOUT_BOARD_NAME:stm32mp15-eval = "stm32mp157c-ev1"
 LMP_BOOT_FIRMWARE_FILES:stm32mp15-eval = "arm-trusted-firmware/tf-a-stm32mp157c-ev1-emmc.stm32 fip/fip-stm32mp157c-ev1-optee.bin"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:append:stm32mp15-eval = " kernel kernel-devicetree u-boot-default-script"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:sota:stm32mp15-eval = "kernel kernel-devicetree u-boot-default-script"
+KERNEL_DEVICETREE:stm32mp15-eval = "stm32mp157c-ev1-scmi.dtb"
 ## stm32mp15-disco
 TF_A_SIGN_ENABLE:sota:stm32mp15-disco = "1"
 UBOOT_SIGN_ENABLE:sota:stm32mp15-disco = "1"
@@ -540,6 +541,7 @@ WKS_FILE_DEPENDS:remove:stm32mp15-disco = "st-image-bootfs st-image-userfs"
 WKS_FILE:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee.wks.in"
 WKS_FILE:sota:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee-sota.wks.in"
 LMP_BOOT_FIRMWARE_FILES:stm32mp15-disco = "arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32 fip/fip-stm32mp157c-dk2-optee.bin"
+KERNEL_DEVICETREE:stm32mp15-disco = "stm32mp157c-dk2-scmi.dtb"
 ## stm32mp15-eval-sec
 SOTA_CLIENT_FEATURES:remove:sota:stm32mp15-eval-sec = "ubootenv"
 

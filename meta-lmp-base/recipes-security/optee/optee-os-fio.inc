@@ -27,6 +27,8 @@ SRC_URI = "${OPTEE_OS_REPO};protocol=https;branch=${SRCBRANCH}"
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 
+PKCS11_TA_HEAP_SIZE ??= "65536"
+
 EXTRA_OEMAKE += " \
     PLATFORM=${OPTEEMACHINE} \
     CFG_${OPTEE_CORE}_core=y \
@@ -34,6 +36,7 @@ EXTRA_OEMAKE += " \
     CROSS_COMPILE_ta_${OPTEE_ARCH}=${HOST_PREFIX} \
     CFG_WERROR=y DEBUG=0 CFG_OPTEE_REVISION_EXTRA=+fio \
     CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_TA_LOG_LEVEL=2 \
+    CFG_PKCS11_TA_HEAP_SIZE=${PKCS11_TA_HEAP_SIZE} \
     ta-targets=ta_${OPTEE_ARCH} \
     O=${B} \
 "

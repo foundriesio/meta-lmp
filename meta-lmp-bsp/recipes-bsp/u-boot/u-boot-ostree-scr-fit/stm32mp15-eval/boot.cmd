@@ -1,3 +1,5 @@
+setenv fdtfile stm32mp157c-ev1-scmi.dtb
+
 echo "Using ${fdtfile}"
 
 # Default boot type and device

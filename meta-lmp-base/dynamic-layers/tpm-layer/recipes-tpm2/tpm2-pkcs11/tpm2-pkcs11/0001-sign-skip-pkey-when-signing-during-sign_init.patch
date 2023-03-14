@@ -1,0 +1,60 @@
+From 5c3ce3469003659c25fcbb456dcb4b03e3cc68c2 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 14 Mar 2023 00:23:43 -0300
+Subject: [PATCH] sign: skip pkey when signing during sign_init
+
+Skip setting up the public key during sign_init when it is a sign
+operation.
+
+This is to skip calling EVP_PKEY_fromdata in order to set the public
+key, which is known to not work correctly with openssl + pkcs11 engine,
+as discussed at
+https://www.mail-archive.com/openssl-users@openssl.org/msg90614.html.
+
+Upstream-Status: Pending
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/lib/sign.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/src/lib/sign.c b/src/lib/sign.c
+index 20494ea..e78c304 100644
+--- a/src/lib/sign.c
++++ b/src/lib/sign.c
+@@ -36,7 +36,7 @@ struct sign_opdata {
+     const EVP_MD *md;
+ };
+ 
+-static sign_opdata *sign_opdata_new(mdetail *mdtl, CK_MECHANISM_PTR mechanism, tobject *tobj) {
++static sign_opdata *sign_opdata_new(operation op, mdetail *mdtl, CK_MECHANISM_PTR mechanism, tobject *tobj) {
+ 
+     int padding = 0;
+     CK_RV rv = mech_get_padding(mdtl,
+@@ -74,9 +74,11 @@ static sign_opdata *sign_opdata_new(mdetail *mdtl, CK_MECHANISM_PTR mechanism, t
+     }
+ 
+     EVP_PKEY *pkey = NULL;
+-    rv = ssl_util_attrs_to_evp(tobj->attrs, &pkey);
+-    if (rv != CKR_OK) {
+-        return NULL;
++    if (op != operation_sign) {
++        rv = ssl_util_attrs_to_evp(tobj->attrs, &pkey);
++        if (rv != CKR_OK) {
++            return NULL;
++        }
+     }
+ 
+     sign_opdata *opdata = calloc(1, sizeof(sign_opdata));
+@@ -226,7 +228,7 @@ static CK_RV common_init(operation op, session_ctx *ctx, CK_MECHANISM_PTR mechan
+         }
+     }
+ 
+-    sign_opdata *opdata = sign_opdata_new(tok->mdtl,
++    sign_opdata *opdata = sign_opdata_new(op, tok->mdtl,
+             mechanism, tobj);
+     if (!opdata) {
+         tpm_opdata_free(&tpm_opdata);
+-- 
+2.34.1
+

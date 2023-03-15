@@ -3,6 +3,8 @@
 
 inherit kernel-arch
 
+DEPENDS += "dtc-native"
+
 # Share same key as used by U-Boot by default
 UBOOT_SPL_SIGN_ENABLE ??= "${UBOOT_SIGN_ENABLE}"
 UBOOT_SPL_SIGN_KEYNAME ??= "${UBOOT_SIGN_KEYNAME}"
@@ -246,6 +248,14 @@ EOF
 	};
 };
 EOF
+
+	# Add boot firmware version to U-Boot DTB (if it's defined and is not zero)
+	if [ -n "${LMP_BOOT_FIRMWARE_VERSION}" -a "${LMP_BOOT_FIRMWARE_VERSION}" != "0" ]; then
+		# Might return "FDT_ERR_EXISTS" error, if "lmp" node already exists
+		fdtput -c -t s ${uboot_dtb} /firmware/bootloader || true
+		fdtput -t s ${uboot_dtb} /firmware/bootloader compatible "lmp,bootloader"
+		fdtput -t s ${uboot_dtb} /firmware/bootloader bootfirmware-version "${LMP_BOOT_FIRMWARE_VERSION}"
+	fi
 
 	# Assemble the ITB image
 	tools/mkimage -f u-boot.its ${1}

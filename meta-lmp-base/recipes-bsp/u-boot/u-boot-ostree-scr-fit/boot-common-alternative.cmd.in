@@ -52,11 +52,15 @@ if fiovb init ${devnum} && test -n "${board_is_closed}"; then
 	if test ! $? -eq 0; then fiovb write_pvalue debug 0; fi
 	fiovb read_pvalue is_secondary_boot 4
 	if test ! $? -eq 0; then fiovb write_pvalue is_secondary_boot 0; fi
+
+	# Try to read rollback-protection variable, but don't write, as this is OTP value
+	fiovb read_pvalue rollback_protection 4
 else
 	echo "${fio_msg} Using ubootenv"
 	# Make sure initial environment is valid
 	if test -z "${bootcount}"; then setenv bootcount 0; setenv envsave 1; fi
 	if test -z "${rollback}"; then setenv rollback 0; setenv envsave 1; fi
+	if test -z "${rollback_protection}"; then setenv rollback_protection 0; setenv envsave 1; fi
 	if test -z "${upgrade_available}"; then setenv upgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_available}"; then setenv bootupgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_primary_updated}"; then setenv bootupgrade_primary_updated 0; setenv envsave 1; fi
@@ -67,9 +71,11 @@ else
 
 	setenv fiovb.bootcount "${bootcount}"
 	setenv fiovb.rollback "${rollback}"
+	setenv fiovb.rollback_protection "${rollback_protection}"
 	setenv fiovb.upgrade_available "${upgrade_available}"
 	setenv fiovb.bootupgrade_available "${bootupgrade_available}"
 	setenv fiovb.bootupgrade_primary_updated "${bootupgrade_primary_updated}"
+	setenv fiovb.bootfirmware_version "${bootfirmware_version}"
 	setenv fiovb.debug "${debug}"
 fi
 
@@ -79,6 +85,7 @@ if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} fiovb.is_secondary_boot = ${fiovb.is_secondary_boot}"
 	echo "${fio_msg} fiovb.bootcount = ${fiovb.bootcount}"
 	echo "${fio_msg} fiovb.rollback = ${fiovb.rollback}"
+	echo "${fio_msg} fiovb.rollback_protection = ${fiovb.rollback_protection}"
 	echo "${fio_msg} fiovb.upgrade_available = ${fiovb.upgrade_available}"
 	echo "${fio_msg} fiovb.bootupgrade_available = ${fiovb.bootupgrade_available}"
 	echo "${fio_msg} fiovb.bootupgrade_primary_updated = ${fiovb.bootupgrade_primary_updated}"
@@ -94,6 +101,22 @@ if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} secondary boot image offset = ${bootloader_s}"
 	echo "${fio_msg} secondary FIT offset = ${bootloader2_s}"
 	echo "${fio_msg} ###########################################"
+fi
+
+if test "${fiovb.rollback_protection}" = "1"; then
+	if test -z "${dt_bootfirmware_version}"; then
+		echo "${fio_msg} Error: Runtime boot firmware version is not available"
+		sleep 5
+		reset
+	fi
+
+	echo "${fio_msg} Anti-rollback protection for boot firmware is enabled"
+	if test ${fiovb.bootfirmware_version} -gt ${dt_bootfirmware_version}; then
+		echo "${fio_msg} Error: It is impossible to downgrade to an older firmware, boot is aborted"
+		echo "${fio_msg} Error: Currently booted firmware: ${dt_bootfirmware_version}, previously booted: ${fiovb.bootfirmware_version}"
+		sleep 5
+		reset
+	fi
 fi
 
 # Check state of SECONDARY_BOOT bit

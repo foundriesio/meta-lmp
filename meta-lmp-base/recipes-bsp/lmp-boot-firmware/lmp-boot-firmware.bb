@@ -15,9 +15,10 @@ INHIBIT_DEFAULT_DEPS = "1"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 S = "${WORKDIR}"
+LMP_BOOT_FIRMWARE_VERSION ?= "0"
 
 # Can be replaced by the user (via bbappend), which will reflect into version.txt
-PV = "0"
+PV = "${LMP_BOOT_FIRMWARE_VERSION}"
 
 # To be customized per machine (referenced from DEPLOY_DIR_IMAGE)
 LMP_BOOT_FIRMWARE_FILES ?= ""

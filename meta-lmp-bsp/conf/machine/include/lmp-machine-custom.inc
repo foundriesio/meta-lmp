@@ -605,6 +605,7 @@ UBOOT_DTB_LOADADDRESS:am62xx-evm = "0x88000000"
 UBOOT_DTBO_LOADADDRESS:am62xx-evm = "0x89000000"
 EFI_PROVIDER:am62xx-evm = ""
 KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
+KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'jailhouse uio_ivshmem', '', d)}"
 LMP_BOOT_FIRMWARE_FILES:am62xx-evm = "tispl.bin u-boot.img"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx-evm = " boot.itb"
 

@@ -77,6 +77,14 @@ KERNEL_IMAGETYPE:mx8ulp-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx8ulp-generic-bsp = " kernel-lmp-fitimage "
 IMXBOOT_TARGETS:mx8ulp-nxp-bsp = "flash_singleboot_m33"
 
+# iMX93
+UBOOT_SIGN_ENABLE:mx93-generic-bsp = "1"
+IMX_DEFAULT_BOOTLOADER:mx93-generic-bsp ?= "u-boot-fio-mfgtool"
+PREFERRED_PROVIDER_u-boot-default-script:mx93-generic-bsp = "u-boot-ostree-scr"
+IMAGE_BOOT_FILES:mx93-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
+KERNEL_IMAGETYPE:mx93-generic-bsp = "fitImage"
+KERNEL_CLASSES:mx93-generic-bsp = " kernel-lmp-fitimage "
+
 # Apalis-iMX6
 UBOOT_SIGN_ENABLE:apalis-imx6 = "1"
 PREFERRED_PROVIDER_virtual/kernel:apalis-imx6 = "linux-lmp-dev-mfgtool"

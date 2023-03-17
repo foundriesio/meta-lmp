@@ -58,6 +58,13 @@ def get_do_deploy_depends(d):
 
 do_deploy[depends] += "${@get_do_deploy_depends(d)}"
 
+do_deploy:prepend:mx93-nxp-bsp() {
+    install -d ${DEPLOYDIR}/${PN}
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/u-boot.itb ${DEPLOYDIR}/${PN}/u-boot-mfgtool.itb
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE} ${DEPLOYDIR}/${PN}/fitImage-${MACHINE}-mfgtool
+}
+
 do_deploy:prepend:mx8-nxp-bsp() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/imx-boot ${DEPLOYDIR}/${PN}/imx-boot-mfgtool

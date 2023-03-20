@@ -1,0 +1,66 @@
+From 15fa023f7c6f31e11cc65339bb979e89da4ae2c0 Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Thu, 23 Mar 2023 22:03:14 +0200
+Subject: [PATCH] alsactl: add fallback for restoring from asound.state
+
+On ostree-based disros asound.state cannot be installed into /var
+directory. Instead, this config installs into /usr/lib/alsa.
+
+Support restoring vendor-specific sound configuration from
+/usr/lib/alsa/asound.state if /var/lib/alsa/asound.state is
+unavailable.
+
+Upstream-Status: Pending
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ alsactl/90-alsa-restore.rules.in | 2 ++
+ alsactl/Makefile.am              | 1 +
+ configure.ac                     | 6 ++++++
+ 3 files changed, 9 insertions(+)
+
+diff --git a/alsactl/90-alsa-restore.rules.in b/alsactl/90-alsa-restore.rules.in
+index c0c1b23..318752d 100644
+--- a/alsactl/90-alsa-restore.rules.in
++++ b/alsactl/90-alsa-restore.rules.in
+@@ -2,6 +2,8 @@ ACTION=="add", SUBSYSTEM=="sound", KERNEL=="controlC*", KERNELS!="card*", TEST==
+ GOTO="alsa_restore_end"
+ 
+ LABEL="alsa_restore_go"
++TEST!="@asoundrcfile@", TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl -f @initasoundrcfile@ nrestore $attr{device/number}", GOTO="alsa_restore_end"
++TEST!="@asoundrcfile@", TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl -f @initasoundrcfile@ restore $attr{device/number}", GOTO="alsa_restore_end"
+ TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl restore $attr{device/number}"
+ TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl nrestore $attr{device/number}"
+ 
+diff --git a/alsactl/Makefile.am b/alsactl/Makefile.am
+index deff2cd..c6e3ced 100644
+--- a/alsactl/Makefile.am
++++ b/alsactl/Makefile.am
+@@ -44,6 +44,7 @@ edit = \
+ 		  -e 's,@mydatadir\@,$(mydatadir),g' \
+ 		  -e 's,@daemonswitch\@,$(ALSACTL_DAEMONSWITCH),g' \
+ 		  -e 's,@asoundrcfile\@,$(ASOUND_STATE_DIR)/asound.state,g' \
++		  -e 's,@initasoundrcfile\@,$(INIT_ASOUND_STATE_DIR)/asound.state,g' \
+ 							< $< > $@ || rm $@
+ 
+ alsa-state.service: alsa-state.service.in
+diff --git a/configure.ac b/configure.ac
+index 92aec3a..8a14f58 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -419,6 +419,12 @@ AC_ARG_WITH([asound-state-dir],
+         [ASOUND_STATE_DIR="/var/lib/alsa"])
+ AC_SUBST(ASOUND_STATE_DIR)
+ 
++AC_ARG_WITH([init-asound-state-dir],
++        AS_HELP_STRING([--with-init-asound-state-dir=DIR], [Directory to place asound.state file in]),
++        [INIT_ASOUND_STATE_DIR="$withval"],
++        [INIT_ASOUND_STATE_DIR="/usr/lib/alsa"])
++AC_SUBST(INIT_ASOUND_STATE_DIR)
++
+ AC_ARG_WITH([alsactl-lock-dir],
+         AS_HELP_STRING([--with-alsactl-lock-dir=DIR], [Directory to place lock files in]),
+         [ASOUND_LOCK_DIR="$withval"],
+-- 
+2.39.2
+

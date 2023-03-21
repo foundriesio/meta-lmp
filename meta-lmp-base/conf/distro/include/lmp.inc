@@ -37,7 +37,7 @@ PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "10.3-2021.10"
 INIT_MANAGER = "systemd"
 DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi security tpm integrity seccomp"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
-DISTRO_FEATURES:append = " pam usrmerge virtualization ptest"
+DISTRO_FEATURES:append = " pam usrmerge virtualization ptest alsa"
 
 # Default IMA policy (tcb)
 IMA_POLICY ?= "ima-policy-tcb"

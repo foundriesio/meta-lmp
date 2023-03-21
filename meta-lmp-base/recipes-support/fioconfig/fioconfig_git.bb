@@ -20,20 +20,6 @@ inherit go-mod systemd
 # Extend from go.bbclass to include internal.Commit and tags
 GO_LDFLAGS += "-tags vpn"
 GO_EXTRA_LDFLAGS = "-X ${GO_IMPORT}/internal.Commit=${SRCREV}"
-GO_LINKSHARED = ""
-
-#GO_DYNLINK = ""
-# bitbake-getvar -r fioconfig GO_DYNLINK
-# doesn't work! it needs to be 1 or 0: make a patch for this in goarch.bbclass
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK = ""
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:arm ?= "1"
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:aarch64 ?= "1"
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:x86 ?= "1"
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:x86-64 ?= "1"
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:powerpc64 ?= "1"
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:powerpc64le ?= "1"
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:class-native ?= ""
-#../openembedded-core/meta/classes-recipe/goarch.bbclass:GO_DYNLINK:class-nativesdk = ""
 
 SYSTEMD_SERVICE:${PN} = "fioconfig.service fioconfig-extract.service fioconfig.path"
 

@@ -11,4 +11,6 @@ CORE_IMAGE_BASE_INSTALL += " \
     curl \
     dtc \
     i2c-tools \
+    alsa-utils \
+    alsa-tools \
 "

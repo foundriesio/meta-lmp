@@ -214,7 +214,33 @@ while true; do
         done
         break
     elif [ "$answer" = "n" ]; then
-        echo "Not erasing current partition table for device ${device}, assuming ${bootfs} as boot/ESP and ${rootfs} as rootfs."
+        echo "Not erasing current partition table for device ${device}. Use ${bootfs} as boot/ESP and ${rootfs} as rootfs? (y - default / n)"
+        echo
+        read answer
+        if [ "$answer" = "n" ]; then
+            while true; do
+                echo "Please define the partition to be used as boot/ESP (e.g. ${bootfs}): "
+                echo
+                read answer
+                if [ -n "${answer}" ] && [ -b ${answer} ]; then
+                    bootfs=${answer}
+                    break;
+                else
+                    echo "Invalid block device for boot/ESP"
+                fi
+            done
+            while true; do
+                echo "Now please define the partition to be used as rootfs (e.g. ${rootfs}): "
+                echo
+                read answer
+                if [ -n "${answer}" ] && [ -b ${answer} ]; then
+                    rootfs=${answer}
+                    break;
+                else
+                    echo "Invalid block device for rootfs"
+                fi
+            done
+        fi
         echo
         echo "Format ${bootfs} (ESP) partition? (n - default / y): "
         read answer

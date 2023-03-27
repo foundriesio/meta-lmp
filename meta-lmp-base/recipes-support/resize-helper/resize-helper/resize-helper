@@ -51,7 +51,7 @@ fi
 # get the partition number and type
 INFO=$(udevadm info --query=property --name=${ROOT_DEVICE})
 PART_ENTRY_NUMBER=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NUMBER=' | cut -d'=' -f2)
-PART_ENTRY_NAME=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NAME=' || true | cut -d'=' -f2)
+PART_ENTRY_NAME=$(echo "${INFO}" | { grep '^ID_PART_ENTRY_NAME=' || true; } | cut -d'=' -f2)
 
 # in case the root device is not on a partitioned media
 if [ "x$PART_ENTRY_NUMBER" = "x" ]; then

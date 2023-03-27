@@ -64,28 +64,32 @@ PART_TABLE_TYPE=$(echo "${INFO}" | grep '^ID_PART_TABLE_TYPE=' | cut -d'=' -f2)
 DEVICE=$(udevadm info --query=path --name=${ROOT_DEVICE} | awk -F'/' '{print $(NF-1)}')
 DEVICE="/dev/${DEVICE}"
 
-SIZE=$(blockdev --getsz ${DEVICE})
-TYPE="p\n"
-if [ "$PART_TABLE_TYPE" = "gpt" ]; then
-	${SGDISK} -e ${DEVICE}
-	SIZE=$(($SIZE - 33)) # the GPT end of disk is 34 sectors
-	TYPE=""
+# only manipulate partition table if rootfs is the last partition
+LAST_PART=$(partx -s -o nr ${DEVICE} | tail -n1)
+if [ ${PART_ENTRY_NUMBER} -eq ${LAST_PART} ]; then
+	SIZE=$(blockdev --getsz ${DEVICE})
+	TYPE="p\n"
+	if [ "$PART_TABLE_TYPE" = "gpt" ]; then
+		${SGDISK} -e ${DEVICE}
+		SIZE=$(($SIZE - 33)) # the GPT end of disk is 34 sectors
+		TYPE=""
+	fi
+
+	# Use fdisk to repartition
+	# fdisk uses a ram image of the parition table until a write is performed
+	# so the sequence is to delete the partition and recreate it at the same
+	# starting point but making it the size of the available disk.
+	#
+	END=$((${SIZE} - 1))
+	PARTOF=$(echo "${INFO}" | grep '^ID_PART_ENTRY_OFFSET=' | cut -d'=' -f2)
+	echo -e "d\n${PART_ENTRY_NUMBER}\nn\n${TYPE}${PART_ENTRY_NUMBER}\n${PARTOF}\n${END}\nw\n" | ${FDISK} ${DEVICE}
+
+	if [ -n "${PART_ENTRY_NAME}" ]; then
+		${SGDISK} --change-name=${PART_ENTRY_NUMBER}:"${PART_ENTRY_NAME}" ${DEVICE}
+	fi
+	${PARTX} -u ${DEVICE}
 fi
 
-# Use fdisk to repartition
-# fdisk uses a ram image of the parition table until a write is performed
-# so the sequence is to delete the partition and recreate it at the same
-# starting point but making it the size of the available disk.
-#
-END=$((${SIZE} - 1))
-PARTOF=$(echo "${INFO}" | grep '^ID_PART_ENTRY_OFFSET=' | cut -d'=' -f2)
-echo -e "d\n${PART_ENTRY_NUMBER}\nn\n${TYPE}${PART_ENTRY_NUMBER}\n${PARTOF}\n${END}\nw\n" | ${FDISK} ${DEVICE}
-
-if [ -n "${PART_ENTRY_NAME}" ]; then
-	${SGDISK} --change-name=${PART_ENTRY_NUMBER}:"${PART_ENTRY_NAME}" ${DEVICE}
-fi
-
-${PARTX} -u ${DEVICE}
 if [ -n "${DM_NAME}" ] && cryptsetup isLuks ${ROOT_DEVICE}; then
 	# OP-TEE: use TEE Identity for pkcs11 authentication
 	export CKTEEC_LOGIN_TYPE=user

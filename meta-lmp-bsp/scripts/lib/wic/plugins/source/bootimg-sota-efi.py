@@ -105,7 +105,7 @@ class BootimgSotaEFIPlugin(SourcePlugin):
                 cls.do_configure_grubefi(creator, cr_workdir)
             elif source_params['loader'] == 'systemd-boot':
                 cls.do_configure_systemdboot(hdddir, part, creator)
-            else:
+            elif source_params['loader'] != 'l4t-launcher':
                 raise WicError("unrecognized bootimg-sota-efi loader: %s" % source_params['loader'])
         except KeyError:
             raise WicError("bootimg-sota-efi requires a loader, none specified")
@@ -200,6 +200,9 @@ class BootimgSotaEFIPlugin(SourcePlugin):
                     exec_cmd(cp_cmd, True)
                     cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (kernel_dir, mod, hdddir, mod[8:])
                     exec_cmd(cp_cmd, True)
+            elif source_params['loader'] == 'l4t-launcher':
+                cp_cmd = "cp %s/BOOTAA64.efi %s/EFI/BOOT/BOOTAA64.efi" % (kernel_dir, hdddir)
+                exec_cmd(cp_cmd, True)
             else:
                 raise WicError("unrecognized bootimg-sota-efi loader: %s" %
                                source_params['loader'])

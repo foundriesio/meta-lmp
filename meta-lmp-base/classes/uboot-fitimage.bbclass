@@ -257,7 +257,7 @@ EOF
 #
 # $1 ... .itb filename
 uboot_fitimage_sign() {
-	if [ "x${UBOOT_SPL_SIGN_ENABLE}" = "x1" ]; then
+	if [ "${UBOOT_SPL_SIGN_ENABLE}" = "1" ]; then
 		if [ ! -f "${UBOOT_SPL_SIGN_KEYDIR}/${UBOOT_SPL_SIGN_KEYNAME}.crt"  -o  ! -f "${UBOOT_SPL_SIGN_KEYDIR}/${UBOOT_SPL_SIGN_KEYNAME}.key" ]; then
 			bbfatal "UBOOT_SPL_SIGN_KEYDIR or UBOOT_SPL_SIGN_KEYNAME is invalid"
 		fi

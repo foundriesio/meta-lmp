@@ -593,7 +593,7 @@ fitimage_assemble() {
 	#
 	# Step 6: Prepare a ramdisk section.
 	#
-	if [ "x${ramdiskcount}" = "x1" ] && [ "${ramdisk_bundle}" != "1" ]; then
+	if [ "${ramdiskcount}" = "1" ] && [ "${ramdisk_bundle}" != "1" ]; then
 		# Find and use the first initramfs image archive type we find
 		for img in cpio.lz4 cpio.lzo cpio.lzma cpio.xz cpio.zst cpio.gz ext2.gz cpio; do
 			initramfs_path="${DEPLOY_DIR_IMAGE}/${ramdisk_image_name}.${img}"
@@ -659,7 +659,7 @@ fitimage_assemble() {
 	#
 	# Step 9: Sign the image and add public key to U-Boot dtb
 	#
-	if [ "x${UBOOT_SIGN_ENABLE}" = "x1" ] ; then
+	if [ "${UBOOT_SIGN_ENABLE}" = "1" ] ; then
 		add_key_to_u_boot=""
 		if [ -n "${UBOOT_DTB_BINARY}" ]; then
 			# The u-boot.dtb is a symlink to UBOOT_DTB_IMAGE, so we need copy

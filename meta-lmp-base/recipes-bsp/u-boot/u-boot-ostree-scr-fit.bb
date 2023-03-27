@@ -43,7 +43,7 @@ do_compile() {
 	    -e 's/@@UBOOT_SIGN_KEYNAME@@/${UBOOT_SIGN_KEYNAME}/' \
 			"${S}/boot.its.in" > boot.its
 	uboot-mkimage -f boot.its -r boot.itb
-	if [ "x${UBOOT_SIGN_ENABLE}" = "x1" ]; then
+	if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then
 		uboot-mkimage -F -k "${UBOOT_SIGN_KEYDIR}" -r boot.itb
 	fi
 }

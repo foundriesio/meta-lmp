@@ -53,6 +53,10 @@ do_install:append:imx-nxp-bsp () {
 }
 
 do_install:append:stm32mpcommon() {
+    # Install calibration file (stm32mp15) for SCMI-ready machines
+    install -m 0644 ${WORKDIR}/nvram-murata/cyfmac43430-sdio.1DX.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157c-dk2-scmi.txt
+    install -m 0644 ${WORKDIR}/nvram-murata/cyfmac43430-sdio.1DX.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157f-dk2-scmi.txt
+
     # Set BFL3_EXT_LPO_ISCLOCK for wifi to work with upstream 5.15
     sed -i "s/^boardflags3=0x08/boardflags3=0x02/g" ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157*
 }

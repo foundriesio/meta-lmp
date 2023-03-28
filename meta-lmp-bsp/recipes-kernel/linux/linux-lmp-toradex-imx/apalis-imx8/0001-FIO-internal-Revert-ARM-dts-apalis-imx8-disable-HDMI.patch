@@ -1,4 +1,4 @@
-From aef8cea6c41a7d8e98d9d71603502bc1622419c3 Mon Sep 17 00:00:00 2001
+From 9c87deef878371be9ace1cfe177a6e5c6ad3192a Mon Sep 17 00:00:00 2001
 From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Date: Wed, 25 Aug 2021 20:09:14 +0300
 Subject: [PATCH] [FIO internal] Revert "ARM: dts: apalis-imx8: disable HDMI
@@ -17,14 +17,14 @@ Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 
  .../boot/dts/freescale/imx8-apalis-eval.dtsi  | 58 +++++++++++++++++++
  .../dts/freescale/imx8-apalis-ixora-v1.1.dtsi | 58 +++++++++++++++++++
- .../boot/dts/freescale/imx8-apalis-v1.1.dtsi  | 11 +++-
- 3 files changed, 125 insertions(+), 2 deletions(-)
+ .../boot/dts/freescale/imx8-apalis-v1.1.dtsi  |  9 ++-
+ 3 files changed, 124 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8-apalis-eval.dtsi b/arch/arm64/boot/dts/freescale/imx8-apalis-eval.dtsi
-index 0a4fe3898993..228872ea98fe 100644
+index 1eba84f0e89e..c0a74adb35ec 100644
 --- a/arch/arm64/boot/dts/freescale/imx8-apalis-eval.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8-apalis-eval.dtsi
-@@ -195,6 +195,60 @@
+@@ -189,6 +189,60 @@ &gpu_3d1{
  	status = "okay";
  };
  
@@ -85,7 +85,7 @@ index 0a4fe3898993..228872ea98fe 100644
  /* Apalis I2C1 */
  &i2c2 {
  	status = "okay";
-@@ -234,6 +288,10 @@
+@@ -228,6 +282,10 @@ &irqsteer_csi1 {
  	status = "okay";
  };
  
@@ -97,10 +97,10 @@ index 0a4fe3898993..228872ea98fe 100644
  &lpspi0 {
  	status = "okay";
 diff --git a/arch/arm64/boot/dts/freescale/imx8-apalis-ixora-v1.1.dtsi b/arch/arm64/boot/dts/freescale/imx8-apalis-ixora-v1.1.dtsi
-index 53f56dc8f536..d8b361f662e6 100644
+index 49c800189e74..2fb8b103da80 100644
 --- a/arch/arm64/boot/dts/freescale/imx8-apalis-ixora-v1.1.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8-apalis-ixora-v1.1.dtsi
-@@ -213,6 +213,60 @@
+@@ -219,6 +219,60 @@ &gpu_3d1{
  	status = "okay";
  };
  
@@ -161,7 +161,7 @@ index 53f56dc8f536..d8b361f662e6 100644
  /* Apalis I2C1 */
  &i2c2 {
  	status = "okay";
-@@ -279,6 +333,10 @@
+@@ -283,6 +337,10 @@ &irqsteer_csi1 {
  	status = "okay";
  };
  
@@ -169,24 +169,17 @@ index 53f56dc8f536..d8b361f662e6 100644
 +	status = "okay";
 +};
 +
- &lsio_gpio5 {
- 	ngpios = <32>;
- 	gpio-line-names = "gpio5-00", "gpio5-01", "gpio5-02", "gpio5-03",
+ /* Apalis SPI1 */
+ &lpspi0 {
+ 	status = "okay";
 diff --git a/arch/arm64/boot/dts/freescale/imx8-apalis-v1.1.dtsi b/arch/arm64/boot/dts/freescale/imx8-apalis-v1.1.dtsi
-index 3a970692aae8..cf6e820409f9 100644
+index 5540846e60d0..ae90c3f5ab9a 100644
 --- a/arch/arm64/boot/dts/freescale/imx8-apalis-v1.1.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8-apalis-v1.1.dtsi
-@@ -253,13 +253,20 @@
- 		};
- 	};
- 
--	sound_hdmi: sound-hdmi {
-+	sound-hdmi {
- 		compatible = "fsl,imx-audio-cdnhdmi";
- 		model = "imx-audio-hdmi-tx";
- 		audio-cpu = <&sai5>;
- 		protocol = <1>;
+@@ -247,7 +247,14 @@ sound_hdmi: sound-hdmi {
  		hdmi-out;
+ 		model = "imx-audio-hdmi-tx";
+ 		protocol = <1>;
 -		status = "disabled";
 +	};
 +
@@ -200,5 +193,5 @@ index 3a970692aae8..cf6e820409f9 100644
  
  	sound-spdif {
 -- 
-2.31.1
+2.39.2
 

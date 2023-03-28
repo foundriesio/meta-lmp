@@ -1,11 +1,11 @@
-include recipes-kernel/linux/kmeta-linux-lmp-5.4.y.inc
+include recipes-kernel/linux/kmeta-linux-lmp-5.15.y.inc
 
-LINUX_VERSION ?= "5.4.154"
-KBRANCH = "toradex_5.4-2.3.x-imx"
-SRCREV_machine = "a0eda828e6253600e2adf7a5ea9e465a038fe0df"
+LINUX_VERSION ?= "5.15.77"
+KBRANCH = "toradex_5.15-2.1.x-imx"
+SRCREV_machine = "3f45ee6bd117ed7f38fb4fbe66e740d7deedba1d"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
-LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
+LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 SRC_URI = "git://git.toradex.com/linux-toradex.git;protocol=git;branch=${KBRANCH};name=machine; \
     ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \

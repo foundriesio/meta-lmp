@@ -288,7 +288,6 @@ UBOOT_SUFFIX:imx8qm-mek = "bin"
 UBOOT_MACHINE:imx8qm-mek = "imx8qm_mek_defconfig"
 UBOOT_DTB_NAME:imx8qm-mek ?= "fsl-imx8qm-mek.dtb"
 ## Toradex Apalis iMX8QM
-KERNEL_BUILTIN_WIREGUARD:apalis-imx8 = "0"
 OSTREE_KERNEL_ARGS:apalis-imx8 ?= "pci=nomsi console=tty1 console=ttyLP1,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"
 PREFERRED_PROVIDER_virtual/kernel:apalis-imx8 ?= "linux-lmp-toradex-imx"
 UBOOT_CONFIG:apalis-imx8 = ""

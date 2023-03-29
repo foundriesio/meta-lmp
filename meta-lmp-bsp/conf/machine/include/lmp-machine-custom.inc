@@ -632,7 +632,7 @@ LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx-evm = " boot.itb"
 DISTRO_FEATURES:append:tegra = " opengl"
 DISTRO_FEATURES_DEFAULT:remove:tegra = "modsign"
 PREFERRED_PROVIDER_virtual/kernel:tegra ?= "linux-tegra"
-IMAGE_TEGRAFLASH_FS_TYPE:sota:tegra = "ota-ext4"
+IMAGE_TEGRAFLASH_FS_TYPE:sota:tegra = "${@bb.utils.contains('TEGRA_EXTERNAL_ROOTFS_WIC', '1', 'wic.gz', 'ota-ext4', d)}"
 TEGRA_INITRAMFS_FSTYPES:tegra = ""
 INITRD_IMAGE:tegra = ""
 IMAGE_TEGRAFLASH_KERNEL:tegra = "${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}"
@@ -682,3 +682,9 @@ MACHINE_FIRMWARE:remove:mx6-nxp-bsp = "linux-firmware-imx-sdma-imx6q"
 MACHINE_FIRMWARE:remove:mx8-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
 MACHINE_FIRMWARE:append:mx6-nxp-bsp = " firmware-imx-sdma-imx6q firmwared"
 MACHINE_FIRMWARE:append:mx8-nxp-bsp = " firmware-imx-sdma-imx7d firmwared"
+
+### Tegra custom LmP hook
+TEGRA_EXTERNAL_ROOTFS_WIC ??= "0"
+tegraflash_custom_post:append:tegra() {
+	echo EXTERNAL_ROOTFS_WIC_FLASH=\"${TEGRA_EXTERNAL_ROOTFS_WIC}\" >> .env.initrd-flash
+}

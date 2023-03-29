@@ -9,7 +9,10 @@ DEPENDS = "optee-client optee-os-tadevkit openssl"
 
 require optee-fio.inc
 
-SRC_URI = "git://github.com/OP-TEE/optee_test.git;protocol=https;branch=master"
+SRC_URI = "\
+	git://github.com/OP-TEE/optee_test.git;protocol=https;branch=master \
+	file://0001-regression-1000-disable-1039.patch \
+	"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

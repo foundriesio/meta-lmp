@@ -1,0 +1,38 @@
+From 9cdaa16531f91c28621d8d8592560df817860eb0 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Wed, 29 Mar 2023 14:16:55 +0200
+Subject: [PATCH] regression 1000: disable 1039
+
+This test requires the TA to be signed with a key located
+in the optee_test repository.
+
+We can not do that with LmP currently - and it is probably not
+worth the effort at this time
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ host/xtest/regression_1000.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/host/xtest/regression_1000.c b/host/xtest/regression_1000.c
+index de32c41..1aa2e8b 100644
+--- a/host/xtest/regression_1000.c
++++ b/host/xtest/regression_1000.c
+@@ -3197,6 +3197,7 @@ out:
+ ADBG_CASE_DEFINE(regression, 1038, xtest_tee_test_1038,
+ 		 "Test MTE (Memory Tag Extension)");
+ 
++#if 0
+ static void xtest_tee_test_1039(ADBG_Case_t *c)
+ {
+ 	TEEC_Session session = { };
+@@ -3221,3 +3222,4 @@ static void xtest_tee_test_1039(ADBG_Case_t *c)
+ 
+ ADBG_CASE_DEFINE(regression, 1039, xtest_tee_test_1039,
+ 		 "Test subkey verification");
++#endif
+-- 
+2.34.1
+

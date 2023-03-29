@@ -14,6 +14,7 @@ Options:
   -h|--help             Displays this usage information
   --skip-bootloader     Skip boot partition programming
   --usb-instance        USB instance of Jetson device
+  --format-mmc-part     Format (ext4) mmc partition
   --erase-nvme          Erase NVME drive during flashing
 
 Options passed through to flash helper:
@@ -46,10 +47,11 @@ user_keyfile=
 keyfile=
 sbk_keyfile=
 skip_bootloader=0
+format_mmc_part=
 early_final_status=0
 erase_nvme=0
 
-ARGS=$(getopt -n $(basename "$0") -l "usb-instance:,user_key:,help,skip-bootloader,erase-nvme" -o "u:v:h" -- "$@")
+ARGS=$(getopt -n $(basename "$0") -l "usb-instance:,user_key,format-mmc-part:,help,skip-bootloader,erase-nvme" -o "u:v:h" -- "$@")
 if [ $? -ne 0 ]; then
     usage >&2
     exit 1
@@ -70,6 +72,10 @@ while true; do
 	--skip-bootloader)
 	    skip_bootloader=1
 	    shift
+	    ;;
+	--format-mmc-part)
+	    format_mmc_part="$2"
+	    shift 2
 	    ;;
 	--erase-nvme)
 	    erase_nvme=1
@@ -351,6 +357,9 @@ generate_flash_package() {
 	cp bootloader_staging/* "$mnt/flashpkg/bootloader"
     fi
 
+    if [ -n "$format_mmc_part" ]; then
+	echo "format-mmc-part $format_mmc_part" >> "$mnt/flashpkg/conf/command_sequence"
+    fi
     if [ $erase_nvme -eq 1 ]; then
 	echo "erase-nvme" >> "$mnt/flashpkg/conf/command_sequence"
     fi
@@ -364,6 +373,25 @@ generate_flash_package() {
     echo "reboot" >> "$mnt/flashpkg/conf/command_sequence"
 
     unmount_and_release "$mnt" "$dev" || return 1
+}
+
+write_wic_to_device() {
+    local devname="$1"
+    local dev=$(wait_for_usb_storage "$session_id" "$devname")
+    local rc=0
+
+    if [ -z "$dev" ]; then
+	echo "ERR: could not find $devname" >&2
+	return 1
+    fi
+
+    # Flash the actual wic
+    bmaptool copy --nobmap $ROOTFS_IMAGE $dev
+
+    if ! unmount_and_release "" "$dev"; then
+	rc=1
+    fi
+    return $rc
 }
 
 write_to_device() {
@@ -391,13 +419,19 @@ write_to_device() {
     if [ "$devname" = "mmcblk0" -a $BOOT_PARTITIONS_ON_EMMC -eq 1 ]; then
 	extraarg="--honor-start-locations"
     fi
-    # XXX
-    # For the pre-signed case, the flash layout will contain the
-    # name of the sparseimage file, and we need to convert it back to
-    # the raw image name.
-    # XXX
-    simgname="${ROOTFS_IMAGE%.*}.img"
-    sed -i -e"s,$simgname,$ROOTFS_IMAGE," -e"s,APPFILE_b,$ROOTFS_IMAGE," -e"s,APPFILE,$ROOTFS_IMAGE," $datased initrd-flash.xml
+
+    # Drop rootfs flashing when required via external wic
+    if [ $EXTERNAL_ROOTFS_WIC_FLASH -eq 1 ]; then
+        sed -i -e"s,APPFILE_b,," -e"s,APPFILE,," $datased initrd-flash.xml
+    else
+        # XXX
+        # For the pre-signed case, the flash layout will contain the
+        # name of the sparseimage file, and we need to convert it back to
+        # the raw image name.
+        # XXX
+        simgname="${ROOTFS_IMAGE%.*}.img"
+        sed -i -e"s,$simgname,$ROOTFS_IMAGE," -e"s,APPFILE_b,$ROOTFS_IMAGE," -e"s,APPFILE,$ROOTFS_IMAGE," $datased initrd-flash.xml
+    fi
     if "$here/make-sdcard" -y $opts $extraarg initrd-flash.xml "$dev"; then
 	rc=0
     fi
@@ -513,10 +547,19 @@ if [ $EXTERNAL_ROOTFS_DRIVE -eq 1 ]; then
     fi
     if [ $early_final_status -eq 0 ]; then
 	step_banner "Writing partitions on external storage device"
-	if ! write_to_device $ROOTFS_DEVICE external-flash.xml.in 2>&1 | tee -a "$logfile"; then
-	    echo "ERR: write failure to external storage at $(date -Is)" | tee -a "$logfile"
-	    if [ $early_final_status -eq 0 ]; then
-		exit 1
+	if [ $EXTERNAL_ROOTFS_WIC_FLASH -eq 1 ]; then
+	    if ! write_wic_to_device $ROOTFS_DEVICE 2>&1 | tee -a "$logfile"; then
+	        echo "ERR: wic write failure to external storage at $(date -Is)" | tee -a "$logfile"
+	        if [ $early_final_status -eq 0 ]; then
+		    exit 1
+	        fi
+	    fi
+	else
+	    if ! write_to_device $ROOTFS_DEVICE external-flash.xml.in 2>&1 | tee -a "$logfile"; then
+	        echo "ERR: write failure to external storage at $(date -Is)" | tee -a "$logfile"
+	        if [ $early_final_status -eq 0 ]; then
+		    exit 1
+	        fi
 	    fi
 	fi
     fi

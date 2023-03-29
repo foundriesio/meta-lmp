@@ -6,10 +6,10 @@ LIC_FILES_CHKSUM:append = " \
 "
 
 SRC_URI:append = " \
-    git://github.com/foundriesio/plug-and-trust.git;protocol=https;branch=optee_lib-v4;name=plug-and-trust;destsuffix=git/plug-and-trust \
+    git://github.com/foundriesio/plug-and-trust.git;protocol=https;branch=optee_lib-v4.03.01;name=plug-and-trust;destsuffix=git/plug-and-trust \
     file://se050_applet_version.patch \
 "
-SRCREV_plug-and-trust ?= "6068e921a765fafc876caa0ad066a06d9a635330"
+SRCREV_plug-and-trust ?= "1b8fa0caf728859c429e306d081af030620e0e4d"
 
 # To be replaced based on the actual board OEFID
 SE05X_OEFID ?= "0xA1F4"

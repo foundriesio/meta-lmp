@@ -7,7 +7,6 @@ LIC_FILES_CHKSUM:append = " \
 
 SRC_URI:append = " \
     git://github.com/foundriesio/plug-and-trust.git;protocol=https;branch=optee_lib-v4.03.01;name=plug-and-trust;destsuffix=git/plug-and-trust \
-    file://se050_applet_version.patch \
 "
 SRCREV_plug-and-trust ?= "1b8fa0caf728859c429e306d081af030620e0e4d"
 

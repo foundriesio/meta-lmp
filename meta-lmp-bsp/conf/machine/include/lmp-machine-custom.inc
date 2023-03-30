@@ -550,6 +550,7 @@ USE_XSCT_TARBALL:zynqmp = "1"
 ## Avnet UltraZed with secure boot support
 UBOOT_SIGN_ENABLE:sota:uz3eg-iocc-sec = "1"
 SOTA_CLIENT_FEATURES:remove:sota:uz3eg-iocc-sec = "ubootenv"
+LMP_BOOT_FIRMWARE_VERSION:uz3eg-iocc-sec = "8"
 ## Avnet UltraZed with secure boot support and EBBR
 UBOOT_SPL_SIGN_ENABLE:sota:uz3eg-iocc-ebbr-sec = "1"
 UBOOT_SIGN_ENABLE:sota:uz3eg-iocc-ebbr-sec = "0"

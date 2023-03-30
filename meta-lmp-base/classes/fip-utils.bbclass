@@ -134,14 +134,15 @@ do_deploy:append:class-target() {
             FIP_FWCONFIG="--fw-config ${FIP_DEPLOYDIR_FWCONF}/${dt}-${FIP_FW_CONFIG}-${config}.${FIP_FW_CONFIG_SUFFIX}"
             # Init FIP hw-config settings
             [ -f "${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" ] || bbfatal "Missing ${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX} file in folder: ${FIP_DEPLOYDIR_UBOOT}"
+            cp -L ${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX} ${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}
             # Add boot firmware version to U-Boot DTB (if it's defined and is not zero)
             if [ -n "${LMP_BOOT_FIRMWARE_VERSION}" -a "${LMP_BOOT_FIRMWARE_VERSION}" != "0" ]; then
                 # Might return "FDT_ERR_EXISTS" error, if "lmp" node already exists
-                fdtput -c -t s "${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader || true
-                fdtput -t s "${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader compatible "lmp,bootloader"
-                fdtput -t s "${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader bootfirmware-version "${LMP_BOOT_FIRMWARE_VERSION}"
+                fdtput -c -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader || true
+                fdtput -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader compatible "lmp,bootloader"
+                fdtput -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader bootfirmware-version "${LMP_BOOT_FIRMWARE_VERSION}"
             fi
-            FIP_HWCONFIG="--hw-config ${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}"
+            FIP_HWCONFIG="--hw-config ${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}"
             # Init FIP nt-fw config
             [ -f "${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT}.${FIP_UBOOT_SUFFIX}" ] || bbfatal "Missing ${FIP_UBOOT}.${FIP_UBOOT_SUFFIX} file in folder: ${FIP_DEPLOYDIR_UBOOT}"
             FIP_NTFW="--nt-fw ${FIP_DEPLOYDIR_UBOOT}/${FIP_UBOOT}.${FIP_UBOOT_SUFFIX}"

@@ -264,9 +264,9 @@ mkdir /src_root
 mkdir -p /boot
 
 # Path /rnu/media/<label>-sdX (check wks used)
-install_mount="install-${live_dev_name}1"
-otaboot_mount="otaboot-${live_dev_name}2"
-rootfs_mount="image-${live_dev_name}3"
+install_mount=`ls /run/media | grep install-`
+otaboot_mount=`ls /run/media | grep otaboot- || true`
+rootfs_mount=`ls /run/media | grep image-`
 
 # Handling of the target root partition
 mount $rootfs /tgt_root
@@ -295,15 +295,30 @@ fi
 mount $bootfs /boot
 echo "Preparing boot partition..."
 
-echo "Copying boot files..."
-cp -rf /run/media/${otaboot_mount}/* /boot
-
-# Update boot args to include UUID and extra options
 rootfs_uuid=$(blkid -o value -s UUID ${rootfs})
-sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" /boot/loader/entries/*.conf
 
 EFIDIR="/boot/EFI/BOOT"
 mkdir -p $EFIDIR
+
+# otaboot means systemd-boot
+if [ -n "${otaboot_mount}" ]; then
+    echo "Copying boot files..."
+    cp -rf /run/media/${otaboot_mount}/* /boot
+    # Generate default loader.conf
+    cat << EOF > /boot/loader/loader.conf
+timeout 1
+EOF
+    sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" /boot/loader/entries/*.conf
+else
+    # Generate default grub.cfg
+    cat << EOF > $EFIDIR/grub.cfg
+search.fs_uuid ${rootfs_uuid} root
+configfile /boot/loader/grub.cfg
+EOF
+    sed -i "s/root=LABEL=otaroot/root=UUID=${rootfs_uuid} ${rootwait}/g" \
+        /tgt_root/boot/loader/grub.cfg /tgt_root/boot/loader/entries/*.conf
+fi
+
 # Copy the efi loader
 efiloader=`basename /run/media/${rootfs_mount}/EFI/BOOT/boot*.efi`
 cp /run/media/${rootfs_mount}/EFI/BOOT/${efiloader} $EFIDIR
@@ -311,11 +326,6 @@ cp /run/media/${rootfs_mount}/EFI/BOOT/${efiloader} $EFIDIR
 if [ -d /run/media/${rootfs_mount}/EFI/systemd ]; then
     cp -rf /run/media/${rootfs_mount}/EFI/systemd /boot/EFI
 fi
-
-# Generate default loader.conf
-cat << EOF > /boot/loader/loader.conf
-timeout 1
-EOF
 
 # Make sure startup.nsh is also available at the boot partition
 if [ -f /run/media/${rootfs_mount}/startup.nsh ]; then

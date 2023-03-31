@@ -599,7 +599,7 @@ UBOOT_DTBO_LOADADDRESS:am62xx-evm = "0x89000000"
 EFI_PROVIDER:am62xx-evm = ""
 KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
 KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'jailhouse uio_ivshmem', '', d)}"
-LMP_BOOT_FIRMWARE_FILES:am62xx-evm = "tispl.bin u-boot.img"
+LMP_BOOT_FIRMWARE_FILES:am62xx-evm = "tispl.bin u-boot.img tiboot3.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx-evm = " boot.itb"
 
 # TI AM64x
@@ -618,7 +618,7 @@ UBOOT_ENTRYPOINT:am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am64xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx-evm = "0x88000000"
 EFI_PROVIDER:am64xx-evm = ""
-LMP_BOOT_FIRMWARE_FILES:am64xx-evm = "tispl.bin u-boot.img"
+LMP_BOOT_FIRMWARE_FILES:am64xx-evm = "tispl.bin u-boot.img tiboot3.bin tiboot3-am64x-gp-evm.bin tiboot3-am64x_sr2-hs-evm.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx-evm = " boot.itb"
 
 # Nvidia Tegra

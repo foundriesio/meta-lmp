@@ -4,8 +4,8 @@ DEFAULT_PREFERENCE = "${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os'
 
 # Compatible with optee-os-fio and optee-os from meta-arm
 include ${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os', 'optee-os', 'recipes-security/optee/optee-os_${PV}.bb', '', d)}
-include ${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os', 'optee-os-fio', 'optee-os-fio_${PV}.bb', '', d)}
-include ${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os', 'optee-os-fio-mfgtool', 'optee-os-fio-mfgtool_${PV}.bb', '', d)}
+include ${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os', 'optee-os-fio', 'recipes-security/optee/optee-os-fio_${PV}.bb', '', d)}
+include ${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os', 'optee-os-fio-mfgtool', 'recipes-security/optee/optee-os-fio-mfgtool_${PV}.bb', '', d)}
 
 SUMMARY = "OP-TEE Trusted OS TA devkit"
 DESCRIPTION = "OP-TEE TA devkit for build TAs"

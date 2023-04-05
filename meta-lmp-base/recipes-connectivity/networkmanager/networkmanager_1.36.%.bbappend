@@ -9,5 +9,5 @@ SRC_URI:append = " \
 
 do_install:append() {
 	# NM is able to create /var/lib/NetworkManager on runtime
-	(cd ${D}${localstatedir}; rmdir -v --parents ./lib/NetworkManager)
+	(cd ${D}${localstatedir}; rmdir -v --parents lib/NetworkManager)
 }

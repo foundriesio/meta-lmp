@@ -7,7 +7,7 @@ SRC_URI:append = " \
 do_install:append() {
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -D -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/softhsm.conf
-		(cd ${D}${localstatedir}; rmdir -v --parents ./lib/softhsm/tokens)
+		(cd ${D}${localstatedir}; rmdir -v --parents lib/softhsm/tokens)
 	fi
 }
 

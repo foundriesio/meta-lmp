@@ -14,6 +14,9 @@ SRC_URI:append:mx8m-nxp-bsp = " \
 SRC_URI:append:mx8qm-nxp-bsp = " \
      file://0001-iMX8QM-add-SPL-only-build.patch \
 "
+SRC_URI:append:mx8ulp-nxp-bsp = " \
+     file://0001-iMX8ULP-add-SPL-only-build.patch \
+"
 
 do_compile[depends] = " \
     virtual/bootloader:do_deploy \

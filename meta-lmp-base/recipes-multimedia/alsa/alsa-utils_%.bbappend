@@ -15,4 +15,4 @@ do_install:append() {
     fi
 }
 
-FILES:alsa-utils-alsactl += "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '${nonarch_libdir}/tmpfiles.d/alsa_utils.conf', '', d)}"
+FILES:alsa-utils-alsactl += "${nonarch_libdir}/tmpfiles.d/alsa_utils.conf"

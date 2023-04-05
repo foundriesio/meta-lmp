@@ -1,0 +1,60 @@
+From 0343108a32bef19383ecc80fac9fc4fec7dc7fb9 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 4 Apr 2023 23:14:59 -0300
+Subject: [PATCH] iMX8ULP: add SPL-only build
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ iMX8ULP/soc.mak | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/iMX8ULP/soc.mak b/iMX8ULP/soc.mak
+index a2f984e..5c579c5 100644
+--- a/iMX8ULP/soc.mak
++++ b/iMX8ULP/soc.mak
+@@ -39,6 +39,10 @@ u-boot-hash.bin: u-boot.bin
+ 	./$(MKIMG) -commit > head.hash
+ 	@cat u-boot.bin head.hash > u-boot-hash.bin
+ 
++# use this to trigger re-combining u-boot-spl.bin u-boot-spl.dtb
++u-boot-spl-combine:
++	@cat u-boot-spl-nodtb.bin u-boot-spl.dtb > u-boot-spl.bin
++
+ u-boot-atf.bin: u-boot-hash.bin bl31.bin
+ 	@cp bl31.bin u-boot-atf.bin
+ 	@dd if=u-boot-hash.bin of=u-boot-atf.bin bs=1K seek=128
+@@ -74,6 +78,9 @@ flash_dualboot: $(MKIMG) u-boot-spl.bin u-boot-atf-container.img
+                    echo "append u-boot-atf-container.img at $$pad_cnt KB"; \
+                    dd if=u-boot-atf-container.img of=flash.bin bs=1K seek=$$pad_cnt;
+ 
++flash_dualboot_spl: $(MKIMG) u-boot-spl-combine
++	./$(MKIMG) -soc ULP -c -ap u-boot-spl.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
++
+ flash_dualboot_flexspi: $(MKIMG) u-boot-spl.bin u-boot-atf-container.img
+ 	./$(MKIMG) -soc ULP -dev flexspi -c -ap u-boot-spl.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
+ 	@flashbin_size=`wc -c flash.bin | awk '{print $$1}'`; \
+@@ -98,6 +105,9 @@ flash_singleboot: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-spl.bin u-boot-atf-c
+                    echo "append u-boot-atf-container.img at $$pad_cnt KB"; \
+                    dd if=u-boot-atf-container.img of=flash.bin bs=1K seek=$$pad_cnt;
+ 
++flash_singleboot_spl: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-spl-combine
++	./$(MKIMG) -soc ULP -append $(AHAB_IMG) -c -upower $(UPOWER_IMG) -ap u-boot-spl.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
++
+ flash_singleboot_flexspi: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-spl.bin u-boot-atf-container.img
+ 	./$(MKIMG) -soc ULP -dev flexspi -append $(AHAB_IMG) -c -upower $(UPOWER_IMG) -ap u-boot-spl.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
+ 	@flashbin_size=`wc -c flash.bin | awk '{print $$1}'`; \
+@@ -106,6 +116,9 @@ flash_singleboot_flexspi: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-spl.bin u-bo
+                    dd if=u-boot-atf-container.img of=flash.bin bs=1K seek=$$pad_cnt;
+ 	./$(QSPI_PACKER) $(QSPI_HEADER)
+ 
++flash_singleboot_spl_m33: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) $(MCU_IMG) u-boot-spl-combine
++	./$(MKIMG) -soc ULP -append $(AHAB_IMG) -c -upower $(UPOWER_IMG) -m4 $(MCU_IMG) 0 $(MCU_SSRAM_ADDR) -ap u-boot-spl.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
++
+ flash_singleboot_m33: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-atf-container.img $(MCU_IMG) u-boot-spl.bin
+ 	./$(MKIMG) -soc ULP -append $(AHAB_IMG) -c -upower $(UPOWER_IMG) -m4 $(MCU_IMG) 0 $(MCU_SSRAM_ADDR) -ap u-boot-spl.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
+ 	cp flash.bin boot-spl-container.img
+-- 
+2.34.1
+

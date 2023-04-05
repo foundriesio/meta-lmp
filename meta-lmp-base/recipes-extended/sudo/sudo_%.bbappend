@@ -8,3 +8,5 @@ do_install:append() {
 		(cd ${D}${localstatedir}; rmdir -v --parents lib/sudo/lectured)
 	fi
 }
+
+FILES:${PN} += "${nonarch_libdir}/tmpfiles.d/sudo-vardir.conf"

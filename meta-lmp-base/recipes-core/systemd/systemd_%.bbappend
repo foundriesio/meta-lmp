@@ -93,4 +93,6 @@ do_install:append() {
 	if ${@bb.utils.contains('PACKAGECONFIG', 'efi', 'true', 'false', d)}; then
 		rm -r ${D}${nonarch_libdir}/systemd/boot
 	fi
+
+	(cd ${D}${localstatedir}; rmdir -v --parents lib/systemd)
 }

@@ -7,8 +7,10 @@ INHIBIT_DEFAULT_DEPS = "1"
 DEPENDS = "dtc-native u-boot-mkimage-native"
 
 SRC_URI = "file://boot.cmd \
-	file://boot-common.cmd.in \
-	file://boot-common-alternative.cmd.in \
+	file://boot-header.cmd.in \
+	file://boot-footer.cmd.in \
+	file://boot-upgrade-regular.cmd.in \
+	file://boot-upgrade-alternative.cmd.in \
 	file://boot.its.in \
 "
 
@@ -31,9 +33,13 @@ do_compile() {
 	if [ ! -f boot.cmd.in ]; then
 		cp "${S}/boot.cmd" boot.cmd.in
 	fi
-	sed -i -e '/@@INCLUDE_COMMON@@/ {' -e 'r ${S}/boot-common.cmd.in' -e 'd' -e '}' \
+	sed -i -e '/@@INCLUDE_COMMON@@/ {' -e 'r ${S}/boot-upgrade-regular.cmd.in' -e 'd' -e '}' \
 			boot.cmd.in
-	sed -i -e '/@@INCLUDE_COMMON_ALTERNATIVE@@/ {' -e 'r ${S}/boot-common-alternative.cmd.in' -e 'd' -e '}' \
+	sed -i -e '/@@INCLUDE_COMMON_ALTERNATIVE@@/ {' -e 'r ${S}/boot-upgrade-alternative.cmd.in' -e 'd' -e '}' \
+			boot.cmd.in
+	sed -i -e '/@@INCLUDE_COMMON_HEADER@@/ {' -e 'r ${S}/boot-header.cmd.in' -e 'd' -e '}' \
+			boot.cmd.in
+	sed -i -e '/@@INCLUDE_COMMON_FOOTER@@/ {' -e 'r ${S}/boot-footer.cmd.in' -e 'd' -e '}' \
 			boot.cmd.in
 	sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
 	    -e 's/@@OSTREE_SPLIT_BOOT@@/${OSTREE_SPLIT_BOOT}/g' \

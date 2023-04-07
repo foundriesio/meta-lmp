@@ -1,0 +1,11 @@
+run bootcmd_rollback
+run bootcmd_bootargs_add_root
+run bootcmd_load_f
+run bootcmd_tee_ovy
+if test -n "${bootcmd_load_fw}"; then
+	run bootcmd_load_fw
+fi
+
+run bootcmd_run
+
+reset

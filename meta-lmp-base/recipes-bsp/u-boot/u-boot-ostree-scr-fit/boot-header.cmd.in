@@ -81,8 +81,8 @@ else
 	setenv fiovb.rollback_protection "${rollback_protection}"
 	setenv fiovb.upgrade_available "${upgrade_available}"
 	setenv fiovb.bootupgrade_available "${bootupgrade_available}"
-	setenv fiovb.bootupgrade_primary_updated "${bootupgrade_primary_updated}"
 	setenv fiovb.bootfirmware_version "${bootfirmware_version}"
+	setenv fiovb.bootupgrade_primary_updated "${bootupgrade_primary_updated}"
 	setenv fiovb.debug "${debug}"
 fi
 
@@ -143,112 +143,3 @@ if test ! "${fiovb.is_secondary_boot}" = "${fiovb.old_is_secondary_boot}"; then
 		fiovb write_pvalue is_secondary_boot "${fiovb.is_secondary_boot}";
 	fi
 fi
-
-# Handle boot firmware updates
-if test "${fiovb.is_secondary_boot}" = "0"; then
-	# Only update bootcount when upgrade_available is set and boot mode is
-	# primary since counting on secondary would double count on upgrades
-	if test "${fiovb.upgrade_available}" = "1"; then
-		setexpr bootcount ${fiovb.bootcount} + 1;
-		if test -n "${fiovb_rpmb}"; then
-			fiovb write_pvalue bootcount ${bootcount};
-		else
-			# just save env with updated bootcount value
-			run saveenv_mmc
-		fi;
-
-
-		# If bootcount is above bootlimit, trigger rollback
-		# if not - try to boot secondary boot path for boot firmware validation
-		if test ${bootcount} -gt ${bootlimit}; then
-			echo "${fio_msg} doing rollback..."
-
-			# check if boot firmware was also updated so we need
-			# to restore it and boot old firmware after reset
-			# and continue rollback process
-			if test "${fiovb.bootupgrade_primary_updated}" = "1"; then
-				run restore_primary_image
-				run rollback_setup
-				run saveenv_mmc
-				run do_reboot
-			else
-				run rollback_setup
-				run saveenv_mmc
-			fi
-
-		else
-			# we haven't updated primary boot image yet
-			if test "${fiovb.bootupgrade_available}" = "1" && test "${fiovb.bootupgrade_primary_updated}" = "0"; then
-				run backup_primary_image
-				echo "${fio_msg} updating primary boot images from ${ostree_root} ..."
-
-				run update_primary_image
-
-				if test -n "${fiovb_rpmb}"; then
-					fiovb write_pvalue bootupgrade_primary_updated 1;
-				else
-					setenv bootupgrade_primary_updated 1;
-				fi
-
-				run saveenv_mmc
-
-				echo "${fio_msg} doing reset to boot newly updated images..."
-				run do_reboot
-			fi;
-		fi
-	else
-
-		# Handle case, when bootupgrade_available is mistakenly set (manually using fiovb/ubootenv)
-		# and this prevents aklite to start new update
-		if test "${fiovb.bootupgrade_primary_updated}" = "0" && test "${fiovb.bootupgrade_available}" = "1"; then
-			if test -n "${fiovb_rpmb}"; then
-				fiovb write_pvalue bootupgrade_available 0;
-			else
-				setenv bootupgrade_available 0;
-			fi
-			run saveenv_mmc
-		fi
-
-		# That means that ak-lite confirmed successful boot, so we can now reset
-		# fiovb.bootupgrade_available variable, confirming that everything is ok
-		# about boot firmware
-		if test "${fiovb.bootupgrade_primary_updated}" = "1"; then
-			echo "${fio_msg} finishing boot firmware update..."
-			run bootcmd_bootenv
-			if test -n "${fiovb_rpmb}"; then
-				fiovb write_pvalue bootupgrade_available 0;
-				fiovb write_pvalue bootupgrade_primary_updated 0;
-				fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
-			else
-				setenv bootupgrade_available 0;
-				setenv bootupgrade_primary_updated 0;
-				setenv bootfirmware_version "${bootfirmware_version}";
-			fi
-			run saveenv_mmc
-		fi
-	fi
-
-else
-	# Handle the case if we booted secondary boot image set,
-	# which means that the primary set is broken (for example, boot0 is corrupted)
-	# and it became corrupted after update, which means
-	# that we should rollback also
-	if test "${fiovb.upgrade_available}" = "1"; then
-			run rollback_setup
-			run saveenv_mmc
-	fi
-	run restore_primary_image
-	run do_reboot
-fi
-
-run bootcmd_rollback
-run bootcmd_bootargs_add_root
-run bootcmd_load_f
-run bootcmd_tee_ovy
-if test -n "${bootcmd_load_fw}"; then
-	run bootcmd_load_fw
-fi
-
-run bootcmd_run
-
-reset

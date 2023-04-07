@@ -121,4 +121,6 @@ setenv update_secondary_image 'echo "${fio_msg} writing ${image_path} ..."; sete
 setenv update_primary_image2 'echo "${fio_msg} writing ${image_path} ..."; setenv run_update "${update_cmd} ${bootloader2_image_update} ${filesize}"; run run_update'
 setenv update_secondary_image2 'echo "${fio_msg} writing ${image_path} ..."; setenv run_update "${update_cmd} ${bootloader2_s_image_update} ${filesize}"; run run_update'
 
+setenv do_reboot "reset"
+
 @@INCLUDE_COMMON@@

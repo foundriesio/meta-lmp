@@ -216,6 +216,12 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		echo "${fio_msg} reset ..."
 		reset
 	fi
+else
+	# If we are validating secondary boot path, Linux should force reboot back to
+	# primary path after running reboot cmd (this is needed for boards without
+	# software POR reset support, like Apalis iMX6)
+	echo "${fiovb_msg} Forcing secondary boot to 0 after reboot"
+	run set_primary_boot
 fi
 
 setenv bootcmd_load_f 'ext4load ${devtype} ${devnum}:${ostree_bootpart} ${fit_addr} "/boot"${kernel_image}'
@@ -230,14 +236,6 @@ run bootcmd_load_f
 run bootcmd_tee_ovy
 if test -n "${bootcmd_load_fw}"; then
 	run bootcmd_load_fw
-fi
-
-# If we are validating secondary boot path, Linux should force reboot back to
-# primary path after running reboot cmd (this is needed for boards without
-# software POR reset support, like Apalis iMX6)
-if test "${fiovb.is_secondary_boot}" = "1"; then
-	echo "${fiovb_msg} Forcing secondary boot to 0 after reboot"
-	run set_primary_boot
 fi
 
 run bootcmd_run

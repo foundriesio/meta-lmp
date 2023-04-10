@@ -804,7 +804,7 @@ PREFERRED_VERSION_optee-examples:mx9-nxp-bsp = "3.21.0"
 PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.21.0"
 PREFERRED_VERSION_optee-test:mx9-nxp-bsp = "3.21.0"
 ## We don't use imx-boot-container just yet
-UBOOT_PROVIDES_BOOT_CONTAINER:imx-boot-container = "0"
+UBOOT_PROVIDES_BOOT_CONTAINER:mx8m-generic-bsp = "0"
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:imx-generic-bsp = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

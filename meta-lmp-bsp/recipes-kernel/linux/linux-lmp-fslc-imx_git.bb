@@ -1,18 +1,11 @@
 include recipes-kernel/linux/kmeta-linux-lmp-5.15.y.inc
 
-# Use Freescale kernel by default
-KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
-KERNEL_REPO_PROTOCOL ?= "https"
 LINUX_VERSION ?= "5.15.87"
 KERNEL_BRANCH ?= "5.15-2.2.x-imx"
 
 SRCREV_machine = "0eb4504bd3b8fd125e83ec62da9ba039519f96c8"
-SRCREV_meta = "${KERNEL_META_COMMIT}"
 
-LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
-
-SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANCH};name=machine; \
-    ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \
+SRC_URI += "\
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
     file://0001-FIO-extras-arm64-dts-imx8mm-evk-use-imx8mm-evkb-for-.patch \
     file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
@@ -30,7 +23,3 @@ SRC_URI:append:imx8mm-lpddr4-evk = " \
 SRC_URI:append:mx8mn-nxp-bsp = " \
     file://0001-FIO-internal-arm64-dts-imx8mn-evk.dtsi-re-add-blueto.patch \
 "
-
-KMETA = "kernel-meta"
-
-include recipes-kernel/linux/linux-lmp.inc

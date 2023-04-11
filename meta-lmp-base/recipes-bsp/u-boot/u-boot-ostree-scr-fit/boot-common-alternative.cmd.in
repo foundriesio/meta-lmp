@@ -130,6 +130,8 @@ fi
 setenv fiovb.old_is_secondary_boot ${fiovb.is_secondary_boot}
 run check_secondary_boot
 
+if test "${ostree_deploy_usr}" = "1"; then setenv image_dir_path "${bootdir}"; else setenv image_dir_path "${ostree_root}/usr/lib/firmware"; fi;
+
 # Check if we store correct secondary boot value in ubootenv/fiovb storage
 # if not - we should update it
 if test ! "${fiovb.is_secondary_boot}" = "${fiovb.old_is_secondary_boot}"; then

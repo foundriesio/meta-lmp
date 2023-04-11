@@ -126,8 +126,8 @@ if test "${fiovb.rollback_protection}" = "1"; then
 	fi
 fi
 
-setenv fiovb.old_is_secondary_boot ${fiovb.is_secondary_boot}
 # Check state of SECONDARY_BOOT bit
+setenv fiovb.old_is_secondary_boot ${fiovb.is_secondary_boot}
 run check_secondary_boot
 
 if test "${ostree_deploy_usr}" = "1"; then setenv image_dir_path "${bootdir}"; else setenv image_dir_path "${ostree_root}/usr/lib/firmware"; fi;

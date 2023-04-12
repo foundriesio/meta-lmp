@@ -3,6 +3,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 DEPENDS:remove = "optee-os"
 DEPENDS += "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os', '', d)}"
 
+M33_DEFAULT_IMAGE:mx8ulp-nxp-bsp = "imx8ulp_m33_TCM_power_mode_switch.bin"
+
 SRC_URI:append:mx8m-nxp-bsp = " \
      file://0002-iMX8M-add-SPL-only-build.patch \
      file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \
@@ -24,6 +26,12 @@ do_compile[depends] = " \
     imx-atf:do_deploy \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'virtual/optee-os:do_deploy', '', d)} \
 "
+
+do_compile:prepend:mx8ulp-nxp-bsp() {
+    if [ -f ${DEPLOY_DIR_IMAGE}/${M33_DEFAULT_IMAGE} ]; then
+        cp ${DEPLOY_DIR_IMAGE}/${M33_DEFAULT_IMAGE} ${BOOT_STAGING}/m33_image.bin
+    fi
+}
 
 do_compile:prepend:mx8-nxp-bsp() {
     # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have

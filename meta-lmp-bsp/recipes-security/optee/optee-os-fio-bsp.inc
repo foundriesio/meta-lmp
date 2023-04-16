@@ -11,6 +11,7 @@ OPTEEMACHINE:imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE:imx8mn-ddr4-evk = "imx-mx8mnevk"
 OPTEEMACHINE:imx8mn-lpddr4-evk = "imx-mx8mnevk"
 OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
+OPTEEMACHINE:imx8ulp-lpddr4-evk = "imx-mx8ulpevk"
 OPTEEMACHINE:qemuarm64 = "vexpress-qemu_armv8a"
 OPTEEMACHINE:zynqmp = "zynqmp-zcu102"
 OPTEEMACHINE:versal = "versal-generic"
@@ -22,6 +23,11 @@ EXTRA_OEMAKE:append:mx8m-nxp-bsp = " \
     CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
     CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_HWRNG_PTA=y CFG_HWRNG_QUALITY=1024 \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x43200000 \
+"
+EXTRA_OEMAKE:append:mx8ulp-nxp-bsp = " \
+    CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
+    CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y \
+    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x9d000000 \
 "
 EXTRA_OEMAKE:append:mx8qm-nxp-bsp = " \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \

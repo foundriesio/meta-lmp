@@ -9,6 +9,7 @@ OPTEEMACHINE:imx8mq-evk = "imx-mx8mqevk"
 OPTEEMACHINE:imx8mn-ddr4-evk = "imx-mx8mnevk"
 OPTEEMACHINE:imx8mn-lpddr4-evk = "imx-mx8mnevk"
 OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
+OPTEEMACHINE:imx8ulp-lpddr4-evk = "imx-mx8ulpevk"
 OPTEEMACHINE:stm32mp15-disco = "stm32mp1-157C_DK2"
 OPTEEMACHINE:stm32mp15-eval = "stm32mp1-157C_EV1"
 
@@ -20,6 +21,11 @@ EXTRA_OEMAKE:append:mx8m-nxp-bsp = " \
 "
 EXTRA_OEMAKE:append:mx8qm-nxp-bsp = " \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
+"
+EXTRA_OEMAKE:append:mx8ulp-nxp-bsp = " \
+    CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
+    CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y \
+    CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x9d000000 \
 "
 
 # Machine Settings

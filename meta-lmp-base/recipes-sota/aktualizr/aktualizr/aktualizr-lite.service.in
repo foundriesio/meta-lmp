@@ -3,6 +3,10 @@ Description=Aktualizr Lite SOTA Client
 After=network.target boot-complete.target
 Requires=boot-complete.target
 ConditionPathExists=|/var/sota/sota.toml
+# this should be StartLimitBurst * RestartSec + 1
+StartLimitIntervalSec=541
+StartLimitBurst=3
+StartLimitAction=reboot
 
 [Service]
 RestartSec=180

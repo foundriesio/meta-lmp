@@ -50,7 +50,7 @@ SRC_URI:append:imx8mn-lpddr4-evk-sec = " \
 
 # Machine specific dependencies
 def get_do_deploy_depends(d):
-    imxboot_families = ['mx8-nxp-bsp']
+    imxboot_families = ['mx8-nxp-bsp', 'mx93-nxp-bsp']
     cur_families = (d.getVar('MACHINEOVERRIDES') or '').split(':')
     if any(map(lambda x: x in cur_families, imxboot_families)):
         return "imx-boot:do_deploy"

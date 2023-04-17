@@ -1,0 +1,807 @@
+From 8b01d1d18f2f2e40e8cc46eaa48adf225c764687 Mon Sep 17 00:00:00 2001
+From: Ivan Stepic <Ivan.Stepic@bmw.de>
+Date: Thu, 8 Sep 2022 14:02:24 +0200
+Subject: [PATCH 1/4] [from list] Introduce generic keypair generation
+ interface and engine ctrl command
+
+As discussed in https://github.com/OpenSC/libp11/pull/379 and
+https://github.com/OpenSC/libp11/pull/378 we need a generic interface
+that supports multiple algorithms for key generation. Attempt was made
+to create a new keygen method and register it in PKCS11_pkey_meths() in
+p11_pkey.c (so that it's possible to generate keys using OpenSSL's
+EVP_PKEY_* API) but multiple design issues appeared. How and where do you
+pass the key ID, token label and alike was the first question. As
+suggested by the maintainer here:
+https://github.com/OpenSC/libp11/pull/379#issuecomment-820588833,
+app_data from EVP_PKEY_CTX was (mis)used and that worked well. The
+reason why this approach was abandoned is because a good (or bad) way
+to get a handle of the PKCS11_CTX_private, that is necessary for the
+Cryptoki call, was not found.
+The way other operations work is that they rely on the key being
+loaded *_first_* through ENGINE_load_public(private)_key because this
+is when the PKCS11_CTX gets initialized and a handle to
+PKCS11_OBJECT_private gets set to the ex_data of the underlying key.
+Key generation obviously cannot rely on that mechanism since key
+doesn't yet exist.
+
+Instead, a generic PKCS11_generate_key interface was made that
+takes a structure describing the key generation algorithm. For now
+it only contains simple options like curve name for ECC or number
+of bits for RSA key generation. This interface can then be used
+as any other PKCS11 wrapper interface or using the ENGINE control
+commands. Using it with ENGINE control commands is demonstrated in
+the new tests/keygen.c file.
+
+Code for ECC keygen was taken from:
+https://github.com/OpenSC/libp11/pull/379 and reworked to compile and
+work with some new additions to libp11 i.e. templates.
+
+Upstream-Status: Submitted [https://github.com/OpenSC/libp11/pull/474]
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ src/eng_back.c       |  60 +++++++++++++
+ src/eng_front.c      |   4 +
+ src/engine.h         |   1 +
+ src/libp11-int.h     |  15 ++--
+ src/libp11.h         |  45 ++++++----
+ src/p11_front.c      |  30 +++++--
+ src/p11_key.c        |  94 +++++++++++++++++++-
+ src/p11_misc.c       |  75 ++++++++++++++++
+ tests/Makefile.am    |   6 +-
+ tests/keygen.c       | 206 +++++++++++++++++++++++++++++++++++++++++++
+ tests/keygen.softhsm |  39 ++++++++
+ 11 files changed, 544 insertions(+), 31 deletions(-)
+ create mode 100644 tests/keygen.c
+ create mode 100755 tests/keygen.softhsm
+
+diff --git a/src/eng_back.c b/src/eng_back.c
+index d25e3c1..b823950 100644
+--- a/src/eng_back.c
++++ b/src/eng_back.c
+@@ -890,6 +890,64 @@ EVP_PKEY *ctx_load_privkey(ENGINE_CTX *ctx, const char *s_key_id,
+ 	return PKCS11_get_private_key(key);
+ }
+ 
++static int ctx_keygen(ENGINE_CTX *ctx, void *p)
++{
++	int rv = 1;
++	int i;
++	PKCS11_KGEN_ATTRS *kg_attrs = p;
++	PKCS11_SLOT* slot = NULL;
++
++	pthread_mutex_lock(&ctx->lock);
++	/* Delayed libp11 initialization */
++	if (ctx_init_libp11_unlocked(ctx)) {
++		ENGerr(ENG_F_CTX_LOAD_OBJECT, ENG_R_INVALID_PARAMETER);
++		goto done;
++	}
++
++	// Take the first token that has a matching label
++	// TODO: make this more intelligent
++	for (i = 0; i < ctx->slot_count; ++i) {
++		slot = ctx->slot_list + i;
++		if (slot && slot->token && slot->token->initialized &&
++				slot->token->label &&
++					!strncmp(slot->token->label, kg_attrs->token_label, 32)) {
++			break;
++		}
++	}
++
++	if (i == ctx->slot_count) {
++		ctx_log(ctx, 0, "Initialized token with matching label not found...\n");
++		goto done;
++	}
++
++	if (!ctx->force_login) {
++		ERR_clear_error();
++		rv = PKCS11_generate_key(slot->token, kg_attrs);
++		if (rv == 0) {
++			goto done;
++		}
++	}
++
++	// Try with logging in
++	ERR_clear_error();
++	if (slot->token->loginRequired) {
++		if (!ctx_login(ctx, slot, slot->token,
++				NULL, NULL)) {
++			ctx_log(ctx, 0, "Login to token failed, returning 0...\n");
++			rv = 1;
++			goto done;
++		}
++		rv = PKCS11_generate_key(slot->token, kg_attrs);
++		if (rv < 0) {
++			ctx_log(ctx, 0, "Failed to generate a key pair on the token."
++					" Error code: %d\n", rv);
++		}
++	}
++
++done:
++	pthread_mutex_unlock(&ctx->lock);
++	return rv ? 0 : 1;
++}
+ /******************************************************************************/
+ /* Engine ctrl request handling                                               */
+ /******************************************************************************/
+@@ -1008,6 +1066,8 @@ int ctx_engine_ctrl(ENGINE_CTX *ctx, int cmd, long i, void *p, void (*f)())
+ 		return ctx_ctrl_force_login(ctx);
+ 	case CMD_RE_ENUMERATE:
+ 		return ctx_enumerate_slots(ctx, ctx->pkcs11_ctx);
++	case CMD_KEYGEN:
++		return ctx_keygen(ctx, p);
+ 	default:
+ 		ENGerr(ENG_F_CTX_ENGINE_CTRL, ENG_R_UNKNOWN_COMMAND);
+ 		break;
+diff --git a/src/eng_front.c b/src/eng_front.c
+index 3a3c891..e3e5a78 100644
+--- a/src/eng_front.c
++++ b/src/eng_front.c
+@@ -79,6 +79,10 @@ static const ENGINE_CMD_DEFN engine_cmd_defns[] = {
+ 		"RE_ENUMERATE",
+ 		"re enumerate slots",
+ 		ENGINE_CMD_FLAG_NO_INPUT},
++	{CMD_KEYGEN,
++		"KEYGEN",
++		"Generate asymmetric key pair",
++		ENGINE_CMD_FLAG_INTERNAL},
+ 	{0, NULL, NULL, 0}
+ };
+ 
+diff --git a/src/engine.h b/src/engine.h
+index 54bdcf0..740f86e 100644
+--- a/src/engine.h
++++ b/src/engine.h
+@@ -52,6 +52,7 @@
+ #define CMD_SET_CALLBACK_DATA	(ENGINE_CMD_BASE + 8)
+ #define CMD_FORCE_LOGIN	(ENGINE_CMD_BASE+9)
+ #define CMD_RE_ENUMERATE	(ENGINE_CMD_BASE+10)
++#define CMD_KEYGEN		(ENGINE_CMD_BASE+11)
+ 
+ typedef struct st_engine_ctx ENGINE_CTX; /* opaque */
+ 
+diff --git a/src/libp11-int.h b/src/libp11-int.h
+index 2d4c48a..ddde598 100644
+--- a/src/libp11-int.h
++++ b/src/libp11-int.h
+@@ -125,6 +125,9 @@ extern int ERR_load_CKR_strings(void);
+ 	pkcs11_strdup((char *) s, sizeof(s))
+ extern char *pkcs11_strdup(char *, size_t);
+ 
++/* Hex to bin */
++extern int pkcs11_hex_to_bin(const char *, unsigned char *, size_t *);
++
+ /* Emulate the OpenSSL 1.1 getters */
+ #if OPENSSL_VERSION_NUMBER < 0x10100003L || ( defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x3000000L )
+ #define EVP_PKEY_get0_RSA(key) ((key)->pkey.rsa)
+@@ -307,12 +310,14 @@ extern int pkcs11_store_certificate(PKCS11_SLOT_private *, X509 * x509,
+ extern int pkcs11_seed_random(PKCS11_SLOT_private *, const unsigned char *s, unsigned int s_len);
+ extern int pkcs11_generate_random(PKCS11_SLOT_private *, unsigned char *r, unsigned int r_len);
+ 
+-/* Internal implementation of deprecated features */
+-
+ /* Generate and store a private key on the token */
+-extern int pkcs11_generate_key(PKCS11_SLOT_private *tpriv,
+-	int algorithm, unsigned int bits,
+-	char *label, unsigned char* id, size_t id_len);
++extern int pkcs11_rsa_keygen(PKCS11_SLOT_private *tpriv,
++	unsigned int bits, char *label, unsigned char* id, size_t id_len);
++
++extern int pkcs11_ec_keygen(PKCS11_SLOT_private *tpriv,
++	const char *curve , char *label, unsigned char* id, size_t id_len);
++
++/* Internal implementation of deprecated features */
+ 
+ /* Get the RSA key modulus size (in bytes) */
+ extern int pkcs11_get_key_size(PKCS11_OBJECT_private *);
+diff --git a/src/libp11.h b/src/libp11.h
+index bd47d67..27a34ec 100644
+--- a/src/libp11.h
++++ b/src/libp11.h
+@@ -111,6 +111,25 @@ typedef struct PKCS11_ctx_st {
+ 	void *_private;
+ } PKCS11_CTX;
+ 
++typedef struct PKCS11_ec_kgen_st {
++	const char *curve;
++} PKCS11_EC_KGEN;
++
++typedef struct PKCS11_rsa_kgen_st {
++	unsigned int bits;
++} PKCS11_RSA_KGEN;
++
++typedef struct PKCS11_kgen_attrs_st {
++	int type;
++	union {
++		PKCS11_EC_KGEN *ec;
++		PKCS11_RSA_KGEN *rsa;
++	} kgen;
++	char *token_label;
++	char *key_label;
++	char *key_id;
++} PKCS11_KGEN_ATTRS;
++
+ /**
+  * Create a new libp11 context
+  *
+@@ -387,6 +406,17 @@ extern int PKCS11_store_certificate(PKCS11_TOKEN * token, X509 * x509,
+ 		char *label, unsigned char *id, size_t id_len,
+ 		PKCS11_CERT **ret_cert);
+ 
++/**
++ * Generate key pair on the token
++ *
++ * @param token on which the key should be generated
++ * @param kgen_attrs struct describing key generation (selection of algorithm,
++ * algorithm parameters...)
++ * @retval 0 on success
++ * @retval negative number on error
++ */
++extern int PKCS11_generate_key(PKCS11_TOKEN *token, PKCS11_KGEN_ATTRS *kgen_attrs);
++
+ /* Access the random number generator */
+ extern int PKCS11_seed_random(PKCS11_SLOT *slot, const unsigned char *s, unsigned int s_len);
+ extern int PKCS11_generate_random(PKCS11_SLOT *slot, unsigned char *r, unsigned int r_len);
+@@ -443,21 +473,6 @@ extern void ERR_load_PKCS11_strings(void);
+  * duplicate the functionality OpenSSL provides for EVP_PKEY objects
+  */
+ 
+-/**
+- * Generate a private key on the token
+- *
+- * @param token token returned by PKCS11_find_token()
+- * @param algorithm IGNORED (still here for backward compatibility)
+- * @param bits size of the modulus in bits
+- * @param label label for this key
+- * @param id bytes to use as the id value
+- * @param id_len length of the id value
+- * @retval 0 success
+- * @retval -1 error
+- */
+-P11_DEPRECATED_FUNC extern int PKCS11_generate_key(PKCS11_TOKEN * token,
+-	int algorithm, unsigned int bits,
+-	char *label, unsigned char* id, size_t id_len);
+ 
+ /* Get the RSA key modulus size (in bytes) */
+ P11_DEPRECATED_FUNC extern int PKCS11_get_key_size(PKCS11_KEY *);
+diff --git a/src/p11_front.c b/src/p11_front.c
+index f74f209..b0072cf 100644
+--- a/src/p11_front.c
++++ b/src/p11_front.c
+@@ -16,6 +16,8 @@
+  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+  */
+ 
++#include <string.h>
++
+ #include "libp11-int.h"
+ 
+ /* The following exported functions are *not* implemented here:
+@@ -367,18 +369,34 @@ int PKCS11_set_ui_method(PKCS11_CTX *pctx, UI_METHOD *ui_method, void *ui_user_d
+ 	return pkcs11_set_ui_method(ctx, ui_method, ui_user_data);
+ }
+ 
+-/* External interface to the deprecated features */
+-
+-int PKCS11_generate_key(PKCS11_TOKEN *token,
+-		int algorithm, unsigned int bits,
+-		char *label, unsigned char *id, size_t id_len)
++int PKCS11_generate_key(PKCS11_TOKEN *token, PKCS11_KGEN_ATTRS *kg)
+ {
+ 	PKCS11_SLOT_private *slot = PRIVSLOT(token->slot);
+ 	if (check_slot_fork(slot) < 0)
+ 		return -1;
+-	return pkcs11_generate_key(slot, algorithm, bits, label, id, id_len);
++	unsigned char out[128] = {0};
++	size_t key_id_len = 0;
++	if (kg && kg->key_id) {
++		key_id_len = strlen(kg->key_id);
++		if (key_id_len > 127) {
++			return -2;
++		}
++		pkcs11_hex_to_bin(kg->key_id, out, &key_id_len);
++	}
++	switch(kg->type) {
++	case EVP_PKEY_RSA:
++		return pkcs11_rsa_keygen(slot, kg->kgen.rsa->bits,
++				kg->key_label, out, key_id_len);
++	case EVP_PKEY_EC:
++		return pkcs11_ec_keygen(slot, kg->kgen.ec->curve,
++				kg->key_label, out, key_id_len);
++	default:
++		return -3;
++	}
+ }
+ 
++/* External interface to the deprecated features */
++
+ int PKCS11_get_key_size(PKCS11_KEY *pkey)
+ {
+ 	PKCS11_OBJECT_private *key = PRIVKEY(pkey);
+diff --git a/src/p11_key.c b/src/p11_key.c
+index ec7f279..62f68a4 100644
+--- a/src/p11_key.c
++++ b/src/p11_key.c
+@@ -252,7 +252,7 @@ int pkcs11_reload_object(PKCS11_OBJECT_private *obj)
+ /**
+  * Generate a key pair directly on token
+  */
+-int pkcs11_generate_key(PKCS11_SLOT_private *slot, int algorithm, unsigned int bits,
++int pkcs11_rsa_keygen(PKCS11_SLOT_private *slot, unsigned int bits,
+ 		char *label, unsigned char* id, size_t id_len) {
+ 
+ 	PKCS11_CTX_private *ctx = slot->ctx;
+@@ -266,10 +266,8 @@ int pkcs11_generate_key(PKCS11_SLOT_private *slot, int algorithm, unsigned int b
+ 	CK_OBJECT_HANDLE pub_key_obj, priv_key_obj;
+ 	int rv;
+ 
+-	(void)algorithm; /* squash the unused parameter warning */
+-
+ 	if (pkcs11_get_session(slot, 1, &session))
+-		return -1;
++		return -10;
+ 
+ 	/* pubkey attributes */
+ 	pkcs11_addattr(&pubtmpl, CKA_ID, id, id_len);
+@@ -310,6 +308,94 @@ int pkcs11_generate_key(PKCS11_SLOT_private *slot, int algorithm, unsigned int b
+ 	return 0;
+ }
+ 
++int pkcs11_ec_keygen(PKCS11_SLOT_private *slot, const char *curve,
++		char *label, unsigned char *id, size_t id_len)
++{
++	PKCS11_CTX_private *ctx = slot->ctx;
++	CK_SESSION_HANDLE session;
++	PKCS11_TEMPLATE pubtmpl = {0}, privtmpl = {0};
++	CK_MECHANISM mechanism = {
++		CKM_EC_KEY_PAIR_GEN, NULL_PTR, 0
++	};
++
++	CK_OBJECT_HANDLE pub_key_obj, priv_key_obj;
++	int rv;
++
++	unsigned char *ecdsa_params = NULL;
++	int ecdsa_params_len = 0;
++	unsigned char *tmp = NULL;
++	ASN1_OBJECT *curve_obj = NULL;
++	int curve_nid = NID_undef;
++
++	if (pkcs11_get_session(slot, 1, &session)) {
++		return -20;
++	}
++
++	curve_nid = EC_curve_nist2nid(curve);
++	if (curve_nid == NID_undef)
++		curve_nid = OBJ_sn2nid(curve);
++	if (curve_nid == NID_undef)
++		curve_nid = OBJ_ln2nid(curve);
++	if (curve_nid == NID_undef)
++		return -21;
++
++	curve_obj = OBJ_nid2obj(curve_nid);
++	if (!curve_obj)
++		return -22;
++	ecdsa_params_len = i2d_ASN1_OBJECT(curve_obj, NULL);
++	ecdsa_params = (unsigned char *)OPENSSL_malloc(ecdsa_params_len);
++	if (!ecdsa_params)
++		return -23;
++	tmp = ecdsa_params;
++	i2d_ASN1_OBJECT(curve_obj, &tmp);
++
++	/* pubkey attributes */
++	pkcs11_addattr(&pubtmpl, CKA_ID, id, id_len);
++	if (label)
++		pkcs11_addattr_s(&pubtmpl, CKA_LABEL, label);
++	pkcs11_addattr_bool(&pubtmpl, CKA_TOKEN, TRUE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_DERIVE, TRUE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_WRAP, FALSE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_VERIFY, TRUE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_VERIFY_RECOVER, FALSE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_ENCRYPT, FALSE);
++	pkcs11_addattr(&pubtmpl, CKA_ECDSA_PARAMS, ecdsa_params, ecdsa_params_len);
++
++	/* privkey attributes */
++	pkcs11_addattr(&privtmpl, CKA_ID, id, id_len);
++	if (label)
++		pkcs11_addattr_s(&privtmpl, CKA_LABEL, label);
++	pkcs11_addattr_bool(&privtmpl, CKA_TOKEN, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_PRIVATE, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_SENSITIVE, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_DERIVE, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_UNWRAP, FALSE);
++	pkcs11_addattr_bool(&privtmpl, CKA_SIGN, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_DECRYPT, FALSE);
++
++	/* call the pkcs11 module to create the key pair */
++	rv = CRYPTOKI_call(ctx, C_GenerateKeyPair(
++			session,
++			&mechanism,
++			pubtmpl.attrs,
++			pubtmpl.nattr,
++			privtmpl.attrs,
++			privtmpl.nattr,
++			&pub_key_obj,
++			&priv_key_obj
++	));
++
++	pkcs11_put_session(slot, session);
++
++	/* zap all memory allocated when building the template */
++	pkcs11_zap_attrs(&privtmpl);
++	pkcs11_zap_attrs(&pubtmpl);
++	OPENSSL_free(ecdsa_params);
++
++	CRYPTOKI_checkerr(CKR_F_PKCS11_GENERATE_KEY, rv);
++	return 0;
++}
++
+ /*
+  * Store a private key on the token
+  */
+diff --git a/src/p11_misc.c b/src/p11_misc.c
+index 1b0e64d..1d9a845 100644
+--- a/src/p11_misc.c
++++ b/src/p11_misc.c
+@@ -60,4 +60,79 @@ int pkcs11_atomic_add(int *value, int amount, pthread_mutex_t *lock)
+ #endif
+ }
+ 
++/* Stolen from OpenSC/src/libopensc/sc.c */
++int pkcs11_hex_to_bin(const char *in, unsigned char *out, size_t *outlen)
++{
++	const char *sc_hex_to_bin_separators = " :";
++	if (in == NULL || out == NULL || outlen == NULL) {
++		return -1;
++	}
++
++	int byte_needs_nibble = 0;
++	int r = 0;
++	size_t left = *outlen;
++	unsigned char byte = 0;
++	while (*in != '\0' && 0 != left) {
++		char c = *in++;
++		unsigned char nibble;
++		if ('0' <= c && c <= '9')
++			nibble = c - '0';
++		else if ('a' <= c && c <= 'f')
++			nibble = c - 'a' + 10;
++		else if ('A' <= c && c <= 'F')
++			nibble = c - 'A' + 10;
++		else {
++			if (strchr(sc_hex_to_bin_separators, (int) c)) {
++				if (byte_needs_nibble) {
++					r = -2;
++					goto err;
++				}
++				continue;
++			}
++			r = -3;
++			goto err;
++		}
++
++		if (byte_needs_nibble) {
++			byte |= nibble;
++			*out++ = (unsigned char) byte;
++			left--;
++			byte_needs_nibble = 0;
++		} else {
++			byte  = nibble << 4;
++			byte_needs_nibble = 1;
++		}
++	}
++
++	if (left == *outlen && 1 == byte_needs_nibble && 0 != left) {
++		/* no output written so far, but we have a valid nibble in the upper
++		 * bits. Allow this special case. */
++		*out = (unsigned char) byte>>4;
++		left--;
++		byte_needs_nibble = 0;
++	}
++
++	/* for ease of implementation we only accept completely hexed bytes. */
++	if (byte_needs_nibble) {
++		r = -4;
++		goto err;
++	}
++
++	/* skip all trailing separators to see if we missed something */
++	while (*in != '\0') {
++		if (NULL == strchr(sc_hex_to_bin_separators, (int) *in))
++			break;
++		in++;
++	}
++	if (*in != '\0') {
++		r = -5;
++		goto err;
++	}
++
++err:
++	*outlen -= left;
++	return r;
++}
++
++
+ /* vim: set noexpandtab: */
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index b1bc0fb..d0e36b8 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -18,6 +18,8 @@ check_PROGRAMS = \
+ 	rsa-oaep \
+ 	check-privkey \
+ 	store-cert
++	dup-key \
++	keygen
+ dist_check_SCRIPTS = \
+ 	rsa-testpkcs11.softhsm \
+ 	rsa-testfork.softhsm \
+@@ -33,7 +35,9 @@ dist_check_SCRIPTS = \
+ 	ec-check-privkey.softhsm \
+ 	pkcs11-uri-without-token.softhsm \
+ 	search-all-matching-tokens.softhsm \
+-	ec-cert-store.softhsm
++	ec-cert-store.softhsm \
++	ec-copy.softhsm \
++	keygen.softhsm
+ dist_check_DATA = \
+ 	rsa-cert.der rsa-prvkey.der rsa-pubkey.der \
+ 	ec-cert.der ec-prvkey.der ec-pubkey.der
+diff --git a/tests/keygen.c b/tests/keygen.c
+new file mode 100644
+index 0000000..6ed8f6f
+--- /dev/null
++++ b/tests/keygen.c
+@@ -0,0 +1,206 @@
++ /*
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ */
++
++#include <libp11.h>
++#include <openssl/conf.h>
++#include <openssl/engine.h>
++#include <openssl/pem.h>
++#include <string.h>
++
++static void
++usage(char* argv[])
++{
++	fprintf(stderr,
++		"%s token_label key_label [module]\n",
++		argv[0]);
++}
++
++static void
++display_openssl_errors(int l)
++{
++	const char* file;
++	char buf[120];
++	int e, line;
++
++	if (ERR_peek_error() == 0)
++		return;
++	fprintf(stderr, "At main.c:%d:\n", l);
++
++	while ((e = ERR_get_error_line(&file, &line))) {
++		ERR_error_string(e, buf);
++		fprintf(stderr, "- SSL %s: %s:%d\n", buf, file, line);
++	}
++}
++
++static int sign_verify_test(EVP_PKEY *priv, EVP_PKEY *pub) {
++	EVP_MD_CTX *mdctx = NULL;
++	int retval = 0;
++	char *msg = "libp11";
++	size_t slen;
++	unsigned char *sig = NULL;
++
++	if (!priv || !pub) {
++		fprintf(stderr, "Where are the keys?\n");
++		return -1;
++	}
++	if(!(mdctx = EVP_MD_CTX_create())) {
++		display_openssl_errors(__LINE__);
++		retval = -2;
++		goto err;
++	}
++	if(1 != EVP_DigestSignInit(mdctx, NULL, EVP_sha256(), NULL, priv)) {
++		display_openssl_errors(__LINE__);
++		retval = -3;
++		goto err;
++	}
++	if(1 != EVP_DigestSignUpdate(mdctx, msg, strlen(msg))) {
++		display_openssl_errors(__LINE__);
++		retval = -4;
++		goto err;
++	}
++	if(1 != EVP_DigestSignFinal(mdctx, NULL, &slen)) {
++		display_openssl_errors(__LINE__);
++		retval = -5;
++		goto err;
++	}
++	if(!(sig = OPENSSL_malloc(sizeof(unsigned char) * (slen)))) {
++		display_openssl_errors(__LINE__);
++		retval = -6;
++		goto err;
++	}
++	if(1 != EVP_DigestSignFinal(mdctx, sig, &slen)) {
++		display_openssl_errors(__LINE__);
++		retval = -7;
++		fprintf(stderr, "Sign fail\n");
++		goto err;
++	}
++	printf("Sign success\n");
++
++	if(1 != EVP_DigestVerifyInit(mdctx, NULL, EVP_sha256(), NULL, pub)) {
++		display_openssl_errors(__LINE__);
++		retval = -8;
++		goto err;
++	}
++	if(1 != EVP_DigestVerifyUpdate(mdctx, msg, strlen(msg))) {
++		display_openssl_errors(__LINE__);
++		retval = -9;
++		goto err;
++	}
++	if(1 == EVP_DigestVerifyFinal(mdctx, sig, slen))
++	{
++		printf("Verify success\n");
++		retval = 0;
++	}
++	else
++	{
++		display_openssl_errors(__LINE__);
++		fprintf(stderr, "Verify fail\n");
++		retval = -10;
++		goto err;
++	}
++
++err:
++	if(sig) OPENSSL_free(sig);
++	if(mdctx) EVP_MD_CTX_destroy(mdctx);
++	return retval;
++}
++
++int
++main(int argc, char* argv[])
++{
++	int ret = 0;
++	ENGINE* engine = NULL;
++	char *module = argv[3];
++
++	if (argc < 3) {
++		fprintf(stderr, "Too few arguments\n");
++		usage(argv);
++		return 1;
++	}
++
++	ENGINE_load_builtin_engines();
++	engine = ENGINE_by_id("pkcs11");
++	if (engine == NULL) {
++		fprintf(stderr, "Could not get engine\n");
++		display_openssl_errors(__LINE__);
++		exit(1);
++	}
++	if (!ENGINE_ctrl_cmd_string(engine, "PIN", "1234", 0)) {
++		display_openssl_errors(__LINE__);
++		exit(1);
++	}
++	if (!ENGINE_ctrl_cmd_string(engine, "VERBOSE", NULL, 0)) {
++		display_openssl_errors(__LINE__);
++		exit(1);
++	}
++	if (module) {
++		if (!ENGINE_ctrl_cmd_string(engine, "MODULE_PATH", module, 0)) {
++			display_openssl_errors(__LINE__);
++			exit(1);
++		}
++	}
++	if (!ENGINE_init(engine)) {
++		fprintf(stderr, "Could not initialize engine\n");
++		display_openssl_errors(__LINE__);
++		exit(1);
++	}
++
++	PKCS11_EC_KGEN ec = {
++		.curve = "P-256"
++	};
++	PKCS11_KGEN_ATTRS eckg =
++	{
++		.type = EVP_PKEY_EC,
++		.kgen.ec = &ec,
++		.token_label = argv[1],
++		.key_label = argv[2],
++		.key_id = "1234",
++	};
++
++	if (!ENGINE_ctrl_cmd(engine, "KEYGEN", 0, &eckg, NULL, 1)) {
++		fprintf(stderr, "Could not generate ECC keys\n");
++		exit(1);
++	}
++
++	EVP_PKEY *ecpb = ENGINE_load_public_key(engine, "1234", NULL, NULL);
++	EVP_PKEY *ecpr = ENGINE_load_private_key(engine, "1234", NULL, NULL);
++	if ((ret = sign_verify_test(ecpr, ecpb)) < 0) {
++		fprintf(stderr, "ECC Sign-verify failed with err code: %d\n", ret);
++		exit(1);
++	}
++	PKCS11_RSA_KGEN rsa = {
++		.bits = 2048
++	};
++	PKCS11_KGEN_ATTRS rsakg = {
++		.type = EVP_PKEY_RSA,
++		.kgen.rsa = &rsa,
++		.token_label = argv[1],
++		.key_label = argv[2],
++		.key_id = "4321",
++	};
++	if (!ENGINE_ctrl_cmd(engine, "KEYGEN", 0, &rsakg, NULL, 1)) {
++		fprintf(stderr, "Could not generate RSA keys\n");
++		exit(1);
++	}
++	EVP_PKEY *rsapb = ENGINE_load_public_key(engine, "4321", NULL, NULL);
++	EVP_PKEY *rsapr = ENGINE_load_private_key(engine, "4321", NULL, NULL);
++	if ((ret = sign_verify_test(rsapr, rsapb)) < 0) {
++		fprintf(stderr, "RSA Sign-verify failed with err code: %d\n", ret);
++		exit(1);
++	}
++
++	ENGINE_finish(engine);
++	return ret;
++}
+diff --git a/tests/keygen.softhsm b/tests/keygen.softhsm
+new file mode 100755
+index 0000000..83f8175
+--- /dev/null
++++ b/tests/keygen.softhsm
+@@ -0,0 +1,39 @@
++#!/bin/sh
++
++# This program is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <https://www.gnu.org/licenses/>.
++
++outdir="output.$$"
++
++# Load common test functions
++. ${srcdir}/ec-no-pubkey.sh
++
++sed -e "s|@MODULE_PATH@|${MODULE}|g" -e "s|@ENGINE_PATH@|../src/.libs/pkcs11.so|g" <"${srcdir}/engines.cnf.in" >"${outdir}/engines.cnf"
++
++export OPENSSL_ENGINES="../src/.libs/"
++
++./keygen libp11-test libp11-keylabel ${MODULE}
++if test $? != 0;then
++	echo "Key generation failed"
++	exit 1;
++fi
++
++pkcs11-tool -p 1234 --module ${MODULE} -l -O | grep -q libp11-keylabel
++if test $? != 0;then
++	echo "The key was not properly generated"
++	exit 1;
++fi
++
++rm -rf "$outdir"
++
++exit 0
+-- 
+2.34.1
+

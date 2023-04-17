@@ -9,7 +9,13 @@ LICENSE = "LGPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=fad9b3332be894bab9bc501572864b29"
 DEPENDS = "libtool openssl"
 
-SRC_URI = "git://github.com/OpenSC/libp11.git;branch=master;protocol=https"
+SRC_URI = "git://github.com/OpenSC/libp11.git;branch=master;protocol=https \
+	file://0001-from-list-Introduce-generic-keypair-generation-inter.patch \
+	file://0002-from-list-Fix-constness-of-key-generation-attributes.patch \
+	file://0003-FIO-internal-ec_keygen-changes-required-for-TPM.patch \
+	file://0004-from-upstream-slot-fix-token-initialization.patch \
+"
+
 SRCREV = "53d65dc48cf436694f7edcfc805414e608e8a2bf"
 
 UPSTREAM_CHECK_GITTAGREGEX = "libp11-(?P<pver>\d+(\.\d+)+)"

@@ -1,0 +1,51 @@
+From d9c35cf328dbf9a242741a60f85d4cf57d2d6f1a Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Sun, 16 Apr 2023 15:50:19 +0200
+Subject: [PATCH 4/4] [from upstream] slot: fix token initialization
+
+The current interface accepts a string as the token label.
+
+The specification however specifies that the label must point
+to a 32-byte memory location, which MUST be padded with blank
+characters and which MUST not be null-terminated.
+
+This fix allows using libp11 with libtpm2_pkcs11 since the
+TPM pkcs#11 implementation does enforce the requirement
+(libsofthsm does not).
+
+Upstream-Status: Backport [https://github.com/OpenSC/libp11/commit/e86eb16bd6266565c0d27abf0d549038f5ae578d]
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ src/p11_slot.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/src/p11_slot.c b/src/p11_slot.c
+index 3c00e22..10813dd 100644
+--- a/src/p11_slot.c
++++ b/src/p11_slot.c
+@@ -271,14 +271,20 @@ int pkcs11_logout(PKCS11_SLOT_private *slot)
+ int pkcs11_init_token(PKCS11_SLOT_private *slot, const char *pin, const char *label)
+ {
+ 	PKCS11_CTX_private *ctx = slot->ctx;
++	unsigned char ck_label[32];
+ 	int rv;
+ 
++	memset(ck_label, ' ', sizeof(ck_label));
++
+ 	if (!label)
+ 		label = "PKCS#11 Token";
++
++	memcpy(ck_label, label, strnlen(label, sizeof(ck_label)));
++
+ 	rv = CRYPTOKI_call(ctx,
+ 		C_InitToken(slot->id,
+ 			(CK_UTF8CHAR *) pin, (unsigned long) strlen(pin),
+-			(CK_UTF8CHAR *) label));
++			(CK_UTF8CHAR *) ck_label));
+ 	CRYPTOKI_checkerr(CKR_F_PKCS11_INIT_TOKEN, rv);
+ 
+ 	/* FIXME: how to update the token?
+-- 
+2.34.1
+

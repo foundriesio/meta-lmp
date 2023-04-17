@@ -1,0 +1,53 @@
+From 561e3e456f7474937d78f4ba609da5b7bdfa1e32 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Sun, 16 Apr 2023 21:39:37 +0200
+Subject: [PATCH 3/4] [FIO internal] ec_keygen: changes required for TPM
+
+These changes depend on EC support being merged
+[ie, https://github.com/OpenSC/libp11/pull/474]
+
+Until then, this code is not upstreamable.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ src/p11_key.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/src/p11_key.c b/src/p11_key.c
+index c3b8c0b..5de6360 100644
+--- a/src/p11_key.c
++++ b/src/p11_key.c
+@@ -354,11 +354,10 @@ int pkcs11_ec_keygen(PKCS11_SLOT_private *slot, const char *curve,
+ 	if (label)
+ 		pkcs11_addattr_s(&pubtmpl, CKA_LABEL, label);
+ 	pkcs11_addattr_bool(&pubtmpl, CKA_TOKEN, TRUE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_VERIFY, TRUE);
+ 	pkcs11_addattr_bool(&pubtmpl, CKA_DERIVE, TRUE);
++	pkcs11_addattr_bool(&pubtmpl, CKA_ENCRYPT, TRUE);
+ 	pkcs11_addattr_bool(&pubtmpl, CKA_WRAP, FALSE);
+-	pkcs11_addattr_bool(&pubtmpl, CKA_VERIFY, TRUE);
+-	pkcs11_addattr_bool(&pubtmpl, CKA_VERIFY_RECOVER, FALSE);
+-	pkcs11_addattr_bool(&pubtmpl, CKA_ENCRYPT, FALSE);
+ 	pkcs11_addattr(&pubtmpl, CKA_ECDSA_PARAMS, ecdsa_params, ecdsa_params_len);
+ 
+ 	/* privkey attributes */
+@@ -366,12 +365,10 @@ int pkcs11_ec_keygen(PKCS11_SLOT_private *slot, const char *curve,
+ 	if (label)
+ 		pkcs11_addattr_s(&privtmpl, CKA_LABEL, label);
+ 	pkcs11_addattr_bool(&privtmpl, CKA_TOKEN, TRUE);
+-	pkcs11_addattr_bool(&privtmpl, CKA_PRIVATE, TRUE);
+-	pkcs11_addattr_bool(&privtmpl, CKA_SENSITIVE, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_SIGN, TRUE);
+ 	pkcs11_addattr_bool(&privtmpl, CKA_DERIVE, TRUE);
++	pkcs11_addattr_bool(&privtmpl, CKA_DECRYPT, TRUE);
+ 	pkcs11_addattr_bool(&privtmpl, CKA_UNWRAP, FALSE);
+-	pkcs11_addattr_bool(&privtmpl, CKA_SIGN, TRUE);
+-	pkcs11_addattr_bool(&privtmpl, CKA_DECRYPT, FALSE);
+ 
+ 	/* call the pkcs11 module to create the key pair */
+ 	rv = CRYPTOKI_call(ctx, C_GenerateKeyPair(
+-- 
+2.34.1
+

@@ -58,12 +58,12 @@ do_install() {
             # limit the length of version
             version="`echo ${version} | md5sum | cut -d' ' -f1`"
         fi
-        echo "bootfirmware_version=${version#-}" > version.txt
+        echo "bootfirmware_version=${version#-}" > ${B}/version.txt
 
         # Make version.txt available on both dirs for compatibility with aktualizr-lite
-        install -m 644 ${S}/version.txt ${D}${nonarch_base_libdir}/firmware/
+        install -m 644 ${B}/version.txt ${D}${nonarch_base_libdir}/firmware/
         if [ "${OSTREE_DEPLOY_USR_OSTREE_BOOT}" != "0" ]; then
-            install -m 644 ${S}/version.txt ${D}${nonarch_base_libdir}/ostree-boot/
+            install -m 644 ${B}/version.txt ${D}${nonarch_base_libdir}/ostree-boot/
         fi
     fi
 }

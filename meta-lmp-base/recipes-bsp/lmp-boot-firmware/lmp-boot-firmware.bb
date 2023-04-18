@@ -23,10 +23,10 @@ PV = "${LMP_BOOT_FIRMWARE_VERSION}"
 # To be customized per machine (referenced from DEPLOY_DIR_IMAGE)
 LMP_BOOT_FIRMWARE_FILES ?= ""
 
+FIRMWARE_DEPLOY_DIR = "${nonarch_base_libdir}/${@bb.utils.contains('OSTREE_DEPLOY_USR_OSTREE_BOOT', '1', 'ostree-boot', 'firmware', d)}"
+
 do_configure[noexec] = "1"
 do_compile[noexec] = "1"
-
-FIRMWARE_DEPLOY_DIR = "${@bb.utils.contains('OSTREE_DEPLOY_USR_OSTREE_BOOT', '1', 'ostree-boot', 'firmware', d)}"
 
 do_install() {
     if [ -n "${LMP_BOOT_FIRMWARE_FILES}" ]; then
@@ -39,20 +39,21 @@ do_install() {
         # unless it gets provided via SRC_URI (e.g. signed firmware such as SPL)
         for file in ${LMP_BOOT_FIRMWARE_FILES}; do
             if [ -f ${S}/${file} ]; then
-                install -m 644 ${S}/${file} ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/
+                f=${S}/${file}
             elif [ -f ${DEPLOY_DIR_IMAGE}/${file} ]; then
-                install -m 644 ${DEPLOY_DIR_IMAGE}/${file} ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/
+                f=${DEPLOY_DIR_IMAGE}/${file}
             else
                 bbfatal "File "${file}" not found in "${S}" and "${DEPLOY_DIR_IMAGE}""
             fi
+            install -m 644 ${f} ${D}${FIRMWARE_DEPLOY_DIR}
         done
 
         # Generate version.txt based on PV and/or md5sum of every firmware file
         if [ "${PV}" != "0" ]; then
             version="${PV}"
         else
-            for file in `ls ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/`; do
-                version="${version}-`md5sum ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/${file} | cut -d' ' -f1`"
+            for file in `ls ${D}${FIRMWARE_DEPLOY_DIR}/`; do
+                version="${version}-`md5sum ${D}${FIRMWARE_DEPLOY_DIR}/${file} | cut -d' ' -f1`"
             done
 
             # limit the length of version
@@ -74,8 +75,8 @@ do_install[depends] += "${@bb.utils.contains('WKS_FILE_DEPENDS', 'imx-boot', 'im
 do_deploy() {
     if [ -n "${LMP_BOOT_FIRMWARE_FILES}" ]; then
         install -d ${DEPLOYDIR}/lmp-boot-firmware
-        for file in `ls ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/`; do
-            install -m 644 ${D}${nonarch_base_libdir}/${FIRMWARE_DEPLOY_DIR}/${file} ${DEPLOYDIR}/lmp-boot-firmware/
+        for file in `ls ${D}${FIRMWARE_DEPLOY_DIR}/`; do
+            install -m 644 ${D}${FIRMWARE_DEPLOY_DIR}/${file} ${DEPLOYDIR}/lmp-boot-firmware/
         done
     fi
 }

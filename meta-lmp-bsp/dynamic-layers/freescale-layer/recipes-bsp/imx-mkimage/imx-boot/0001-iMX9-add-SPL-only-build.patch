@@ -1,0 +1,50 @@
+From ada790344d092ec011cf94436a95411a78980402 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 18 Apr 2023 16:39:29 -0300
+Subject: [PATCH] iMX9: add SPL-only build
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ iMX9/soc.mak | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/iMX9/soc.mak b/iMX9/soc.mak
+index 23f6f64..9e3eb9d 100644
+--- a/iMX9/soc.mak
++++ b/iMX9/soc.mak
+@@ -37,6 +37,10 @@ lpddr4_dmem_1d = lpddr4_dmem_1d$(LPDDR_FW_VERSION).bin
+ lpddr4_imem_2d = lpddr4_imem_2d$(LPDDR_FW_VERSION).bin
+ lpddr4_dmem_2d = lpddr4_dmem_2d$(LPDDR_FW_VERSION).bin
+ 
++# use this to trigger re-combining u-boot-spl.bin u-boot-spl.dtb
++u-boot-spl-combine:
++	@cat u-boot-spl-nodtb.bin u-boot-spl.dtb > u-boot-spl.bin
++
+ u-boot-spl-ddr.bin: u-boot-spl.bin $(lpddr4_imem_1d) $(lpddr4_dmem_1d) $(lpddr4_imem_2d) $(lpddr4_dmem_2d)
+ 	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(lpddr4_imem_1d) lpddr4_pmu_train_1d_imem_pad.bin
+ 	@objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 $(lpddr4_dmem_1d) lpddr4_pmu_train_1d_dmem_pad.bin
+@@ -79,6 +83,9 @@ clean:
+ 	@rm -rf extracted_imgs
+ 	@echo "imx8ulp clean done"
+ 
++flash_singleboot_spl: $(MKIMG) $(AHAB_IMG) u-boot-spl-combine u-boot-spl-ddr.bin
++	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
++
+ flash_singleboot: $(MKIMG) $(AHAB_IMG) u-boot-spl-ddr.bin u-boot-atf-container.img
+ 	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
+ 	@flashbin_size=`wc -c flash.bin | awk '{print $$1}'`; \
+@@ -94,6 +101,9 @@ flash_singleboot_flexspi: $(MKIMG) $(AHAB_IMG) u-boot-spl-ddr.bin u-boot-atf-con
+                    dd if=u-boot-atf-container.img of=flash.bin bs=1K seek=$$pad_cnt;
+ 	./$(QSPI_PACKER) $(QSPI_HEADER)
+ 
++flash_singleboot_spl_m33: $(MKIMG) $(AHAB_IMG) $(MCU_IMG) u-boot-spl-combine u-boot-spl-ddr.bin
++	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -m4 $(MCU_IMG) 0 $(MCU_TCM_ADDR) $(MCU_TCM_ADDR_ACORE_VIEW) -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
++
+ flash_singleboot_m33: $(MKIMG) $(AHAB_IMG) u-boot-atf-container.img $(MCU_IMG) u-boot-spl-ddr.bin
+ 	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -m4 $(MCU_IMG) 0 $(MCU_TCM_ADDR) $(MCU_TCM_ADDR_ACORE_VIEW) -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
+ 	cp flash.bin boot-spl-container.img
+-- 
+2.34.1
+

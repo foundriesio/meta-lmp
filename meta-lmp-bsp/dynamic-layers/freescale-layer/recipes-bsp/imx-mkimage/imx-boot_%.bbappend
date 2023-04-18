@@ -19,6 +19,9 @@ SRC_URI:append:mx8qm-nxp-bsp = " \
 SRC_URI:append:mx8ulp-nxp-bsp = " \
      file://0001-iMX8ULP-add-SPL-only-build.patch \
 "
+SRC_URI:append:mx93-nxp-bsp = " \
+     file://0001-iMX9-add-SPL-only-build.patch \
+"
 
 do_compile[depends] = " \
     virtual/bootloader:do_deploy \
@@ -33,16 +36,22 @@ do_compile:prepend:mx8ulp-nxp-bsp() {
     fi
 }
 
-do_compile:prepend:mx8-nxp-bsp() {
+copy_uboot_spl() {
     # copy u-boot-spl-nodtb instead of u-boot-spl.bin as we need to have
     # spl and its dtb separate (dt-spl.dtb will contain public hash of
     # used to check the signature of u-boot fit-image)
     cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-spl-nodtb.bin-${MACHINE}-${UBOOT_CONFIG} \
                                                          ${BOOT_STAGING}/u-boot-spl-nodtb.bin
     cp ${DEPLOY_DIR_IMAGE}/u-boot-spl.bin-${MACHINE}.dtb ${BOOT_STAGING}/u-boot-spl.dtb
+}
+do_compile:prepend:mx8-nxp-bsp() {
+    copy_uboot_spl
     if [ -e "${DEPLOY_DIR_IMAGE}/signed_hdmi_imx8m.bin" ]; then
         cp ${DEPLOY_DIR_IMAGE}/signed_hdmi_imx8m.bin ${BOOT_STAGING}/signed_hdmi_imx8m.bin
     fi
+}
+do_compile:prepend:mx93-nxp-bsp() {
+    copy_uboot_spl
 }
 
 do_compile:append() {

@@ -9,7 +9,6 @@ SRC_URI:append:mx8m-nxp-bsp = " \
      file://0002-iMX8M-add-SPL-only-build.patch \
      file://0003-iMX8M-add-support-for-packing-HDMI-fw-in-SPL-only-bo.patch \
      file://0004-iMX8M-also-create-nohdmi-boot-image.patch \
-     file://0001-iMX8M-change-DDR-DMEM-padding.patch \
      file://0001-iMX8M-add-SPL-only-build-for-DDR4.patch \
 "
 

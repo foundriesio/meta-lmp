@@ -76,6 +76,8 @@ python () {
     if len(fip_depends) > 0:
         for depend in fip_depends:
             d.appendVarFlag('do_deploy', 'depends', ' %s:do_deploy' % depend)
+            # we need to set the DEPENDS as well to produce valid SPDX documents
+            d.appendVar('DEPENDS', ' %s' % depend)
 
     # Manage FIP config settings
     fipconfigflags = d.getVarFlags('FIP_CONFIG')

@@ -1,0 +1,8 @@
+# short-description: Create an OTA-enabled iMX GPT disk image
+# long-description: Creates an OTA-enabled iMX GPT compatible disk image to
+# be flashed in eMMC (for devices booting from boot0/boot1).
+
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 1024 --use-uuid --size 128M
+part / --source otaimage --ondisk mmcblk --part-name=otaroot --fstype=ext4 --align 1024 --use-uuid
+
+bootloader --ptable gpt

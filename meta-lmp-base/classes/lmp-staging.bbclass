@@ -38,3 +38,16 @@ def lmp_sstate_checkhashes(sq_data, d, **kwargs):
     if mirrors:
         bb.plain("SState mirrors: %s" % mirrors)
     return sstate_checkhashes(sq_data, d, **kwargs)
+
+# handler to warn when there are 'do_deploy' dependencies without setting the DEPENDS
+addhandler check_deployed_depends
+check_deployed_depends[eventmask] = "bb.build.TaskSucceeded"
+python check_deployed_depends() {
+    d = e.data
+    taskname = d.getVar("BB_RUNTASK")
+    depends = (d.getVarFlag(taskname, 'depends', True) or '').split()
+    for depend in depends:
+        recipe, task = depend.split(':')
+        if task == 'do_deploy' and recipe not in d.getVar('DEPENDS'):
+            bb.warn("Task '%s' depends on '%s' but '%s' is not in DEPENDS" % (taskname, depend, recipe))
+}

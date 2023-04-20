@@ -84,6 +84,7 @@ PREFERRED_PROVIDER_u-boot-default-script:mx93-generic-bsp = "u-boot-ostree-scr"
 IMAGE_BOOT_FILES:mx93-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE:mx93-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx93-generic-bsp = " kernel-lmp-fitimage "
+IMXBOOT_TARGETS:mx93-nxp-bsp = "flash_singleboot"
 
 # Apalis-iMX6
 UBOOT_SIGN_ENABLE:apalis-imx6 = "1"

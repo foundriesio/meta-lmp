@@ -26,7 +26,7 @@ FIT_HASH_ALG ?= "sha256"
 OPTEE_BINARY ?= "tee-pager_v2.bin"
 OPTEE_SUPPORT = "${@bb.utils.contains('MACHINE_FEATURES', 'optee', 'true', 'false', d)}"
 ATF_BINARY ?= "arm-trusted-firmware.bin"
-ATF_SUPPORT = "${@bb.utils.contains('EXTRA_IMAGEDEPENDS', 'virtual/trusted-firmware-a', 'true', 'false', d)}"
+ATF_SUPPORT ?= "false"
 BOOTSCR_SUPPORT = "${@bb.utils.contains('PREFERRED_PROVIDER_u-boot-default-script', 'u-boot-ostree-scr-fit', 'true', 'false', d)}"
 # FPGA loading via SPL
 SPL_FPGA_BINARY ?= ""

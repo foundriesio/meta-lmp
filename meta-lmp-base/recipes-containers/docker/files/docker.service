@@ -9,7 +9,7 @@ StartLimitBurst=3
 StartLimitIntervalSec=60
 # Reboot the system in case docker daemon fails. This will trigger a rollback
 # after three consecutive failures.
-FailureAction=reboot
+StartLimitAction=reboot
 
 [Service]
 Type=notify

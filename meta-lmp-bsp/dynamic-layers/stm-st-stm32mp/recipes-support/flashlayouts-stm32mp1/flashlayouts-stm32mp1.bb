@@ -58,3 +58,8 @@ do_deploy[depends] += "sdcard-raw-tools-native:do_deploy"
 do_deploy[depends] += "${MFGTOOL_FLASH_IMAGE}:do_image_complete"
 
 addtask deploy after do_compile before do_build
+
+python() {
+    # we need to set the DEPENDS as well to produce valid SPDX documents
+    fix_deployed_depends('do_deploy', d)
+}

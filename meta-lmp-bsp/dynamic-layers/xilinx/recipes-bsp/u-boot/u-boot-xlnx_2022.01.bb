@@ -70,3 +70,6 @@ EXTRA_OEMAKE += "${@'EXT_DTB=${RECIPE_SYSROOT}/${DTB_PATH}/${DTB_NAME}' if (d.ge
 UBOOT_CLASSES ?= ""
 LOCALVERSION = "+xlnx"
 inherit ${UBOOT_CLASSES} fio-u-boot-localversion
+
+# setting DEPENDS create dependency loops so skip the check
+LMPSTAGING_DEPLOYED_CHECK_SKIP += "${PN}:do_deploy"

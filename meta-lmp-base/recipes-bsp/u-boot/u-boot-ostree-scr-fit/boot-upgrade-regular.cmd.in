@@ -71,6 +71,7 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 		else
 			setenv bootupgrade_available 0;
 			setenv bootfirmware_version "${bootfirmware_version}";
+			setenv fiovb.bootfirmware_version "${bootfirmware_version}";
 		fi
 
 		run saveenv_mmc

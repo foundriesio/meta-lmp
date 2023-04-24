@@ -648,8 +648,8 @@ SSTATE_ALLOW_OVERLAP_FILES_K3R5:am62xx-evm-k3r5 = ""
 SSTATE_ALLOW_OVERLAP_FILES:append:k3r5 = "${SSTATE_ALLOW_OVERLAP_FILES_K3R5}"
 
 # TI AM62x
-BBMULTICONFIG:remove:am62xx-evm = "k3r5"
-BBMULTICONFIG:append:am62xx-evm = " lmp-k3r5"
+BBMULTICONFIG:remove:am62xx-evm = "k3r5-hs-fs k3r5-gp k3r5-hs-se"
+BBMULTICONFIG:append:am62xx-evm = " lmp-k3r5-hs-fs lmp-k3r5-gp lmp-k3r5-hs-se"
 MACHINE_FEATURES:append:am62xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 PREFERRED_PROVIDER_u-boot-fw-utils:am62xx-evm = "libubootenv"

@@ -26,8 +26,9 @@ python __anonymous() {
     if bb.data.inherits_class('image_types_wic', d) and \
         'k3' in d.getVar('MACHINEOVERRIDES').split(':') and \
         all(bbmc.startswith('lmp-k3r5') for bbmc in d.getVar('BBMULTICONFIG').split()):
-            mcdepends = d.getVarFlag('do_image_wic', 'mcdepends')
-            d.setVarFlag('do_image_wic', 'mcdepends', mcdepends.replace(':k3r5', ':lmp-k3r5'))
+            task = "do_image_complete"
+            mcdepends = d.getVarFlag(task, 'mcdepends')
+            d.setVarFlag(task, 'mcdepends', mcdepends.replace(':k3r5', ':lmp-k3r5'))
 }
 
 inherit ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}

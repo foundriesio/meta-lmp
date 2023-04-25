@@ -77,6 +77,8 @@ RDEPENDS:${PN}:remove = "volatile-binds"
 do_install:append() {
 	# prefer nonarch_libdir instead of sysconfdir as this is a core configuration file
 	mv ${D}${sysconfdir}/tmpfiles.d/00-create-volatile.conf ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
+	# drop /run/lock as it is already provided via legacy.conf
+	sed -i '/\/run\/lock/d' ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
 	if [ ${@ oe.types.boolean('${VOLATILE_LOG_DIR}') } = True ]; then
 		sed -i '/^d \/var\/log /d' ${D}${nonarch_libdir}/tmpfiles.d/var.conf
 		echo 'L+ /var/log - - - - /var/volatile/log' >> ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf

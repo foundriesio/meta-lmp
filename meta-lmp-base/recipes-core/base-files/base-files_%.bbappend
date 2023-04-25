@@ -5,6 +5,7 @@ SRC_URI += "file://tmpfiles.conf"
 do_install:append () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -D -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/${PN}.conf
+        sed -i 's#ROOTHOME#${ROOT_HOME}#' ${D}${nonarch_libdir}/tmpfiles.d/${PN}.conf
         (
             # Remove /var stuff
             cd ${D}${localstatedir};
@@ -16,6 +17,10 @@ do_install:append () {
             rmdir -v ${@'volatile/' if oe.types.boolean('${VOLATILE_LOG_DIR}') else ''}log;
             # symlinks
             rm -v run lock;
+            # Remove /home stuff
+            cd ${D}
+            roothomedir=$(echo ${ROOT_HOME} | sed 's#^/##')
+            rmdir -v --parents ${roothomedir};
         )
     fi
 }

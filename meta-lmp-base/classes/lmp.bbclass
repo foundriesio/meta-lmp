@@ -14,6 +14,20 @@ include conf/machine/include/lmp-partner-custom.inc
 # Allow customizations per factory level
 include conf/machine/include/lmp-factory-custom.inc
 
+# Rootfs cleanup as a rootfs post process hook, before ostree
+sota_var_cleanup() {
+	if ${@bb.utils.contains('IMAGE_FSTYPES', 'ota-ext4', 'true', 'false', d)}; then
+		# Remove /var stuff (ignored by ostree)
+		cd ${IMAGE_ROOTFS}/var
+		rmdir -v backups spool local lib/misc
+		rmdir -v volatile ${@'' if oe.types.boolean('${VOLATILE_LOG_DIR}') else 'log'}
+		# symlinks
+		rm -v run lock tmp ${@'log' if oe.types.boolean('${VOLATILE_LOG_DIR}') else ''}
+		cd -
+	fi
+}
+ROOTFS_POSTPROCESS_COMMAND:append:sota = " sota_var_cleanup; "
+
 provision_root_meta () {
 	if [ -n "${SOTA_TUF_ROOT_FETCHER}" ]; then
 		if [ -f "${SOTA_TUF_ROOT_FETCHER}" ] && [ -x "${SOTA_TUF_ROOT_FETCHER}" ]; then

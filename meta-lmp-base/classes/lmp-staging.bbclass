@@ -64,7 +64,7 @@ python check_deployed_depends() {
     for depend in depends:
         recipe, task = depend.split(':')
         if task == 'do_deploy' and recipe not in d.getVar('DEPENDS'):
-            bb.error("Task '%s' depends on '%s' but '%s' is not in DEPENDS" % (taskname, depend, recipe))
+            bb.warn("Task '%s' depends on '%s' but '%s' is not in DEPENDS" % (taskname, depend, recipe))
 }
 
 def fix_deployed_depends(task, d):

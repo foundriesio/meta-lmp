@@ -2,6 +2,8 @@ PACKAGES += "ostree-recovery-initramfs"
 ALLOW_EMPTY:ostree-recovery-initramfs = "1"
 FILES:ostree-recovery-initramfs = "${nonarch_base_libdir}/ostree-boot"
 
+INHIBIT_DEFAULT_DEPS = "1"
+
 do_install:append() {
     ostreeboot=${D}${nonarch_base_libdir}/ostree-boot
     install -d $ostreeboot

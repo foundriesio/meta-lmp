@@ -20,7 +20,7 @@ KMETA = "kernel-meta"
 include recipes-kernel/linux/linux-lmp.inc
 
 # make sure firmware-imx files are available in case they are needed by fit
-do_assemble_fitimage[depends] += "${@bb.utils.contains('MACHINE_FIRMWARE', 'firmware-imx-8', 'firmware-imx-8:do_deploy', '', d)}"
+do_assemble_fitimage[depends] += "${@bb.utils.contains('MACHINE_FIRMWARE', 'imx-boot-firmware-files', 'imx-boot-firmware-files:do_deploy', '', d)}"
 
 python() {
     # we need to set the DEPENDS as well to produce valid SPDX documents

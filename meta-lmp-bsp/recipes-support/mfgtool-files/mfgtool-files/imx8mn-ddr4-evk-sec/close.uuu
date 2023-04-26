@@ -2,10 +2,6 @@ uuu_version 1.2.39
 
 SDPS: boot -f imx-boot-mfgtool.signed
 
-SDPV: delay 1000
-SDPV: write -f u-boot-mfgtool.itb
-SDPV: jump
-
 FB: ucmd if mmc dev 2; then setenv fiohab_dev 2; else setenv fiohab_dev 1; fi;
 
 FB: ucmd setenv srk_0 0xEA2F0B50

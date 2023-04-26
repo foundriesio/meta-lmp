@@ -85,6 +85,7 @@ do_install:append() {
 	else
 		# Make sure /var/log is not a link to volatile (e.g. after system updates)
 		sed -i '/\[Service\]/aExecStartPre=-/bin/rm -f /var/log' ${D}${systemd_system_unitdir}/systemd-journal-flush.service
+		(cd ${D}${localstatedir}; rmdir -v --parents log/journal)
 	fi
 
 	# Workaround for https://github.com/systemd/systemd/issues/11329

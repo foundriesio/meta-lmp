@@ -8,7 +8,7 @@ inherit pkgconfig
 DEPENDS = "optee-client openssl"
 
 SRC_URI = "git://github.com/foundriesio/fio-se05x-cli.git;protocol=https;branch=main"
-SRCREV = "1e170cd3d8a0f46920073565115ee19b694ab64a"
+SRCREV = "7a87cce5900eb419669389dabf5c5942094f83a4"
 
 S = "${WORKDIR}/git"
 
@@ -20,4 +20,3 @@ do_install() {
 	install -d ${D}${bindir}
 	install -m 0755 ${S}/fio-se05x-cli ${D}${bindir}
 }
-

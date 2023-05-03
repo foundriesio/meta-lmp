@@ -16,5 +16,3 @@ KMETA = "kernel-meta"
 
 require linux-lmp.inc
 include recipes-kernel/linux/linux-lmp-machine-custom.inc
-
-DEFAULT_PREFERENCE = "-1"

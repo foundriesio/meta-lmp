@@ -14,7 +14,7 @@ SDPV: write -f u-boot-mfgtool.itb
 SDPV: jump
 
 FB: ucmd setenv fastboot_dev mmc
-FB: ucmd setenv emmc_dev 0
+FB: ucmd setenv emmc_dev 2
 FB: ucmd setenv mmcdev ${emmc_dev}
 FB: ucmd mmc dev ${emmc_dev} 1; mmc erase 0 0x7FF
 

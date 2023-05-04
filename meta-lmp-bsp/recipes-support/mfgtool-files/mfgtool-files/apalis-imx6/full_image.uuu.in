@@ -13,7 +13,7 @@ SDPV: delay 1000
 SDPV: write -f u-boot-mfgtool.itb
 SDPV: jump
 
-FB: ucmd if mmc dev 0; then setenv flash_dev 0; setenv emmc_partconf "mmc partconf ${flash_dev} 1 1 0"; else setenv flash_dev 1; setenv emmc_partconf "true"; fi;
+FB: ucmd if mmc dev 2; then setenv flash_dev 2; setenv emmc_partconf "mmc partconf ${flash_dev} 1 1 0"; else setenv flash_dev 1; setenv emmc_partconf "true"; fi;
 FB: ucmd setenv fastboot_dev mmc
 FB: ucmd mmc dev ${flash_dev} 1; mmc erase 0 0x7FF
 FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic

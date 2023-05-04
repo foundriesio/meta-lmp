@@ -6,7 +6,7 @@ echo "Using ${fdt_file_final}"
 # Default boot type and device
 setenv bootlimit 3
 setenv devtype mmc
-setenv devnum 0
+setenv devnum 2
 setenv bootpart 1
 setenv rootpart 2
 

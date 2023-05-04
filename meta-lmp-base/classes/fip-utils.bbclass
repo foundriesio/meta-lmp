@@ -138,7 +138,7 @@ do_deploy:append:class-target() {
             # Add boot firmware version to U-Boot DTB (if it's defined and is not zero)
             if [ -n "${LMP_BOOT_FIRMWARE_VERSION}" -a "${LMP_BOOT_FIRMWARE_VERSION}" != "0" ]; then
                 # Might return "FDT_ERR_EXISTS" error, if "lmp" node already exists
-                fdtput -c -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader || true
+                fdtput -c -p -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader || true
                 fdtput -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader compatible "lmp,bootloader"
                 fdtput -t s "${WORKDIR}/${FIP_UBOOT_DTB}.${FIP_UBOOT_DTB_SUFFIX}" /firmware/bootloader bootfirmware-version "${LMP_BOOT_FIRMWARE_VERSION}"
             fi

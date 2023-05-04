@@ -105,7 +105,6 @@ BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-virtualization/dynamic-layers/xilinx/recipes-extended/xen/xen_4.14.bbappend \
     /meta-security/meta-integrity/recipes-core/systemd/systemd_%.bbappend \
-    /meta-updater/recipes-connectivity/nfs-utils/nfs-utils_%.bbappend \
 "
 
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp

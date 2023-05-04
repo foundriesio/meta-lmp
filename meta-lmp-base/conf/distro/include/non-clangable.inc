@@ -178,3 +178,6 @@ TOOLCHAIN:pn-u-boot-fio = "gcc"
 TOOLCHAIN:pn-u-boot-fio-mfgtool = "gcc"
 TOOLCHAIN:pn-u-boot-xlnx = "gcc"
 TOOLCHAIN:pn-u-boot-ti-staging = "gcc"
+
+# libmali-xlnx calls gcc directly on do_install
+TOOLCHAIN:pn-libmali-xlnx = "gcc"

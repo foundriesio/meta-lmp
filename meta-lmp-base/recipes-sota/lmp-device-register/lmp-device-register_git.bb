@@ -2,9 +2,9 @@ SUMMARY = "Linux microPlatform OSF OTA+ device registration tool"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
-DEPENDS = "boost curl glib-2.0"
+DEPENDS = "boost curl glib-2.0 libp11 openssl"
 
-SRCREV = "848bcbbba886320b13b11ac04826be0361288619"
+SRCREV = "263d11e77d0489e0daa8ed515eb5b4f2a6ad835d"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https;branch=main"
 
@@ -18,7 +18,7 @@ S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
 
-RDEPENDS:${PN} += "openssl-bin ${SOTA_CLIENT}"
+RDEPENDS:${PN} += "${SOTA_CLIENT}"
 
 EXTRA_OECMAKE += "\
     -DGIT_COMMIT=${SRCREV} \

@@ -74,10 +74,7 @@ do_install[depends] += "${@bb.utils.contains('WKS_FILE_DEPENDS', 'imx-boot', 'im
 
 do_deploy() {
     if [ -n "${LMP_BOOT_FIRMWARE_FILES}" ]; then
-        install -d ${DEPLOYDIR}/lmp-boot-firmware
-        for file in `ls ${D}${FIRMWARE_DEPLOY_DIR}/`; do
-            install -m 644 ${D}${FIRMWARE_DEPLOY_DIR}/${file} ${DEPLOYDIR}/lmp-boot-firmware/
-        done
+        cp --no-preserve=ownership --recursive ${D}${FIRMWARE_DEPLOY_DIR} ${DEPLOYDIR}/lmp-boot-firmware
     fi
 }
 addtask deploy after do_install

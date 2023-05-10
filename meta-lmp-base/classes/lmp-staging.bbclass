@@ -35,9 +35,10 @@ inherit ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}
 
 BB_HASHCHECK_FUNCTION:lmp = "lmp_sstate_checkhashes"
 def lmp_sstate_checkhashes(sq_data, d, **kwargs):
-    mirrors = d.getVar("SSTATE_MIRRORS")
-    if mirrors:
-        bb.plain("SState mirrors: %s" % mirrors)
+    if 'summary' not in kwargs or kwargs.get('summary'):
+        mirrors = d.getVar("SSTATE_MIRRORS")
+        if mirrors:
+            bb.plain("SState mirrors: %s" % mirrors)
     return sstate_checkhashes(sq_data, d, **kwargs)
 
 # don't check images

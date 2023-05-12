@@ -1,3 +1,3 @@
 #Opt	Id	Name		Type		IP	Offset		Binary
--	0x01	fsbl-boot	Binary		none	0x0		../stm32-mfgtool-files/tf-a-@@BOARD_NAME@@-usb.stm32
--	0x03	fip-boot	Binary		none	0x0		../stm32-mfgtool-files/fip-@@BOARD_NAME@@-optee.bin
+-	0x01	fsbl-boot	Binary		none	0x0		../mfgtool-files-@@MACHINE@@/tf-a-@@BOARD_NAME@@-usb.stm32
+-	0x03	fip-boot	Binary		none	0x0		../mfgtool-files-@@MACHINE@@/fip-@@BOARD_NAME@@-optee.bin

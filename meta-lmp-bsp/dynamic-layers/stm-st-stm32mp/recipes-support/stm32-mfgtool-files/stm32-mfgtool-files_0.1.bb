@@ -43,7 +43,7 @@ do_deploy() {
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE} ${DEPLOYDIR}/${PN}/fitImage-mfgtool
 
     tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \
-            --transform "s,^mfgtool-files,mfgtool-files-${MACHINE}," \
+            --transform "s,^${PN},mfgtool-files-${MACHINE}," \
             -C ${DEPLOYDIR} ${PN}
 
     ln -s ${PN}-${MACHINE}.tar.gz ${DEPLOYDIR}/${PN}.tar.gz

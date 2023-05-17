@@ -19,8 +19,12 @@ sota_var_cleanup() {
 	if ${@bb.utils.contains('IMAGE_FSTYPES', 'ota-ext4', 'true', 'false', d)}; then
 		# Remove /var stuff (ignored by ostree)
 		cd ${IMAGE_ROOTFS}/var
-		rmdir -v backups spool local lib/misc
-		rmdir -v volatile ${@'' if oe.types.boolean('${VOLATILE_LOG_DIR}') else 'log'}
+		ostree_rmdir_helper backups
+		ostree_rmdir_helper spool
+		ostree_rmdir_helper local
+		ostree_rmdir_helper lib/misc
+		ostree_rmdir_helper volatile
+		ostree_rmdir_helper ${@'' if oe.types.boolean('${VOLATILE_LOG_DIR}') else 'log'}
 		# symlinks
 		rm -v run lock tmp ${@'log' if oe.types.boolean('${VOLATILE_LOG_DIR}') else ''}
 		cd -

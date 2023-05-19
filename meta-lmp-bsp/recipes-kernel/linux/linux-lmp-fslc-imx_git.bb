@@ -1,3 +1,5 @@
+include recipes-kernel/linux/linux-lmp-fslc-imx.inc
+
 include recipes-kernel/linux/kmeta-linux-lmp-5.15.y.inc
 
 LINUX_VERSION ?= "5.15.87"

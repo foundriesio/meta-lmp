@@ -199,11 +199,10 @@ run_fiotool_cmd () {
 				cmd="${2}"
 			fi
 			bbplain "Pushing/checking an ostree repo, cmd: ${cmd}"
-			if [ "${OSTREE_API_VERSION}" = "v2" ]; then
-				"${cmd}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}" -api-version "${OSTREE_API_VERSION}" -cor-id "${GARAGE_TARGET_NAME}-${GARAGE_TARGET_VERSION}"
-			else
-				"${cmd}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}"
+			if [ -n "${OSTREE_API_VERSION}" ] && [ "${OSTREE_API_VERSION}" != "v2" ]; then
+				bbfatal "The ostreehub version ${OSTREE_API_VERSION} is not supported (OSTREE_API_VERSION=${OSTREE_API_VERSION})"
 			fi
+			"${cmd}" -repo "${OSTREE_REPO}" -creds "${SOTA_PACKED_CREDENTIALS}" -cor-id "${GARAGE_TARGET_NAME}-${GARAGE_TARGET_VERSION}"
 		else
 			bbwarn "SOTA_PACKED_CREDENTIALS file does not exist."
 		fi

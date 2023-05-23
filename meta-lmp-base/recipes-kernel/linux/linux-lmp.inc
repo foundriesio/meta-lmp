@@ -9,6 +9,7 @@ DEPENDS += "openssl-native util-linux-native"
 
 inherit kernel siteinfo
 require recipes-kernel/linux/linux-yocto.inc
+require ${@bb.utils.contains_any('DISTRO_FEATURES', 'integrity', 'recipes-kernel/linux/linux_ima.inc', '', d)}
 
 KCONFIG_MODE = "--alldefconfig"
 

@@ -100,6 +100,14 @@ INHERIT += "uninative"
 # Clang toolchain
 TOOLCHAIN ?= "clang"
 RUNTIME = "llvm"
+# use llvm provided by clang
+# https://github.com/kraj/meta-clang/pull/799/files
+PREFERRED_PROVIDER_llvm = "clang"
+PREFERRED_PROVIDER_llvm-native = "clang-native"
+PREFERRED_PROVIDER_nativesdk-llvm = "nativesdk-clang"
+PROVIDES:pn-clang = "llvm"
+PROVIDES:pn-clang-native = "llvm-native"
+PROVIDES:pn-nativesdk-clang = "nativesdk-llvm"
 
 PREMIRRORS += "\
      git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \

@@ -275,6 +275,7 @@ UBOOT_SIGN_ENABLE:sota:mx8qm-generic-bsp = "1"
 ## iMX8QM MEK
 OSTREE_KERNEL_ARGS:imx8qm-mek ?= "pci=nomsi console=ttyLP0,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"
 PREFERRED_PROVIDER_virtual/kernel:imx8qm-mek ?= "linux-lmp-fslc-imx"
+PREFERRED_VERSION_linux-lmp-fslc-imx:imx8qm-mek ?= "6.1%"
 KERNEL_DANGLING_FEATURES_WARN_ONLY:imx8qm-mek ?= "1"
 UBOOT_CONFIG:imx8qm-mek = ""
 UBOOT_SUFFIX:imx8qm-mek = "bin"

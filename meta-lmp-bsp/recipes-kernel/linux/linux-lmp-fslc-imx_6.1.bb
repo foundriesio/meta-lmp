@@ -30,5 +30,3 @@ SRC_URI:append:imx8mm-lpddr4-evk = " \
 SRC_URI:append:mx8mn-nxp-bsp = " \
     file://0001-FIO-internal-arm64-dts-imx8mn-evk.dtsi-re-add-blueto.patch \
 "
-
-DEFAULT_PREFERENCE = "-1"

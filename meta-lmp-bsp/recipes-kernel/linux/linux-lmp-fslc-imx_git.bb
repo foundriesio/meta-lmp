@@ -25,7 +25,3 @@ SRC_URI:append:imx8mm-lpddr4-evk = " \
 SRC_URI:append:mx8mn-nxp-bsp = " \
     file://0001-FIO-internal-arm64-dts-imx8mn-evk.dtsi-re-add-blueto.patch \
 "
-
-# FIXME: https://github.com/Freescale/meta-freescale/pull/1536/files
-# | make[1]: *** No rule to make target 'arch/arm64/boot/dts/freescale/imx8qm-mek-dsi-rm67199.dtb'.  Stop.
-KERNEL_DEVICETREE:remove:imx8qm-mek = "freescale/imx8qm-mek-dsi-rm67199.dtb"

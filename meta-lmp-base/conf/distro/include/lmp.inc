@@ -43,8 +43,6 @@ DISTRO_FEATURES:append = " pam usrmerge virtualization ptest alsa"
 IMA_POLICY ?= "ima-policy-tcb"
 
 # Extended packageconfig options for LMP
-PACKAGECONFIG:append:pn-docker-ce = " seccomp"
-PACKAGECONFIG:append:pn-docker-moby = " seccomp"
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG:remove:pn-runc-opencontainers = "static"
 PACKAGECONFIG:append:pn-qemu-native = " libusb"

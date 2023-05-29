@@ -6,24 +6,24 @@ DESCRIPTION = "containerd is a daemon to control runC, built for performance and
 
 
 SRCREV = "1c90a442489720eec95342e1789ee8a5e1b9536f"
-SRC_URI = "git://github.com/containerd/containerd;branch=release/1.6;protocol=https \
-           file://0001-Add-build-option-GODEBUG-1.patch \
+SRC_URI = "git://github.com/containerd/containerd;branch=release/1.6;protocol=https;destsuffix=git/src/github.com/containerd/containerd \
            file://0001-Makefile-allow-GO_BUILD_FLAGS-to-be-externally-speci.patch \
+           file://0001-build-don-t-use-gcflags-to-define-trimpath.patch \
           "
 
 # Apache-2.0 for containerd
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=1269f40c0d099c21a871163984590d89"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=1269f40c0d099c21a871163984590d89"
 
 CONTAINERD_VERSION = "v1.6.9"
 CVE_VERSION = "1.6.9"
 
-EXTRA_OEMAKE += "GODEBUG=1"
+# EXTRA_OEMAKE += "GODEBUG=1"
 
 PROVIDES += "virtual/containerd"
 RPROVIDES:${PN} = "virtual-containerd"
 
-S = "${WORKDIR}/git"
+S = "${WORKDIR}/git/src/github.com/containerd/containerd"
 
 PV = "${CONTAINERD_VERSION}+git${SRCPV}"
 
@@ -41,34 +41,7 @@ do_configure[noexec] = "1"
 do_compile() {
     export GOARCH="${TARGET_GOARCH}"
 
-    # link fixups for compilation
-    rm -f ${S}/src/import/vendor/src
-    ln -sf ./ ${S}/src/import/vendor/src
-
-    mkdir -p ${S}/src/import/vendor/src/github.com/containerd/containerd/
-    mkdir -p ${S}/src/import/vendor/src/github.com/containerd/containerd/pkg/
-    mkdir -p ${S}/src/import/vendor/src/github.com/containerd/containerd/contrib/
-    # without this, the stress test parts of the build fail
-    cp ${S}/src/import/*.go ${S}/src/import/vendor/src/github.com/containerd/containerd
-
-    for c in content timeout ttrpcutil oom stdio process errdefs fs images mount snapshots linux api runtimes defaults progress \
-		     protobuf reference diff platforms runtime remotes version archive dialer gc metadata \
-		     metrics filters identifiers labels leases plugin server services \
-		     cmd cio containers namespaces oci events log reaper sys rootfs nvidia seed apparmor seccomp \
-		     cap cri userns atomic ioutil os registrar seutil runtimeoptions netns \
-                     shutdown schedcore tracing kmutex; do
-        if [ -d ${S}/src/import/${c} ]; then
-	    ln -sfn ${S}/src/import/${c} ${S}/src/import/vendor/github.com/containerd/containerd/${c}
-        fi
-        if [ -d ${S}/src/import/pkg/${c} ]; then
-            ln -sfn ${S}/src/import/pkg/${c} ${S}/src/import/vendor/github.com/containerd/containerd/pkg/${c}
-        fi
-        if [ -d ${S}/src/import/contrib/${c} ]; then
-            ln -sfn ${S}/src/import/contrib/${c} ${S}/src/import/vendor/github.com/containerd/containerd/contrib/${c}
-        fi
-    done
-
-    export GOPATH="${S}/src/import/.gopath:${S}/src/import/vendor:${STAGING_DIR_TARGET}/${prefix}/local/go"
+    export GOPATH="${S}/src/import/.gopath:${S}/src/import/vendor:${STAGING_DIR_TARGET}/${prefix}/local/go:${WORKDIR}/git/"
     export GOROOT="${STAGING_DIR_NATIVE}/${nonarch_libdir}/${HOST_SYS}/go"
 
     # Pass the needed cflags/ldflags so that cgo
@@ -84,10 +57,11 @@ do_compile() {
     # cannot find package runtime/cgo (using -importcfg)
     #        ... recipe-sysroot-native/usr/lib/aarch64-poky-linux/go/pkg/tool/linux_amd64/link:
     #        cannot open file : open : no such file or directory
-    export GO_BUILD_FLAGS="-a -pkgdir dontusecurrentpkgs"
+    export GO_BUILD_FLAGS="-trimpath -a -pkgdir dontusecurrentpkgs"
     export GO111MODULE=off
 
-    cd ${S}/src/import
+    cd ${S}
+
     oe_runmake binaries
 }
 
@@ -98,11 +72,11 @@ SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','conta
 do_install() {
 	mkdir -p ${D}/${bindir}
 
-	cp ${S}/src/import/bin/containerd ${D}/${bindir}/containerd
-	cp ${S}/src/import/bin/containerd-shim ${D}/${bindir}/containerd-shim
-	cp ${S}/src/import/bin/containerd-shim-runc-v1 ${D}/${bindir}/containerd-shim-runc-v1
-	cp ${S}/src/import/bin/containerd-shim-runc-v2 ${D}/${bindir}/containerd-shim-runc-v2
-	cp ${S}/src/import/bin/ctr ${D}/${bindir}/containerd-ctr
+	cp ${S}/bin/containerd ${D}/${bindir}/containerd
+	cp ${S}/bin/containerd-shim ${D}/${bindir}/containerd-shim
+	cp ${S}/bin/containerd-shim-runc-v1 ${D}/${bindir}/containerd-shim-runc-v1
+	cp ${S}/bin/containerd-shim-runc-v2 ${D}/${bindir}/containerd-shim-runc-v2
+	cp ${S}/bin/ctr ${D}/${bindir}/containerd-ctr
 
 	ln -sf containerd ${D}/${bindir}/docker-containerd
 	ln -sf containerd-shim ${D}/${bindir}/docker-containerd-shim
@@ -112,7 +86,7 @@ do_install() {
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -d ${D}${systemd_unitdir}/system
-		install -m 644 ${S}/src/import/containerd.service ${D}/${systemd_unitdir}/system
+		install -m 644 ${S}/containerd.service ${D}/${systemd_unitdir}/system
 	        # adjust from /usr/local/bin to /usr/bin/
 		sed -e "s:/usr/local/bin/containerd:${bindir}/containerd:g" -i ${D}/${systemd_unitdir}/system/containerd.service
 	fi

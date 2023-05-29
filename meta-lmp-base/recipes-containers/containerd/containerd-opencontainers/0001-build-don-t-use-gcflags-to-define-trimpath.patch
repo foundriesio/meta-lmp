@@ -1,0 +1,32 @@
+From 9174091fa1624dbb09ce812792a4102dff693541 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Mon, 12 Sep 2022 15:40:08 -0400
+Subject: [PATCH] build: don't use gcflags to define trimpath
+
+We can pass trimpath in via environment variables. The gcflags
+definition of trimpath is for older go versions and is using the
+complete path for trimming. If the variable is captured in the
+resulting binary, we have a reproducibility and QA issue.
+
+Upstream-Status: Inappropriate [embedded specific]
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git git.orig/Makefile git.orig/Makefile
+index 4a6c13042..debb57925 100644
+--- git.orig/Makefile
++++ git.orig/Makefile
+@@ -130,7 +130,6 @@ TESTFLAGS_RACE=
+ # See Golang issue re: '-trimpath': https://github.com/golang/go/issues/13809
+ GO_GCFLAGS=$(shell				\
+ 	set -- ${GOPATHS};			\
+-	echo "-gcflags=-trimpath=$${1}/src";	\
+ 	)
+ 
+ BINARIES=$(addprefix bin/,$(COMMANDS))
+-- 
+2.19.1
+

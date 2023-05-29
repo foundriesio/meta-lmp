@@ -51,6 +51,8 @@ SRC_URI = "\
 	file://0001-Fsync-layer-once-extracted-to-file-system.patch \
 	"
 
+DOCKER_COMMIT = "${SRCREV_docker}"
+
 require recipes-containers/docker/docker.inc
 require docker-lmp.inc
 
@@ -61,4 +63,4 @@ LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=4859e97a9c7780e77972d989f0823f
 DOCKER_VERSION = "20.10.21-ce"
 PV = "${DOCKER_VERSION}+git${SRCREV_docker}"
 
-CVE_PRODUCT = "docker"
+CVE_PRODUCT = "docker mobyproject:moby"

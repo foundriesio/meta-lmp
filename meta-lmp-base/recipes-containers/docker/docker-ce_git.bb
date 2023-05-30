@@ -39,12 +39,6 @@ SRC_URI = "\
 	git://github.com/docker/cli;branch=23.0;name=cli;destsuffix=git/cli;protocol=https \
 	file://0001-dynbinary-use-go-cross-compiler.patch;patchdir=src/import \
 	file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
-	file://dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
-	file://cli-config-support-default-system-config.patch;patchdir=cli \
-	file://increase_containerd_timeouts.patch \
-	file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
-	file://0001-overlay2-fsync-layer-metadata-files.patch;patchdir=src/import \
-	file://0001-Fsync-layer-once-extracted-to-file-system.patch;patchdir=src/import \
 	"
 
 DOCKER_COMMIT = "${SRCREV_docker}"

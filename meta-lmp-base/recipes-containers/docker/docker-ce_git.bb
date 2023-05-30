@@ -52,7 +52,7 @@ SRC_URI = "\
 
 DOCKER_COMMIT = "${SRCREV_docker}"
 
-require recipes-containers/docker/docker.inc
+require docker.inc
 require docker-lmp.inc
 
 # Apache-2.0 for docker

@@ -7,7 +7,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 SRC_URI = "git://github.com/docker/compose-switch.git;branch=master;protocol=https"
-SRCREV = "2b8c6e31c6d1b172cd4b94f316a849558d755bcb"
+SRCREV = "00ad39bc37dac1248501aad29be97dc904cf87de"
 
 UPSTREAM_CHECK_COMMITS = "1"
 

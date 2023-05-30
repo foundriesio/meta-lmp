@@ -9,7 +9,6 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=175792518e4ac015ab6696d1
 SRC_URI = "\
 	git://github.com/docker/compose.git;branch=v2;protocol=https;name=compose \
 	git://github.com/docker/cli.git;branch=23.0;protocol=https;name=cli;destsuffix=${S}/src/github.com/docker/cli \
-	file://cli-config-support-default-system-config.patch;patchdir=src/github.com/docker/cli \
 	"
 
 SRCREV_compose = "cd0fc214a5a9b07cbe6e262398d0e9dc8603b81b"

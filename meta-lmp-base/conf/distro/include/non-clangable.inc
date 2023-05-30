@@ -71,6 +71,12 @@ OBJCOPY:pn-docker-ce:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-docker-compose:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-docker-compose:toolchain-clang = "${HOST_PREFIX}objcopy"
 
+# ERROR: docker-compose-switch-1.0.5-r0 do_package: Fatal errors occurred in subprocesses:
+# Command '['x86_64-lmp-linux-llvm-strip', '--remove-section=.comment', '--remove-section=.note', '/home/rsalveti/build/lmp/build-lmp/tmp-lmp/work/corei7-64-lmp-linux/docker-compose-switch/1.0.5-r0/package/usr/bin/docker-compose.docker-compose-switch']' returned non-zero exit status 1.
+# Subprocess output:x86_64-lmp-linux-llvm-strip: error: SHT_STRTAB string table section [index 7] is non-null terminated
+STRIP:pn-docker-compose-switch:toolchain-clang = "${HOST_PREFIX}strip"
+OBJCOPY:pn-docker-compose-switch:toolchain-clang = "${HOST_PREFIX}objcopy"
+
 # ERROR: mcumgr-v0.0.1+git-r0 do_package: Fatal errors occurred in subprocesses:
 # Command '['x86_64-lmp-linux-llvm-strip', '--remove-section=.comment', '--remove-section=.note', '/srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/mcumgr/v0.0.1+git-r0/package/usr/bin/mcumgr']' returned non-zero exit status 1.
 # Subprocess output:x86_64-lmp-linux-llvm-strip: error: SHT_STRTAB string table section [index 9] is non-null terminated

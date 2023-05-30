@@ -1,4 +1,4 @@
-From 2b25060b1f02e5cf3bb49743572d0fcdc0ef874e Mon Sep 17 00:00:00 2001
+From f3f4cab2d5a4a055ca4daa33fdea33b0355f8c53 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Mon, 3 Dec 2018 16:26:18 -0200
 Subject: [PATCH] dockerd: daemon: use default system config when none is
@@ -8,26 +8,28 @@ This allows the system image to provide a default daemon.json file while
 still allowing the user to overwrite via /etc/docker/daemon.json.
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
- src/import/cmd/dockerd/daemon.go | 5 +++++
- 1 file changed, 5 insertions(+)
+ cmd/dockerd/daemon.go | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/src/import/cmd/dockerd/daemon.go b/src/import/cmd/dockerd/daemon.go
-index 839537316a..6cba2df859 100644
---- a/src/import/cmd/dockerd/daemon.go
-+++ b/src/import/cmd/dockerd/daemon.go
-@@ -80,6 +80,11 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
- 
- 	opts.SetDefaultOptions(opts.flags)
+diff --git a/cmd/dockerd/daemon.go b/cmd/dockerd/daemon.go
+index c59e6f067b..b31feadd19 100644
+--- a/cmd/dockerd/daemon.go
++++ b/cmd/dockerd/daemon.go
+@@ -388,6 +388,12 @@ func loadDaemonCliConfig(opts *daemonOptions) (*config.Config, error) {
+ 	}
+ 	opts.setDefaultOptions()
  
 +	// UNIX: use default system daemon config file if provided is not available
 +	defaultSystemDaemonConfigFile := "/usr/lib/docker/daemon.json"
 +	if _, err := os.Stat(opts.configFile); os.IsNotExist(err) {
 +		opts.configFile = defaultSystemDaemonConfigFile
 +	}
- 	if cli.Config, err = loadDaemonCliConfig(opts); err != nil {
- 		return err
- 	}
++
+ 	conf := opts.daemonConfig
+ 	flags := opts.flags
+ 	conf.Debug = opts.Debug
 -- 
-2.19.2
+2.34.1
 

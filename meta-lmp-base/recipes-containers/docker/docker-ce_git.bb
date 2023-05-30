@@ -31,24 +31,23 @@ DESCRIPTION = "Linux container runtime \
 # so we get that tag, and make it our SRCREVS:
 #
 
-SRCREV_docker = "3056208812eb5e792fa99736c9167d1e10f4ab49"
-SRCREV_libnetwork = "0dde5c895075df6e3630e76f750a447cf63f4789"
-SRCREV_cli = "baeda1f82a10204ec5708d5fbba130ad76cfee49"
+SRCREV_docker = "219f21bf07502b447095649b5a2764661737f164"
+SRCREV_libnetwork = "25ec449c45d2075c85fb3688ef4c1730be0466e0"
+SRCREV_cli = "569dd73db13099a7c3104d73aa15117b359045bc"
 SRCREV_FORMAT = "docker_libnetwork"
 SRC_URI = "\
-	git://github.com/docker/docker.git;branch=20.10;name=docker;protocol=https \
+	git://github.com/docker/docker.git;branch=23.0;name=docker;protocol=https \
 	git://github.com/docker/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork;protocol=https \
-	git://github.com/docker/cli;branch=20.10;name=cli;destsuffix=git/cli;protocol=https \
+	git://github.com/docker/cli;branch=23.0;name=cli;destsuffix=git/cli;protocol=https \
 	file://0001-libnetwork-use-GO-instead-of-go.patch \
-	file://0001-dynbinary-use-go-cross-compiler.patch \
+	file://0001-dynbinary-use-go-cross-compiler.patch;patchdir=src/import \
 	file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
-	file://dockerd-daemon-use-default-system-config-when-none-i.patch \
-	file://cli-config-support-default-system-config.patch \
+	file://dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
+	file://cli-config-support-default-system-config.patch;patchdir=cli \
 	file://increase_containerd_timeouts.patch \
-	file://0001-registry-increase-TLS-and-connection-timeouts.patch \
-	file://0001-overlay2-fsync-layer-metadata-files.patch \
-	file://0001-Revert-20.10-vendor-update-archive-tar-for-go-1.18.patch \
-	file://0001-Fsync-layer-once-extracted-to-file-system.patch \
+	file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
+	file://0001-overlay2-fsync-layer-metadata-files.patch;patchdir=src/import \
+	file://0001-Fsync-layer-once-extracted-to-file-system.patch;patchdir=src/import \
 	"
 
 DOCKER_COMMIT = "${SRCREV_docker}"
@@ -60,7 +59,7 @@ require docker-lmp.inc
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=4859e97a9c7780e77972d989f0823f28"
 
-DOCKER_VERSION = "20.10.21-ce"
+DOCKER_VERSION = "23.0.2-ce"
 PV = "${DOCKER_VERSION}+git${SRCREV_docker}"
 
 CVE_PRODUCT = "docker mobyproject:moby"

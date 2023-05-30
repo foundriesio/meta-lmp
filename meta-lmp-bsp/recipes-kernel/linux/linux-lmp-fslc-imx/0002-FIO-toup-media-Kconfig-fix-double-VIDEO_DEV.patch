@@ -1,0 +1,32 @@
+From 5359b7f5ba75a3b93d4195d66290aa92c802cad4 Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Tue, 30 May 2023 18:04:50 +0300
+Subject: [PATCH 2/2] [FIO toup] media: Kconfig: fix double VIDEO_DEV
+
+The VIDEO_IMX_MEDIA dependency of VIDEO_DEV has 2 entries.
+Remove a duplicate.
+
+Upstream-Status: Pending
+
+Fixes: commit 9958d30f38b96 ("media: Kconfig: cleanup VIDEO_DEV dependencies")
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ drivers/staging/media/imx/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/media/imx/Kconfig b/drivers/staging/media/imx/Kconfig
+index 58f3ebd53bfba..a154edad36333 100644
+--- a/drivers/staging/media/imx/Kconfig
++++ b/drivers/staging/media/imx/Kconfig
+@@ -4,7 +4,6 @@ config VIDEO_IMX_MEDIA
+ 	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on HAS_DMA
+ 	depends on VIDEO_DEV
+-	depends on VIDEO_DEV
+ 	select MEDIA_CONTROLLER
+ 	select V4L2_FWNODE
+ 	select V4L2_MEM2MEM_DEV
+-- 
+2.40.1
+

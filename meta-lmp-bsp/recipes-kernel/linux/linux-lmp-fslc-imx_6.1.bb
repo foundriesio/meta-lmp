@@ -12,6 +12,8 @@ SRC_URI += " \
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
     file://0001-FIO-extras-arm64-dts-imx8mm-evk-use-imx8mm-evkb-for-.patch \
     file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
+    file://0001-FIO-toimx-of-enable-using-OF_DYNAMIC-without-OF_UNIT.patch \
+    file://0002-FIO-toup-media-Kconfig-fix-double-VIDEO_DEV.patch \
 "
 
 SRC_URI:append:imx8mp-lpddr4-evk = " \

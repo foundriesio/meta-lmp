@@ -1,6 +1,12 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append = " \
+    file://dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
+    file://cli-config-support-default-system-config.patch;patchdir=cli \
+    file://increase_containerd_timeouts.patch \
+    file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
+    file://0001-overlay2-fsync-layer-metadata-files.patch;patchdir=src/import \
+    file://0001-Fsync-layer-once-extracted-to-file-system.patch;patchdir=src/import \
     file://daemon.json.in \
     file://docker.service \
 "

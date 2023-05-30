@@ -32,14 +32,11 @@ DESCRIPTION = "Linux container runtime \
 #
 
 SRCREV_docker = "219f21bf07502b447095649b5a2764661737f164"
-SRCREV_libnetwork = "25ec449c45d2075c85fb3688ef4c1730be0466e0"
 SRCREV_cli = "569dd73db13099a7c3104d73aa15117b359045bc"
-SRCREV_FORMAT = "docker_libnetwork"
+SRCREV_FORMAT = "docker_cli"
 SRC_URI = "\
 	git://github.com/docker/docker.git;branch=23.0;name=docker;protocol=https \
-	git://github.com/docker/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork;protocol=https \
 	git://github.com/docker/cli;branch=23.0;name=cli;destsuffix=git/cli;protocol=https \
-	file://0001-libnetwork-use-GO-instead-of-go.patch \
 	file://0001-dynbinary-use-go-cross-compiler.patch;patchdir=src/import \
 	file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
 	file://dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \

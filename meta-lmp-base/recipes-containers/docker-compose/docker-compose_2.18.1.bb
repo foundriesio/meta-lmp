@@ -8,12 +8,12 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=175792518e4ac015ab6696d1
 
 SRC_URI = "\
 	git://github.com/docker/compose.git;branch=v2;protocol=https;name=compose \
-	git://github.com/docker/cli.git;branch=master;protocol=https;name=cli;destsuffix=${S}/src/github.com/docker/cli \
-	file://cli-config-support-default-system-config.patch \
+	git://github.com/docker/cli.git;branch=23.0;protocol=https;name=cli;destsuffix=${S}/src/github.com/docker/cli \
+	file://cli-config-support-default-system-config.patch;patchdir=src/github.com/docker/cli \
 	"
 
-SRCREV_compose = "36926c41c6ff719b376a42f7aa6c1eae98f1ae7e"
-SRCREV_cli = "2b52f62e962783ef39b53d1cb95e1d435b33f3cd"
+SRCREV_compose = "cd0fc214a5a9b07cbe6e262398d0e9dc8603b81b"
+SRCREV_cli = "ef23cbc4315ae76c744e02d687c09548ede461bd"
 SRCREV_FORMAT = "compose_cli"
 
 UPSTREAM_CHECK_COMMITS = "1"
@@ -28,7 +28,9 @@ go_do_compile() {
 	export TMPDIR="${GOTMPDIR}"
 	mkdir -p ${B}/cli-plugins/bin
 	${GO} mod download -modcacherw
-	cp -f ${S}/src/github.com/docker/cli/cli/config/config.go ${B}/pkg/mod/github.com/docker/cli@v20.10.3-0.20220309205733-2b52f62e9627+incompatible/cli/config/config.go
+	cp -f ${S}/src/github.com/docker/cli/cli/config/config.go ${B}/pkg/mod/github.com/docker/cli@v23.0.6+incompatible/cli/config/config.go
+	# remove godog staticcheck binary to avoid qa issues
+	rm -f ${B}/pkg/mod/github.com/laurazard/godog*/bin/staticcheck*
 	${GO} build ${GOBUILDFLAGS} -o ${B}/cli-plugins/bin/docker-compose ./cmd
 }
 

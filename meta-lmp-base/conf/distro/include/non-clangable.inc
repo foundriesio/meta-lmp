@@ -99,6 +99,8 @@ OBJCOPY:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}strip"
+OBJCOPY:pn-linux-lmp-fslc-imx-xeno4:toolchain-clang = "${HOST_PREFIX}objcopy"
+STRIP:pn-linux-lmp-fslc-imx-xeno4:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-tegra:toolchain-clang = "${HOST_PREFIX}objcopy"
@@ -109,6 +111,12 @@ STRIP:pn-linux-tegra-rt:toolchain-clang = "${HOST_PREFIX}strip"
 # jailhouse (includes kernel module)
 # | warning: the compiler differs from the one used to build the kernel
 TOOLCHAIN:pn-jailhouse = "gcc"
+
+# use gcc for now as it fail with clang with some compile errors:
+# error: passing 'unsigned int *' to parameter of type 'int *' converts between pointers to integer types with different sign [-Werror,-Wpointer-sign]
+# error: fields must have a constant size: 'variable length array in structure' extension will never be supported
+# error: passing 'typeof (((fundle_t)0)) *' (aka 'unsigned int *') to parameter of type '__s32 *' (aka 'int *') converts between pointers to integer types with different sign [-Werror,-Wpointer-sign]
+TOOLCHAIN:pn-xenomai4 = "gcc"
 
 # qemuarm64-secureboot
 # | ld.lld: error: cannot open /usr/lib/clang/14.0.3/lib/linux/libclang_rt.builtins-aarch64.a: No such file or directory

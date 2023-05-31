@@ -51,6 +51,11 @@ OBJCOPY:pn-ostree:toolchain-clang = "${HOST_PREFIX}objcopy"
 # ERROR: Task (/srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-containers/containerd/containerd-opencontainers_git.bb:do_package) failed with exit code '1'
 STRIP:pn-containerd-opencontainers:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-containerd-opencontainers:toolchain-clang = "${HOST_PREFIX}objcopy"
+# glibc is built with gcc and hence encodes some libgcc specific builtins which are not found
+# when doing static linking with clang using compiler-rt, so use libgcc
+# undefined reference to `__unordtf2'
+COMPILER_RT:pn-containerd-opencontainers:toolchain-clang:x86 = "-rtlib=libgcc --unwindlib=libgcc"
+COMPILER_RT:pn-containerd-opencontainers:toolchain-clang:x86-64 = "-rtlib=libgcc --unwindlib=libgcc"
 
 # ERROR: docker-ce-20.10.14-ce+git87a90dc786bda134c9eb02adbae2c6a7342fb7f6-r0 do_package: Fatal errors occurred in subprocesses:
 # Command '['x86_64-lmp-linux-llvm-strip', '--remove-section=.comment', '--remove-section=.note', '/srv/oe/build/tmp-lmp/work/corei7-64-lmp-linux/docker-ce/20.10.14-ce+git87a90dc786bda134c9eb02adbae2c6a7342fb7f6-r0/package/usr/bin/docker-proxy']' returned non-zero exit status 1.

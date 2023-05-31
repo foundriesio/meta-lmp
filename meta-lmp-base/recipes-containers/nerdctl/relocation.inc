@@ -18,6 +18,7 @@ export sites="github.com/Masterminds/semver/v3:github.com/Masterminds/semver/v3 
            github.com/containerd/typeurl:github.com/containerd/typeurl \
            github.com/containernetworking/cni:github.com/containernetworking/cni \
            github.com/containernetworking/plugins:github.com/containernetworking/plugins \
+           github.com/coreos/go-iptables:github.com/coreos/go-iptables \
            github.com/coreos/go-systemd/v22:github.com/coreos/go-systemd/v22 \
            github.com/cyphar/filepath-securejoin:github.com/cyphar/filepath-securejoin \
            github.com/docker/cli:github.com/docker/cli \

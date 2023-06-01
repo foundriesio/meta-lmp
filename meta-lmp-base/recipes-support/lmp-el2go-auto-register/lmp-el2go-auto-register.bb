@@ -2,7 +2,7 @@ SUMMARY = "A systemd oneshot helper to auto register a device using EdgeLock2GO"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-RDEPENDS:${PN} += "plug-and-trust-seteec python3-core python3-plug-and-trust-ssscli opensc"
+RDEPENDS:${PN} += "python3-core opensc fio-se05x-cli"
 
 SRC_URI = " \
 	file://lmp-el2go-auto-register.service \

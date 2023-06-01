@@ -4,6 +4,7 @@
 # Copyright (c) 2022, Foundries.io Ltd.
 
 from contextlib import contextmanager
+import re
 import os
 import logging
 import subprocess
@@ -34,10 +35,44 @@ def run_quietly(args: List[str]):
         sys.exit(1)
 
 
+class FioCli:
+    @classmethod
+    def has_object(self, oid: str) -> bool:
+        args = ["fio-se05x-cli", "--list-objects", oid]
+        process = subprocess.Popen(args, stdout=None, stderr=subprocess.PIPE)
+        _, stderr = process.communicate()
+        line = stderr.decode()
+        pattern = r"Key-Id:\s+(0x[0-9a-fA-F]+)"
+        match = re.search(pattern, line)
+        if match:
+            if match.group(1) == oid:
+                return True
+        return False
+
+    @classmethod
+    def import_crt(self, identifier: str, label: str):
+        oid = label.replace("SE_", "0x")
+        args = [
+            "fio-se05x-cli",
+            "--token-label",
+            "aktualizr",
+            "--import-cert",
+            oid,
+            "--id",
+            identifier,
+            "--label",
+            label,
+        ]
+        run_quietly(args)
+
+
 class Pkcs11:
     LIB = "/usr/lib/libckteec.so.0"
 
-    def gen_kp(self, slot: str, label: str):
+    def import_crt(self, identifier: str, label: str):
+        FioCli.import_crt(identifier, label)
+
+    def import_key(self, slot: str, label: str):
         args = [
             "pkcs11-tool",
             f"--module={self.LIB}",
@@ -47,19 +82,6 @@ class Pkcs11:
             f"--id={slot}",
             f"--label={label}",
             "--token-label=aktualizr",
-        ]
-        run_quietly(args)
-
-    def write_object(self, type: str, objfile: str, slot: str, label: str):
-        args = [
-            "pkcs11-tool",
-            f"--module={self.LIB}",
-            f"--pin={PIN}",
-            "--login",
-            f"--write-object={objfile}",
-            f"--type={type}",
-            f"--id={slot}",
-            f"--label={label}",
         ]
         run_quietly(args)
 
@@ -101,31 +123,6 @@ class Pkcs11:
         return cls()
 
 
-class SssCli:
-    @contextmanager
-    def i2c_session(*args, **kwds):
-        log.info("Connecting to ssscli...")
-        subprocess.check_call(["ssscli", "connect", "se05x", "t1oi2c", "none"])
-        try:
-            yield
-        finally:
-            log.info("Disconnecting from ssscli")
-            subprocess.check_call(["ssscli", "disconnect"])
-
-    @classmethod
-    def read_id_list(cls) -> List[str]:
-        with cls.i2c_session():
-            out = subprocess.check_output(["ssscli", "se05x", "readidlist"])
-            lines = out.decode().splitlines()
-            # lines are like: Key-Id: 0Xf0000003   BINARY .....
-            return [x.split(" ")[1] for x in lines if x]
-
-    @classmethod
-    def get_cert(cls, keyid: str, certfile: str):
-        with cls.i2c_session():
-            subprocess.check_call(["ssscli", "get", "cert", keyid, certfile])
-
-
 def run_agent() -> bool:
     log.info("Running EdgeLock2GO agent...")
     try:
@@ -138,25 +135,23 @@ def run_agent() -> bool:
 
 
 class AwsKpHandler(NamedTuple):
-    key_id: str = "0X83000044"
-    crt_id: str = "0X83000045"
+    key_id: str = "0x83000044"
+    crt_id: str = "0x83000045"
 
     def process(self, pkcs11: Pkcs11):
-        key_label = self.key_id.replace("0X", "SE_")
-        crt_label = self.crt_id.replace("0X", "SE_")
+        key_label = self.key_id.replace("0x", "SE_")
+        crt_label = self.crt_id.replace("0x", "SE_")
         if pkcs11.has_labels([key_label, crt_label]):
             log.info("aws-iot already provisioned")
             return
         log.info("Processing keys for aws-iot...")
-        pkcs11.gen_kp("04", key_label)
-        with NamedTemporaryFile() as f:
-            SssCli.get_cert(self.crt_id, f.name)
-            pkcs11.write_object("cert", f.name, "05", crt_label)
+        pkcs11.import_key("04", key_label)
+        pkcs11.import_crt("05", crt_label)
 
 
 class AkliteKpHandler(NamedTuple):
-    key_id: str = "0X83000042"
-    crt_id: str = "0X83000043"
+    key_id: str = "0x83000042"
+    crt_id: str = "0x83000043"
 
     @staticmethod
     def _get_tag():
@@ -169,8 +164,8 @@ class AkliteKpHandler(NamedTuple):
         sys.exit("Unable to parse LMP_MACHINE and LMP_TAG from /etc/os-release")
 
     def process(self, pkcs11: Pkcs11):
-        key_label = self.key_id.replace("0X", "SE_")
-        crt_label = self.crt_id.replace("0X", "SE_")
+        key_label = self.key_id.replace("0x", "SE_")
+        crt_label = self.crt_id.replace("0x", "SE_")
 
         if pkcs11.has_labels([key_label, crt_label]):
             if os.path.exists(os.path.join(SOTA_DIR, "sql.db")):
@@ -180,10 +175,8 @@ class AkliteKpHandler(NamedTuple):
                 log.info("Aktualizr-lite keys in place")
         else:
             log.info("Processing keys for aktualizr-lite...")
-            pkcs11.gen_kp("01", key_label)
-            with NamedTemporaryFile() as f:
-                SssCli.get_cert(self.crt_id, f.name)
-                pkcs11.write_object("cert", f.name, "03", crt_label)
+            pkcs11.import_key("01", key_label)
+            pkcs11.import_crt("03", crt_label)
 
         tag = self._get_tag()
         sota_toml = os.path.join(SOTA_DIR, "sota.toml")
@@ -240,11 +233,11 @@ def main():
 
     while True:
         if run_agent():
-            ids = SssCli.read_id_list()
             for name in handler_names:
                 handler = handlers[name]
-                if handler.key_id in ids and handler.crt_id in ids:
-                    handler.process(pkcs11)
+                if FioCli.has_object(handler.key_id):
+                    if FioCli.has_object(handler.crt_id):
+                        handler.process(pkcs11)
             break
         else:
             log.info(

@@ -125,10 +125,18 @@ IMAGE_CMD:ota:append () {
 	if [ "${APP_PRELOAD_WITHIN_OE_BUILD}" = "1" ]; then
 		preload_apps
 	fi
+
+	# Split content /var into a separated folder so it can be consumed by WKS separately
+	if [ "${OSTREE_SPLIT_VAR}" = "1" ]; then
+		rm -rf ${OTA_VAR}
+		mv ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var ${OTA_VAR}
+		mkdir -p ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var
+	fi
 }
 OTA_BOOT = "${WORKDIR}/ota-boot"
-do_image_ota[dirs] += "${OTA_BOOT}"
-do_image_ota[cleandirs] += "${OTA_BOOT}"
+OTA_VAR = "${WORKDIR}/ota-var"
+do_image_ota[dirs] += "${OTA_BOOT} ${OTA_VAR}"
+do_image_ota[cleandirs] += "${OTA_BOOT} ${OTA_VAR}"
 
 # Adapted from oe_mkext234fs in image_types.bbclass
 oe_mkotaespfs() {

@@ -283,7 +283,7 @@ do_deploy:prepend() {
 	fi
 	if ${ATF_SUPPORT}; then
 		ATF_ELF="${DEPLOY_DIR_IMAGE}/$(basename -s .bin ${ATF_BINARY}).elf"
-		ATF_LOAD_ADDR=$(${READELF} -h ${ATF_ELF} | egrep -m 1 -i "entry point.*?0x" | sed -r 's/.*?(0x.*?)/\1/g')
+		ATF_LOAD_ADDR=$(${READELF} -h ${ATF_ELF} | grep -Em 1 -i "entry point.*?0x" | sed -r 's/.*?(0x.*?)/\1/g')
 	fi
 
 	if [ -n "${UBOOT_CONFIG}" ]; then

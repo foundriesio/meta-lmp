@@ -1,0 +1,37 @@
+From 7edfba994d7eb53ad76d8de0cf8a92687e4f86e6 Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Sat, 3 Jun 2023 20:11:26 +0300
+Subject: [PATCH 3/4] [FIO toup] gpu: drm: cadence: select hdmi helper
+
+drm_hdmi_helper driver is required for cdns-hdmi-core driver to be
+built well. Select the option DRM_DISPLAY_HDMI_HELPER to fix building
+error [1].
+
+[1]
+aarch64-none-linux-gnu-ld: drivers/gpu/drm/bridge/cadence/cdns-hdmi-core.o: in function `cdns_hdmi_mode_set':
+cdns-hdmi-core.c:(.text+0xfec): undefined reference to `drm_hdmi_avi_infoframe_colorimetry'
+aarch64-none-linux-gnu-ld: cdns-hdmi-core.c:(.text+0x10ac): undefined reference to `drm_hdmi_infoframe_set_hdr_metadata'
+
+Upstream-Status: Pending
+
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ drivers/gpu/drm/bridge/cadence/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/bridge/cadence/Kconfig b/drivers/gpu/drm/bridge/cadence/Kconfig
+index 736b107fab74d..76dc4cb60ba58 100644
+--- a/drivers/gpu/drm/bridge/cadence/Kconfig
++++ b/drivers/gpu/drm/bridge/cadence/Kconfig
+@@ -40,6 +40,7 @@ config DRM_CDNS_MHDP
+ config DRM_CDNS_HDMI
+ 	tristate "Cadence HDMI DRM driver"
+ 	depends on DRM_CDNS_MHDP
++	select DRM_DISPLAY_HDMI_HELPER
+ 
+ config DRM_CDNS_DP
+ 	tristate "Cadence DP DRM driver"
+-- 
+2.40.1
+

@@ -14,6 +14,8 @@ SRC_URI += " \
     file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
     file://0001-FIO-toimx-of-enable-using-OF_DYNAMIC-without-OF_UNIT.patch \
     file://0002-FIO-toup-media-Kconfig-fix-double-VIDEO_DEV.patch \
+    file://0003-FIO-toup-gpu-drm-cadence-select-hdmi-helper.patch \
+    file://0004-FIO-toup-media-imx8-select-v4l2_-for-mxc-mipi-csi2_y.patch \
 "
 
 SRC_URI:append:imx8mp-lpddr4-evk = " \

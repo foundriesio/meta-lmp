@@ -1,0 +1,39 @@
+From 75fd604dbdc332e02cd5d1c6bee60058ed0a509f Mon Sep 17 00:00:00 2001
+From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Date: Sat, 3 Jun 2023 20:25:35 +0300
+Subject: [PATCH 4/4] [FIO toup] media: imx8: select v4l2_* for
+ mxc-mipi-csi2_yav
+
+v4l2-fwnode and v4l2-async modules are required by mxc-mipi-csi2_yav
+driver. Select V4L2_FWNODE in IMX8_MIPI_CSI2_YAV to fix the building
+error [1].
+
+[1]
+ERROR: modpost: "v4l2_fwnode_endpoint_parse" [drivers/media/platform/imx8/mxc-mipi-csi2_yav.ko] undefined!
+ERROR: modpost: "v4l2_async_register_subdev" [drivers/media/platform/imx8/mxc-mipi-csi2_yav.ko] undefined!
+ERROR: modpost: "v4l2_async_nf_init" [drivers/media/platform/imx8/mxc-mipi-csi2_yav.ko] undefined!
+...
+
+Upstream-Status: Pending
+
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ drivers/media/platform/imx8/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/imx8/Kconfig b/drivers/media/platform/imx8/Kconfig
+index eb42572ef27f3..d5ecd749e516b 100644
+--- a/drivers/media/platform/imx8/Kconfig
++++ b/drivers/media/platform/imx8/Kconfig
+@@ -4,6 +4,7 @@ menu "IMX8 Camera ISI/MIPI Features support"
+ config IMX8_MIPI_CSI2_YAV
+ 	tristate "IMX8 MIPI CSI2 Controller Yet Another Version"
+ 	default y
++	select V4L2_FWNODE
+ 
+ endmenu
+ endif #VIDEO_MX8_CAPTURE
+-- 
+2.40.1
+

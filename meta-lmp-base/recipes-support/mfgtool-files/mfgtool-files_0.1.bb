@@ -14,15 +14,13 @@ MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
 SRC_URI = " \
     https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu;downloadfilename=uuu-${UUU_RELEASE};name=Linux \
-    https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu_mac;downloadfilename=uuu-${UUU_RELEASE}_mac;name=Mac \
     https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu.exe;downloadfilename=uuu-${UUU_RELEASE}.exe;name=Windows \
     file://bootloader.uuu.in \
     file://full_image.uuu.in \
 "
 
-SRC_URI[Linux.sha256sum] = "84fccb00eec7b73ceee11feee34ca2d992d9860df1e91ad29fef891a50541119"
-SRC_URI[Mac.sha256sum] = "7fd4d37c3e3c7a30b4ddc2965d06265301dd644c87a546276cdfc3e2223da14b"
-SRC_URI[Windows.sha256sum] = "31d0d473e9184f229b99d8c77ea0c3d345c03c68b1568e794820e9df6c553f47"
+SRC_URI[Linux.sha256sum] = "f6db7aec9e07714a71b22241c03684a87f6d507f73eefbe1d82f8b63a72ffd89"
+SRC_URI[Windows.sha256sum] = "05b05157e88c6ff702bb5548c7a553833434bfd2a578dfaed6bd7ba20b2a53a8"
 
 S = "${WORKDIR}"
 
@@ -39,7 +37,6 @@ do_compile() {
 do_deploy() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0755 ${WORKDIR}/uuu-${UUU_RELEASE} ${DEPLOYDIR}/${PN}/uuu
-    install -m 0755 ${WORKDIR}/uuu-${UUU_RELEASE}_mac ${DEPLOYDIR}/${PN}/uuu_mac
     install -m 0644 ${WORKDIR}/uuu-${UUU_RELEASE}.exe ${DEPLOYDIR}/${PN}/uuu.exe
     install -m 0644 ${WORKDIR}/bootloader.uuu ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/full_image.uuu ${DEPLOYDIR}/${PN}

@@ -21,8 +21,12 @@ SYSTEMD_PACKAGES += "${PN}"
 SYSTEMD_SERVICE:${PN} = "${PN}.service"
 
 do_install:append() {
+    install -d ${D}${sysconfdir}/sota/conf.d/
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/systemd.service ${D}${systemd_system_unitdir}/${PN}.service
 }
 
-FILES:${PN} += "${systemd_system_unitdir}/${PN}.service"
+FILES:${PN} += "\
+    ${sysconfdir}/sota/conf.d \
+    ${systemd_system_unitdir}/${PN}.service \
+"

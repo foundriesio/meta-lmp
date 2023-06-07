@@ -1,38 +1,39 @@
-From 096f01b0496fdbccea611d9ad8ac38a9f389afad Mon Sep 17 00:00:00 2001
+From c7ad0e6f343c5b240274787f0b0ef73c446b67a3 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Tue, 20 Dec 2022 11:45:13 +0100
 Subject: [PATCH] Fsync layer once extracted to file system
 
-- Sync an overall file system just after layer unpack while the control
-  flow is within the layer "change root".
+Sync an overall file system just after layer unpack
+
+Upstream-Status: Pending
 
 Signed-off-by: Mike <mike.sul@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- pkg/chrootarchive/diff_unix.go | 3 +++
- 1 file changed, 3 insertions(+)
+ pkg/archive/diff.go | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/pkg/chrootarchive/diff_unix.go b/pkg/chrootarchive/diff_unix.go
-index fcc02f675e..7a8fd200ec 100644
---- a/pkg/chrootarchive/diff_unix.go
-+++ b/pkg/chrootarchive/diff_unix.go
-@@ -12,6 +12,7 @@ import (
- 	"os"
+diff --git a/pkg/archive/diff.go b/pkg/archive/diff.go
+index 92c1361478..41b6adf8c2 100644
+--- a/pkg/archive/diff.go
++++ b/pkg/archive/diff.go
+@@ -8,6 +8,7 @@ import (
  	"path/filepath"
  	"runtime"
+ 	"strings"
 +	"syscall"
  
- 	"github.com/containerd/containerd/pkg/userns"
- 	"github.com/docker/docker/pkg/archive"
-@@ -73,6 +74,8 @@ func applyLayer() {
- 		fatal(err)
+ 	"github.com/docker/docker/pkg/pools"
+ 	"github.com/docker/docker/pkg/system"
+@@ -203,6 +204,7 @@ func UnpackLayer(dest string, layer io.Reader, options *TarOptions) (size int64,
+ 			return 0, err
+ 		}
  	}
- 
 +	syscall.Sync()
-+
- 	os.Exit(0)
- }
  
+ 	return size, nil
+ }
 -- 
 2.34.1
 

@@ -1,4 +1,4 @@
-From 096f01b0496fdbccea611d9ad8ac38a9f389afad Mon Sep 17 00:00:00 2001
+From 8e55e79fe5d11776b0458f473c96ab7b2038c735 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Tue, 20 Dec 2022 11:45:13 +0100
 Subject: [PATCH] Fsync layer once extracted to file system
@@ -9,30 +9,29 @@ Subject: [PATCH] Fsync layer once extracted to file system
 Signed-off-by: Mike <mike.sul@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
- pkg/chrootarchive/diff_unix.go | 3 +++
- 1 file changed, 3 insertions(+)
+ pkg/chrootarchive/diff_unix.go | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/pkg/chrootarchive/diff_unix.go b/pkg/chrootarchive/diff_unix.go
-index fcc02f675e..7a8fd200ec 100644
+index 9f7c808ba6..79b5b71c46 100644
 --- a/pkg/chrootarchive/diff_unix.go
 +++ b/pkg/chrootarchive/diff_unix.go
-@@ -12,6 +12,7 @@ import (
- 	"os"
+@@ -5,6 +5,7 @@ package chrootarchive // import "github.com/docker/docker/pkg/chrootarchive"
+ import (
+ 	"io"
  	"path/filepath"
- 	"runtime"
 +	"syscall"
  
  	"github.com/containerd/containerd/pkg/userns"
  	"github.com/docker/docker/pkg/archive"
-@@ -73,6 +74,8 @@ func applyLayer() {
- 		fatal(err)
- 	}
+@@ -46,6 +47,7 @@ func applyLayerHandler(dest string, layer io.Reader, options *archive.TarOptions
+ 		_ = unix.Umask(0)
  
-+	syscall.Sync()
-+
- 	os.Exit(0)
- }
- 
+ 		size, err := archive.UnpackLayer("/", layer, options)
++		syscall.Sync()
+ 		done <- result{layerSize: size, err: err}
+ 	})
+ 	if err != nil {
 -- 
 2.34.1
 

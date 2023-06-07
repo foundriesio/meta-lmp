@@ -31,12 +31,12 @@ DESCRIPTION = "Linux container runtime \
 # so we get that tag, and make it our SRCREVS:
 #
 
-SRCREV_docker = "9dbdbd4b6d7681bd18c897a6ba0376073c2a72ff"
-SRCREV_cli = "ef23cbc4315ae76c744e02d687c09548ede461bd"
+SRCREV_docker = "659604f9ee60f147020bdd444b26e4b5c636dc28"
+SRCREV_cli = "cb74dfcd853482dd43cb553106b1e0cd237acb3e"
 SRCREV_FORMAT = "docker_cli"
 SRC_URI = "\
-	git://github.com/docker/docker.git;branch=23.0;name=docker;protocol=https \
-	git://github.com/docker/cli;branch=23.0;name=cli;destsuffix=git/cli;protocol=https \
+	git://github.com/docker/docker.git;branch=24.0;name=docker;protocol=https \
+	git://github.com/docker/cli;branch=24.0;name=cli;destsuffix=git/cli;protocol=https \
 	file://0001-dynbinary-use-go-cross-compiler.patch;patchdir=src/import \
 	file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
 	"
@@ -49,7 +49,7 @@ require docker.inc
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=4859e97a9c7780e77972d989f0823f28"
 
-DOCKER_VERSION = "23.0.6-ce"
+DOCKER_VERSION = "24.0.2-ce"
 PV = "${DOCKER_VERSION}+git${SRCREV_docker}"
 
 CVE_PRODUCT = "docker mobyproject:moby"

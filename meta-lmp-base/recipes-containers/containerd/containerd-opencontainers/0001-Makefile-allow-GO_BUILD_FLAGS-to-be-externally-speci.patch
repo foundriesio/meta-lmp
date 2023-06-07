@@ -19,12 +19,12 @@ Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
  Makefile | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git git.orig/Makefile  git.orig/Makefile
-index c61418e60..54a10eb42 100644
---- git.orig/Makefile
-+++ git.orig/Makefile
-@@ -112,7 +112,8 @@ endif
- GOPATHS=$(shell echo ${GOPATH} | tr ":" "\n" | tr ";" "\n")
+Index: containerd/Makefile
+===================================================================
+--- containerd.orig/Makefile
++++ containerd/Makefile
+@@ -127,7 +127,8 @@
+ GOPATHS=$(shell go env GOPATH | tr ":" "\n" | tr ";" "\n")
  
  TESTFLAGS_RACE=
 -GO_BUILD_FLAGS=
@@ -33,6 +33,3 @@ index c61418e60..54a10eb42 100644
  # See Golang issue re: '-trimpath': https://github.com/golang/go/issues/13809
  GO_GCFLAGS=$(shell				\
  	set -- ${GOPATHS};			\
--- 
-2.19.1
-

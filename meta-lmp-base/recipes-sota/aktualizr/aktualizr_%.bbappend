@@ -23,6 +23,7 @@ SYSTEMD_SERVICE:${PN}-lite = "aktualizr-lite.service"
 
 COMPOSE_HTTP_TIMEOUT ?= "60"
 DOCKER_CRED_HELPER_CFG ?= "${libdir}/docker/config.json"
+SKOPEO_MAX_PARALLEL_PULLS ?= "3"
 
 # Workaround as aktualizr is a submodule of aktualizr-lite
 do_configure:prepend:lmp() {
@@ -35,6 +36,7 @@ do_configure:prepend:lmp() {
 do_compile:append:lmp() {
     sed -e 's|@@COMPOSE_HTTP_TIMEOUT@@|${COMPOSE_HTTP_TIMEOUT}|g' \
         -e 's|@@DOCKER_CRED_HELPER_CFG@@|${DOCKER_CRED_HELPER_CFG}|g' \
+        -e 's|@@SKOPEO_MAX_PARALLEL_PULLS@@|${SKOPEO_MAX_PARALLEL_PULLS}|g' \
         ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
 }
 

@@ -680,7 +680,7 @@ UBOOT_ENTRYPOINT:am64xx-evm = "0x82000000"
 UBOOT_LOADADDRESS:am64xx-evm = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx-evm = "0x88000000"
 EFI_PROVIDER:am64xx-evm = ""
-LMP_BOOT_FIRMWARE_FILES:am64xx-evm = "tispl.bin u-boot.img tiboot3.bin tiboot3-am64x-gp-evm.bin tiboot3-am64x_sr2-hs-evm.bin"
+LMP_BOOT_FIRMWARE_FILES:am64xx-evm = "tispl.bin u-boot.img tiboot3.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx-evm = " boot.itb"
 
 # Nvidia Tegra

@@ -644,8 +644,8 @@ OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "1"
 SSTATE_ALLOW_OVERLAP_FILES:append:k3r5 = " ${DEPLOY_DIR_IPK}/armv7at2hf-vfp"
 
 # TI AM62x
-BBMULTICONFIG:remove:am62xx-evm = "k3r5-hs-fs k3r5-gp k3r5-hs-se"
-BBMULTICONFIG:append:am62xx-evm = " lmp-k3r5-hs-fs lmp-k3r5-gp lmp-k3r5-hs-se"
+BBMULTICONFIG:remove:am62xx-evm = "k3r5"
+BBMULTICONFIG:append:am62xx-evm = " lmp-k3r5"
 MACHINE_FEATURES:append:am62xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 PREFERRED_PROVIDER_u-boot-fw-utils:am62xx-evm = "libubootenv"
@@ -666,8 +666,8 @@ LMP_BOOT_FIRMWARE_FILES:am62xx-evm = "tispl.bin u-boot.img tiboot3.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx-evm = " boot.itb"
 
 # TI AM64x
-BBMULTICONFIG:remove:am64xx-evm = "k3r5-sr2-hs-fs k3r5-gp k3r5-sr2-hs-se"
-BBMULTICONFIG:append:am64xx-evm = " lmp-k3r5-sr2-hs-fs lmp-k3r5-gp lmp-k3r5-sr2-hs-se"
+BBMULTICONFIG:remove:am64xx-evm = "k3r5"
+BBMULTICONFIG:append:am64xx-evm = " lmp-k3r5"
 MACHINE_FEATURES:append:am64xx-evm = " optee"
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"
 PREFERRED_PROVIDER_u-boot-fw-utils:am64xx-evm = "libubootenv"

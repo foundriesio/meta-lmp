@@ -1,16 +1,18 @@
-From b841d7b6e1ee07938f100357b574487e985ba1a7 Mon Sep 17 00:00:00 2001
+From 535f993aa2f741ff004157bc9535aef5bb2f4dcd Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@opensourcefoundries.com>
 Date: Tue, 20 Feb 2018 21:09:02 -0300
 Subject: [PATCH] ostree: decrease default grub.cfg timeout and set default
 
 Upstream-Status: Inappropriate [lmp specific]
 
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+
 ---
  src/boot/grub2/ostree-grub-generator | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/boot/grub2/ostree-grub-generator b/src/boot/grub2/ostree-grub-generator
-index d1436b6..3caebda 100644
+index d1436b65..3caebda6 100644
 --- a/src/boot/grub2/ostree-grub-generator
 +++ b/src/boot/grub2/ostree-grub-generator
 @@ -99,8 +99,8 @@ populate_header()

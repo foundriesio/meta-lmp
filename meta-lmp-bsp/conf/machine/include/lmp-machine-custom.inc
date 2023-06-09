@@ -641,7 +641,6 @@ KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE} ${@bb.utils.contains('MACHINE_F
 PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
 WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "1"
-SSTATE_ALLOW_OVERLAP_FILES:append:k3r5 = " ${DEPLOY_DIR_IPK}/armv7at2hf-vfp"
 
 # TI AM62x
 BBMULTICONFIG:remove:am62xx-evm = "k3r5"

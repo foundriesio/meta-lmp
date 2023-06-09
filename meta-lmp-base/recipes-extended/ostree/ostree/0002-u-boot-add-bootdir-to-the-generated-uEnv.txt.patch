@@ -1,4 +1,4 @@
-From 0282a84916af342f315006607aaacfda160d8137 Mon Sep 17 00:00:00 2001
+From a28431e7024fe6fe098fff013707eef0fffd5cf0 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
 Subject: [PATCH] u-boot: add 'bootdir' to the generated uEnv.txt
@@ -26,6 +26,7 @@ bootdir=/boot/ostree/$os-$bootcsum/ is a better approach here, as
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 
 ---
  src/libostree/ostree-bootloader-uboot.c | 4 ++++
@@ -33,18 +34,18 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  2 files changed, 5 insertions(+)
 
 diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
-index d0207ad..bfcd7bd 100644
+index 41280cf1..bfdc5c91 100644
 --- a/src/libostree/ostree-bootloader-uboot.c
 +++ b/src/libostree/ostree-bootloader-uboot.c
-@@ -111,6 +111,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
-   g_autoptr(GPtrArray) boot_loader_configs = NULL;
+@@ -106,6 +106,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot *self, int bootver
+   g_autoptr (GPtrArray) boot_loader_configs = NULL;
    OstreeBootconfigParser *config;
    const char *val;
 +  g_autofree char *bootdir = NULL;
  
    if (!_ostree_sysroot_read_boot_loader_configs (self->sysroot, bootversion, &boot_loader_configs,
                                                   cancellable, error))
-@@ -134,6 +135,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
+@@ -129,6 +130,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot *self, int bootver
          }
        g_ptr_array_add (new_lines, g_strdup_printf ("kernel_image%s=/boot%s", index_suffix, val));
  
@@ -55,7 +56,7 @@ index d0207ad..bfcd7bd 100644
        if (val)
          g_ptr_array_add (new_lines, g_strdup_printf ("ramdisk_image%s=/boot%s", index_suffix, val));
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
-index f69c125..9365b29 100755
+index f69c1253..9365b29e 100755
 --- a/tests/test-bootdir-update.sh
 +++ b/tests/test-bootdir-update.sh
 @@ -35,5 +35,6 @@ assert_has_file sysroot/boot/ostree/testos-${bootcsum}/1

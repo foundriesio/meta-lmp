@@ -1,4 +1,4 @@
-From 3919d3bda5bde664b8b594dbb8502aeffa289b31 Mon Sep 17 00:00:00 2001
+From 8126bb8c6287e7e77b111f83faa4402f3291f114 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
 Subject: [PATCH] Allow updating files in the /boot directory
@@ -13,6 +13,7 @@ be enabled by 'touch .ostree-bootcsumdir-source' in
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 
 ---
  Makefile-tests.am                     |   1 +
@@ -22,10 +23,10 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index 01ed0bd..9bfb1b5 100644
+index 32817704..73dab527 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -150,6 +150,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -154,6 +154,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-signed-pull.sh \
  	tests/test-pre-signed-pull.sh \
  	tests/test-signed-pull-summary.sh \
@@ -34,10 +35,10 @@ index 01ed0bd..9bfb1b5 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index cd191d3..7c4aceb 100644
+index b87866ff..30e40117 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -284,6 +284,37 @@ checksum_dir_recurse (int          dfd,
+@@ -273,9 +273,52 @@ checksum_dir_recurse (int dfd, const char *path, OtChecksum *checksum, GCancella
    return TRUE;
  }
  
@@ -73,12 +74,8 @@ index cd191d3..7c4aceb 100644
 +                  GError         **error);
 +
  static gboolean
- copy_dir_recurse (int              src_parent_dfd,
-                   int              dest_parent_dfd,
-@@ -291,6 +322,18 @@ copy_dir_recurse (int              src_parent_dfd,
-                   OstreeSysrootDebugFlags flags,
-                   GCancellable    *cancellable,
-                   GError         **error)
+ copy_dir_recurse (int src_parent_dfd, int dest_parent_dfd, const char *name,
+                   OstreeSysrootDebugFlags flags, GCancellable *cancellable, GError **error)
 +{
 +  return hardlink_or_copy_dir_recurse (src_parent_dfd, dest_parent_dfd, name, FALSE, flags, cancellable, error);
 +}
@@ -92,22 +89,22 @@ index cd191d3..7c4aceb 100644
 +                  GCancellable    *cancellable,
 +                  GError         **error)
  {
-   g_auto(GLnxDirFdIterator) src_dfd_iter = { 0, };
-   glnx_autofd int dest_dfd = -1;
-@@ -325,17 +368,28 @@ copy_dir_recurse (int              src_parent_dfd,
+   g_auto (GLnxDirFdIterator) src_dfd_iter = {
+     0,
+@@ -311,17 +354,28 @@ copy_dir_recurse (int src_parent_dfd, int dest_parent_dfd, const char *name,
  
        if (S_ISDIR (child_stbuf.st_mode))
          {
--          if (!copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name,
--                                 flags, cancellable, error))
-+          if (!hardlink_or_copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name,
-+                                 hardlink, flags, cancellable, error))
+-          if (!copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name, flags, cancellable,
+-                                 error))
++          if (!hardlink_or_copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name, hardlink,
++                                 flags, cancellable, error))
              return FALSE;
          }
        else
          {
--          if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf,
--                                  dest_dfd, dent->d_name,
+-          if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf, dest_dfd,
+-                                  dent->d_name,
 -                                  sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
 -                                  cancellable, error))
 -            return glnx_prefix_error (error, "Copying %s", dent->d_name);
@@ -121,8 +118,8 @@ index cd191d3..7c4aceb 100644
 +            }
 +          else
 +            {
-+              if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf,
-+                                      dest_dfd, dent->d_name,
++              if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf, dest_dfd,
++                                      dent->d_name,
 +                                      sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
 +                                      cancellable, error))
 +                return glnx_prefix_error (error, "Copying %s", dent->d_name);
@@ -130,7 +127,7 @@ index cd191d3..7c4aceb 100644
          }
      }
  
-@@ -1835,6 +1889,7 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1745,6 +1799,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -138,7 +135,7 @@ index cd191d3..7c4aceb 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -1998,6 +2053,76 @@ install_deployment_kernel (OstreeSysroot   *sysroot,
+@@ -1913,6 +1968,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  
@@ -217,7 +214,7 @@ index cd191d3..7c4aceb 100644
      return FALSE;
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
 new file mode 100755
-index 0000000..f69c125
+index 00000000..f69c1253
 --- /dev/null
 +++ b/tests/test-bootdir-update.sh
 @@ -0,0 +1,39 @@

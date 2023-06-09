@@ -1,4 +1,4 @@
-From 6fb7c54fa862a28defaace9654c995b5016369ee Mon Sep 17 00:00:00 2001
+From 1d622fa93fe0eb3403eede91c6e4b08b7cbfde0c Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Thu, 2 Jun 2022 23:27:43 -0300
 Subject: [PATCH] Add support for systemd-boot bootloader
@@ -9,23 +9,24 @@ and to keep the file between deployments.
 Upstream-Status: pending
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 
 ---
  Makefile-libostree.am                     |   2 +
  Makefile-tests.am                         |   1 +
  src/libostree/ostree-bootloader-sd-boot.c | 130 ++++++++++++++++++++++
  src/libostree/ostree-bootloader-sd-boot.h |  39 +++++++
- src/libostree/ostree-repo-private.h       |   2 +
+ src/libostree/ostree-repo-private.h       |   3 +-
  src/libostree/ostree-sysroot.c            |   4 +
  tests/libtest.sh                          |  10 ++
  tests/test-admin-deploy-dir-sd-boot.sh    |  47 ++++++++
- 8 files changed, 235 insertions(+)
+ 8 files changed, 235 insertions(+), 1 deletion(-)
  create mode 100644 src/libostree/ostree-bootloader-sd-boot.c
  create mode 100644 src/libostree/ostree-bootloader-sd-boot.h
  create mode 100755 tests/test-admin-deploy-dir-sd-boot.sh
 
 diff --git a/Makefile-libostree.am b/Makefile-libostree.am
-index 12f1ffb..0ea2e75 100644
+index d18714ae..302a0690 100644
 --- a/Makefile-libostree.am
 +++ b/Makefile-libostree.am
 @@ -121,6 +121,8 @@ libostree_1_la_SOURCES = \
@@ -38,10 +39,10 @@ index 12f1ffb..0ea2e75 100644
  	src/libostree/ostree-repo-static-delta-processing.c \
  	src/libostree/ostree-repo-static-delta-compilation.c \
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index 1591b7c..836f91b 100644
+index b94ce3f2..3974c194 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -109,6 +109,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -113,6 +113,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-admin-deploy-none.sh \
  	tests/test-admin-deploy-dir-syslinux.sh \
  	tests/test-admin-deploy-dir-uboot.sh \
@@ -51,7 +52,7 @@ index 1591b7c..836f91b 100644
  	tests/test-admin-deploy-bootid-gc.sh \
 diff --git a/src/libostree/ostree-bootloader-sd-boot.c b/src/libostree/ostree-bootloader-sd-boot.c
 new file mode 100644
-index 0000000..d7fa7d1
+index 00000000..d7fa7d16
 --- /dev/null
 +++ b/src/libostree/ostree-bootloader-sd-boot.c
 @@ -0,0 +1,130 @@
@@ -187,7 +188,7 @@ index 0000000..d7fa7d1
 +}
 diff --git a/src/libostree/ostree-bootloader-sd-boot.h b/src/libostree/ostree-bootloader-sd-boot.h
 new file mode 100644
-index 0000000..4384fad
+index 00000000..4384fad7
 --- /dev/null
 +++ b/src/libostree/ostree-bootloader-sd-boot.h
 @@ -0,0 +1,39 @@
@@ -231,10 +232,10 @@ index 0000000..4384fad
 +
 +G_END_DECLS
 diff --git a/src/libostree/ostree-repo-private.h b/src/libostree/ostree-repo-private.h
-index 1799357..ad049a0 100644
+index f3865854..421a617c 100644
 --- a/src/libostree/ostree-repo-private.h
 +++ b/src/libostree/ostree-repo-private.h
-@@ -124,6 +124,7 @@ typedef enum {
+@@ -131,6 +131,7 @@ typedef enum
    CFG_SYSROOT_BOOTLOADER_OPT_GRUB2,
    CFG_SYSROOT_BOOTLOADER_OPT_SYSLINUX,
    CFG_SYSROOT_BOOTLOADER_OPT_UBOOT,
@@ -242,36 +243,37 @@ index 1799357..ad049a0 100644
    CFG_SYSROOT_BOOTLOADER_OPT_ZIPL,
    CFG_SYSROOT_BOOTLOADER_OPT_ABOOT,
    /* Non-exhaustive */
-@@ -136,6 +137,7 @@ static const char* const CFG_SYSROOT_BOOTLOADER_OPTS_STR[] = {
-   "grub2",
-   "syslinux",
-   "uboot",
-+  "systemd-boot",
-   "zipl",
-   "aboot",
-   NULL,
+@@ -138,7 +139,7 @@ typedef enum
+ 
+ static const char *const CFG_SYSROOT_BOOTLOADER_OPTS_STR[] = {
+   /* This must be kept in the same order as the enum */
+-  "auto", "none", "grub2", "syslinux", "uboot", "zipl", "aboot", NULL,
++  "auto", "none", "grub2", "syslinux", "uboot", "systemd-boot", "zipl", "aboot", NULL,
+ };
+ 
+ /**
 diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
-index ded048a..a40b477 100644
+index 68c5c20c..eabf1c9e 100644
 --- a/src/libostree/ostree-sysroot.c
 +++ b/src/libostree/ostree-sysroot.c
-@@ -34,6 +34,7 @@
- #include "ostree-deployment-private.h"
- #include "ostree-bootloader-aboot.h"
+@@ -30,6 +30,7 @@
+ #include "ostree-bootloader-grub2.h"
+ #include "ostree-bootloader-syslinux.h"
  #include "ostree-bootloader-uboot.h"
 +#include "ostree-bootloader-sd-boot.h"
- #include "ostree-bootloader-syslinux.h"
- #include "ostree-bootloader-grub2.h"
  #include "ostree-bootloader-zipl.h"
-@@ -1515,6 +1516,8 @@ _ostree_sysroot_new_bootloader_by_type (
-       return (OstreeBootloader*) _ostree_bootloader_aboot_new (sysroot);
+ #include "ostree-core-private.h"
+ #include "ostree-deployment-private.h"
+@@ -1458,6 +1459,8 @@ _ostree_sysroot_new_bootloader_by_type (OstreeSysroot *sysroot,
+       return (OstreeBootloader *)_ostree_bootloader_aboot_new (sysroot);
      case CFG_SYSROOT_BOOTLOADER_OPT_UBOOT:
-       return (OstreeBootloader*) _ostree_bootloader_uboot_new (sysroot);
+       return (OstreeBootloader *)_ostree_bootloader_uboot_new (sysroot);
 +    case CFG_SYSROOT_BOOTLOADER_OPT_SDBOOT:
-+      return (OstreeBootloader*) _ostree_bootloader_sdboot_new (sysroot);
++      return (OstreeBootloader *)_ostree_bootloader_sdboot_new (sysroot);
      case CFG_SYSROOT_BOOTLOADER_OPT_ZIPL:
        /* We never consider zipl as active by default, so it can only be created
         * if it's explicitly requested in the config */
-@@ -1553,6 +1556,7 @@ _ostree_sysroot_query_bootloader (OstreeSysroot     *sysroot,
+@@ -1495,6 +1498,7 @@ _ostree_sysroot_query_bootloader (OstreeSysroot *sysroot, OstreeBootloader **out
          CFG_SYSROOT_BOOTLOADER_OPT_SYSLINUX,
          CFG_SYSROOT_BOOTLOADER_OPT_GRUB2,
          CFG_SYSROOT_BOOTLOADER_OPT_UBOOT,
@@ -280,10 +282,10 @@ index ded048a..a40b477 100644
        for (int i = 0; i < G_N_ELEMENTS (probe); i++)
          {
 diff --git a/tests/libtest.sh b/tests/libtest.sh
-index 264094b..2d8af50 100755
+index 963bc923..d1ba5515 100755
 --- a/tests/libtest.sh
 +++ b/tests/libtest.sh
-@@ -381,6 +381,13 @@ setup_os_boot_uboot() {
+@@ -384,6 +384,13 @@ setup_os_boot_uboot() {
      ln -s loader/uEnv.txt sysroot/boot/uEnv.txt
  }
  
@@ -297,7 +299,7 @@ index 264094b..2d8af50 100755
  setup_os_boot_grub2() {
      grub2_options=$1
      mkdir -p sysroot/boot/grub2/
-@@ -509,6 +516,9 @@ EOF
+@@ -512,6 +519,9 @@ EOF
          "uboot")
  	    setup_os_boot_uboot
              ;;
@@ -309,7 +311,7 @@ index 264094b..2d8af50 100755
              ;;
 diff --git a/tests/test-admin-deploy-dir-sd-boot.sh b/tests/test-admin-deploy-dir-sd-boot.sh
 new file mode 100755
-index 0000000..53e461f
+index 00000000..53e461fd
 --- /dev/null
 +++ b/tests/test-admin-deploy-dir-sd-boot.sh
 @@ -0,0 +1,47 @@

@@ -3,8 +3,7 @@ TI_BOOT_SCRIPT_DEPLOY ?= ""
 TI_BOOT_SCRIPT_DEPLOY:sota:k3 = "u-boot-ostree-scr-fit:do_deploy"
 do_install[depends] += "${TI_BOOT_SCRIPT_DEPLOY}"
 
-# MC task dependencies for TI_SCI_FW
-TI_SCI_FW_DEPLOY ?= ""
-TI_SCI_FW_DEPLOY:am62xx-evm = "mc::lmp-k3r5-gp:ti-sci-fw:do_deploy mc::lmp-k3r5-hs-fs:ti-sci-fw:do_deploy mc::lmp-k3r5-hs-se:ti-sci-fw:do_deploy"
-TI_SCI_FW_DEPLOY:am64xx-evm = "mc::lmp-k3r5-gp:ti-sci-fw:do_deploy mc::lmp-k3r5-sr2-hs-fs:ti-sci-fw:do_deploy mc::lmp-k3r5-sr2-hs-se:ti-sci-fw:do_deploy"
-do_install[mcdepends] += "${TI_SCI_FW_DEPLOY}"
+# Depend on u-boot do_deploy for tiboot3.bin, that is provided by the lmp-k3r5 variant
+TI_BOOT_FW_DEPLOY ?= ""
+TI_BOOT_FW_DEPLOY:sota:k3 = "mc::lmp-k3r5:u-boot:do_deploy"
+do_install[mcdepends] += "${TI_BOOT_FW_DEPLOY}"

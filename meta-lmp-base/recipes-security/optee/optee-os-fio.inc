@@ -24,6 +24,16 @@ SRCBRANCH ?= "master"
 OPTEE_OS_REPO ?= "git://github.com/foundriesio/optee_os.git"
 SRC_URI = "${OPTEE_OS_REPO};protocol=https;branch=${SRCBRANCH}"
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI:append:mx8ulp-nxp-bsp = " \
+	file://0001-FIO-fromtree-core-mm-Fix-conflicting-types-due-to-en.patch \
+	file://0002-FIO-fromtree-ta-pkcs11-Fix-conflicting-types-due-to-.patch \
+	"
+SRC_URI:append:mx93-nxp-bsp = " \
+	file://0001-FIO-fromtree-core-mm-Fix-conflicting-types-due-to-en.patch \
+	file://0002-FIO-fromtree-ta-pkcs11-Fix-conflicting-types-due-to-.patch \
+	"
+
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 

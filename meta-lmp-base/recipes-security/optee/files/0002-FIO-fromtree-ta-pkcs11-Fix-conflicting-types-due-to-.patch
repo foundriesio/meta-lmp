@@ -1,0 +1,32 @@
+From 8212959a2e78e0ff609564431bd4fe632ddd46b6 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Mon, 12 Jun 2023 18:32:46 +0100
+Subject: [PATCH 2/2] [FIO fromtree] ta: pkcs11: Fix conflicting types due to
+ enum/integer mismatch
+
+This is an error with gcc13 [-Werror=enum-int-mismatch]
+
+Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+(cherry picked from commit 5d6b6c795b8f02995d07ce9af35100b173fb1894)
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ ta/pkcs11/src/processing.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ta/pkcs11/src/processing.h b/ta/pkcs11/src/processing.h
+index 7201078c8..9f84732be 100644
+--- a/ta/pkcs11/src/processing.h
++++ b/ta/pkcs11/src/processing.h
+@@ -147,7 +147,7 @@ enum pkcs11_rc unwrap_key_by_asymm(struct pkcs11_session *session, void *data,
+ /*
+  * Symmetric crypto algorithm specific functions
+  */
+-bool processing_is_tee_symm(uint32_t proc_id);
++bool processing_is_tee_symm(enum pkcs11_mechanism_id proc_id);
+ 
+ enum pkcs11_rc init_symm_operation(struct pkcs11_session *session,
+ 				   enum processing_func function,
+-- 
+2.34.1
+

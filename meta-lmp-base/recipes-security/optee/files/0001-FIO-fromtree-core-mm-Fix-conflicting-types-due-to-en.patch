@@ -1,0 +1,33 @@
+From c95bf46abd1ee18d555e10f557c9406d99fcad43 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Mon, 12 Jun 2023 18:32:24 +0100
+Subject: [PATCH 1/2] [FIO fromtree] core: mm: Fix conflicting types due to
+ enum/integer mismatch
+
+This is an error with gcc13 [-Werror=enum-int-mismatch]
+
+Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+(cherry picked from commit 359c54b79de65acb91a50acd20d28a166c448510)
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ core/mm/core_mmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/core/mm/core_mmu.c b/core/mm/core_mmu.c
+index f2ca9ff5e..b7ccbcde8 100644
+--- a/core/mm/core_mmu.c
++++ b/core/mm/core_mmu.c
+@@ -1482,7 +1482,8 @@ static void *map_pa2va(struct tee_mmap_region *map, paddr_t pa, size_t len)
+ /*
+  * teecore gets some memory area definitions
+  */
+-void core_mmu_get_mem_by_type(unsigned int type, vaddr_t *s, vaddr_t *e)
++void core_mmu_get_mem_by_type(enum teecore_memtypes type, vaddr_t *s,
++			      vaddr_t *e)
+ {
+ 	struct tee_mmap_region *map = find_map_by_type(type);
+ 
+-- 
+2.34.1
+

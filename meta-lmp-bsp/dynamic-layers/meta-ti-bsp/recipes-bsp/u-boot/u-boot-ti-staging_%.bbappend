@@ -4,6 +4,7 @@ include recipes-bsp/u-boot/u-boot-lmp-common.inc
 
 SRC_URI:append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'file://0003-HACK-lib-lmb-Allow-re-reserving-post-relocation-U-Bo.patch', '', d)} \
+    file://lib-zlib-Fix-a-bug-when-getting-a-gzip-header-extra-field.patch \
 "
 
 SRC_URI:append:am64xx-evm = " \

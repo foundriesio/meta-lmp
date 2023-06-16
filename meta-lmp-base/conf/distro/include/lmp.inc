@@ -42,6 +42,9 @@ DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
 DISTRO_FEATURES:append = " pam usrmerge virtualization alsa"
 
+# List of distro-specific packages to add to all images with packagegroup-distro-base
+DISTRO_EXTRA_RRECOMMENDS += "base-files-issue"
+
 # Default IMA policy (tcb)
 IMA_POLICY ?= "ima-policy-tcb"
 

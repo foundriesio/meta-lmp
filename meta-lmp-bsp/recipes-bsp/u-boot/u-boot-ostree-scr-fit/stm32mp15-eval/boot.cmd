@@ -7,12 +7,12 @@ setenv bootlimit 3
 setenv devtype ${boot_device}
 setenv devnum ${boot_instance}
 setenv rootpart 2
-setenv fit_addr ${ramdisk_addr_r}
+setenv fit_addr 0xc4400000
 setenv fdt_file_final ${fdtfile}
-setenv fdt_addr ${fdt_addr_r}
+setenv fdt_addr 0xc4000000
 setenv optee_ovl_addr 0xc4300000
 
-setenv loadaddr ${ramdisk_addr_r}
+setenv loadaddr 0xc4400000
 setenv do_reboot "reset"
 setenv check_board_closed 'if test "${boot_auth}" = "2"; then setenv board_is_closed 1; else setenv board_is_closed; fi;'
 setenv check_secondary_boot 'if test "${boot_part}" = "2"; then setenv fiovb.is_secondary_boot 1; else setenv fiovb.is_secondary_boot 0; fi;'

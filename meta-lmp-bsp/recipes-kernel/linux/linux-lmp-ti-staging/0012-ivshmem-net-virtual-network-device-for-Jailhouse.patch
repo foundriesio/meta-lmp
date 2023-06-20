@@ -1,28 +1,32 @@
-From 435179849d28a100ed3e0efa111831cbfe4e65d1 Mon Sep 17 00:00:00 2001
+From ecf3d476ec199333454c2f55276ea1cc3bb40cd6 Mon Sep 17 00:00:00 2001
 From: Mans Rullgard <mans@mansr.com>
 Date: Thu, 26 May 2016 16:04:02 +0100
-Subject: [PATCH 09/14] ivshmem-net: virtual network device for Jailhouse
+Subject: [PATCH 12/15] ivshmem-net: virtual network device for Jailhouse
 
 Combines the work from Mans' baseline, over various fixes and
 improvements to the conversion to "ivshmem 2.0".
 
+Upstream-Status: Pending
+
 Signed-off-by: Mans Rullgard <mans@mansr.com>
 [Jan: combined fixes and enhancements]
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+(cherry picked from commit ed88f61398ea848685dfceec6c12977986b7f57a)
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  drivers/net/Kconfig       |    4 +
  drivers/net/Makefile      |    2 +
- drivers/net/ivshmem-net.c | 1102 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 1108 insertions(+)
+ drivers/net/ivshmem-net.c | 1104 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1110 insertions(+)
  create mode 100644 drivers/net/ivshmem-net.c
 
 diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index cb865b7ec375..5de2c9b3b7c9 100644
+index 9e63b8c43f3e2e..6da3ab912089e4 100644
 --- a/drivers/net/Kconfig
 +++ b/drivers/net/Kconfig
-@@ -593,4 +593,8 @@ config NET_FAILOVER
- 	  a VM with direct attached VF by failing over to the paravirtual
- 	  datapath when the VF is unplugged.
+@@ -631,4 +631,8 @@ config NETDEV_LEGACY_INIT
+ 	  Drivers that call netdev_boot_setup_check() should select this
+ 	  symbol, everything else no longer needs it.
  
 +config IVSHMEM_NET
 +	tristate "IVSHMEM virtual network device"
@@ -30,10 +34,10 @@ index cb865b7ec375..5de2c9b3b7c9 100644
 +
  endif # NETDEVICES
 diff --git a/drivers/net/Makefile b/drivers/net/Makefile
-index 72e18d505d1a..e09ec7bc64d1 100644
+index 6ce076462dbfd2..eb12689da752c1 100644
 --- a/drivers/net/Makefile
 +++ b/drivers/net/Makefile
-@@ -84,3 +84,5 @@ thunderbolt-net-y += thunderbolt.o
+@@ -89,3 +89,5 @@ thunderbolt-net-y += thunderbolt.o
  obj-$(CONFIG_USB4_NET) += thunderbolt-net.o
  obj-$(CONFIG_NETDEVSIM) += netdevsim/
  obj-$(CONFIG_NET_FAILOVER) += net_failover.o
@@ -41,10 +45,10 @@ index 72e18d505d1a..e09ec7bc64d1 100644
 +obj-$(CONFIG_IVSHMEM_NET) += ivshmem-net.o
 diff --git a/drivers/net/ivshmem-net.c b/drivers/net/ivshmem-net.c
 new file mode 100644
-index 000000000000..56c2c87e7498
+index 00000000000000..a7128ecf2b9067
 --- /dev/null
 +++ b/drivers/net/ivshmem-net.c
-@@ -0,0 +1,1102 @@
+@@ -0,0 +1,1104 @@
 +/*
 + * Copyright 2016 Mans Rullgard <mans@mansr.com>
 + * Copyright (c) Siemens AG, 2016-2020
@@ -69,6 +73,7 @@ index 000000000000..56c2c87e7498
 +#include <linux/pci.h>
 +#include <linux/io.h>
 +#include <linux/bitops.h>
++#include <linux/ethtool.h>
 +#include <linux/interrupt.h>
 +#include <linux/netdevice.h>
 +#include <linux/etherdevice.h>
@@ -1022,7 +1027,8 @@ index 000000000000..56c2c87e7498
 +
 +	INIT_WORK(&in->state_work, ivshm_net_state_change);
 +
-+	eth_random_addr(ndev->dev_addr);
++	eth_random_addr(ndev->perm_addr);
++	dev_addr_set(ndev, ndev->perm_addr);
 +	ndev->netdev_ops = &ivshm_net_ops;
 +	ndev->ethtool_ops = &ivshm_net_ethtool_ops;
 +	ndev->mtu = min_t(u32, IVSHM_NET_MTU_DEF, in->qsize / 16);
@@ -1032,7 +1038,7 @@ index 000000000000..56c2c87e7498
 +	ndev->features = ndev->hw_features;
 +
 +	netif_carrier_off(ndev);
-+	netif_napi_add(ndev, &in->napi, ivshm_net_poll, NAPI_POLL_WEIGHT);
++	netif_napi_add(ndev, &in->napi, ivshm_net_poll);
 +
 +	ret = register_netdev(ndev);
 +	if (ret)
@@ -1148,5 +1154,5 @@ index 000000000000..56c2c87e7498
 +MODULE_AUTHOR("Mans Rullgard <mans@mansr.com>");
 +MODULE_LICENSE("GPL");
 -- 
-2.30.2
+2.40.1
 

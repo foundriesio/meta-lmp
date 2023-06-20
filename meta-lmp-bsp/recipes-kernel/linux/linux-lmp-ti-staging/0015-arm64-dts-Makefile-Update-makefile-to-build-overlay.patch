@@ -1,0 +1,32 @@
+From 36f0ef4a69dc4a048e9aa7a7d6836df8870c3fbb Mon Sep 17 00:00:00 2001
+From: Paresh Bhagat <p-bhagat@ti.com>
+Date: Sun, 28 May 2023 11:21:24 +0530
+Subject: [PATCH 15/15] arm64: dts: Makefile: Update makefile to build overlay
+
+Update makefile to build overlay for jailhouse.
+
+Upstream-Status: Pending
+
+Signed-off-by: Matt Ranostay <mranostay@ti.com>
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+---
+ arch/arm64/boot/dts/ti/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+index d4c71593494c35..22abe3ad2eaa8f 100644
+--- a/arch/arm64/boot/dts/ti/Makefile
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -85,6 +85,9 @@ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-virt-mac-client.dtbo
+ 
++#jailhouse overlay
++dtb-$(CONFIG_ARCH_K3) += k3-am625-base-board-jailhouse.dtbo
++
+ # FPDLink Sensors
+ dtb-$(CONFIG_ARCH_K3) += k3-fpdlink-imx390-rcm-0-0.dtbo \
+ 			 k3-fpdlink-imx390-rcm-0-1.dtbo \
+-- 
+2.40.1
+

@@ -1,0 +1,47 @@
+From 9e2a59546b6635c2901a7487d600fe9730b31971 Mon Sep 17 00:00:00 2001
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Date: Sun, 3 Jul 2016 10:02:40 +0200
+Subject: [PATCH 06/15] arm: Export __boot_cpu_mode for use in Jailhouse driver
+ module
+
+Onlining a CPU while Jailhouse was running sets BOOT_CPU_MODE_MISMATCH
+because the kernel detect that the CPU will now only come up in SVC
+mode. Therefore, we need to fix up the flag after disabling Jailhouse
+again.
+
+Moreover, exporting the symbol allows to use is_hyp_mode_available() in
+the driver, thus prevents us from crashing during Jailhouse activation
+when there is no hyp stub installed.
+
+Upstream-Status: Pending
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+(cherry picked from commit 7c6832aec86a040c10188efe89fb2aaaa6093164)
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ arch/arm/kernel/armksyms.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/kernel/armksyms.c b/arch/arm/kernel/armksyms.c
+index 82e96ac836849c..354ab3e4e41fef 100644
+--- a/arch/arm/kernel/armksyms.c
++++ b/arch/arm/kernel/armksyms.c
+@@ -16,6 +16,7 @@
+ 
+ #include <asm/checksum.h>
+ #include <asm/ftrace.h>
++#include <asm/virt.h>
+ 
+ /*
+  * libgcc functions - functions that are used internally by the
+@@ -175,3 +176,7 @@ EXPORT_SYMBOL(__pv_offset);
+ EXPORT_SYMBOL(__arm_smccc_smc);
+ EXPORT_SYMBOL(__arm_smccc_hvc);
+ #endif
++
++#ifdef CONFIG_ARM_VIRT_EXT
++EXPORT_SYMBOL_GPL(__boot_cpu_mode);
++#endif
+-- 
+2.40.1
+

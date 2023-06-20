@@ -1,22 +1,25 @@
-From 7d70f91089f6a55e06892b924d63e2e3515b1519 Mon Sep 17 00:00:00 2001
+From cdb382de380c5edab8a18bc5eb4da5110ee015db Mon Sep 17 00:00:00 2001
 From: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
 Date: Wed, 7 Jun 2017 15:48:43 +0200
-Subject: [PATCH 05/14] arm, arm64: export __hyp_stub_vectors
+Subject: [PATCH 10/15] arm, arm64: export __hyp_stub_vectors
 
 HVC_GET_VECTORS got removed. External hypervisors, like Jailhouse, need
 this address when they are deactivated, in order to restore original
 state.
 
+Upstream-Status: Pending
+
 Signed-off-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+(cherry picked from commit 04ea1cb888eece6aa4b7a0705e65f63be1f25b1a)
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
- arch/arm/kernel/hyp-stub.S      | 2 ++
- arch/arm64/include/asm/ptrace.h | 2 ++
- arch/arm64/kernel/hyp-stub.S    | 2 ++
- 3 files changed, 6 insertions(+)
+ arch/arm/kernel/hyp-stub.S   | 2 ++
+ arch/arm64/kernel/hyp-stub.S | 2 ++
+ 2 files changed, 4 insertions(+)
 
 diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
-index 26d8e03b1dd3..c2ef9b474f64 100644
+index b19ae4459f14b4..b9ba0585a4ce27 100644
 --- a/arch/arm/kernel/hyp-stub.S
 +++ b/arch/arm/kernel/hyp-stub.S
 @@ -6,6 +6,7 @@
@@ -27,38 +30,25 @@ index 26d8e03b1dd3..c2ef9b474f64 100644
  #include <asm/assembler.h>
  #include <asm/virt.h>
  
-@@ -245,4 +246,5 @@ __hyp_stub_trap:	W(b)	__hyp_stub_do_trap
+@@ -259,4 +260,5 @@ __hyp_stub_trap:	W(b)	__hyp_stub_do_trap
  __hyp_stub_irq:		W(b)	.
  __hyp_stub_fiq:		W(b)	.
  ENDPROC(__hyp_stub_vectors)
 +EXPORT_SYMBOL_GPL(__hyp_stub_vectors)
  
-diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
-index d3106f5e121f..2726277fde91 100644
---- a/arch/arm64/include/asm/ptrace.h
-+++ b/arch/arm64/include/asm/ptrace.h
-@@ -252,6 +252,8 @@ extern int regs_query_register_offset(const char *name);
- extern unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
- 					       unsigned int n);
- 
-+extern char __hyp_stub_vectors[];
-+
- /**
-  * regs_get_register() - get register value from its offset
-  * @regs:	pt_regs from which register value is gotten
 diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
-index 160f5881a0b7..a055e28be5c2 100644
+index 2ee18c860f2ab6..47d117fd1fbca8 100644
 --- a/arch/arm64/kernel/hyp-stub.S
 +++ b/arch/arm64/kernel/hyp-stub.S
-@@ -10,6 +10,7 @@
+@@ -9,6 +9,7 @@
+ #include <linux/init.h>
  #include <linux/linkage.h>
- #include <linux/irqchip/arm-gic-v3.h>
  
 +#include <asm-generic/export.h>
  #include <asm/assembler.h>
+ #include <asm/el2_setup.h>
  #include <asm/kvm_arm.h>
- #include <asm/kvm_asm.h>
-@@ -42,6 +43,7 @@ SYM_CODE_START(__hyp_stub_vectors)
+@@ -66,6 +67,7 @@ SYM_CODE_START(__hyp_stub_vectors)
  	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
  	ventry	el1_error_invalid		// Error 32-bit EL1
  SYM_CODE_END(__hyp_stub_vectors)
@@ -67,5 +57,5 @@ index 160f5881a0b7..a055e28be5c2 100644
  	.align 11
  
 -- 
-2.30.2
+2.40.1
 

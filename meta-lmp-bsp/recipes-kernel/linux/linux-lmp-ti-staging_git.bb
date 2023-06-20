@@ -16,20 +16,21 @@ SRC_URI = "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git;protocol=git;bra
 
 # Jailhouse patches and config
 SRC_URI_JAILHOUSE = " \
-    file://0001-arm64-dts-am654-base-board-Reserve-memory-for-jailho.patch \
-    file://0002-arm64-dts-k3-am654-base-board-jailhouse-Disable-mcu_.patch \
-    file://0003-mm-Re-export-ioremap_page_range.patch \
-    file://0004-mm-vmalloc-Export-__get_vm_area_caller.patch \
-    file://0005-arm-arm64-export-__hyp_stub_vectors.patch \
-    file://0006-uio-Enable-read-only-mappings.patch \
-    file://0007-ivshmem-Add-header-file.patch \
-    file://0008-uio-Add-driver-for-inter-VM-shared-memory-device.patch \
-    file://0009-ivshmem-net-virtual-network-device-for-Jailhouse.patch \
-    file://0010-arm64-dts-disable-peripherals-for-am654x-root-cell.patch \
-    file://0011-arm64-dts-expanded-k3-am654-memory-region-for-jailho.patch \
-    file://0012-arm64-dts-disable-pcie0_rc-node-in-k3-am654-jailhous.patch \
-    file://0013-arm64-dts-am625-base-board-Reserve-memory-for-jailho.patch \
-    file://0014-arm64-dts-add-reserved_memory-label-for-CMA-regions-.patch \
+    file://0001-uio-Enable-read-only-mappings.patch \
+    file://0002-ivshmem-Add-header-file.patch \
+    file://0003-uio-Add-driver-for-inter-VM-shared-memory-device.patch \
+    file://0004-jailhouse-Add-simple-debug-console-via-the-hyperviso.patch \
+    file://0005-Revert-arm-Remove-the-ability-to-set-HYP-vectors-out.patch \
+    file://0006-arm-Export-__boot_cpu_mode-for-use-in-Jailhouse-driv.patch \
+    file://0007-mm-Re-export-ioremap_page_range.patch \
+    file://0008-Revert-mm-don-t-allow-executable-ioremap-mappings.patch \
+    file://0009-mm-vmalloc-Export-__get_vm_area_caller.patch \
+    file://0010-arm-arm64-export-__hyp_stub_vectors.patch \
+    file://0011-x86-Export-lapic_timer_period.patch \
+    file://0012-ivshmem-net-virtual-network-device-for-Jailhouse.patch \
+    file://0013-arm64-dts-add-reserved_memory-label-for-CMA-regions-.patch \
+    file://0014-arm64-dts-am625-base-board-Reserve-memory-for-jailho.patch \
+    file://0015-arm64-dts-Makefile-Update-makefile-to-build-overlay.patch \
 "
 
 KMETA = "kernel-meta"

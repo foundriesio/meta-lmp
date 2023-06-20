@@ -1,4 +1,4 @@
-From ec87e53066a9942e9aaba817d71268342f5e83b9 Mon Sep 17 00:00:00 2001
+From ae061d11ccf61a5da2a9a4ce3d0befd95aac25a8 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 16 Aug 2017 14:45:27 +0800
 Subject: [PATCH] configure: reproducible
@@ -19,10 +19,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure b/configure
-index 421cf859..a1b7840d 100755
+index 3b9179f8..c2462f7f 100755
 --- a/configure
 +++ b/configure
-@@ -5072,7 +5072,7 @@ else
+@@ -5125,7 +5125,7 @@ else
  		;;
  	(*)
  		cf_cv_ar_flags=unknown

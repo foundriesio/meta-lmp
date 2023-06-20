@@ -15,27 +15,20 @@ otherwise U-Boot corruption could occur. This includes but is not limited
 to attempting to load binary files that would overlap U-Boot's after-
 relocation's memory region, for which now no error would be shown.
 
+Upstream-Status: Pending
+
 Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
 ---
- lib/lmb.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ lib/lmb.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/lib/lmb.c b/lib/lmb.c
-index d126f8dc04..a52340d4fc 100644
+index 2444b2a6212..106ca5e320a 100644
 --- a/lib/lmb.c
 +++ b/lib/lmb.c
-@@ -12,6 +12,8 @@
- #include <log.h>
- #include <malloc.h>
- 
-+DECLARE_GLOBAL_DATA_PTR;
-+
- #define LMB_ALLOC_ANYWHERE	0
- 
- void lmb_dump_all_force(struct lmb *lmb)
-@@ -162,6 +164,59 @@ static long lmb_add_region(struct lmb_region *rgn, phys_addr_t base, phys_size_t
- 			/* Already have this region, so we're done */
- 			return 0;
+@@ -258,6 +258,60 @@ static long lmb_add_region_flags(struct lmb_region *rgn, phys_addr_t base,
+ 				return -1; /* regions with new flags */
+ 		}
  
 +		/*
 +		 * See if the memory region being checked against is U-Boot's
@@ -90,8 +83,10 @@ index d126f8dc04..a52340d4fc 100644
 +			}
 +		}
 +
++
  		adjacent = lmb_addrs_adjacent(base, size, rgnbase, rgnsize);
  		if (adjacent > 0) {
- 			rgn->region[i].base -= size;
+ 			if (flags != rgnflags)
 -- 
-2.34.1
+2.40.1
+

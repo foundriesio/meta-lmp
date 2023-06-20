@@ -1,7 +1,7 @@
-From 33abf7ccbd96153895ec9be330947a4152164c08 Mon Sep 17 00:00:00 2001
+From 15e0ed8d4c336373f0a483b712375b7146dd2332 Mon Sep 17 00:00:00 2001
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Date: Tue, 4 Jun 2019 18:40:25 +0200
-Subject: [PATCH 08/14] uio: Add driver for inter-VM shared memory device
+Subject: [PATCH 03/15] uio: Add driver for inter-VM shared memory device
 
 This adds a UIO driver the ivshmem device, found in QEMU and the
 Jailhouse hypervisor. It exposes the MMIO register region and all shared
@@ -13,7 +13,11 @@ vectors, coalescing them into the single notifier UIO provides.
 Note: Specification work for the interface is ongoing, so details may
 still change.
 
+Upstream-Status: Pending
+
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+(cherry picked from commit e8095ac1ea00c67b1d334232c74924c238c15878)
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  drivers/uio/Kconfig       |   7 ++
  drivers/uio/Makefile      |   1 +
@@ -23,13 +27,13 @@ Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
  create mode 100644 drivers/uio/uio_ivshmem.c
 
 diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
-index 202ee81cfc2b..a130500f46b8 100644
+index 2e16c5338e5b14..d2cc0d03d8e783 100644
 --- a/drivers/uio/Kconfig
 +++ b/drivers/uio/Kconfig
-@@ -165,4 +165,11 @@ config UIO_HV_GENERIC
- 	  to network and storage devices from userspace.
+@@ -182,4 +182,11 @@ config UIO_DFL
+ 	    opae-sdk/tools/libopaeuio/
  
- 	  If you compile this as a module, it will be called uio_hv_generic.
+ 	  If you compile this as a module, it will be called uio_dfl.
 +
 +config UIO_IVSHMEM
 +	tristate "Inter-VM Shared Memory driver"
@@ -39,17 +43,17 @@ index 202ee81cfc2b..a130500f46b8 100644
 +	  as provided by QEMU and the Jailhouse hypervisor.
  endif
 diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
-index c285dd2a4539..3911fefb2a7e 100644
+index f2f416a142286b..893c9d0a399b21 100644
 --- a/drivers/uio/Makefile
 +++ b/drivers/uio/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_UIO_PRUSS)         += uio_pruss.o
- obj-$(CONFIG_UIO_MF624)         += uio_mf624.o
+@@ -12,3 +12,4 @@ obj-$(CONFIG_UIO_MF624)         += uio_mf624.o
  obj-$(CONFIG_UIO_FSL_ELBC_GPCM)	+= uio_fsl_elbc_gpcm.o
  obj-$(CONFIG_UIO_HV_GENERIC)	+= uio_hv_generic.o
+ obj-$(CONFIG_UIO_DFL)	+= uio_dfl.o
 +obj-$(CONFIG_UIO_IVSHMEM)	+= uio_ivshmem.o
 diff --git a/drivers/uio/uio_ivshmem.c b/drivers/uio/uio_ivshmem.c
 new file mode 100644
-index 000000000000..0c16d428c6ed
+index 00000000000000..0c16d428c6edf8
 --- /dev/null
 +++ b/drivers/uio/uio_ivshmem.c
 @@ -0,0 +1,241 @@
@@ -295,10 +299,10 @@ index 000000000000..0c16d428c6ed
 +MODULE_AUTHOR("Jan Kiszka <jan.kiszka@siemens.com>");
 +MODULE_LICENSE("GPL v2");
 diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index d97cd7983ee6..23f34a6303d0 100644
+index 45c3d62e616d85..680ebb3e9927e9 100644
 --- a/include/linux/pci_ids.h
 +++ b/include/linux/pci_ids.h
-@@ -1482,6 +1482,7 @@
+@@ -1499,6 +1499,7 @@
  
  #define PCI_VENDOR_ID_SIEMENS           0x110A
  #define PCI_DEVICE_ID_SIEMENS_DSCC4     0x2102
@@ -307,5 +311,5 @@ index d97cd7983ee6..23f34a6303d0 100644
  #define PCI_VENDOR_ID_VORTEX		0x1119
  #define PCI_DEVICE_ID_VORTEX_GDT60x0	0x0000
 -- 
-2.30.2
+2.40.1
 

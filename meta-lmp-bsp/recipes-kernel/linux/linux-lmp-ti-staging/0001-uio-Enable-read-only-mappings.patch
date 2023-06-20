@@ -1,22 +1,26 @@
-From d139fa10eab8fb04180624ab12f336a3221a38b8 Mon Sep 17 00:00:00 2001
+From cc3005a720bebf1ab8ac5060bce54eaf96ca5936 Mon Sep 17 00:00:00 2001
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Date: Tue, 4 Jun 2019 14:40:09 +0200
-Subject: [PATCH 06/14] uio: Enable read-only mappings
+Subject: [PATCH 01/15] uio: Enable read-only mappings
 
 This allows to tag memory regions read-only, denying userspace to map
 them writable. Default remains read/write.
 
+Upstream-Status: Pending
+
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+(cherry picked from commit fdbff561f1499c218946877f4a3cb46fb69f010f)
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  drivers/uio/uio.c          | 9 +++++++++
  include/linux/uio_driver.h | 2 ++
  2 files changed, 11 insertions(+)
 
 diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index be06f1a961c2..970045c37e46 100644
+index 43afbb7c5ab916..75bdffd0fe979a 100644
 --- a/drivers/uio/uio.c
 +++ b/drivers/uio/uio.c
-@@ -790,6 +790,15 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
+@@ -792,6 +792,15 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
  		goto out;
  	}
  
@@ -33,7 +37,7 @@ index be06f1a961c2..970045c37e46 100644
  		ret = idev->info->mmap(idev->info, vma);
  		goto out;
 diff --git a/include/linux/uio_driver.h b/include/linux/uio_driver.h
-index 54bf6b118401..baa6f1fee94e 100644
+index 47c5962b876b02..e7a101e47457bd 100644
 --- a/include/linux/uio_driver.h
 +++ b/include/linux/uio_driver.h
 @@ -31,6 +31,7 @@ struct uio_map;
@@ -53,5 +57,5 @@ index 54bf6b118401..baa6f1fee94e 100644
  	struct uio_map		*map;
  };
 -- 
-2.30.2
+2.40.1
 

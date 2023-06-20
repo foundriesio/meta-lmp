@@ -1,0 +1,117 @@
+From 56b8e25e2338c63d262ec385e101766293e03d0c Mon Sep 17 00:00:00 2001
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Date: Sun, 27 Dec 2020 15:04:31 +0100
+Subject: [PATCH 05/15] Revert "arm: Remove the ability to set HYP vectors
+ outside of the decompressor"
+
+This reverts commit 15ff9a39cd5ebabdf704634ea58806f2d12bbc39. It's
+needed for Jailhouse.
+
+Upstream-Status: Pending
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+(cherry picked from commit 6360d1a4f982ef43ee49d9754c4df56061299026)
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ arch/arm/include/asm/virt.h |  5 +++++
+ arch/arm/kernel/hyp-stub.S  | 39 +++++++++++++++++++++++++++++--------
+ 2 files changed, 36 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/include/asm/virt.h b/arch/arm/include/asm/virt.h
+index dd9697b2bde809..47600a5894b179 100644
+--- a/arch/arm/include/asm/virt.h
++++ b/arch/arm/include/asm/virt.h
+@@ -39,6 +39,8 @@ static inline void sync_boot_mode(void)
+ 	sync_cache_r(&__boot_cpu_mode);
+ }
+ 
++void __hyp_set_vectors(unsigned long phys_vector_base);
++void __hyp_reset_vectors(void);
+ #else
+ #define __boot_cpu_mode	(SVC_MODE)
+ #define sync_boot_mode()
+@@ -73,6 +75,9 @@ static inline bool is_kernel_in_hyp_mode(void)
+ 
+ #define HVC_SET_VECTORS 0
+ #define HVC_SOFT_RESTART 1
++#define HVC_RESET_VECTORS 2
++
++#define HVC_STUB_HCALL_NR 3
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
+index b699b22a4db1fa..b19ae4459f14b4 100644
+--- a/arch/arm/kernel/hyp-stub.S
++++ b/arch/arm/kernel/hyp-stub.S
+@@ -186,19 +186,19 @@ ARM_BE8(orr	r7, r7, #(1 << 25))     @ HSCTLR.EE
+ ENDPROC(__hyp_stub_install_secondary)
+ 
+ __hyp_stub_do_trap:
+-#ifdef ZIMAGE
+ 	teq	r0, #HVC_SET_VECTORS
+ 	bne	1f
+-	/* Only the ZIMAGE stubs can change the HYP vectors */
+ 	mcr	p15, 4, r1, c12, c0, 0	@ set HVBAR
+ 	b	__hyp_stub_exit
+-#endif
+ 
+ 1:	teq	r0, #HVC_SOFT_RESTART
+-	bne	2f
++	bne	1f
+ 	bx	r1
+ 
+-2:	ldr	r0, =HVC_STUB_ERR
++1:	teq	r0, #HVC_RESET_VECTORS
++	beq	__hyp_stub_exit
++
++	ldr	r0, =HVC_STUB_ERR
+ 	__ERET
+ 
+ __hyp_stub_exit:
+@@ -207,9 +207,26 @@ __hyp_stub_exit:
+ ENDPROC(__hyp_stub_do_trap)
+ 
+ /*
+- * __hyp_set_vectors is only used when ZIMAGE must bounce between HYP
+- * and SVC. For the kernel itself, the vectors are set once and for
+- * all by the stubs.
++ * __hyp_set_vectors: Call this after boot to set the initial hypervisor
++ * vectors as part of hypervisor installation.  On an SMP system, this should
++ * be called on each CPU.
++ *
++ * r0 must be the physical address of the new vector table (which must lie in
++ * the bottom 4GB of physical address space.
++ *
++ * r0 must be 32-byte aligned.
++ *
++ * Before calling this, you must check that the stub hypervisor is installed
++ * everywhere, by waiting for any secondary CPUs to be brought up and then
++ * checking that BOOT_CPU_MODE_HAVE_HYP(__boot_cpu_mode) is true.
++ *
++ * If not, there is a pre-existing hypervisor, some CPUs failed to boot, or
++ * something else went wrong... in such cases, trying to install a new
++ * hypervisor is unlikely to work as desired.
++ *
++ * When you call into your shiny new hypervisor, sp_hyp will contain junk,
++ * so you will need to set that to something sensible at the new hypervisor's
++ * initialisation entry point.
+  */
+ ENTRY(__hyp_set_vectors)
+ 	mov	r1, r0
+@@ -225,6 +242,12 @@ ENTRY(__hyp_soft_restart)
+ 	ret	lr
+ ENDPROC(__hyp_soft_restart)
+ 
++ENTRY(__hyp_reset_vectors)
++	mov	r0, #HVC_RESET_VECTORS
++	__HVC(0)
++	ret	lr
++ENDPROC(__hyp_reset_vectors)
++
+ .align 5
+ ENTRY(__hyp_stub_vectors)
+ __hyp_stub_reset:	W(b)	.
+-- 
+2.40.1
+

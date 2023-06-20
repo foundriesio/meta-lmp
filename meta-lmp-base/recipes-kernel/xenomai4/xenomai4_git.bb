@@ -18,7 +18,7 @@ RDEPENDS:${PN}:append:libc-glibc = " libgcc"
 
 inherit pkgconfig meson features_check
 
-REQUIRED_MACHINE_FEATURES = "xeno"
+REQUIRED_MACHINE_FEATURES = "xeno4"
 
 PACKAGECONFIG ?= ""
 PACKAGECONFIG[debug] = "-Doptimization=0 -Ddebug=true,,,"

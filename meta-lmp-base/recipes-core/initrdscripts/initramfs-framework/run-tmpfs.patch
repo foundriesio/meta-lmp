@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/finish b/finish
 index ac0de9f..ed8298d 100755
 --- a/finish

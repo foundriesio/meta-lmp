@@ -21,6 +21,7 @@ IMAGE_OVERHEAD_FACTOR:qemuriscv64 ?= "2.3"
 IMAGE_OVERHEAD_FACTOR:qemuarm64 ?= "2.3"
 IMAGE_OVERHEAD_FACTOR:qemuarm ?= "2.3"
 IMAGE_OVERHEAD_FACTOR:intel-corei7-64 ?= "2.3"
+IMAGE_OVERHEAD_FACTOR:tegra ?= "2.3"
 
 # let's make sure we have a good image..
 REQUIRED_DISTRO_FEATURES = "pam systemd"

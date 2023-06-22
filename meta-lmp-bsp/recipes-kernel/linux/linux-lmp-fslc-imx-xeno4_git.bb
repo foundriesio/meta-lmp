@@ -1,10 +1,10 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/linux-lmp-fslc-imx:"
 
-include linux-lmp-fslc-imx_git.bb
+include linux-lmp-fslc-imx_6.1.bb
 
 KERNEL_REPO = "git://github.com/foundriesio/linux.git"
-LINUX_VERSION = "5.15.87"
-KERNEL_BRANCH = "5.15-2.2.x-imx-xeno4"
+LINUX_VERSION = "6.1.24"
+KERNEL_BRANCH = "6.1-1.0.x-imx-xeno4"
 
-SRCREV_machine = "dbd918d3a96e088088307b4a62886efd889058a6"
+SRCREV_machine = "25aa4b67c7364c4e628b0ce2e12429b287937b76"
 LINUX_KERNEL_TYPE = "xeno4"

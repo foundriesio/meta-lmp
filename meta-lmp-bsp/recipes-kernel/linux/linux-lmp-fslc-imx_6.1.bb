@@ -6,7 +6,7 @@ include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 LINUX_VERSION ?= "6.1.24"
 KERNEL_BRANCH ?= "6.1-1.0.x-imx"
 
-SRCREV_machine = "8842a4d0ef55bb3d7561566c79b28f45ac76f863"
+SRCREV_machine = "ad9ab3b3c553cbc3c61f233b6e2cd5abdd2a624b"
 
 SRC_URI += " \
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \

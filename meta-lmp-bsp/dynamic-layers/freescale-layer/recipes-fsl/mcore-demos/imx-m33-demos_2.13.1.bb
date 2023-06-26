@@ -4,7 +4,7 @@
 DESCRIPTION = "i.MX M33 core demo images"
 SECTION = "BSP"
 LICENSE = "Proprietary"
-LIC_FILES_CHKSUM = "file://COPYING;md5=5a0bf11f745e68024f37b4724a5364fe"
+LIC_FILES_CHKSUM = "file://COPYING;md5=ea25d099982d035af85d193c88a1b479"
 
 inherit deploy fsl-eula-unpack
 
@@ -18,11 +18,11 @@ SRC_URI = "${FSL_MIRROR}/${SOC}-${MCORE_TYPE}-demo-${PV}.bin;name=${SOC};fsl-eul
 
 S = "${WORKDIR}/${SOC}-${MCORE_TYPE}-demo-${PV}"
 
-SRC_URI[imx8ulp.md5sum] = "7a4c8e667749d429f57a64cefc096d0e"
-SRC_URI[imx8ulp.sha256sum] = "40d6184e50e5dfad78973ccf4da9fdd221737558b5ed8963167b6fd81e6752c4"
+SRC_URI[imx8ulp.md5sum] = "f76e829152d3d704b3e16d96a077aac2"
+SRC_URI[imx8ulp.sha256sum] = "83e8612e687fa337e763152bc1a9add1cbf154cc19b329273d5f74252ebfb1b2"
 
-SRC_URI[imx93.md5sum] = "b63358a6ed6f2b95c8196c54140b4a23"
-SRC_URI[imx93.sha256sum] = "e87cd109bf4a20c5f28ea9e927d300f59386c0e2edeef95e2e3496882101469f"
+SRC_URI[imx93.md5sum] = "dd9d0d8b46c089f1f9dd61ba4f8e7d18"
+SRC_URI[imx93.sha256sum] = "c6f6c13abba24dcc92e1015674850c86785b9ab60f4e32ccc0aae939d277e16f"
 
 PACKAGE_ARCH = "${MACHINE_SOCARCH}"
 

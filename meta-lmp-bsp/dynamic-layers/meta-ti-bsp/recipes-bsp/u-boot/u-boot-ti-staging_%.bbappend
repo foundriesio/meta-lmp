@@ -27,3 +27,7 @@ python() {
     # we need to set the DEPENDS as well to produce valid SPDX documents
     fix_deployed_depends('do_install', d)
 }
+
+# Root of Trust Key directory
+K3_ROT_KEYS ?= "CONFIG_SIGN_KEY_PATH=${TOPDIR}/conf/keys"
+EXTRA_OEMAKE += "$K3_ROT_KEYS"

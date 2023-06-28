@@ -18,3 +18,11 @@ SRC_URI:append:am62xx-evm = " \
 "
 
 PACKAGECONFIG[optee] = "TEE=${STAGING_DIR_HOST}${nonarch_base_libdir}/firmware/tee-pager_v2.bin,,optee-os-fio"
+
+# setting DEPENDS create dependency loops so skip the check
+LMPSTAGING_DEPLOYED_CHECK_SKIP += "${PN}:do_deploy"
+
+python() {
+    # we need to set the DEPENDS as well to produce valid SPDX documents
+    fix_deployed_depends('do_install', d)
+}

@@ -18,6 +18,7 @@ SRC_URI:append:imx-nxp-bsp = "\
     git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware; \
 "
 SRCREV_imx-firmware ?= "982bb10dfabfb9e7b9dc106c59a4fbb2c45bfb44"
+SRCREV_FORMAT = "imx-firmware"
 
 SRC_URI:append:beaglebone-yocto = "\
     https://github.com/beagleboard/beaglebone-black-wireless/raw/d9135000a223228158d92fd2e3f00e495f642fee/firmware/wl18xx-conf.bin;name=wl18xx-conf \

@@ -18,6 +18,12 @@ SRC_URI:append:am62xx-evm = " \
     file://lmp.cfg \
 "
 
+SRC_URI:append:beagleplay-k3r5 = " file://lmp.cfg"
+SRC_URI:append:beagleplay = " \
+    file://fw_env.config \
+    file://lmp.cfg \
+"
+
 PACKAGECONFIG[optee] = "TEE=${STAGING_DIR_HOST}${nonarch_base_libdir}/firmware/tee-pager_v2.bin,,optee-os-fio"
 
 # setting DEPENDS create dependency loops so skip the check

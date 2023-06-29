@@ -12,6 +12,7 @@ SRC_URI:append:imx-nxp-bsp = "\
     git://github.com/NXP/imx-firmware.git;protocol=https;branch=${IMX_FIRMWARE_BRANCH};destsuffix=imx-firmware;name=imx-firmware; \
 "
 SRCREV_imx-firmware ?= "982bb10dfabfb9e7b9dc106c59a4fbb2c45bfb44"
+SRCREV_FORMAT = "imx-firmware"
 
 do_install:append:imx-nxp-bsp () {
     # Drop upstream sdma firmware binaries (prefer from the BSP)

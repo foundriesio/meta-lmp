@@ -668,6 +668,12 @@ BBMULTICONFIG:append:am62xx-evm = " lmp-k3r5"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
 KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'jailhouse uio_ivshmem', '', d)}"
+## beagleplay
+BBMULTICONFIG:remove:beagleplay = "k3r5"
+BBMULTICONFIG:append:beagleplay = " lmp-k3r5"
+SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
+KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:beagleplay = "kernel-image-image"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx = " optee"

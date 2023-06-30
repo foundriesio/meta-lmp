@@ -5,7 +5,7 @@ include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 
 LINUX_VERSION ?= "6.1.33"
 KBRANCH = "ti-linux-6.1.y"
-SRCREV_machine = "2b6f5746de558d954e42749b898fcdb4227dce5a"
+SRCREV_machine = "f6f812cfa29f7a8136ebf62c604b1d7fefbcee8e"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

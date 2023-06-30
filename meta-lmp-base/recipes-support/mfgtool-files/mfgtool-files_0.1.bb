@@ -9,18 +9,20 @@ inherit deploy nopackages
 INITRAMFS_IMAGE = "fsl-image-mfgtool-initramfs"
 DEPENDS = "${INITRAMFS_IMAGE}"
 
-UUU_RELEASE = "1.5.21"
+UUU_RELEASE = "1.5.109"
 MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 
 SRC_URI = " \
     https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu;downloadfilename=uuu-${UUU_RELEASE};name=Linux \
+    https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu_mac;downloadfilename=uuu-${UUU_RELEASE}_mac;name=Mac \
     https://github.com/NXPmicro/mfgtools/releases/download/uuu_${UUU_RELEASE}/uuu.exe;downloadfilename=uuu-${UUU_RELEASE}.exe;name=Windows \
     file://bootloader.uuu.in \
     file://full_image.uuu.in \
 "
 
-SRC_URI[Linux.sha256sum] = "f6db7aec9e07714a71b22241c03684a87f6d507f73eefbe1d82f8b63a72ffd89"
-SRC_URI[Windows.sha256sum] = "05b05157e88c6ff702bb5548c7a553833434bfd2a578dfaed6bd7ba20b2a53a8"
+SRC_URI[Linux.sha256sum] = "d5568f967a686dcef4f60932baba2dc8393b79e43dab5c1437226b2a34658a40"
+SRC_URI[Mac.sha256sum] = "2e37d04e7e4435e25dbe0f9463efe672324e1718b0a272b2d6627b90e13cb4fa"
+SRC_URI[Windows.sha256sum] = "ae5dd2b1a6575d1a2416a51ab849009bcaf230d803692c46ade95266b6dcc08e"
 
 S = "${WORKDIR}"
 
@@ -37,6 +39,7 @@ do_compile() {
 do_deploy() {
     install -d ${DEPLOYDIR}/${PN}
     install -m 0755 ${WORKDIR}/uuu-${UUU_RELEASE} ${DEPLOYDIR}/${PN}/uuu
+    install -m 0755 ${WORKDIR}/uuu-${UUU_RELEASE}_mac ${DEPLOYDIR}/${PN}/uuu_mac
     install -m 0644 ${WORKDIR}/uuu-${UUU_RELEASE}.exe ${DEPLOYDIR}/${PN}/uuu.exe
     install -m 0644 ${WORKDIR}/bootloader.uuu ${DEPLOYDIR}/${PN}
     install -m 0644 ${WORKDIR}/full_image.uuu ${DEPLOYDIR}/${PN}

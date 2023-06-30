@@ -37,3 +37,9 @@ SRC_URI_JAILHOUSE = " \
 KMETA = "kernel-meta"
 
 include recipes-kernel/linux/linux-lmp.inc
+
+# Special configuration for remoteproc/rpmsg IPC modules
+module_conf_rpmsg_client_sample = "blacklist rpmsg_client_sample"
+module_conf_ti_k3_r5_remoteproc = "softdep ti_k3_r5_remoteproc pre: virtio_rpmsg_bus"
+module_conf_ti_k3_dsp_remoteproc = "softdep ti_k3_dsp_remoteproc pre: virtio_rpmsg_bus"
+KERNEL_MODULE_PROBECONF += "rpmsg_client_sample ti_k3_r5_remoteproc ti_k3_dsp_remoteproc"

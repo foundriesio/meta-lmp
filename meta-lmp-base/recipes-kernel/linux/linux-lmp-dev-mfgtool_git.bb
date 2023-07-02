@@ -19,3 +19,8 @@ DEPENDS += "lzop-native"
 
 SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANCH};name=machine;"
 KMETA = ""
+
+KBUILD_DEFCONFIG:mx6-generic-bsp = "imx_v7_defconfig"
+KBUILD_DEFCONFIG:mx7-generic-bsp = "imx_v7_defconfig"
+KBUILD_DEFCONFIG:mx8-generic-bsp = "imx_v8_defconfig"
+KBUILD_DEFCONFIG:mx9-generic-bsp = "imx_v8_defconfig"

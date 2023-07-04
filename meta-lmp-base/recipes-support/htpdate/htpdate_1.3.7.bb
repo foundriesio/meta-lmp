@@ -16,7 +16,7 @@ LIC_FILES_CHKSUM = "file://htpdate.c;beginline=26;endline=30;md5=2b6cdb94bd53496
 SRC_URI = "http://www.vervest.org/htp/archive/c/htpdate-${PV}.tar.gz \
 	   file://default.conf \
 "
-SRC_URI[sha256sum] = "3cdc558ec8e53ef374a42490b2f28c0b23981fa8754a6d7182044707828ad1e9"
+SRC_URI[sha256sum] = "88c52fe475308ee95f560fd7cf68c75bc6e9a6abf56be7fed203a7f762fe7ab2"
 
 inherit systemd
 

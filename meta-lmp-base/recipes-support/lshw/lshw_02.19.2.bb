@@ -5,19 +5,31 @@ configuration, bus speed, etc. on DMI-capable or EFI systems."
 SUMMARY = "Hardware lister"
 HOMEPAGE = "http://ezix.org/project/wiki/HardwareLiSter"
 SECTION = "console/tools"
+
 LICENSE = "GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
-DEPENDS = "gettext-native pciutils usbutils"
 COMPATIBLE_HOST = "(i.86|x86_64|arm|aarch64|riscv64).*-linux"
 
-SRC_URI = "git://github.com/lyonel/lshw.git;protocol=https;branch=master \
-    file://docbook2man.patch \
+PV .= "+git${SRCPV}"
+SRCREV = "42fef565731411a784101de614a54bff79d1858e"
+SRC_URI = " \
+    git://github.com/lyonel/lshw.git;protocol=https;branch=master \
+    file://0001-disable-docbook2man.patch \
 "
 
-SRCREV = "996aaad9c760efa6b6ffef8518999ec226af049a"
-
 S = "${WORKDIR}/git"
+
+inherit pkgconfig
+
+DEPENDS = "gettext-native"
+
+PACKAGECONFIG ??= "zlib"
+PACKAGECONFIG[sqlite] = "SQLITE=1,SQLITE=0,sqlite3"
+PACKAGECONFIG[zlib]   = "ZLIB=1,ZLIB=0,zlib gzip-native"
+
+# use the PACKAGECONFIG configurations arguments
+EXTRA_OEMAKE = "${PACKAGECONFIG_CONFARGS} RPM_OPT_FLAGS='${CFLAGS}'"
 
 do_compile() {
     # build core only - don't ship gui
@@ -29,3 +41,5 @@ do_install() {
     # data files provided by dependencies
     rm -rf ${D}/usr/share/lshw
 }
+
+BBCLASSEXTEND = "native"

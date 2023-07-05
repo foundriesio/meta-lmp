@@ -27,6 +27,7 @@ PACKAGE_INSTALL = " \
 	${ROOTFS_BOOTSTRAP_INSTALL}"
 
 
+IMAGE_NAME_SUFFIX = ""
 # Do not pollute the initrd image with rootfs features
 IMAGE_FEATURES = ""
 IMAGE_LINGUAS = ""

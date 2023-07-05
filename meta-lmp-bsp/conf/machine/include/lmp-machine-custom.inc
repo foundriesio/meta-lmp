@@ -221,35 +221,6 @@ UBOOT_MACHINE:imx6ullevk = "mx6ull_14x14_evk_defconfig"
 KERNEL_DEVICETREE:imx6ullevk = "imx6ull-14x14-evk.dtb"
 BOOTSCR_LOAD_ADDR:imx6ullevk = "0x85000000"
 
-# Toradex Apalis iMX6
-UBOOT_SIGN_ENABLE:sota:apalis-imx6 = "1"
-PREFERRED_PROVIDER_u-boot-default-script:apalis-imx6 = "u-boot-base-scr"
-PREFERRED_PROVIDER_u-boot-default-script:sota:apalis-imx6 = "u-boot-ostree-scr-fit"
-LMP_BOOT_FIRMWARE_FILES:apalis-imx6 = "SPL u-boot.itb"
-IMAGE_BOOT_FILES:apalis-imx6 = "boot.scr uEnv.txt SPL u-boot.itb ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)}"
-IMAGE_BOOT_FILES:remove:apalis-imx6 = "boot.scr-${MACHINE};boot.scr"
-IMAGE_BOOT_FILES:sota:apalis-imx6 = "boot.itb"
-KERNEL_IMAGETYPE:sota:apalis-imx6 = "fitImage"
-KERNEL_CLASSES:sota:apalis-imx6 = " kernel-lmp-fitimage "
-OSTREE_KERNEL_ARGS:apalis-imx6 ?= "console=tty1 console=ttymxc0,115200 rootfstype=ext4"
-PREFERRED_PROVIDER_virtual/kernel:apalis-imx6 ?= "linux-lmp"
-KERNEL_DEVICETREE:remove:apalis-imx6 = "imx6q-apalis-ixora-v1.2.dtb"
-IMX_DEFAULT_BOOTLOADER:apalis-imx6 ?= "u-boot-fio"
-SOTA_CLIENT_FEATURES:append:apalis-imx6 = " ubootenv"
-UBOOT_CONFIG:apalis-imx6 = ""
-UBOOT_SUFFIX:apalis-imx6 = "bin"
-UBOOT_MACHINE:apalis-imx6 = "apalis_imx6_defconfig"
-UBOOT_CLASSES:apalis-imx6 = "uboot-fitimage"
-UBOOT_DTB_LOADADDRESS:apalis-imx6 = "0x15800000"
-UBOOT_RD_LOADADDRESS:apalis-imx6 = "0x14000000"
-WKS_FILE:apalis-imx6 = "sdimage-imx6dq-spl-fit.wks"
-WKS_FILES:sota:apalis-imx6 = "sdimage-imx6dq-spl-fit-sota.wks"
-MACHINE_FEATURES:append:apalis-imx6 = " optee"
-BOOTSCR_LOAD_ADDR:apalis-imx6 = "0x15000000"
-
-# Toradex Apalis iMX6 with secure boot support
-SOTA_CLIENT_FEATURES:remove:sota:apalis-imx6-sec = "ubootenv"
-
 # iMX8QM
 SOTA_CLIENT_FEATURES:append:mx8qm-generic-bsp = " ubootenv"
 IMAGE_BOOT_FILES:mx8qm-nxp-bsp = "imx-boot u-boot.itb hdmitxfw.bin ${KERNEL_IMAGETYPE} ${@make_dtb_boot_files(d)} boot.scr uEnv.txt"
@@ -280,12 +251,6 @@ UBOOT_CONFIG:imx8qm-mek = ""
 UBOOT_SUFFIX:imx8qm-mek = "bin"
 UBOOT_MACHINE:imx8qm-mek = "imx8qm_mek_defconfig"
 UBOOT_DTB_NAME:imx8qm-mek ?= "fsl-imx8qm-mek.dtb"
-## Toradex Apalis iMX8QM
-OSTREE_KERNEL_ARGS:apalis-imx8 ?= "pci=nomsi console=tty1 console=ttyLP1,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"
-PREFERRED_PROVIDER_virtual/kernel:apalis-imx8 ?= "linux-lmp-toradex-imx"
-UBOOT_CONFIG:apalis-imx8 = ""
-UBOOT_SUFFIX:apalis-imx8 = "bin"
-UBOOT_MACHINE:apalis-imx8 = "apalis-imx8_defconfig"
 
 # iMX8ULP
 UBOOT_SIGN_ENABLE:sota:mx8ulp-generic-bsp = "1"
@@ -319,9 +284,6 @@ UBOOT_CONFIG:imx8ulp-lpddr4-evk = ""
 UBOOT_SUFFIX:imx8ulp-lpddr4-evk = "bin"
 UBOOT_MACHINE:imx8ulp-lpddr4-evk = "imx8ulp_evk_defconfig"
 UBOOT_DTB_NAME:imx8ulp-lpddr4-evk ?= "imx8ulp-evk.dtb"
-
-# Toradex Apalis iMX8 with secure boot support
-SOTA_CLIENT_FEATURES:remove:sota:apalis-imx8-sec = "ubootenv"
 
 # NXP i.MX 8QuadMax MEK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8qm-mek-sec = "ubootenv"

@@ -1,0 +1,17 @@
+[Unit]
+Description=Non-Resident HCI-based Bluetooth Serial Attach Initialization
+ConditionFileNotEmpty=/etc/bluetooth/hciattach.conf
+ConditionFirmware=device-tree-compatible(@@HCI_ATTACH_BOARD@@)
+After=rc-local.service
+
+[Service]
+EnvironmentFile=/etc/bluetooth/hciattach.conf
+PassEnvironment=HCI_PORT HCI_SPEED
+ExecStart=/usr/bin/hciattach-custom.sh
+# Assume interface 0 by default
+ExecStop=-/usr/bin/hciconfig hci0 down
+RemainAfterExit=true
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,15 @@
 #!/bin/sh -e
 
 TOKEN_FILE=${TOKEN_FILE-/etc/lmp-device-register-token}
+TAG=""
+
+if [ -f /etc/sota/tag ] ; then
+	# tag file should contain only one tag
+	# FoundriesFactory backend supports only
+	# single tag for device registration
+	TAG=$(</etc/sota/tag)
+	TAG="-t ${TAG}"
+fi
 
 if [ ! -f ${TOKEN_FILE} ] ; then
 	echo "$0: ERROR: Missing token file ${TOKEN_FILE}"
@@ -29,4 +38,4 @@ else
 	echo "$0: Registering with all available apps"
 fi
 
-/usr/bin/lmp-device-register -T ${TOKEN} ${APPS}
+/usr/bin/lmp-device-register -T ${TOKEN} ${TAG} ${APPS}

@@ -117,9 +117,10 @@ BBMASK += " \
     /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.113.bbappend \
     /meta-st-stm32mp/recipes-bsp/trusted-firmware-a/tf-a-stm32mp_2.6.bb \
 "
-# meta-ti-bsp: mask optee related recipes as they are provided by lmp
+# meta-ti-bsp: mask optee and jailhouse related recipes as they are provided by lmp
 BBMASK += " \
     /meta-ti/meta-ti-bsp/recipes-security/optee \
+    /meta-ti/meta-ti-extras/recipes-ti/jailhouse \
 "
 
 # disable xsct tarball by default (xilinx)

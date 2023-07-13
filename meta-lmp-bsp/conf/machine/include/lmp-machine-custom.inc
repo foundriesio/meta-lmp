@@ -674,7 +674,7 @@ KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATU
 BBMULTICONFIG:remove:beagleplay = "k3r5"
 BBMULTICONFIG:append:beagleplay = " lmp-k3r5"
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
-KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb"
+KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-sk-csi2-ov5640.dtbo ti/k3-am625-sk-csi2-tevi-ov5640.dtbo"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:beagleplay = "kernel-image-image"
 
 # TI AM64x

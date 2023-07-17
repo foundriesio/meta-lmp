@@ -626,7 +626,7 @@ UBOOT_LOADADDRESS:am62xx = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am62xx = "0x88000000"
 UBOOT_DTBO_LOADADDRESS:am62xx = "0x89000000"
 EFI_PROVIDER:am62xx = ""
-LMP_BOOT_FIRMWARE_FILES:am62xx = "tispl.bin u-boot.img tiboot3.bin"
+LMP_BOOT_FIRMWARE_FILES:am62xx = "tispl.bin u-boot.img tiboot3-am62x-gp-evm.bin tiboot3-am62x-hs-evm.bin tiboot3-am62x-hs-fs-evm.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx = " boot.itb"
 ## am62xx-evm
 BBMULTICONFIG:remove:am62xx-evm = "k3r5"

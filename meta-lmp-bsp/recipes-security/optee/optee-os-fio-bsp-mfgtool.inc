@@ -1,4 +1,3 @@
-OPTEEMACHINE:apalis-imx8 = "imx-mx8qmmek"
 OPTEEMACHINE:imx6ulevk = "imx-mx6ulevk"
 OPTEEMACHINE:imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE:imx7ulpea-ucom = "imx-mx7ulpevk"
@@ -32,11 +31,6 @@ EXTRA_OEMAKE:append:mx93-nxp-bsp = " \
 "
 
 # Machine Settings
-EXTRA_OEMAKE:append:apalis-imx8 = " \
-    CFG_UART_BASE=0x5a070000 \
-    CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
-    CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_HWRNG_PTA=y CFG_HWRNG_QUALITY=1024 \
-"
 EXTRA_OEMAKE:append:imx8qm-mek = " \
     CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
     CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_HWRNG_PTA=y CFG_HWRNG_QUALITY=1024 \
@@ -92,9 +86,6 @@ EXTRA_OEMAKE:append:stm32mp15-eval = " \
 "
 
 # Extra Settings for Secure Machines
-EXTRA_OEMAKE:append:apalis-imx8-sec = " \
-    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=0 CFG_RPMB_WRITE_KEY=y \
-"
 EXTRA_OEMAKE:append:imx8qm-mek-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=0 CFG_RPMB_WRITE_KEY=y \
 "

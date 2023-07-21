@@ -144,7 +144,6 @@ TOOLCHAIN:pn-optee-sks = "gcc"
 ## clang only works with debug mode (not release)
 TOOLCHAIN:pn-edk2-firmware = "gcc"
 
-# apalis-imx6-sec
 # imx8mm-lpddr4-evk-sec
 # imx8mp-lpddr4-evk-sec
 # uz3eg-iocc-ebbr-sec

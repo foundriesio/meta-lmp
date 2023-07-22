@@ -11,7 +11,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  1 file changed, 10 insertions(+)
 
 diff --git a/iMX9/soc.mak b/iMX9/soc.mak
-index 23f6f64..9e3eb9d 100644
+index 7c4086c..b1100dd 100644
 --- a/iMX9/soc.mak
 +++ b/iMX9/soc.mak
 @@ -37,6 +37,10 @@ lpddr4_dmem_1d = lpddr4_dmem_1d$(LPDDR_FW_VERSION).bin
@@ -34,8 +34,8 @@ index 23f6f64..9e3eb9d 100644
 +
  flash_singleboot: $(MKIMG) $(AHAB_IMG) u-boot-spl-ddr.bin u-boot-atf-container.img
  	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
- 	@flashbin_size=`wc -c flash.bin | awk '{print $$1}'`; \
-@@ -94,6 +101,9 @@ flash_singleboot_flexspi: $(MKIMG) $(AHAB_IMG) u-boot-spl-ddr.bin u-boot-atf-con
+ 	cp flash.bin boot-spl-container.img
+@@ -95,6 +102,9 @@ flash_singleboot_flexspi: $(MKIMG) $(AHAB_IMG) u-boot-spl-ddr.bin u-boot-atf-con
                     dd if=u-boot-atf-container.img of=flash.bin bs=1K seek=$$pad_cnt;
  	./$(QSPI_PACKER) $(QSPI_HEADER)
  

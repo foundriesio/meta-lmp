@@ -15,11 +15,11 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  1 file changed, 2 insertions(+)
 
 diff --git a/group.master b/group.master
-index d34d2b8..91d8207 100644
+index e54fd1d..bddf72e 100644
 --- a/group.master
 +++ b/group.master
-@@ -36,7 +36,9 @@ plugdev:*:46:
- kvm:*:47:
+@@ -37,7 +37,9 @@ kvm:*:47:
+ sgx:*:48:
  staff:*:50:
  games:*:60:
 +render:*:61:

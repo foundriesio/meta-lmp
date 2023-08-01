@@ -125,7 +125,7 @@ EFI_PROVIDER:generic-arm64 ?= "grub-efi"
 WKS_FILE:generic-arm64:sota ?= "image-efi-installer-grub.wks.in"
 WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
-IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer-grub.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
+IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer-grub.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}${IMAGE_NAME_SUFFIX}.ota-ext4;rootfs.img', '', d)}"
 
 # Intel
 MACHINE_FEATURES:append:intel-corei7-64 = " tpm2"

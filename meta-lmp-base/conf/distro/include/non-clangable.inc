@@ -122,6 +122,7 @@ STRIP:pn-linux-tegra-rt:toolchain-clang = "${HOST_PREFIX}strip"
 # jailhouse (includes kernel module)
 # | warning: the compiler differs from the one used to build the kernel
 TOOLCHAIN:pn-jailhouse = "gcc"
+TOOLCHAIN:pn-jailhouse-imx = "gcc"
 
 # use gcc for now as it fail with clang with some compile errors:
 # error: passing 'unsigned int *' to parameter of type 'int *' converts between pointers to integer types with different sign [-Werror,-Wpointer-sign]

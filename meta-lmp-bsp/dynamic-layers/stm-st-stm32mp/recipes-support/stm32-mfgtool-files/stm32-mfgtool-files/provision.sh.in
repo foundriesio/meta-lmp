@@ -27,6 +27,8 @@ function usage {
 	echo
 	echo "Required Arguments:"
 	echo "  --pub-key-hash <file_path> Public Key Hash File binary (usually publicKeyhash.bin)"
+	echo "  --port <port> STM32CubeProgrammer interface identifer (ex COM1, /dev/ttyS0, usb1)"
+	echo "  --tsv <tsv_file> STM32CubeProgrammer TSV file path, whose content to be downloaded into device memory"
 }
 
 # NOTE: use v1 of the STM32_Programmer_CLI OTP disp command which doesn't correctly use word= param
@@ -94,7 +96,7 @@ function usage {
 # [...]
 
 stm32prog_otp_refresh_values () {
-	otp_displ=$(STM32_Programmer_CLI -c port=USB1 -otp displ || echo "STM32_Programmer_CLI -otp displ returned an error")
+	otp_displ=$(STM32_Programmer_CLI -c port="${hwPort}" -otp displ || echo "STM32_Programmer_CLI -otp displ returned an error")
 	# Make some validity tests on the "STM32_Programmer_CLI"
 	# output. Match the version after "STM32CubeProgrammer v":
 	stm32prog_vers=$(echo "$otp_displ" | sed -n -e '/.*[[:blank:]]*STM32CubeProgrammer v\([0-9][0-9]*\.[0-9][0-9\.]*\)[[:blank:]]*$/s//\1/p')
@@ -132,11 +134,11 @@ stm32prog_otp_get_value () {
 }
 
 stm32prog_otp_set_value () {
-	STM32_Programmer_CLI -y -c port=USB1 -otp write word=${1} value=${2}
+	STM32_Programmer_CLI -y -c port="${hwPort}" -otp write word=${1} value=${2}
 }
 
 stm32prog_otp_lock () {
-	STM32_Programmer_CLI -y -c port=USB1 -otp lock word=${1}
+	STM32_Programmer_CLI -y -c port="${hwPort}" -otp lock word=${1}
 }
 
 trap error_exit ERR
@@ -162,10 +164,10 @@ fi
 # Parse Args
 #######################
 # NOTE: This requires GNU getopt.
-if ! PARSED_ARGS=$(getopt --longoptions "pub-key-hash:" \
+if ! PARSED_ARGS=$(getopt --longoptions "pub-key-hash:,port:,tsv:" \
 		--options "" --name "${scriptName}" -- "$@") ; then
 	usage
-	error_exit "Unable to parse arguments"
+	error_exit "Unable to parse arguments - is GNU getopt installed?"
 fi
 
 # Note the quotes around '${PARSED_ARGS}' are essential
@@ -179,9 +181,15 @@ fi
 
 # Sec Boot Public Key SHA256 Hash Binary
 pubKeyFile=
+# STM32CubeProgrammer interface identifer
+hwPort=
+# STM32CubeProgrammer TSV filepath
+tsvFile=
 while true; do
 	case "$1" in
 		--pub-key-hash) pubKeyFile="${2}"; shift 2 ;;
+		--port) hwPort="${2}"; shift 2 ;;
+		--tsv) tsvFile="${2}"; shift 2 ;;
 		# -- means the end of the arguments; drop this, and break out of the while loop
 		--) shift; break ;;
 		* ) usage; error_exit "Unrecognized option - ${1}" ;;
@@ -200,6 +208,10 @@ fi
 if [ ! -f "${pubKeyFile}" ]; then
 	error_exit "STM32 publicKeyhash file not found!"
 fi
+
+# Set default values for parameters that wasn't specified explicitly
+[ -z "${hwPort}" ] && hwPort="USB1"
+[ -z "${tsvFile}" ] && tsvFile="flashlayouts-stm32mp1/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv"
 
 ####
 # VALIDATE STM32 pubKeyFile
@@ -220,7 +232,7 @@ need_reboot="0"
 # Flash software image
 ####
 # start USB download mode and flash primary eMMC partitions
-STM32_Programmer_CLI -c port=USB1 -d flashlayouts-stm32mp1/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+STM32_Programmer_CLI -c port="${hwPort}" -d "${tsvFile}"
 
 ######
 # Program OTP
@@ -272,7 +284,7 @@ if stm32prog_state_is_open; then
 fi # if not closed device
 
 # detach from stm32prog mode
-STM32_Programmer_CLI -c port=USB1 -detach
+STM32_Programmer_CLI -c port="${hwPort}" -detach
 
 # Only close the device if not already closed
 if stm32prog_state_is_open; then
@@ -331,8 +343,9 @@ fi # if not closed device
 if [ "${need_reboot}" -eq "1" ]; then
 	fastboot reboot
 	sleep 2
-	STM32_Programmer_CLI -c port=USB1 -d stm32-mfgtool-files/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
-	STM32_Programmer_CLI -c port=USB1 -detach
+	# use TSV with usb entries only, as we don't want to re-flash binaries to eMMC again
+	STM32_Programmer_CLI -c port="${hwPort}" -d stm32-mfgtool-files/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+	STM32_Programmer_CLI -c port="${hwPort}" -detach
 fi
 
 # make sure we initialize RPMB in u-boot regardless of Linux provisioning steps

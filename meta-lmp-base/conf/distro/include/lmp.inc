@@ -18,6 +18,9 @@ require conf/distro/include/non-clangable.inc
 require conf/distro/include/security_flags.inc
 require conf/distro/include/yocto-uninative.inc
 
+# Disable branch-protection=standard from clang until properly validated (causes issues on aktualizr)
+TUNE_CCARGS:remove:toolchain-clang = "${@bb.utils.contains('TUNE_FEATURES', 'aarch64', '-mbranch-protection=standard', '', d)}"
+
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/optee-os ?= "optee-os-fio"
 PREFERRED_PROVIDER_u-boot-fw-utils ?= "libubootenv"

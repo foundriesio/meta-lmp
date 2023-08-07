@@ -33,12 +33,12 @@ function usage {
 # Typical output of "STM32_Programmer_CLI -c port=USB1 -otp displ":
 # For v2.12:
 #       -------------------------------------------------------------------
-#                         STM32CubeProgrammer v2.12.0                  
+#                         STM32CubeProgrammer v2.12.0
 #       -------------------------------------------------------------------
 # [...]
 # OTP Partition read successfully
 #
-# OTP DATA WORDS : 
+# OTP DATA WORDS :
 #
 # STRUCT VERSION           :
 #                          | version    : 0x00000002
@@ -56,20 +56,20 @@ function usage {
 #     000     |     0x00000017  |  0x30000000
 #                                  |_[28] Shadow write sticky lock
 #                                  |_[29] Shadow read sticky lock
-#             |                 |          
+#             |                 |
 #     001     |     0x00008024  |  0x50000000
 #                                  |_[28] Shadow write sticky lock
 #                                  |_[30] Permanent write lock
-#             |                 |          
+#             |                 |
 #
 # For v2.11 and before, the "ID" contains 2 digits:
 #       -------------------------------------------------------------------
-#                         STM32CubeProgrammer v2.11.0                  
+#                         STM32CubeProgrammer v2.11.0
 #       -------------------------------------------------------------------
 # [...]
 # OTP Partition read successfully
 #
-# OTP DATA WORDS : 
+# OTP DATA WORDS :
 #
 # Struct_version           :
 #                          | none       : 0x00000002
@@ -79,18 +79,18 @@ function usage {
 #                          |_ Encrypted data   : N
 #
 # OTP REGISTERS:
-# 
+#
 # ---------------------------------------------------------------------------
 #     ID     |        value    |     status
 # ---------------------------------------------------------------------------
 #     00     |     0x00000017  |  0x30000000
 #                                  |_[28] Shadow write sticky lock
 #                                  |_[29] Shadow read sticky lock
-#            |                 |          
+#            |                 |
 #     01     |     0x00008024  |  0x50000000
 #                                  |_[28] Shadow write sticky lock
 #                                  |_[30] Permanent write lock
-#            |                 |          
+#            |                 |
 # [...]
 
 stm32prog_otp_refresh_values () {

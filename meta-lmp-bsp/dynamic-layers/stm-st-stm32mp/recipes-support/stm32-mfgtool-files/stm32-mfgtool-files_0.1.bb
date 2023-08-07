@@ -19,6 +19,10 @@ SRC_URI = " \
     file://provision.sh.in \
 "
 
+do_compile:prepend:stm32mp15-eval-sec() {
+    sed -i -e 's/@@BOARD_IS_SECURE@@/_Signed/' ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE}
+}
+
 do_compile() {
     sed -e 's/@@IMAGE@@/${MFGTOOL_FLASH_IMAGE}/' \
         -e 's/@@MACHINE@@/${MACHINE}/' \
@@ -28,6 +32,7 @@ do_compile() {
         -e 's/@@BOARD_OFFSET_FSBL2@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL2}/' \
         -e 's/@@BOARD_OFFSET_FIP@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FIP}/' \
         -e 's/@@BOARD_OFFSET_ROOT@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_ROOT}/' \
+        -e 's/@@BOARD_IS_SECURE@@//' \
         ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_FLASHLAYOUT}
     sed -e 's/@@MACHINE@@/${MACHINE}/' \
         -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \

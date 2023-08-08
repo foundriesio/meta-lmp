@@ -44,6 +44,9 @@ do_deploy() {
     install -m 0755 ${WORKDIR}/*.tsv ${DEPLOYDIR}/${PN}
     install -m 0755 ${WORKDIR}/provision.sh ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb.stm32 ${DEPLOYDIR}/${PN}/
+    if [ -f "${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb_Signed.stm32" ]; then
+        install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb_Signed.stm32 ${DEPLOYDIR}/${PN}/
+    fi
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin ${DEPLOYDIR}/${PN}/
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE} ${DEPLOYDIR}/${PN}/fitImage-mfgtool
 

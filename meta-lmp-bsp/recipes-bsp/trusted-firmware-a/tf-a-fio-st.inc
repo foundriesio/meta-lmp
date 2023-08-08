@@ -22,3 +22,47 @@ TFA_PLATFORM  = "stm32mp1"
 TF_A_SUFFIX   = "stm32"
 TF_A_METADATA_JSON ?= "plat/st/stm32mp1/default_metadata.json"
 TF_A_SOC_NAME  = "${STM32MP_SOC_NAME}"
+
+sign_binaries() {
+    if [ -z "${STM32_CUBE_PATH}" ] || [ -z "${STM32_ROT_KEY_PATH}" ] || [ -z "${STM32_ROT_KEY_PASSWORD}" ]; then
+        bbfatal "Fail to sign TF-A BL2 binaries, as STM32_CUBE_PATH/STM32_ROT_KEY_PATH/STM32_ROT_KEY_PASSWORD variables are not set correctly"
+    fi
+    unset i
+    for config in ${TF_A_CONFIG}; do
+        i=$(expr $i + 1)
+
+        # Initialize devicetree list and tf-a basename
+        dt_config=$(echo ${TF_A_DEVICETREE} | cut -d',' -f${i})
+        tfa_basename=$(echo ${TF_A_BINARIES} | cut -d',' -f${i})
+        tfa_file_type=$(echo ${TF_A_FILES} | cut -d',' -f${i})
+        for dt in ${dt_config}; do
+            # Init soc suffix
+            soc_suffix=""
+            if [ -n "${TF_A_SOC_NAME}" ]; then
+                for soc in ${TF_A_SOC_NAME}; do
+                    [ "$(echo ${dt} | grep -c ${soc})" -eq 1 ] && soc_suffix="-${soc}"
+                done
+            fi
+            for file_type in ${tfa_file_type}; do
+                if [ "${file_type}" = "bl2" ]; then
+                    # Install TF-A binary
+                    if [ -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" ]; then
+                        bbnote "Signing STM32 TF-A binary with ROT key: ${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}"
+                        ${STM32_CUBE_PATH}/bin/STM32MP_SigningTool_CLI -bin "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" \
+                                                                       -pubk ${STM32_ROT_KEY_PATH}/publicKey.pem -prvk ${STM32_ROT_KEY_PATH}/privateKey.pem \
+                                                                       -iv 5 -t fsbl -pwd ${STM32_ROT_KEY_PASSWORD}
+                        if [ -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}_Signed.${TF_A_SUFFIX}" ]; then
+                            install -m 644 "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}_Signed.${TF_A_SUFFIX}" "${DEPLOYDIR}/arm-trusted-firmware"
+                        fi
+                    fi
+                fi
+            done
+        done
+    done
+}
+
+do_deploy:append:stm32mp15-eval-sec() {
+    if [ "${STM32_ROT_SIGN_ENABLE}" = "1" ]; then
+        sign_binaries
+    fi
+}

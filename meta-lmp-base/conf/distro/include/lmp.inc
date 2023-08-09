@@ -56,6 +56,8 @@ DISTRO_EXTRA_RRECOMMENDS += "base-files-issue"
 # Default IMA policy (tcb)
 IMA_POLICY ?= "ima-policy-tcb"
 
+# [FIXME] just for debug propose in main-next
+PACKAGECONFIG:append:pn-systemd = " coredump"
 # Extended packageconfig options for LMP
 # Required because of https://github.com/opencontainers/runc/issues/2008
 PACKAGECONFIG:remove:pn-runc-opencontainers = "static"

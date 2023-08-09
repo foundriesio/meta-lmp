@@ -12,6 +12,7 @@ PACKAGECONFIG ?= " \
     binfmt \
     cryptsetup \
     cryptsetup-plugins \
+    coredump \
     gshadow \
     hibernate \
     hostnamed \

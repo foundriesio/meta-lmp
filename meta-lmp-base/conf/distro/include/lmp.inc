@@ -65,6 +65,7 @@ PACKAGECONFIG:remove:pn-cryptsetup = "ssh-token"
 PACKAGECONFIG:append:pn-cryptsetup = " luks2"
 PACKAGECONFIG:append:pn-cryptsetup-native = " luks2"
 PACKAGECONFIG:pn-tpm2-tss = "policy"
+PACKAGECONFIG:append:pn-systemd = "${@bb.utils.contains('DISTRO_FEATURES', 'lmpdebug', ' coredump', '', d)}"
 
 # Alternatives used by nss-altfiles
 NSS_ALT_TYPES ?= "hosts,pwd,grp,spwd,sgrp"

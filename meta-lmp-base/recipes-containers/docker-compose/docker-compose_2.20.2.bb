@@ -7,7 +7,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 
 SRC_URI = "\
-	git://github.com/docker/compose.git;branch=v2;protocol=https;name=compose \
+	git://github.com/docker/compose.git;branch=main;protocol=https;name=compose \
 	git://github.com/docker/cli.git;branch=24.0;protocol=https;name=cli;destsuffix=${S}/src/github.com/docker/cli \
 	"
 

@@ -59,7 +59,7 @@ do_deploy() {
     fi
 
     tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \
-	    -C ${DEPLOYDIR} ${PN}
+        -C ${DEPLOYDIR} ${PN}
 
     ln -s ${PN}-${MACHINE}.tar.gz ${DEPLOYDIR}/${PN}.tar.gz
     ln -s ${PN}-${MACHINE}.tar.gz ${DEPLOYDIR}/flashlayouts-${MACHINE}.tar.gz

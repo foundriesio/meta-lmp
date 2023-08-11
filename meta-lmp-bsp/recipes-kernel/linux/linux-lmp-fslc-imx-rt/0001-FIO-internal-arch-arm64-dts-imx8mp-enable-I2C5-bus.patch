@@ -1,0 +1,40 @@
+From b936fde36f98c09151e8737350d9caeac78aec03 Mon Sep 17 00:00:00 2001
+From: Vanessa Maegima <vanessa.maegima@foundries.io>
+Date: Tue, 29 Mar 2022 15:44:59 -0300
+Subject: [PATCH] [FIO internal] arch: arm64: dts: imx8mp: enable I2C5 bus
+
+Enable I2C5 bus to connect SE050. Switch GPIO pad to use I2C5 instead
+of flexcan1.
+
+Upstream-Status: Inappropriate [configuration]
+Signed-off-by: Vanessa Maegima <vanessa.maegima@foundries.io>
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 86348daa826ce..ebbee4f7fe277 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -710,14 +710,12 @@ &i2c5 {
+ 	clock-frequency = <100000>; /* Lower clock speed for external bus. */
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_i2c5>;
+-	status = "disabled"; /* can1 pins conflict with i2c5 */
+-
+ 	/* GPIO 2 of PCA6416 is used to switch between CAN1 and I2C5 functions:
+ 	 *     LOW:  CAN1 (default, pull-down)
+ 	 *     HIGH: I2C5
+-	 * You need to set it to high to enable I2C5 (for example, add gpio-hog
+-	 * in pca6416 node).
+ 	 */
++	pinctrl-assert-gpios = <&pca6416 2 GPIO_ACTIVE_HIGH>;
++	status = "okay";
+ };
+ 
+ &irqsteer_hdmi {
+-- 
+2.41.0
+

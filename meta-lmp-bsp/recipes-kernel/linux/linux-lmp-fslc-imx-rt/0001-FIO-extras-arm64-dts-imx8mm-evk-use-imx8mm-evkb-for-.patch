@@ -1,0 +1,611 @@
+From 96a93c00ae3f91aa093edba0e6a89f19d0c4b493 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Fri, 14 May 2021 13:36:10 -0300
+Subject: [PATCH] [FIO extras] arm64: dts: imx8mm-evk: use imx8mm-evkb for the
+ new EVKs
+
+Allow older EVKs to be transitioned properly by using a new dtb for the
+EVKB variant.
+
+Main difference is the pmic used (bd71847 -> pca9450).
+
+Upstream-Status: Inappropriate [configuration]
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+---
+
+ .../dts/freescale/imx8mm-evk-8mic-revE.dts    |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-ak4497.dts  |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-ak5558.dts  |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-dpdk.dts    |   2 +-
+ .../dts/freescale/imx8mm-evk-ecspi-slave.dts  |   2 +-
+ .../imx8mm-evk-hifiberry-dacplus.dts          |   2 +-
+ .../freescale/imx8mm-evk-iqaudio-dacplus.dts  |   2 +-
+ .../freescale/imx8mm-evk-iqaudio-dacpro.dts   |  75 ++++++++-
+ .../boot/dts/freescale/imx8mm-evk-lk.dts      |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-pcie-ep.dts |   2 +-
+ .../dts/freescale/imx8mm-evk-qca-wifi.dts     |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-rm67191.dts |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-root.dts    |   2 +-
+ .../boot/dts/freescale/imx8mm-evk-rpmsg.dts   |   2 +-
+ .../dts/freescale/imx8mm-evk-usd-wifi.dts     |   2 +-
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 139 +----------------
+ arch/arm64/boot/dts/freescale/imx8mm-evkb.dts | 142 ++++++++++++++++++
+ 17 files changed, 229 insertions(+), 155 deletions(-)
+ mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
+ mode change 100755 => 100644 arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
+index 5facaecc733f0..36d70369af083 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-8mic-revE.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2020 NXP
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	mic_leds {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts
+index ca8e5d7b35d84..4cf5b10b55a6e 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak4497.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2019 NXP
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	sound-ak4458 {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts
+index 4d3da8e33688c..149b5cf67ce76 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-ak5558.dts
+@@ -4,7 +4,7 @@
+  */
+ 
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	sound-ak5558 {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts
+index e600a7208c1ff..08a4c3232ccf2 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-dpdk.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2021 NXP
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ &ethphy0 {
+ 	/delete-property/ reset-assert-us;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts
+index e06dbc00d9dc7..b0670f2cde372 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-ecspi-slave.dts
+@@ -2,7 +2,7 @@
+ //
+ // Copyright 2020 NXP
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ /delete-node/&spidev0;
+ 
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts
+index 9115dd67eb705..47273b11ec6c9 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-hifiberry-dacplus.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2020 NXP.
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	ext_osc_22m: ext-osc-22m {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts
+index 3a1ccd204a5ad..e5df1348c8e3a 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacplus.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2020 NXP.
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	reg_3v3_vext: regulator-3v3-vext {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts
+index ce99f4338cd2d..85b3ec59fef30 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-iqaudio-dacpro.dts
+@@ -3,10 +3,77 @@
+  * Copyright 2020 NXP.
+  */
+ 
+-#include "imx8mm-evk-iqaudio-dacplus.dts"
++#include "imx8mm-evkb.dts"
+ 
+-&i2c3 {
+-	pcm512x: pcm512x@4c {
+-		compatible = "ti,pcm5142";
++/ {
++	reg_3v3_vext: regulator-3v3-vext {
++		compatible = "regulator-fixed";
++		regulator-name = "3V3_VEXT";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	sound-ak4458 {
++		status = "disabled";
++	};
++
++	sound-micfil {
++		status = "disabled";
++	};
++
++	sound-pcm512x {
++		compatible = "fsl,imx-audio-pcm512x";
++		model = "pcm512x-audio";
++		audio-cpu = <&sai5>;
++		audio-codec = <&pcm512x>;
++		format = "i2s";
++		audio-widgets =
++			"Line", "Left Line Out Jack",
++			"Line", "Right Line Out Jack";
++		audio-routing =
++			"Left Line Out Jack", "OUTL",
++			"Right Line Out Jack", "OUTR";
++		dac,24db_digital_gain;
+ 	};
+ };
++
++&i2c3 {
++	ak4458_1: ak4458@10 {
++		status = "disabled";
++	};
++
++	ak4458_2: ak4458@12 {
++		status = "disabled";
++	};
++
++	ak4497: ak4497@11 {
++		status = "disabled";
++	};
++
++	pcm512x: pcm512x@4c {
++		compatible = "ti,pcm5142";
++		reg = <0x4c>;
++		AVDD-supply = <&reg_3v3_vext>;
++		DVDD-supply = <&reg_3v3_vext>;
++		CPVDD-supply = <&reg_3v3_vext>;
++	};
++};
++
++&iomuxc {
++	pinctrl_sai5: sai5grp {
++		fsl,pins = <
++			MX8MM_IOMUXC_SAI5_RXD1_SAI5_TX_SYNC	0xd6
++			MX8MM_IOMUXC_SAI5_RXD2_SAI5_TX_BCLK	0xd6
++			MX8MM_IOMUXC_SAI5_RXD3_SAI5_TX_DATA0	0xd6
++			MX8MM_IOMUXC_SAI5_RXD0_SAI5_RX_DATA0	0xd6
++		>;
++	};
++};
++
++&micfil {
++	status = "disabled";
++};
++
++&sai5 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts
+index ccf3e9901e323..16e32e7f1aed0 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-lk.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2019-2021 NXP
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts
+index 2f96420e3230e..61202cae7f3b8 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-pcie-ep.dts
+@@ -5,7 +5,7 @@
+ 
+ /dts-v1/;
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ &pcie0{
+ 	status = "disabled";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
+old mode 100755
+new mode 100644
+index aa1a25f00f550..b5cbf6882e5ed
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-qca-wifi.dts
+@@ -5,7 +5,7 @@
+ 
+ /dts-v1/;
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	model = "FSL i.MX8MM LPDDR4 EVK with QCA WIFI revC board ";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts
+index 958912c409b2c..d6563b7a41dad 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-rm67191.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2019,2021 NXP
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ &adv_bridge {
+ 	status = "disabled";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts
+index 426b0adc31ce6..3986daaec096f 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-root.dts
+@@ -3,7 +3,7 @@
+  * Copyright 2019 NXP
+  */
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
+index 237bf6eafef6c..7ad1651296b26 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-rpmsg.dts
+@@ -5,7 +5,7 @@
+ 
+ /dts-v1/;
+ #include <dt-bindings/rpmsg/imx_srtm.h>
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ / {
+ 	reserved-memory {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts
+index 9bf4ce755d5c1..c9c792ca4c3d4 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk-usd-wifi.dts
+@@ -5,7 +5,7 @@
+ 
+ /dts-v1/;
+ 
+-#include "imx8mm-evk.dts"
++#include "imx8mm-evkb.dts"
+ 
+ &pinctrl_usdhc2 {
+ 	fsl,pins = <
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+old mode 100755
+new mode 100644
+index bd7705d6d7a5c..c5e542942aaf6
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+@@ -1,143 +1,8 @@
+ // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+- * Copyright 2019-2020 NXP
++ * Copyright 2021 Foundries.IO
+  */
+ 
+ /dts-v1/;
+ 
+-#include <dt-bindings/usb/pd.h>
+-#include "imx8mm-evk.dtsi"
+-
+-/ {
+-	model = "FSL i.MX8MM EVK board";
+-	compatible = "fsl,imx8mm-evk", "fsl,imx8mm";
+-
+-	aliases {
+-		spi0 = &flexspi;
+-	};
+-
+-	usdhc1_pwrseq: usdhc1_pwrseq {
+-		compatible = "mmc-pwrseq-simple";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_usdhc1_gpio>;
+-		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+-	};
+-};
+-
+-&flexspi {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_flexspi>;
+-	status = "okay";
+-
+-	flash@0 {
+-		reg = <0>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		compatible = "jedec,spi-nor";
+-		spi-max-frequency = <80000000>;
+-		spi-tx-bus-width = <1>;
+-		spi-rx-bus-width = <4>;
+-	};
+-};
+-
+-&usdhc1 {
+-	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+-	pinctrl-0 = <&pinctrl_usdhc1>, <&pinctrl_wlan>;
+-	pinctrl-1 = <&pinctrl_usdhc1_100mhz>, <&pinctrl_wlan>;
+-	pinctrl-2 = <&pinctrl_usdhc1_200mhz>, <&pinctrl_wlan>;
+-	bus-width = <4>;
+-	keep-power-in-suspend;
+-	non-removable;
+-	wakeup-source;
+-	mmc-pwrseq = <&usdhc1_pwrseq>;
+-	fsl,sdio-async-interrupt-enabled;
+-	status = "okay";
+-
+-	wifi_wake_host {
+-		compatible = "nxp,wifi-wake-host";
+-		interrupt-parent = <&gpio2>;
+-		interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-names = "host-wake";
+-	};
+-};
+-
+-&usdhc3 {
+-	assigned-clocks = <&clk IMX8MM_CLK_USDHC3_ROOT>;
+-	assigned-clock-rates = <400000000>;
+-	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+-	pinctrl-0 = <&pinctrl_usdhc3>;
+-	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
+-	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
+-	bus-width = <8>;
+-	non-removable;
+-	status = "okay";
+-};
+-
+-&iomuxc {
+-	pinctrl_flexspi: flexspigrp {
+-		fsl,pins = <
+-			MX8MM_IOMUXC_NAND_ALE_QSPI_A_SCLK               0x1c2
+-			MX8MM_IOMUXC_NAND_CE0_B_QSPI_A_SS0_B            0x82
+-			MX8MM_IOMUXC_NAND_DATA00_QSPI_A_DATA0           0x82
+-			MX8MM_IOMUXC_NAND_DATA01_QSPI_A_DATA1           0x82
+-			MX8MM_IOMUXC_NAND_DATA02_QSPI_A_DATA2           0x82
+-			MX8MM_IOMUXC_NAND_DATA03_QSPI_A_DATA3           0x82
+-		>;
+-	};
+-
+-	pinctrl_usdhc3: usdhc3grp {
+-		fsl,pins = <
+-			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x190
+-			MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD               0x1d0
+-			MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0           0x1d0
+-			MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1           0x1d0
+-			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d0
+-			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d0
+-			MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3           0x1d0
+-			MX8MM_IOMUXC_NAND_RE_B_USDHC3_DATA4             0x1d0
+-			MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5            0x1d0
+-			MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6            0x1d0
+-			MX8MM_IOMUXC_NAND_CLE_USDHC3_DATA7              0x1d0
+-			MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STROBE           0x190
+-		>;
+-	};
+-
+-	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
+-		fsl,pins = <
+-			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x194
+-			MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD               0x1d4
+-			MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0           0x1d4
+-			MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1           0x1d4
+-			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d4
+-			MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3           0x1d4
+-			MX8MM_IOMUXC_NAND_RE_B_USDHC3_DATA4             0x1d4
+-			MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5            0x1d4
+-			MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6            0x1d4
+-			MX8MM_IOMUXC_NAND_CLE_USDHC3_DATA7              0x1d4
+-			MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STROBE           0x194
+-		>;
+-	};
+-
+-	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
+-		fsl,pins = <
+-			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x196
+-			MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD               0x1d6
+-			MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0           0x1d6
+-			MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1           0x1d6
+-			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d6
+-			MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3           0x1d6
+-			MX8MM_IOMUXC_NAND_RE_B_USDHC3_DATA4             0x1d6
+-			MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5            0x1d6
+-			MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6            0x1d6
+-			MX8MM_IOMUXC_NAND_CLE_USDHC3_DATA7              0x1d6
+-			MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STROBE           0x196
+-		>;
+-	};
+-
+-	pinctrl_wlan: wlangrp {
+-		fsl,pins = <
+-			MX8MM_IOMUXC_GPIO1_IO00_ANAMIX_REF_CLK_32K	0x141
+-			MX8MM_IOMUXC_SD1_DATA7_GPIO2_IO9		0x159
+-		>;
+-	};
+-};
++#include "imx8mm-evk-qca-wifi.dts"
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
+new file mode 100644
+index 0000000000000..7129fbb7c2288
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evkb.dts
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2019-2020 NXP
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/usb/pd.h>
++#include "imx8mm-evk.dtsi"
++
++/ {
++	model = "FSL i.MX8MM EVKB board";
++	compatible = "fsl,imx8mm-evkb", "fsl,imx8mm-evk", "fsl,imx8mm";
++
++	aliases {
++		spi0 = &flexspi;
++	};
++
++	usdhc1_pwrseq: usdhc1_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_usdhc1_gpio>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&flexspi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_flexspi>;
++	status = "okay";
++
++	flash@0 {
++		reg = <0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "jedec,spi-nor";
++		spi-max-frequency = <80000000>;
++		spi-tx-bus-width = <1>;
++		spi-rx-bus-width = <4>;
++	};
++};
++
++&usdhc1 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc1>, <&pinctrl_wlan>;
++	pinctrl-1 = <&pinctrl_usdhc1_100mhz>, <&pinctrl_wlan>;
++	pinctrl-2 = <&pinctrl_usdhc1_200mhz>, <&pinctrl_wlan>;
++	keep-power-in-suspend;
++	non-removable;
++	wakeup-source;
++	mmc-pwrseq = <&usdhc1_pwrseq>;
++	fsl,sdio-async-interrupt-enabled;
++	status = "okay";
++
++	wifi_wake_host {
++		compatible = "nxp,wifi-wake-host";
++		interrupt-parent = <&gpio2>;
++		interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "host-wake";
++	};
++};
++
++&usdhc3 {
++	assigned-clocks = <&clk IMX8MM_CLK_USDHC3_ROOT>;
++	assigned-clock-rates = <400000000>;
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc3>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
++&iomuxc {
++	pinctrl_flexspi: flexspigrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_NAND_ALE_QSPI_A_SCLK               0x1c2
++			MX8MM_IOMUXC_NAND_CE0_B_QSPI_A_SS0_B            0x82
++			MX8MM_IOMUXC_NAND_DATA00_QSPI_A_DATA0           0x82
++			MX8MM_IOMUXC_NAND_DATA01_QSPI_A_DATA1           0x82
++			MX8MM_IOMUXC_NAND_DATA02_QSPI_A_DATA2           0x82
++			MX8MM_IOMUXC_NAND_DATA03_QSPI_A_DATA3           0x82
++		>;
++	};
++
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x190
++			MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD               0x1d0
++			MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0           0x1d0
++			MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1           0x1d0
++			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d0
++			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d0
++			MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3           0x1d0
++			MX8MM_IOMUXC_NAND_RE_B_USDHC3_DATA4             0x1d0
++			MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5            0x1d0
++			MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6            0x1d0
++			MX8MM_IOMUXC_NAND_CLE_USDHC3_DATA7              0x1d0
++			MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STROBE           0x190
++		>;
++	};
++
++	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x194
++			MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD               0x1d4
++			MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0           0x1d4
++			MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1           0x1d4
++			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d4
++			MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3           0x1d4
++			MX8MM_IOMUXC_NAND_RE_B_USDHC3_DATA4             0x1d4
++			MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5            0x1d4
++			MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6            0x1d4
++			MX8MM_IOMUXC_NAND_CLE_USDHC3_DATA7              0x1d4
++			MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STROBE           0x194
++		>;
++	};
++
++	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x196
++			MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD               0x1d6
++			MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0           0x1d6
++			MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1           0x1d6
++			MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2           0x1d6
++			MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3           0x1d6
++			MX8MM_IOMUXC_NAND_RE_B_USDHC3_DATA4             0x1d6
++			MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5            0x1d6
++			MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6            0x1d6
++			MX8MM_IOMUXC_NAND_CLE_USDHC3_DATA7              0x1d6
++			MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STROBE           0x196
++		>;
++	};
++
++	pinctrl_wlan: wlangrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_GPIO1_IO00_ANAMIX_REF_CLK_32K	0x141
++			MX8MM_IOMUXC_SD1_DATA7_GPIO2_IO9		0x159
++		>;
++	};
++};
+-- 
+2.41.0
+

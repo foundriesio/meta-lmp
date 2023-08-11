@@ -41,12 +41,21 @@ do_deploy() {
     install -m 0644 ${DEPLOY_DIR_IMAGE}/fip/*.bin ${DEPLOYDIR}/${PN}
     install -m 0644 ${DEPLOY_DIR_IMAGE}/${LMP_FLASHLAYOUT_IMAGE} ${DEPLOYDIR}/${PN}/${MFGTOOL_FLASH_IMAGE}-${MACHINE}.ext4
 
-    if [ -f "${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32" ] && \
+    # Create combined image for final flashing to boot0/boot1
+    if [ -f "${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc_Signed.stm32" ] && \
        [ -f "${DEPLOYDIR}/${PN}/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin" ]; then
-        cp ${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32 \
+        cp ${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc_Signed.stm32 \
            ${DEPLOYDIR}/${PN}/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
         dd if=${DEPLOYDIR}/${PN}/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
            of=${DEPLOYDIR}/${PN}/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
+    else
+        if [ -f "${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32" ] && \
+           [ -f "${DEPLOYDIR}/${PN}/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin" ]; then
+            cp ${DEPLOYDIR}/${PN}/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32 \
+               ${DEPLOYDIR}/${PN}/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
+            dd if=${DEPLOYDIR}/${PN}/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
+               of=${DEPLOYDIR}/${PN}/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
+        fi
     fi
 
     tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \

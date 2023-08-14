@@ -13,11 +13,9 @@ MFGTOOL_FLASH_IMAGE ?= "lmp-base-console-image"
 LMP_FLASHLAYOUT_TEMPLATE ?= "FlashLayout_stm32mp1-optee.tsv.in"
 LMP_FLASHLAYOUT_IMAGE = "${MFGTOOL_FLASH_IMAGE}-${MACHINE}.${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'ota-ext4', 'ext4', d)}"
 
-SRC_URI = "file://${LMP_FLASHLAYOUT_TEMPLATE}"
+STM32_BOOTIMAGE_SUFFIX ?= ""
 
-do_compile:prepend:stm32mp15-eval-sec() {
-    sed -i -e 's/@@BOARD_IS_SECURE@@/_Signed/' ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE}
-}
+SRC_URI = "file://${LMP_FLASHLAYOUT_TEMPLATE}"
 
 do_compile() {
     sed -e 's/@@IMAGE@@/${MFGTOOL_FLASH_IMAGE}/' \
@@ -28,7 +26,7 @@ do_compile() {
         -e 's/@@BOARD_OFFSET_FSBL2@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL2}/' \
         -e 's/@@BOARD_OFFSET_FIP@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FIP}/' \
         -e 's/@@BOARD_OFFSET_ROOT@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_ROOT}/' \
-        -e 's/@@BOARD_IS_SECURE@@//' \
+        -e "s/@@STM32_BOOTIMAGE_SUFFIX@@/${STM32_BOOTIMAGE_SUFFIX}/" \
         ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_FLASHLAYOUT}
 }
 

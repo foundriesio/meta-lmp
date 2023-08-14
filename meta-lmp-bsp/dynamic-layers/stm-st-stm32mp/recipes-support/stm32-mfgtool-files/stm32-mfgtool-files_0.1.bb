@@ -13,15 +13,13 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+STM32_BOOTIMAGE_SUFFIX ?= ""
+
 LMP_FLASHLAYOUT_TEMPLATE ?= "FlashLayout_stm32mp1-usb.tsv.in"
 SRC_URI = " \
     file://${LMP_FLASHLAYOUT_TEMPLATE} \
     file://provision.sh.in \
 "
-
-do_compile:prepend:stm32mp15-eval-sec() {
-    sed -i -e 's/@@BOARD_IS_SECURE@@/_Signed/' ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE}
-}
 
 do_compile() {
     sed -e 's/@@IMAGE@@/${MFGTOOL_FLASH_IMAGE}/' \
@@ -32,7 +30,7 @@ do_compile() {
         -e 's/@@BOARD_OFFSET_FSBL2@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL2}/' \
         -e 's/@@BOARD_OFFSET_FIP@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FIP}/' \
         -e 's/@@BOARD_OFFSET_ROOT@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_ROOT}/' \
-        -e 's/@@BOARD_IS_SECURE@@//' \
+        -e "s/@@STM32_BOOTIMAGE_SUFFIX@@/${STM32_BOOTIMAGE_SUFFIX}/" \
         ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_FLASHLAYOUT}
     sed -e 's/@@MACHINE@@/${MACHINE}/' \
         -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \

@@ -66,3 +66,9 @@ do_deploy:append:stm32mp15-eval-sec() {
         sign_binaries
     fi
 }
+
+do_deploy:append:stm32mp15-disco-sec() {
+    if [ "${STM32_ROT_SIGN_ENABLE}" = "1" ]; then
+        sign_binaries
+    fi
+}

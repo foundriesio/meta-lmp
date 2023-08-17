@@ -1,0 +1,12 @@
+[Unit]
+Description=Create docker-network-ref docker bridge network
+After=boot-complete.target
+Before=aktualizr-lite.service
+Requires=boot-complete.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/create-docker-ref-network.sh
+
+[Install]
+WantedBy=multi-user.target

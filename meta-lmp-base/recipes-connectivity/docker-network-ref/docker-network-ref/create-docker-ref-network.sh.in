@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Run this script as root to prepare docker-network-ref bridge network for docker
+#
+
+if [ -z "`docker network list -q -f name=@@DOCKER_NETWORK_NAME@@`" ]; then
+	docker network create @@DOCKER_NETWORK_NAME@@
+fi

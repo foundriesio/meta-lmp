@@ -1,0 +1,9 @@
+#Opt	Id	Name		Type		IP	Offset		Binary
+-	0x01	fsbl-boot	Binary		none	0x0		tf-a-@@BOARD_NAME@@-usb@@STM32_BOOTIMAGE_SUFFIX@@.stm32
+-	0x03	fip-boot	Binary		none	0x0		fip-@@BOARD_NAME@@-optee.bin
+PD	0x04	fsbl1		Binary		mmc0	0x00004400	tf-a-@@BOARD_NAME@@-sdcard@@STM32_BOOTIMAGE_SUFFIX@@.stm32
+PD	0x05	fsbl2		Binary		mmc0	0x00044400	tf-a-@@BOARD_NAME@@-sdcard@@STM32_BOOTIMAGE_SUFFIX@@.stm32
+PD	0x06	fip-a		Binary		mmc0	0x00084400	fip-@@BOARD_NAME@@-optee.bin
+PD	0x07	fip-b		Binary		mmc0	0x00484400	fip-@@BOARD_NAME@@-optee.bin
+PED	0x08	u-boot-env	Binary		mmc0	0x00900000	none
+P	0x10	rootfs		System		mmc0	0x00910000	@@IMAGE@@-@@MACHINE@@.ext4

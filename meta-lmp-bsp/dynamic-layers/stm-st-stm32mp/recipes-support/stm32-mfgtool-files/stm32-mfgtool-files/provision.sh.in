@@ -344,7 +344,7 @@ if [ "${need_reboot}" -eq "1" ]; then
 	fastboot reboot
 	sleep 2
 	# use TSV with usb entries only, as we don't want to re-flash binaries to eMMC again
-	STM32_Programmer_CLI -c port="${hwPort}" -d stm32-mfgtool-files/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv
+	STM32_Programmer_CLI -c port="${hwPort}" -d stm32-mfgtool-files/@@FLASHLAYOUT_USB@@
 	STM32_Programmer_CLI -c port="${hwPort}" -detach
 fi
 

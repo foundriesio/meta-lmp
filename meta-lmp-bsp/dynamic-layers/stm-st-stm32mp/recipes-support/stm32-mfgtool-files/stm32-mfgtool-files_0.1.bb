@@ -34,6 +34,7 @@ do_compile() {
         ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_FLASHLAYOUT}
     sed -e 's/@@MACHINE@@/${MACHINE}/' \
         -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \
+        -e 's/@@FLASHLAYOUT_USB@@/${LMP_FLASHLAYOUT}/' \
         ${WORKDIR}/provision.sh.in > ${WORKDIR}/provision.sh
 }
 

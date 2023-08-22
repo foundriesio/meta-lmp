@@ -28,7 +28,7 @@ function usage {
 	echo "Required Arguments:"
 	echo "  --pub-key-hash <file_path> Public Key Hash File binary (usually publicKeyhash.bin)"
 	echo "  --port <port> STM32CubeProgrammer interface identifer (ex COM1, /dev/ttyS0, usb1)"
-	echo "  --tsv <tsv_file> STM32CubeProgrammer TSV file path, whose content to be downloaded into device memory"
+	echo "  --tsv <tsv_file> STM32CubeProgrammer TSV file path"
 }
 
 # NOTE: use v1 of the STM32_Programmer_CLI OTP disp command which doesn't correctly use word= param
@@ -211,7 +211,7 @@ fi
 
 # Set default values for parameters that wasn't specified explicitly
 [ -z "${hwPort}" ] && hwPort="USB1"
-[ -z "${tsvFile}" ] && tsvFile="flashlayouts-stm32mp1/FlashLayout_emmc_@@BOARD_NAME@@-optee.tsv"
+[ -z "${tsvFile}" ] && tsvFile="stm32-mfgtool-files/@@FLASHLAYOUT_USB@@"
 
 ####
 # VALIDATE STM32 pubKeyFile
@@ -228,10 +228,7 @@ fi
 
 need_reboot="0"
 
-####
-# Flash software image
-####
-# start USB download mode and flash primary eMMC partitions
+# start USB download mode
 STM32_Programmer_CLI -c port="${hwPort}" -d "${tsvFile}"
 
 ######
@@ -343,8 +340,7 @@ fi # if not closed device
 if [ "${need_reboot}" -eq "1" ]; then
 	fastboot reboot
 	sleep 2
-	# use TSV with usb entries only, as we don't want to re-flash binaries to eMMC again
-	STM32_Programmer_CLI -c port="${hwPort}" -d stm32-mfgtool-files/@@FLASHLAYOUT_USB@@
+	STM32_Programmer_CLI -c port="${hwPort}" -d "${tsvFile}"
 	STM32_Programmer_CLI -c port="${hwPort}" -detach
 fi
 

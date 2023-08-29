@@ -109,5 +109,16 @@ PREFERRED_PROVIDER_android-tools-conf:stm32mp1common = "android-tools-conf-confi
 KERNEL_IMAGETYPE:stm32mp1common = "fitImage"
 KERNEL_CLASSES:stm32mp1common = " kernel-lmp-fitimage "
 
+# TI Generic (BSP)
+INITRAMFS_IMAGE:k3 = "initramfs-ostree-lmp-recovery"
+EXTRA_IMAGEDEPENDS:remove:k3 = "u-boot-default-script"
+PREFERRED_PROVIDER_virtual/optee-os:k3 = "optee-os-fio-mfgtool"
+KERNEL_IMAGETYPE:k3 = "fitImage"
+KERNEL_CLASSES:k3 = " kernel-lmp-fitimage "
+PREFERRED_PROVIDER_virtual/bootloader:k3 = "u-boot-ti-staging-mfgtool"
+PREFERRED_PROVIDER_u-boot:k3 = "u-boot-ti-staging-mfgtool"
+# TI AM62XX EVM
+UBOOT_MACHINE:am62xx-evm-k3r5 = "am62x_evm_r5_usbdfu_defconfig"
+
 # Cross machines / BSPs
 PREFERRED_VERSION_u-boot-fio-mfgtool:imx-nxp-bsp ?= "imx-2022.04"

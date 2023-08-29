@@ -1,0 +1,188 @@
+#!/bin/bash
+#
+# Copyright (C) 2023 Foundries.IO
+# Copyright (C) 2022-2023 FORT Robotics
+#
+# SPDX-License-Identifier: MIT
+#
+set -e
+
+# Name of the script
+scriptName="$(basename "$0")"
+scriptDir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+#######################
+# Functions
+#######################
+function error_exit {
+	if [ -n "${1}" ] ; then
+		echo "ERROR:  ${1}"
+	else
+		echo "ERROR: Command execution failure"
+	fi
+	exit 1
+}
+
+function usage {
+	echo "Usage: $scriptName"
+	echo
+	echo "Required Arguments:"
+	echo "  --wic <file_path>        WIC image to flash to destination eMMC"
+	echo "Optional Arguments:"
+	echo "  -h | --help              Do nothing, print this script usage and exit"
+	echo "  --board-type <type>      Board type: gp, hs, hs-fs"
+	echo "  --dev-id <type>          Board PID and VID in format '0451:6165'"
+	echo "Boot Pins Cheat Sheet:"
+	echo "  eMMC boot:               00000000 11010011"
+	echo "  eMMC UDA boot:           00000000 11000010"
+	echo "  SD boot:                 01000000 11000010"
+	echo "  USB DFU:                 00000000 11001010"
+}
+
+function get_ums_disk {
+	for usdDevPath in $(find /sys/bus/usb/devices/usb*/ -name dev ); do
+		sysPath="${usdDevPath%/dev}"
+		devName="$(udevadm info -q name -p $sysPath)"
+		if [[ "$devName" == "bus/"* ]]; then
+			continue
+		fi
+		eval "$(udevadm info -q property --export -p $sysPath)"
+		if [[ "$ID_SERIAL" == *"Linux_UMS_disk"* && "$devName" =~ ^"sd" && !("$devName" =~ [0-9]) ]]; then
+			echo "/dev/$devName"
+			break
+		fi
+	done
+}
+
+function validate_commands {
+	for cmd in "${commands[@]}"; do
+		if ! command -v "${cmd}" > /dev/null; then
+			error_exit "Missing ${cmd}"
+		fi
+	done
+}
+
+trap error_exit ERR
+
+# Validate we are running as root
+#   Future improvement could be that checks for udev rules to allow
+#   non-root running
+if [ "${EUID}" -ne "0" ]; then
+	error_exit "ERROR: Script not running as root"
+fi
+
+####
+# VALIDATE environment
+####
+
+# Validate required commands are available
+commands=("getopt" "dd" "udevadm" "dfu-util" "lsusb" "gunzip" "umount")
+validate_commands
+
+#######################
+# Parse Args
+#######################
+# NOTE: This requires GNU getopt.
+if ! PARSED_ARGS=$(getopt --longoptions "help,wic:,board-type:,dev-id:" \
+		--options "h" --name "${scriptName}" -- "$@") ; then
+	usage
+	error_exit "Unable to parse arguments - is GNU getopt installed?"
+fi
+
+# Note the quotes around '${PARSED_ARGS}' are essential
+eval set -- "${PARSED_ARGS}"
+
+# Make sure required option is defined
+if [ $# = 1 ]; then
+	usage
+	error_exit "Required option missing"
+fi
+
+# Board type
+boardType=
+# WIC filepath
+wicFile=
+# dev PID and VID
+devID=
+while true; do
+	case "$1" in
+		--wic) wicFile="${2}"; shift 2 ;;
+		--board-type) boardType="${2}"; shift 2 ;;
+		--dev-id) devID="${2}"; shift 2 ;;
+		# -- means the end of the arguments; drop this, and break out of the while loop
+		--) shift; break ;;
+		* ) usage; error_exit "Unrecognized option - ${1}" ;;
+	esac
+done
+
+# Ensure no positions args were specified.
+if [ $# != 0 ]; then
+	usage
+	error_exit "No positional arguments allowed - $*"
+fi
+
+#######################
+# Validate Parameters
+#######################
+if [ ! -f "${wicFile}" ]; then
+	error_exit "WIC image file not found!"
+fi
+
+[ -z "${boardType}" ] && boardType="gp"
+[ -z "${devID}" ] && devID="$(lsusb | grep 'Texas Instruments, Inc. AM62x' | awk '{print $6}')"
+
+####
+# Flash software images
+####
+
+# start USB DFU download mode and flash primary eMMC with provided WIC image
+
+echo "Load U-Boot via DFU..."
+
+echo "------------------------------------------"
+echo "  DFU BOOT TIBOOT3: TIFS and R5           "
+echo "------------------------------------------"
+dfu-util -R -a bootloader -D ${scriptDir}/tiboot3-am62x-${boardType}-evm.bin --device="${devID}" 2>&1 >/dev/null
+sleep 2
+# read -p "Boot tispl.bin" foo
+echo "------------------------------------------"
+echo "  DFU BOOT TISPL: TFA/OPTEE/ and A53 SPL  "
+echo "------------------------------------------"
+dfu-util -R -a tispl.bin -D ${scriptDir}/tispl.bin --device="${devID}" 2>&1 >/dev/null
+sleep 2
+# read -p "Boot u-boot.img " foo
+echo "------------------------------------------"
+echo "  DFU BOOT UBOOT: A53 UBOOT               "
+echo "------------------------------------------"
+dfu-util -R  -a u-boot.img -D ${scriptDir}/u-boot.img --device="${devID}" 2>&1 >/dev/null
+
+echo "------------------------------------------"
+echo "  Exposing eMMC via USB using UMS         "
+echo "------------------------------------------"
+
+sleep 6
+mmcPath=$(get_ums_disk)
+echo "Detected device: ${mmcPath}"
+
+if [ -z "${mmcPath}" ]; then
+	error_exit "Can't detect UMS exposed device!"
+fi
+
+read -p "Confirm flashing ${wicFile} to ${mmcPath} (y/N) >" -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+	echo "------------------------------------------"
+	echo " Unmounting all partitions from ${mmcPath}"
+	echo "------------------------------------------"
+	umount ${mmcPath}?*
+	sleep 2
+	echo "------------------------------------------"
+	echo "  Flashing ${mmcPath} via UMS             "
+	echo "------------------------------------------"
+
+	dd if=${wicFile} of=${mmcPath} bs=1M iflag=fullblock oflag=direct conv=fsync status=progress
+	sync
+	echo "Flashing is finished. Device can be disconnected"
+else
+	echo "Flashing is aborted"
+fi

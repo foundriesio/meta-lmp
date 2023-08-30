@@ -25,7 +25,7 @@ RPROVIDES:${PN} = "virtual-containerd"
 
 S = "${WORKDIR}/git/src/github.com/containerd/containerd"
 
-PV = "${CONTAINERD_VERSION}+git${SRCPV}"
+PV = "${CONTAINERD_VERSION}+git"
 
 inherit go
 inherit goarch

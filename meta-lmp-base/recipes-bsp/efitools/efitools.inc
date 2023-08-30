@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=e28f66b16cb46be47b20a4cdfe6e99a1"
 
 DEPENDS = "help2man-native openssl-native sbsigntool-native libfile-slurp-perl-native"
 
-PV = "1.9.2+git${SRCPV}"
+PV = "1.9.2+git"
 
 SRC_URI = "\
     git://git.kernel.org/pub/scm/linux/kernel/git/jejb/efitools.git;branch=master \

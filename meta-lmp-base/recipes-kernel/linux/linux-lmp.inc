@@ -1,6 +1,6 @@
 DESCRIPTION = "Common Foundries.io Linux microPlatform Kernel"
 
-PV = "${LINUX_VERSION}+git${SRCPV}"
+PV = "${LINUX_VERSION}+git"
 
 KERNEL_FEATURES += "${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', ' features/jailhouse/jailhouse.scc', '', d)}"
 

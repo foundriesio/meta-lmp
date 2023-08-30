@@ -14,7 +14,7 @@ FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
 LINUX_VERSION ?= "6.5.0-rc2"
 LINUX_VERSION_EXTENSION ?= "-lmpdev-${LINUX_KERNEL_TYPE}"
-PV = "${LINUX_VERSION}+git${SRCPV}"
+PV = "${LINUX_VERSION}+git"
 
 KERNEL_REPO ?= "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
 KERNEL_REPO_PROTOCOL ?= "https"

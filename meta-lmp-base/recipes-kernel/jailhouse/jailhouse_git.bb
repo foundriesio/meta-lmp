@@ -16,7 +16,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=9fa7f895f96bde2d47fd5b7d95b6ba4d \
                  file://driver/jailhouse.h;beginline=9;endline=36;md5=2825581c1666c44a17955dc574cfbfb3 \
 "
 
-PV = "0.12+git${SRCPV}"
+PV = "0.12+git"
 SRCREV = "e57d1eff6d55aeed5f977fe4e2acfb6ccbdd7560"
 BRANCH = "master"
 

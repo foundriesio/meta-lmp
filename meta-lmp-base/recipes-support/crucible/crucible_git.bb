@@ -9,7 +9,7 @@ GO_IMPORT_PROTO ?= "https"
 SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=master"
 SRCREV = "b84eb54532b969fed3025fb291fd83eafa0417e3"
 
-PV = "v2021.05.03+git${SRCPV}"
+PV = "v2021.05.03+git"
 
 UPSTREAM_CHECK_COMMITS = "1"
 

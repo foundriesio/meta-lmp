@@ -41,14 +41,29 @@ start_restorable_apps() {
 
 	if [ -f $default_apps_path ] ; then
 		for app in `cat $default_apps_path`; do
-			shortlist="${shortlist}${app},"
+			if [ -e "/var/sota/compose-apps/${app}" ] ; then
+				start_compose_app ${app}
+			else
+				shortlist="${shortlist}${app},"
+			fi
 		done
 		if [ ! -z $shortlist ] ; then
 			shortlist=${shortlist::-1}
                 fi
 	fi
 
-	aklite-apps run --apps "${shortlist}"
+	if [ -z "${shortlist}" ] ; then
+		all=`ls /var/sota/compose-apps 2> /dev/null`
+		if [ -n "${all}" ] ; then
+			for app in ${all} ; do
+				start_compose_app ${app}
+			done
+		else
+			aklite-apps run --apps "${shortlist}"
+		fi
+	else
+		aklite-apps run --apps "${shortlist}"
+	fi
 }
 
 if [ -d /var/sota/reset-apps ] ; then

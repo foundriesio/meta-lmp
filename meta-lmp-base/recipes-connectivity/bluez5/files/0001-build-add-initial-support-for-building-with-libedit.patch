@@ -1,7 +1,7 @@
-From 0ebb379dff45608cb65f6ca2aae7046cdccdedf7 Mon Sep 17 00:00:00 2001
+From 842563d12da41d2c6edf4994c6c030e13d676c0a Mon Sep 17 00:00:00 2001
 From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Date: Sun, 5 Feb 2023 18:46:32 +0200
-Subject: [PATCH] build: add initial support for building with libedit
+Subject: [PATCH 1/2] build: add initial support for building with libedit
 
 Enable the project building and running in non-interactive mode
 with BSD-3-Clause licensed library libedit instead of GPLv3+ licensed
@@ -12,8 +12,8 @@ Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 
 ---
- Makefile.am                   |  2 +-
- Makefile.tools                | 18 +++++++++---------
+ Makefile.am                   |  1 +
+ Makefile.tools                | 17 +++++++++--------
  attrib/interactive.c          | 10 ++++++++++
  client/display.c              | 15 +++++++++++++++
  configure.ac                  |  2 ++
@@ -21,35 +21,33 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  tools/mesh-gatt/onoff-model.c |  6 ++++++
  tools/mesh-gatt/prov.c        |  5 +++++
  tools/obex-client-tool.c      |  4 ++++
- 9 files changed, 78 insertions(+), 10 deletions(-)
+ 9 files changed, 78 insertions(+), 8 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 44267d0bf..24cc451cb 100644
+index 081d0aa050..9e019f3f82 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -25,7 +25,7 @@ pkgincludedir = $(includedir)/bluetooth
+@@ -25,6 +25,7 @@ pkgincludedir = $(includedir)/bluetooth
  pkginclude_HEADERS =
  
  AM_CFLAGS = $(MISC_CFLAGS) $(WARNING_CFLAGS) $(UDEV_CFLAGS) $(LIBEBOOK_CFLAGS) \
--				$(LIBEDATASERVER_CFLAGS) $(ell_cflags)
-+				$(LIBEDATASERVER_CFLAGS) $(READLINE_CFLAGS) $(ell_cflags)
++				$(READLINE_CFLAGS) \
+ 				$(LIBEDATASERVER_CFLAGS) $(ell_cflags)
  AM_LDFLAGS = $(MISC_LDFLAGS)
  
- confdir = $(sysconfdir)/bluetooth
 diff --git a/Makefile.tools b/Makefile.tools
-index df4cad065..68ffad731 100644
+index 0bc0f232da..a957653f24 100644
 --- a/Makefile.tools
 +++ b/Makefile.tools
-@@ -14,7 +14,7 @@ client_bluetoothctl_SOURCES = client/main.c \
- 					client/admin.h client/admin.c \
- 					client/player.h client/player.c
- client_bluetoothctl_LDADD = gdbus/libgdbus-internal.la src/libshared-glib.la \
--				$(GLIB_LIBS) $(DBUS_LIBS) -lreadline
-+				$(GLIB_LIBS) $(DBUS_LIBS) $(READLINE_LIBS)
+@@ -16,6 +16,7 @@ client_bluetoothctl_SOURCES = client/main.c \
+ 					client/mgmt.h client/mgmt.c
+ client_bluetoothctl_LDADD = lib/libbluetooth-internal.la \
+ 			gdbus/libgdbus-internal.la src/libshared-glib.la \
++			$(READLINE_LIBS) \
+ 			$(GLIB_LIBS) $(DBUS_LIBS) -lreadline
  endif
  
- if ZSH_COMPLETIONS
-@@ -373,7 +373,7 @@ tools_meshctl_SOURCES = tools/meshctl.c \
+@@ -377,7 +378,7 @@ tools_meshctl_SOURCES = tools/meshctl.c \
  				tools/mesh-gatt/onoff-model.c
  tools_meshctl_LDADD = gdbus/libgdbus-internal.la src/libshared-glib.la \
  				lib/libbluetooth-internal.la \
@@ -58,7 +56,7 @@ index df4cad065..68ffad731 100644
  
  EXTRA_DIST += tools/mesh-gatt/local_node.json tools/mesh-gatt/prov_db.json
  endif
-@@ -392,7 +392,7 @@ tools_mesh_cfgclient_SOURCES = tools/mesh-cfgclient.c \
+@@ -396,7 +397,7 @@ tools_mesh_cfgclient_SOURCES = tools/mesh-cfgclient.c \
  				mesh/crypto.h mesh/crypto.c
  
  tools_mesh_cfgclient_LDADD = lib/libbluetooth-internal.la src/libshared-ell.la \
@@ -67,7 +65,7 @@ index df4cad065..68ffad731 100644
  
  bin_PROGRAMS +=  tools/mesh-cfgtest
  
-@@ -488,7 +488,7 @@ noinst_PROGRAMS += tools/btmgmt tools/obex-client-tool tools/obex-server-tool \
+@@ -494,7 +495,7 @@ noinst_PROGRAMS += tools/btmgmt tools/obex-client-tool tools/obex-server-tool \
  tools_obex_client_tool_SOURCES = $(gobex_sources) $(btio_sources) \
  						tools/obex-client-tool.c
  tools_obex_client_tool_LDADD = lib/libbluetooth-internal.la \
@@ -76,7 +74,7 @@ index df4cad065..68ffad731 100644
  
  tools_obex_server_tool_SOURCES = $(gobex_sources) $(btio_sources) \
  						tools/obex-server-tool.c
-@@ -499,15 +499,15 @@ tools_bluetooth_player_SOURCES = tools/bluetooth-player.c client/print.c \
+@@ -505,16 +506,16 @@ tools_bluetooth_player_SOURCES = tools/bluetooth-player.c client/print.c \
  				client/player.c
  tools_bluetooth_player_LDADD = gdbus/libgdbus-internal.la \
  				src/libshared-glib.la \
@@ -88,14 +86,15 @@ index df4cad065..68ffad731 100644
 -			$(GLIB_LIBS) $(DBUS_LIBS) -lreadline
 +			$(GLIB_LIBS) $(DBUS_LIBS) $(READLINE_LIBS)
  
- tools_btmgmt_SOURCES = tools/btmgmt.c src/uuid-helper.c client/display.c
+ tools_btmgmt_SOURCES = tools/btmgmt.c src/uuid-helper.c client/display.c \
+ 			client/mgmt.c
  tools_btmgmt_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la \
 -				-lreadline
 +				$(READLINE_LIBS)
  if DEPRECATED
  noinst_PROGRAMS += attrib/gatttool
  
-@@ -517,7 +517,7 @@ attrib_gatttool_SOURCES = attrib/gatttool.c attrib/att.c attrib/gatt.c \
+@@ -524,7 +525,7 @@ attrib_gatttool_SOURCES = attrib/gatttool.c attrib/att.c attrib/gatt.c \
  				attrib/utils.c src/log.c client/display.c \
  				client/display.h
  attrib_gatttool_LDADD = lib/libbluetooth-internal.la \
@@ -104,7 +103,7 @@ index df4cad065..68ffad731 100644
  
  endif
  endif
-@@ -563,5 +563,5 @@ tools/btpclient.$(OBJEXT): src/libshared-ell.la ell/internal
+@@ -570,5 +571,5 @@ tools/btpclient.$(OBJEXT): src/libshared-ell.la ell/internal
  
  tools_btpclientctl_SOURCES = tools/btpclientctl.c client/display.c
  tools_btpclientctl_LDADD = src/libshared-mainloop.la src/libshared-glib.la \
@@ -112,7 +111,7 @@ index df4cad065..68ffad731 100644
 +				lib/libbluetooth-internal.la $(READLINE_LIBS)
  endif
 diff --git a/attrib/interactive.c b/attrib/interactive.c
-index 171b95738..fe4f228f5 100644
+index 171b957382..fe4f228f5b 100644
 --- a/attrib/interactive.c
 +++ b/attrib/interactive.c
 @@ -23,8 +23,12 @@
@@ -158,7 +157,7 @@ index 171b95738..fe4f228f5 100644
  
  	g_main_loop_run(event_loop);
 diff --git a/client/display.c b/client/display.c
-index a590a1388..05930e48d 100644
+index a590a1388d..05930e48dc 100644
 --- a/client/display.c
 +++ b/client/display.c
 @@ -18,7 +18,13 @@
@@ -227,10 +226,10 @@ index a590a1388..05930e48d 100644
  	rl_redisplay();
  
 diff --git a/configure.ac b/configure.ac
-index eff297960..9595b78ff 100644
+index 655e8e5321..20ac2e1736 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -315,8 +315,10 @@ AM_CONDITIONAL(CLIENT, test "${enable_client}" != "no")
+@@ -316,8 +316,10 @@ AM_CONDITIONAL(CLIENT, test "${enable_client}" != "no")
  if (test "${enable_client}" != "no" || test "${enable_mesh}" = "yes"); then
          AC_CHECK_HEADERS(readline/readline.h, enable_readline=yes,
                  AC_MSG_ERROR(readline header files are required))
@@ -242,7 +241,7 @@ index eff297960..9595b78ff 100644
  AC_ARG_ENABLE(systemd, AS_HELP_STRING([--disable-systemd],
  		[disable systemd integration]), [enable_systemd=${enableval}])
 diff --git a/src/shared/shell.c b/src/shared/shell.c
-index db79c882c..753a2e781 100644
+index db79c882ca..753a2e7818 100644
 --- a/src/shared/shell.c
 +++ b/src/shared/shell.c
 @@ -26,8 +26,12 @@
@@ -375,7 +374,7 @@ index db79c882c..753a2e781 100644
  }
  
 diff --git a/tools/mesh-gatt/onoff-model.c b/tools/mesh-gatt/onoff-model.c
-index 9dfedd85a..46350a3d6 100644
+index 9dfedd85a0..46350a3d67 100644
 --- a/tools/mesh-gatt/onoff-model.c
 +++ b/tools/mesh-gatt/onoff-model.c
 @@ -21,8 +21,14 @@
@@ -394,7 +393,7 @@ index 9dfedd85a..46350a3d6 100644
  
  #include "src/shared/shell.h"
 diff --git a/tools/mesh-gatt/prov.c b/tools/mesh-gatt/prov.c
-index 1f3f62dfd..796de33ef 100644
+index 1f3f62dfdc..796de33efb 100644
 --- a/tools/mesh-gatt/prov.c
 +++ b/tools/mesh-gatt/prov.c
 @@ -19,8 +19,13 @@
@@ -412,7 +411,7 @@ index 1f3f62dfd..796de33ef 100644
  
  #include "src/shared/util.h"
 diff --git a/tools/obex-client-tool.c b/tools/obex-client-tool.c
-index cb0e41247..f129a6d44 100644
+index cb0e412473..f129a6d447 100644
 --- a/tools/obex-client-tool.c
 +++ b/tools/obex-client-tool.c
 @@ -22,8 +22,12 @@
@@ -428,3 +427,6 @@ index cb0e41247..f129a6d44 100644
  
  #include "gobex/gobex.h"
  #include "btio/btio.h"
+-- 
+2.34.1
+

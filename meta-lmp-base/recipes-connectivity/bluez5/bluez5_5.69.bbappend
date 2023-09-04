@@ -10,6 +10,6 @@ PACKAGECONFIG[client] = "--enable-client,--disable-client"
 PACKAGECONFIG[mesh] = "--enable-mesh,--disable-mesh"
 
 SRC_URI += " \
-    file://0001-build-add-initial-support-for-building.patch \
+    file://0001-build-add-initial-support-for-building-with-libedit.patch \
     file://0002-build-support-choosing-libedit-instead-readline.patch \
 "

@@ -3,9 +3,9 @@
 TOOLCHAIN:forcevariable = "clang"
 
 DEPENDS:append:toolchain-clang = " clang-cross-${TARGET_ARCH}"
-KERNEL_CC:toolchain-clang = "${CCACHE}clang ${HOST_CC_KERNEL_ARCH} ${DEBUG_PREFIX_MAP} -fdebug-prefix-map=${STAGING_KERNEL_DIR}=${KERNEL_SRC_PATH}"
-KERNEL_LD:toolchain-clang = "${CCACHE}ld.lld ${HOST_LD_KERNEL_ARCH}"
-KERNEL_AR:toolchain-clang = "${CCACHE}llvm-ar ${HOST_AR_KERNEL_ARCH}"
+
+# https://github.com/kraj/meta-clang/issues/856
+KERNEL_CC:remove:toolchain-clang = "-fuse-ld=bfd"
 
 # FIXME: hacks
 do_kernel_configcheck[noexec] = "1"
@@ -23,3 +23,14 @@ KERNEL_EXTRA_ARGS += "LLVM=1"
 
 # disable pararel make
 #PARALLEL_MAKE = "-j1"
+
+python __anonymous() {
+    kernel_vars = [
+        ['KERNEL_CC', 'gcc', 'clang'],
+        ['KERNEL_LD', 'ld.bfd', 'ld.lld'],
+        ['KERNEL_AR', 'ar', 'llvm-ar'],
+    ]
+    for [var, match, rep] in kernel_vars:
+        v = d.getVar(var, False)
+        d.setVar(var , v.replace('${HOST_PREFIX}%s' % match, '${HOST_PREFIX}%s' % rep))
+}

@@ -4,8 +4,8 @@ TOOLCHAIN:forcevariable = "clang"
 
 DEPENDS:append:toolchain-clang = " clang-cross-${TARGET_ARCH}"
 KERNEL_CC:toolchain-clang = "${CCACHE}clang ${HOST_CC_KERNEL_ARCH} ${DEBUG_PREFIX_MAP} -fdebug-prefix-map=${STAGING_KERNEL_DIR}=${KERNEL_SRC_PATH}"
-KERNEL_LD:toolchain-clang = "${CCACHE}ld.lld"
-KERNEL_AR:toolchain-clang = "${CCACHE}llvm-ar"
+KERNEL_LD:toolchain-clang = "${CCACHE}ld.lld ${HOST_LD_KERNEL_ARCH}"
+KERNEL_AR:toolchain-clang = "${CCACHE}llvm-ar ${HOST_AR_KERNEL_ARCH}"
 
 # FIXME: hacks
 do_kernel_configcheck[noexec] = "1"

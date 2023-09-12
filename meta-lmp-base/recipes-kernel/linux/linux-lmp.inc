@@ -27,5 +27,3 @@ do_deploy:append() {
     cp -a ${B}/.config ${DEPLOYDIR}/${KERNEL_CONFIG_NAME}
     ln -sf ${KERNEL_CONFIG_NAME} ${DEPLOYDIR}/${KERNEL_CONFIG_LINK_NAME}
 }
-
-require linux-lmp-clang.inc

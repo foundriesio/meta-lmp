@@ -21,7 +21,7 @@ FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb delete_pvalue bootfirm
 FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue debug 0; else true; fi
 FB[-t 50000]: ucmd if test -n "${fiovb_rpmb}"; then fiovb write_pvalue is_secondary_boot 0; else true; fi
 
-FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic
+FB: flash -raw2sparse all ../@@MFGTOOL_FLASH_IMAGE@@-@@MACHINE@@.wic.gz/*
 FB: flash bootloader ../imx-boot-@@MACHINE@@.signed
 FB: flash bootloader2 ../u-boot-@@MACHINE@@.itb
 FB: flash bootloader_s ../imx-boot-@@MACHINE@@.signed

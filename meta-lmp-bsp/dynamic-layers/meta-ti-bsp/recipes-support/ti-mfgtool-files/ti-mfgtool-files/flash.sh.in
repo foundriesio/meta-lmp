@@ -76,7 +76,7 @@ fi
 ####
 
 # Validate required commands are available
-commands=("getopt" "dd" "udevadm" "dfu-util" "lsusb" "gunzip" "umount")
+commands=("getopt" "dd" "udevadm" "dfu-util" "lsusb" "gunzip" "umount" "fastboot")
 validate_commands
 
 #######################
@@ -161,6 +161,10 @@ echo "  Exposing eMMC via USB using UMS         "
 echo "------------------------------------------"
 
 sleep 6
+
+# For now we don't run any custom cmds in U-Boot
+fastboot continue
+
 mmcPath=$(get_ums_disk)
 echo "Detected device: ${mmcPath}"
 

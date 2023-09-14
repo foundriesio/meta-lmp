@@ -149,7 +149,7 @@ echo "------------------------------------------"
 echo "  DFU BOOT TISPL: TFA/OPTEE/ and A53 SPL  "
 echo "------------------------------------------"
 dfu-util -R -a tispl.bin -D ${scriptDir}/tispl.bin --device="${devID}" 2>&1 >/dev/null
-sleep 2
+sleep 4
 # read -p "Boot u-boot.img " foo
 echo "------------------------------------------"
 echo "  DFU BOOT UBOOT: A53 UBOOT               "

@@ -1,0 +1,64 @@
+From 4361790843d50f37d1e938b9bb90bd0d7d823aea Mon Sep 17 00:00:00 2001
+From: Mike Sul <mike.sul@foundries.io>
+Date: Wed, 13 Sep 2023 09:13:13 +0200
+Subject: [PATCH] daemon: overlay2: Write layer metadata atomically
+
+When the daemon process or the host running it is abruptly terminated,
+the layer metadata file can become inconsistent on the file system.
+Specifically, `link` and `lower` files may exist but be empty, leading
+to overlay mounting errors during layer extraction, such as:
+"failed to register layer: error creating overlay mount to <path>:
+too many levels of symbolic links."
+
+This commit introduces the use of `AtomicWriteFile` to ensure that the
+layer metadata files contain correct data when they exist on the file system.
+
+Upstream-Status: Backport [https://github.com/moby/moby/pull/46471]
+
+Signed-off-by: Mike <mike.sul@foundries.io>
+---
+ daemon/graphdriver/overlay2/overlay.go | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/daemon/graphdriver/overlay2/overlay.go b/daemon/graphdriver/overlay2/overlay.go
+index 08e739ca04..3f06a837c8 100644
+--- a/daemon/graphdriver/overlay2/overlay.go
++++ b/daemon/graphdriver/overlay2/overlay.go
+@@ -23,6 +23,7 @@ import (
+ 	"github.com/docker/docker/pkg/containerfs"
+ 	"github.com/docker/docker/pkg/directory"
+ 	"github.com/docker/docker/pkg/idtools"
++	"github.com/docker/docker/pkg/ioutils"
+ 	"github.com/docker/docker/pkg/parsers"
+ 	"github.com/docker/docker/quota"
+ 	units "github.com/docker/go-units"
+@@ -386,7 +387,7 @@ func (d *Driver) create(id, parent string, opts *graphdriver.CreateOpts) (retErr
+ 	}
+ 
+ 	// Write link id to link file
+-	if err := os.WriteFile(path.Join(dir, "link"), []byte(lid), 0644); err != nil {
++	if err := ioutils.AtomicWriteFile(path.Join(dir, "link"), []byte(lid), 0o644); err != nil {
+ 		return err
+ 	}
+ 
+@@ -399,7 +400,7 @@ func (d *Driver) create(id, parent string, opts *graphdriver.CreateOpts) (retErr
+ 		return err
+ 	}
+ 
+-	if err := os.WriteFile(path.Join(d.dir(parent), "committed"), []byte{}, 0600); err != nil {
++	if err := ioutils.AtomicWriteFile(path.Join(d.dir(parent), "committed"), []byte{}, 0o600); err != nil {
+ 		return err
+ 	}
+ 
+@@ -408,7 +409,7 @@ func (d *Driver) create(id, parent string, opts *graphdriver.CreateOpts) (retErr
+ 		return err
+ 	}
+ 	if lower != "" {
+-		if err := os.WriteFile(path.Join(dir, lowerFile), []byte(lower), 0666); err != nil {
++		if err := ioutils.AtomicWriteFile(path.Join(dir, lowerFile), []byte(lower), 0o666); err != nil {
+ 			return err
+ 		}
+ 	}
+-- 
+2.40.1
+

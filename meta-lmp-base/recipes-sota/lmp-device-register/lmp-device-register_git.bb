@@ -9,6 +9,7 @@ SRCREV = "f3f6d4ba03b27b83ca168d62d5f561767107ad07"
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https;branch=main"
 
 LMP_DEVICE_API ?= "https://api.foundries.io/ota/devices/"
+LMP_OAUTH_API ?= "https://app.foundries.io/oauth"
 
 PACKAGECONFIG ?= "composeapp"
 PACKAGECONFIG[composeapp] = "-DDOCKER_COMPOSE_APP=ON,-DDOCKER_COMPOSE_APP=OFF,"
@@ -24,5 +25,6 @@ EXTRA_OECMAKE += "\
     -DGIT_COMMIT=${SRCREV} \
     -DHARDWARE_ID=${MACHINE} \
     -DDEVICE_API=${LMP_DEVICE_API} \
+    -DOAUTH_API=${LMP_OAUTH_API} \
     -DSOTA_CLIENT=${SOTA_CLIENT} \
 "

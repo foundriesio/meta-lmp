@@ -19,6 +19,7 @@ PIN = os.environ.get("PKCS11_PIN", "87654321")
 SO_PIN = os.environ.get("PKCS11_SOPIN", "12345678")
 SOTA_DIR = os.environ.get("SOTA_DIR", "/var/sota")
 HANDLERS = os.environ.get("HANDLERS", "aws-iot,aktualizr-lite")
+PACMAN_TYPE = os.environ.get("PACMAN_TYPE", "ostree+compose_apps")
 
 REPO_ID = os.environ["REPOID"]
 
@@ -196,7 +197,7 @@ repo_server = "https://{REPO_ID}.ota-lite.foundries.io:8443/repo"
 key_source = "file"
 
 [pacman]
-type = "ostree+compose_apps"
+type = "{PACMAN_TYPE}"
 ostree_server = "https://{REPO_ID}.ostree.foundries.io:8443/ostree"
 packages_file = "/usr/package.manifest"
 tags = "{tag}"

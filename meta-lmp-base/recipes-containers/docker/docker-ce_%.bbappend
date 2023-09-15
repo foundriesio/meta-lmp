@@ -6,7 +6,7 @@ SRC_URI:append = " \
     file://increase_containerd_timeouts.patch \
     file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
     file://0001-daemon-overlay2-write-layer-metadata-atomically.patch;patchdir=src/import \
-    file://0001-Fsync-layer-once-extracted-to-file-system.patch;patchdir=src/import \
+    file://0001-layer-ensure-layer-files-are-synced-to-disk.patch;patchdir=src/import \
     file://daemon.json.in \
     file://docker.service \
 "

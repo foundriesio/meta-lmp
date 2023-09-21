@@ -1,8 +1,8 @@
 include kmeta-linux-lmp-6.1.y.inc
 
-LINUX_VERSION ?= "6.1.38"
+LINUX_VERSION ?= "6.1.54"
 KBRANCH = "linux-v6.1.y-rt"
-SRCREV_machine = "edfd1dff490eb48fc7607b63da594629f887ee2a"
+SRCREV_machine = "fb0ae41d23670adb840e2892d786d504a0fdc2ad"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 LINUX_KERNEL_TYPE = "preempt-rt"
 

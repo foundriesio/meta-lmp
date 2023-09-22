@@ -31,8 +31,8 @@ DESCRIPTION = "Linux container runtime \
 # so we get that tag, and make it our SRCREVS:
 #
 
-SRCREV_docker = "a61e2b4c9c5f7c241aeb37f389b4444aee26bea4"
-SRCREV_cli = "ced099660009713e0e845eeb754e6050dbaa45d0"
+SRCREV_docker = "1a7969545d73537545645f5cd2c79b7a77e7d39f"
+SRCREV_cli = "ed223bc820ee9bb7005a333013b86203a9e1bc23"
 SRCREV_FORMAT = "docker_cli"
 SRC_URI = "\
 	git://github.com/docker/docker.git;branch=24.0;name=docker;protocol=https \
@@ -49,7 +49,7 @@ require docker.inc
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=4859e97a9c7780e77972d989f0823f28"
 
-DOCKER_VERSION = "24.0.5-ce"
+DOCKER_VERSION = "24.0.6-ce"
 PV = "${DOCKER_VERSION}+git${SRCREV_docker}"
 
 CVE_PRODUCT = "docker mobyproject:moby"

@@ -11,8 +11,8 @@ SRC_URI = "\
 	git://github.com/docker/cli.git;branch=24.0;protocol=https;name=cli;destsuffix=${S}/src/github.com/docker/cli \
 	"
 
-SRCREV_compose = "8318f66330358988a058bf611a953f464ab7973f"
-SRCREV_cli = "3713ee1eea0447bcfe27378ad247c7e245406f04"
+SRCREV_compose = "d6f842b042d2f2926901305336527b3eaadf067a"
+SRCREV_cli = "ced099660009713e0e845eeb754e6050dbaa45d0"
 SRCREV_FORMAT = "compose_cli"
 
 UPSTREAM_CHECK_COMMITS = "1"
@@ -27,7 +27,7 @@ go_do_compile() {
 	export TMPDIR="${GOTMPDIR}"
 	mkdir -p ${B}/cli-plugins/bin
 	${GO} mod download -modcacherw
-	cp -f ${S}/src/github.com/docker/cli/cli/config/config.go ${B}/pkg/mod/github.com/docker/cli@v24.0.4+incompatible/cli/config/config.go
+	cp -f ${S}/src/github.com/docker/cli/cli/config/config.go ${B}/pkg/mod/github.com/docker/cli@v24.0.5+incompatible/cli/config/config.go
 	# remove prebuilt binaries to avoid qa issues
 	rm -f ${B}/pkg/mod/github.com/laurazard/godog*/bin/staticcheck*
 	rm -f ${B}/pkg/mod/github.com/in-toto/in-toto-golang*/test/data/helloworld

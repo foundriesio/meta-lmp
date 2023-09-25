@@ -18,7 +18,6 @@ DAEMON_INTERVAL = os.environ.get("DAEMON_INTERVAL", "300")
 PIN = os.environ.get("PKCS11_PIN", "87654321")
 SO_PIN = os.environ.get("PKCS11_SOPIN", "12345678")
 SOTA_DIR = os.environ.get("SOTA_DIR", "/var/sota")
-HANDLERS = os.environ.get("HANDLERS", "aws-iot,aktualizr-lite")
 PACMAN_TYPE = os.environ.get("PACMAN_TYPE", "ostree+compose_apps")
 
 REPO_ID = os.environ["REPOID"]
@@ -223,19 +222,17 @@ tls_clientcert_id = "03"
 
 
 def main():
-    handlers = {
-        "aws-iot": AwsKpHandler(),
-        "aktualizr-lite": AkliteKpHandler(),
-    }
-    handler_names = [x.strip() for x in HANDLERS.split(",") if x]
+    handlers = [
+        AwsKpHandler(),
+        AkliteKpHandler(),
+    ]
 
     interval = int(DAEMON_INTERVAL)
     pkcs11 = Pkcs11.get_initialized()
 
     while True:
         if run_agent():
-            for name in handler_names:
-                handler = handlers[name]
+            for handler in handlers:
                 if FioCli.has_object(handler.key_id):
                     if FioCli.has_object(handler.crt_id):
                         handler.process(pkcs11)

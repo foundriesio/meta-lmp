@@ -66,25 +66,27 @@ class FioCli:
         ]
         run_quietly(args)
 
+    @classmethod
+    def import_key(cls, slot: str, label: str):
+        oid = label.replace("SE_", "0x")
+        args = [
+            "fio-se05x-cli",
+            "--token-label",
+            "aktualizr",
+            "--import-key",
+            oid,
+            "--pin",
+            PIN,
+            "--id",
+            slot,
+            "--key-type",
+            "EC:prime256v1",
+        ]
+        run_quietly(args)
+
 
 class Pkcs11:
     LIB = "/usr/lib/libckteec.so.0"
-
-    def import_crt(self, identifier: str, label: str):
-        FioCli.import_crt(identifier, label)
-
-    def import_key(self, slot: str, label: str):
-        args = [
-            "pkcs11-tool",
-            f"--module={self.LIB}",
-            f"--pin={PIN}",
-            "--keypairgen",
-            "--key-type=EC:prime256v1",
-            f"--id={slot}",
-            f"--label={label}",
-            "--token-label=aktualizr",
-        ]
-        run_quietly(args)
 
     def has_labels(self, labels: List[str]) -> bool:
         args = ["pkcs11-tool", f"--module={self.LIB}", f"--pin={PIN}", "--list-objects"]
@@ -150,8 +152,8 @@ class GenericKpHandler:
             log.info(f"Key {self.key_id} already provisioned")
             return
         log.info(f"Processing key {self.key_id}...")
-        pkcs11.import_key(f"{self.slot_num:02d}", key_label)
-        pkcs11.import_crt(f"{(self.slot_num+1):02d}", crt_label)
+        FioCli.import_key(f"{self.slot_num:02d}", key_label)
+        FioCli.import_crt(f"{(self.slot_num+1):02d}", crt_label)
 
 
 class AkliteKpHandler(NamedTuple):
@@ -180,8 +182,8 @@ class AkliteKpHandler(NamedTuple):
                 log.info("Aktualizr-lite keys in place")
         else:
             log.info("Processing keys for aktualizr-lite...")
-            pkcs11.import_key("01", key_label)
-            pkcs11.import_crt("03", crt_label)
+            FioCli.import_key("01", key_label)
+            FioCli.import_crt("03", crt_label)
 
         tag = self._get_tag()
         sota_toml = os.path.join(SOTA_DIR, "sota.toml")

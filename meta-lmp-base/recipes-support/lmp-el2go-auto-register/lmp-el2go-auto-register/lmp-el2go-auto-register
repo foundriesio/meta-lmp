@@ -38,11 +38,16 @@ def run_quietly(args: List[str]):
 
 class FioCli:
     @classmethod
-    def has_object(self, oid: str) -> bool:
+    def _list_object(cls, oid: str) -> str:
         args = ["fio-se05x-cli", "--list-objects", oid]
         process = subprocess.Popen(args, stdout=None, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         line = stderr.decode()
+        return line
+
+    @classmethod
+    def has_object(cls, oid: str) -> bool:
+        line = cls._list_object(oid)
         pattern = r"Key-Id:\s+(0x[0-9a-fA-F]+)"
         match = re.search(pattern, line)
         if match:
@@ -69,6 +74,33 @@ class FioCli:
     @classmethod
     def import_key(cls, slot: str, label: str):
         oid = label.replace("SE_", "0x")
+        line = cls._list_object(oid)
+        pattern = r"Key-Id:\s+(0x[0-9a-fA-F]+)\s+([A-Z_]+)\s+\[\s*([0-9]+) bits\]"
+        match = re.search(pattern, line)
+        if not match or match.group(1) != oid:
+            log.error(f"Key {label} not found, not importing")
+            return
+        key_class = match.group(2)
+        key_length = match.group(3)
+        if key_class == "EC_KEY_PAIR":
+            # OpenSSL has different EC key types depending on length
+            ec_subtypes = {
+                "192": "prime192v1",
+                "224": "secp224r1",
+                "256": "prime256v1",
+                "384": "secp384r1",
+                "521": "secp521r1",
+            }
+            if key_length not in ec_subtypes:
+                log.error(f"Unsupported key length {key_length} for EC key {label}")
+                return
+            key_type = f"EC:{ec_subtypes[key_length]}"
+        elif key_class == "RSA_KEY_PAIR_CRT":
+            key_type = f"RSA:{key_length}"
+        else:
+            log.error(f"Unsupported key type {key_class} for key {label}")
+            return
+
         args = [
             "fio-se05x-cli",
             "--token-label",
@@ -80,7 +112,7 @@ class FioCli:
             "--id",
             slot,
             "--key-type",
-            "EC:prime256v1",
+            key_type,
         ]
         run_quietly(args)
 

@@ -249,12 +249,19 @@ EOF
 };
 EOF
 
-	# Add boot firmware version to U-Boot DTB (if it's defined and is not zero)
+	if [ -f spl/u-boot-spl.dtb ]; then
+		UBOOT_DTBS="${uboot_dtb} spl/u-boot-spl.dtb"
+	else
+		UBOOT_DTBS="${uboot_dtb}"
+	fi
+	# Add boot firmware version to U-Boot and SPL DTB (if it's defined and is not zero)
 	if [ -n "${LMP_BOOT_FIRMWARE_VERSION}" -a "${LMP_BOOT_FIRMWARE_VERSION}" != "0" ]; then
-		# Might return "FDT_ERR_EXISTS" error, if "lmp" node already exists
-		fdtput -c -p -t s ${uboot_dtb} /firmware/bootloader || true
-		fdtput -t s ${uboot_dtb} /firmware/bootloader compatible "lmp,bootloader"
-		fdtput -t s ${uboot_dtb} /firmware/bootloader bootfirmware-version "${LMP_BOOT_FIRMWARE_VERSION}"
+		for dtb_img in ${UBOOT_DTBS}; do
+			# Might return "FDT_ERR_EXISTS" error, if "lmp" node already exists
+			fdtput -c -p -t s ${dtb_img} /firmware/bootloader || true
+			fdtput -t s ${dtb_img} /firmware/bootloader compatible "lmp,bootloader"
+			fdtput -t s ${dtb_img} /firmware/bootloader bootfirmware-version "${LMP_BOOT_FIRMWARE_VERSION}"
+		done
 	fi
 
 	# Assemble the ITB image

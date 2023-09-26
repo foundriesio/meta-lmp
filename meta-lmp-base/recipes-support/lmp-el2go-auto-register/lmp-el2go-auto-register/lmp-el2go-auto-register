@@ -18,6 +18,7 @@ DAEMON_INTERVAL = os.environ.get("DAEMON_INTERVAL", "300")
 PIN = os.environ.get("PKCS11_PIN", "87654321")
 SO_PIN = os.environ.get("PKCS11_SOPIN", "12345678")
 SOTA_DIR = os.environ.get("SOTA_DIR", "/var/sota")
+GENERIC_KEYPAIRS = os.environ.get("GENERIC_KEYPAIRS", "0X83000044")
 PACMAN_TYPE = os.environ.get("PACMAN_TYPE", "ostree+compose_apps")
 
 REPO_ID = os.environ["REPOID"]
@@ -134,19 +135,23 @@ def run_agent() -> bool:
     return True
 
 
-class AwsKpHandler(NamedTuple):
-    key_id: str = "0x83000044"
-    crt_id: str = "0x83000045"
+class GenericKpHandler:
+    def __init__(self, key_id: str, slot_num: int):
+        key_id_int = int(key_id, 16)
+        crt_id_int = key_id_int + 1
+        self.key_id = f"0x{key_id_int:x}"
+        self.crt_id = f"0x{crt_id_int:x}"
+        self.slot_num = slot_num
 
     def process(self, pkcs11: Pkcs11):
         key_label = self.key_id.replace("0x", "SE_")
         crt_label = self.crt_id.replace("0x", "SE_")
         if pkcs11.has_labels([key_label, crt_label]):
-            log.info("aws-iot already provisioned")
+            log.info(f"Key {self.key_id} already provisioned")
             return
-        log.info("Processing keys for aws-iot...")
-        pkcs11.import_key("04", key_label)
-        pkcs11.import_crt("05", crt_label)
+        log.info(f"Processing key {self.key_id}...")
+        pkcs11.import_key(f"{self.slot_num:02d}", key_label)
+        pkcs11.import_crt(f"{(self.slot_num+1):02d}", crt_label)
 
 
 class AkliteKpHandler(NamedTuple):
@@ -222,10 +227,16 @@ tls_clientcert_id = "03"
 
 
 def main():
-    handlers = [
-        AwsKpHandler(),
-        AkliteKpHandler(),
-    ]
+    generic_keypairs = GENERIC_KEYPAIRS.split(",")
+    handlers = []
+    # slot_num starts at 4 because 1 and 3 are used by aktualizr.
+    # It increments with 2 (one for key, one for cert), so we count half slot_num
+    for half_slot_num, key_id in enumerate(generic_keypairs, 2):
+        try:
+            handlers.append(GenericKpHandler(key_id, 2*half_slot_num))
+        except ValueError:
+            log.error(f"Invalid generic keypair {key_id} - should be formatted as 0X....")
+    handlers.append(AkliteKpHandler())
 
     interval = int(DAEMON_INTERVAL)
     pkcs11 = Pkcs11.get_initialized()

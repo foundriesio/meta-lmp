@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
 DEPENDS = "boost curl glib-2.0 libp11 openssl"
 
-SRCREV = "f3f6d4ba03b27b83ca168d62d5f561767107ad07"
+SRCREV = "2557b25bedd47315dec47a01f09d27b979e84569"
 
 SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https;branch=main"
 

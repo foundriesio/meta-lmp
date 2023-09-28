@@ -13,9 +13,9 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-STM32_BOOTIMAGE_SUFFIX ?= ""
+STM32_BOOTIMAGE_SUFFIX ??= ""
 
-LMP_FLASHLAYOUT_TEMPLATE ?= "FlashLayout_stm32mp1-usb.tsv.in"
+LMP_FLASHLAYOUT_TEMPLATE ??= "FlashLayout_stm32mp1-usb.tsv.in"
 SRC_URI = " \
     file://${LMP_FLASHLAYOUT_TEMPLATE} \
     file://provision.sh.in \

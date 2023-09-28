@@ -108,8 +108,10 @@ PREFERRED_PROVIDER_u-boot:stm32mp1common = "u-boot-fio-mfgtool"
 PREFERRED_PROVIDER_android-tools-conf:stm32mp1common = "android-tools-conf-configfs"
 KERNEL_IMAGETYPE:stm32mp1common = "fitImage"
 KERNEL_CLASSES:stm32mp1common = " kernel-lmp-fitimage "
-LMP_FLASHLAYOUT_TEMPLATE:stm32mp1common = "FlashLayout_stm32mp1-usb.tsv.in"
-LMP_FLASHLAYOUT:stm32mp1common = "FlashLayout_stm32mp1-usb.tsv"
+LMP_FLASHLAYOUT_TEMPLATE:stm32mp15-disco = "FlashLayout_stm32mp1-usb.tsv.in"
+LMP_FLASHLAYOUT:stm32mp15-disco = "FlashLayout_stm32mp1-usb.tsv"
+LMP_FLASHLAYOUT_TEMPLATE:stm32mp15-eval = "FlashLayout_stm32mp1-usb.tsv.in"
+LMP_FLASHLAYOUT:stm32mp15-eval = "FlashLayout_stm32mp1-usb.tsv"
 
 # TI Generic (BSP)
 INITRAMFS_IMAGE:k3 = "initramfs-ostree-lmp-recovery"

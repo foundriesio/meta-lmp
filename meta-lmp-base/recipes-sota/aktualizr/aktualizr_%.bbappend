@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 BRANCH:lmp = "master"
-SRCREV:lmp = "e9812564058a84c70d9e4a8be8bf8cca47d12a71"
+SRCREV:lmp = "a8d0bfe81f70ef2af3e6f7ceb19d0a98eca3b31a"
 
 SRC_URI:remove:lmp = "gitsm://github.com/uptane/aktualizr;branch=${BRANCH};name=aktualizr;protocol=https"
 SRC_URI:append:lmp = " \

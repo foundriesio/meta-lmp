@@ -123,4 +123,4 @@ PREFERRED_PROVIDER_u-boot:k3 = "u-boot-ti-staging-mfgtool"
 UBOOT_MACHINE:am62xx-evm-k3r5 = "am62x_evm_r5_usbdfu_defconfig"
 
 # Cross machines / BSPs
-PREFERRED_VERSION_u-boot-fio-mfgtool:imx-nxp-bsp ?= "imx-2022.04"
+PREFERRED_VERSION_u-boot-fio-mfgtool:imx-nxp-bsp ?= "imx-2023.04"

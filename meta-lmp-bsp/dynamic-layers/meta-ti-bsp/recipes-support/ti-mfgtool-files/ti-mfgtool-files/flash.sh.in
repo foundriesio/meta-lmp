@@ -129,7 +129,10 @@ if [ ! -f "${wicFile}" ]; then
 fi
 
 [ -z "${boardType}" ] && boardType="gp"
-[ -z "${devID}" ] && devID="$(lsusb | grep 'Texas Instruments, Inc. AM62x' | awk '{print $6}')"
+[ -z "${devID}" ] && devID="$(lsusb | grep 'Texas Instruments, Inc.' | awk '{print $6}')"
+
+vid=$(echo "${devID}" | cut -d ':' -f 1)
+pid=$(echo "${devID}" | cut -d ':' -f 2)
 
 ####
 # Flash software images
@@ -138,32 +141,53 @@ fi
 # start USB DFU download mode and flash primary eMMC with provided WIC image
 
 echo "Load U-Boot via DFU..."
+dfuCheck=0
+dfu-suffix -c ${scriptDir}/tiboot3-am62x-${boardType}-evm.bin || dfuCheck=$?
+if [ ${dfuCheck} -ne 0 ]; then
+	echo "Adding DFU suffix signature to binaries"
+	dfu-suffix -v ${vid} -p ${pid} -a ${scriptDir}/tiboot3-am62x-${boardType}-evm.bin
+	dfu-suffix -v ${vid} -p ${pid} -a ${scriptDir}/tispl.bin
+	dfu-suffix -v ${vid} -p ${pid} -a ${scriptDir}/u-boot.img
+fi
 
 echo "------------------------------------------"
 echo "  DFU BOOT TIBOOT3: TIFS and R5           "
 echo "------------------------------------------"
-dfu-util -R -a bootloader -D ${scriptDir}/tiboot3-am62x-${boardType}-evm.bin --device="${devID}" 2>&1 >/dev/null
+# invocation ends with  "dfu-util: unable to read DFU status after completion (LIBUSB_ERROR_IO)"
+# error message, so just suppress it
+dfu-util -R -a bootloader -D ${scriptDir}/tiboot3-am62x-${boardType}-evm.bin --device="${devID}" || true
 sleep 2
-# read -p "Boot tispl.bin" foo
+
 echo "------------------------------------------"
 echo "  DFU BOOT TISPL: TFA/OPTEE/ and A53 SPL  "
 echo "------------------------------------------"
-dfu-util -R -a tispl.bin -D ${scriptDir}/tispl.bin --device="${devID}" 2>&1 >/dev/null
+dfuCheck=0
+dfu-util -R -a tispl.bin -D ${scriptDir}/tispl.bin --device="${devID}" || dfuCheck=$?
+# 0 and 251 are both valid return codes
+if [[ ${dfuCheck} -ne 0 ]] && [[ ${dfuCheck} -ne 251 ]]; then
+	error_exit "dfu-util failed with error code: ${dfuCheck}"
+fi
 sleep 4
-# read -p "Boot u-boot.img " foo
+
 echo "------------------------------------------"
 echo "  DFU BOOT UBOOT: A53 UBOOT               "
 echo "------------------------------------------"
-dfu-util -R  -a u-boot.img -D ${scriptDir}/u-boot.img --device="${devID}" 2>&1 >/dev/null
+dfuCheck=0
+dfu-util -R -a u-boot.img -D ${scriptDir}/u-boot.img --device="${devID}" || dfuCheck=$?
+if [[ ${dfuCheck} -ne 0 ]] && [[ ${dfuCheck} -ne 251 ]]; then
+	error_exit "dfu-util failed with error code: ${dfuCheck}"
+fi
+sleep 2
 
 echo "------------------------------------------"
 echo "  Exposing eMMC via USB using UMS         "
 echo "------------------------------------------"
 
-sleep 6
-
 # For now we don't run any custom cmds in U-Boot
 fastboot continue
+
+# wait for ums to expose eMMC to host pc
+sleep 6
 
 mmcPath=$(get_ums_disk)
 echo "Detected device: ${mmcPath}"

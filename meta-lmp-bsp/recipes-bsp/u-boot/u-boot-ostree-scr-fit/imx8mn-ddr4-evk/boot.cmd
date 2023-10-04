@@ -16,14 +16,25 @@ setenv fit_addr 0x43800000
 # Offsets are in blocks (512 bytes each)
 setenv bootloader 0x0
 setenv bootloader2 0x300
-setenv bootloader_s 0x1000
-setenv bootloader2_s 0x1300
+setenv bootloader_s ${bootloader}
+setenv bootloader2_s ${bootloader2}
 
 setenv bootloader_image "imx-boot"
 setenv bootloader_s_image ${bootloader_image}
 setenv bootloader2_image "u-boot.itb"
 setenv bootloader2_s_image ${bootloader2_image}
-setenv uboot_hwpart 1
+
+setenv update_image_boot0 'echo "${fio_msg} writing ${image_path} ..."; run set_blkcnt && mmc dev ${devnum} 1 && mmc write ${loadaddr} ${start_blk} ${blkcnt}'
+
+setenv backup_primary_image 'echo "${fio_msg} backing up primary boot image set ..."; mmc dev ${devnum} 1 && mmc read ${loadaddr} 0x0 0x2000 && mmc dev ${devnum} 2 && mmc write ${loadaddr} 0x0 0x2000'
+setenv restore_primary_image 'echo "${fio_msg} restore primary boot image set ..."; mmc dev ${devnum} 2 && mmc read ${loadaddr} 0x0 0x2000 && mmc dev ${devnum} 1 && mmc write ${loadaddr} 0x0 0x2000'
+
+setenv update_primary_image1 'if test "${ostree_deploy_usr}" = "1"; then setenv image_path "${bootdir}/${bootloader_image}"; else setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader_image}"; fi; setenv start_blk "${bootloader_s}";  run load_image; run update_image_boot0'
+setenv update_primary_image2 'if test "${ostree_deploy_usr}" = "1"; then setenv image_path "${bootdir}/${bootloader2_image}"; else setenv image_path "${ostree_root}/usr/lib/firmware/${bootloader2_image}"; fi; setenv start_blk "${bootloader2}";  run load_image; run update_image_boot0'
+
+setenv update_primary_image 'run update_primary_image1; run update_primary_image2'
+
+setenv check_secondary_boot 'setenv fiovb.is_secondary_boot "0"'
 
 @@INCLUDE_COMMON_IMX@@
-@@INCLUDE_COMMON@@
+@@INCLUDE_COMMON_ALTERNATIVE@@

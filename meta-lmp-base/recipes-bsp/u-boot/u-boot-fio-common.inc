@@ -12,12 +12,17 @@ UBOOT_REPO ??= "git://github.com/foundriesio/u-boot.git"
 
 SRC_URI = "${UBOOT_REPO};protocol=https;branch=${SRCBRANCH} \
     file://fw_env.config \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp-common.cfg', d)} \
-    ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', '', 'file://lmp-common-nosec.cfg', d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', '', 'file://lmp.cfg', d)} \
 "
-# LMP base requires a different u-boot configuration fragment
-SRC_URI:append:lmp-base = " file://lmp-base.cfg "
+
+# Handle lmp / lmp-mfgtool distro configs set
+SRC_URI:append = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-common-ebbr.cfg', 'file://lmp-common.cfg', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
+    ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', '', 'file://lmp-common-nosec.cfg', d)} \
+"
+
+# LMP base requires different u-boot configuration fragments
+SRC_URI:append:lmp-base = " file://lmp-common-base.cfg file://lmp-base.cfg "
 SRC_URI:remove:lmp-base = "file://lmp.cfg"
 SRC_URI:remove:lmp-base = "file://lmp-common.cfg"
 SRC_URI:remove:lmp-base = "file://lmp-common-nosec.cfg"

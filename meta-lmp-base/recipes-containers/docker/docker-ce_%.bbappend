@@ -14,6 +14,7 @@ SRC_URI:append = " \
 
 DOCKER_MAX_CONCURRENT_DOWNLOADS ?= "3"
 DOCKER_MAX_DOWNLOAD_ATTEMPTS ?= "5"
+DOCKER_DAEMON_JSON_CUSTOM ?= ""
 
 # Prefer docker.service instead of docker.socket as this is a critical service
 SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','docker.service','',d)}"
@@ -21,6 +22,7 @@ SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('DISTRO_FEATURES','systemd','docke
 do_install:prepend() {
     sed -e 's/@@MAX_CONCURRENT_DOWNLOADS@@/${DOCKER_MAX_CONCURRENT_DOWNLOADS}/' \
         -e 's/@@MAX_DOWNLOAD_ATTEMPTS@@/${DOCKER_MAX_DOWNLOAD_ATTEMPTS}/' \
+        -e 's/@@DOCKER_DAEMON_JSON_CUSTOM@@/${DOCKER_DAEMON_JSON_CUSTOM}/' \
         ${WORKDIR}/daemon.json.in > ${WORKDIR}/daemon.json
 }
 

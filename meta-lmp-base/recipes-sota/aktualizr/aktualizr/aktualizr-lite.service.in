@@ -9,6 +9,7 @@ StartLimitBurst=3
 StartLimitAction=reboot
 
 [Service]
+User=root
 RestartSec=180
 Restart=always
 ExecStartPre=/usr/bin/mkdir -p /run/aktualizr

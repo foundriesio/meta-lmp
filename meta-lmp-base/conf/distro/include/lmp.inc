@@ -1,4 +1,4 @@
-DISTRO_VERSION = "4.0.12"
+DISTRO_VERSION = "4.0.13"
 
 # These default to 'oecore' and 'nodistro'
 SDK_NAME_PREFIX = "${DISTRO}"

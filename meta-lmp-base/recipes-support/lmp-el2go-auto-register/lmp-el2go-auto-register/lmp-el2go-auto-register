@@ -36,49 +36,50 @@ def run_quietly(args: List[str]):
         sys.exit(1)
 
 
+def SE_label(oid: int) -> str:
+    return f"SE_{oid:08x}"
+
 class FioCli:
     @classmethod
-    def _list_object(cls, oid: str) -> str:
-        args = ["fio-se05x-cli", "--list-objects", oid]
+    def _list_object(cls, oid: int) -> str:
+        args = ["fio-se05x-cli", "--list-objects", hex(oid)]
         process = subprocess.Popen(args, stdout=None, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         line = stderr.decode()
         return line
 
     @classmethod
-    def has_object(cls, oid: str) -> bool:
+    def has_object(cls, oid: int) -> bool:
         line = cls._list_object(oid)
         pattern = r"Key-Id:\s+(0x[0-9a-fA-F]+)"
         match = re.search(pattern, line)
         if match:
-            if match.group(1) == oid:
+            if int(match.group(1), 16) == oid:
                 return True
         return False
 
     @classmethod
-    def import_crt(self, identifier: str, label: str):
-        oid = label.replace("SE_", "0x")
+    def import_crt(self, identifier: str, oid: int):
         args = [
             "fio-se05x-cli",
             "--token-label",
             "aktualizr",
             "--import-cert",
-            oid,
+            f"0x{oid:08x}",
             "--id",
             identifier,
             "--label",
-            label,
+            SE_label(oid),
         ]
         run_quietly(args)
 
     @classmethod
-    def import_key(cls, slot: str, label: str):
-        oid = label.replace("SE_", "0x")
+    def import_key(cls, slot: str, oid: int):
         line = cls._list_object(oid)
         pattern = r"Key-Id:\s+(0x[0-9a-fA-F]+)\s+([A-Z_]+)\s+\[\s*([0-9]+) bits\]"
         match = re.search(pattern, line)
-        if not match or match.group(1) != oid:
-            log.error(f"Key {label} not found, not importing")
+        if not match or int(match.group(1), 16) != oid:
+            log.error(f"Key 0x{oid:08x} not found, not importing")
             return
         key_class = match.group(2)
         key_length = match.group(3)
@@ -92,13 +93,13 @@ class FioCli:
                 "521": "secp521r1",
             }
             if key_length not in ec_subtypes:
-                log.error(f"Unsupported key length {key_length} for EC key {label}")
+                log.error(f"Unsupported key length {key_length} for EC key 0x{oid:08x}")
                 return
             key_type = f"EC:{ec_subtypes[key_length]}"
         elif key_class == "RSA_KEY_PAIR_CRT":
             key_type = f"RSA:{key_length}"
         else:
-            log.error(f"Unsupported key type {key_class} for key {label}")
+            log.error(f"Unsupported key type {key_class} for key 0x{oid:08x}")
             return
 
         args = [
@@ -106,7 +107,7 @@ class FioCli:
             "--token-label",
             "aktualizr",
             "--import-key",
-            oid,
+            f"0x{oid:08x}",
             "--pin",
             PIN,
             "--id",
@@ -171,26 +172,22 @@ def run_agent() -> bool:
 
 class GenericKpHandler:
     def __init__(self, key_id: str, slot_num: int):
-        key_id_int = int(key_id, 16)
-        crt_id_int = key_id_int + 1
-        self.key_id = f"0x{key_id_int:x}"
-        self.crt_id = f"0x{crt_id_int:x}"
+        self.key_id = int(key_id, 16)
+        self.crt_id = self.key_id + 1
         self.slot_num = slot_num
 
     def process(self, pkcs11: Pkcs11):
-        key_label = self.key_id.replace("0x", "SE_")
-        crt_label = self.crt_id.replace("0x", "SE_")
-        if pkcs11.has_labels([key_label, crt_label]):
-            log.info(f"Key {self.key_id} already provisioned")
+        if pkcs11.has_labels([SE_label(self.key_id), SE_label(self.crt_id)]):
+            log.info(f"Key {self.key_id:08x} already provisioned")
             return
-        log.info(f"Processing key {self.key_id}...")
-        FioCli.import_key(f"{self.slot_num:02d}", key_label)
-        FioCli.import_crt(f"{(self.slot_num+1):02d}", crt_label)
+        log.info(f"Processing key {self.key_id:08x}...")
+        FioCli.import_key(f"{self.slot_num:02d}", self.key_id)
+        FioCli.import_crt(f"{(self.slot_num+1):02d}", self.crt_id)
 
 
 class AkliteKpHandler(NamedTuple):
-    key_id: str = "0x83000042"
-    crt_id: str = "0x83000043"
+    key_id = 0x83000042
+    crt_id = 0x83000043
 
     @staticmethod
     def _get_tag():
@@ -203,10 +200,7 @@ class AkliteKpHandler(NamedTuple):
         sys.exit("Unable to parse LMP_MACHINE and LMP_TAG from /etc/os-release")
 
     def process(self, pkcs11: Pkcs11):
-        key_label = self.key_id.replace("0x", "SE_")
-        crt_label = self.crt_id.replace("0x", "SE_")
-
-        if pkcs11.has_labels([key_label, crt_label]):
+        if pkcs11.has_labels([SE_label(self.key_id), SE_label(self.crt_id)]):
             if os.path.exists(os.path.join(SOTA_DIR, "sql.db")):
                 log.info("Aktualizr-lite already provisioned")
                 return
@@ -214,8 +208,8 @@ class AkliteKpHandler(NamedTuple):
                 log.info("Aktualizr-lite keys in place")
         else:
             log.info("Processing keys for aktualizr-lite...")
-            FioCli.import_key("01", key_label)
-            FioCli.import_crt("03", crt_label)
+            FioCli.import_key("01", self.key_id)
+            FioCli.import_crt("03", self.crt_id)
 
         tag = self._get_tag()
         sota_toml = os.path.join(SOTA_DIR, "sota.toml")

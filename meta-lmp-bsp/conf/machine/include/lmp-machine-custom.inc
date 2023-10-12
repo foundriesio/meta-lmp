@@ -692,6 +692,7 @@ IMAGE_BOOT_FILES:sota:versal = "boot.bin boot.itb"
 WKS_FILES:sota:versal = "sdimage-sota.wks"
 
 # TI Generic (BSP)
+TI_COMMON_DEPLOY = "${DEPLOY_DIR}"
 UBOOT_SIGN_ENABLE:sota:k3 = "1"
 UBOOT_SIGN_KEYDIR:k3 ?= "${TOPDIR}/conf/keys"
 FIT_HASH_ALG:sota:k3 ?= "sha256"

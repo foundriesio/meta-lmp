@@ -217,6 +217,7 @@ IMAGE_BOOT_FILES:mx6ull-generic-bsp = " boot.scr uEnv.txt zImage ${@make_dtb_boo
 KERNEL_IMAGETYPE:sota:mx6ull-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx6ull-generic-bsp = " kernel-lmp-fitimage "
 WKS_FILE:mx6ull-generic-bsp:sota = "sdimage-imx6-spl-fit-sota.wks"
+PREFERRED_VERSION_u-boot-fio:mx6ull-generic-bsp ?= "imx-2023.04"
 # iMX6ULL EVK
 UBOOT_SIGN_ENABLE:sota:imx6ullevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ullevk = " ubootenv"

@@ -412,6 +412,7 @@ KERNEL_CLASSES:sota:mx8mp-generic-bsp = " kernel-lmp-fitimage "
 PREFERRED_PROVIDER_virtual/kernel:mx8mp-nxp-bsp ?= "linux-lmp-fslc-imx"
 WKS_FILE:sota:mx8mp-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mp-nxp-bsp = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio:mx8mp-nxp-bsp ?= "imx-2023.04"
 ## iMX8MP EVK
 UBOOT_SIGN_ENABLE:sota:imx8mp-lpddr4-evk ?= "1"
 OSTREE_KERNEL_ARGS:imx8mp-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 rootfstype=ext4"

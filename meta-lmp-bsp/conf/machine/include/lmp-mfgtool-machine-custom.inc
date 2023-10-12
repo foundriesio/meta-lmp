@@ -45,6 +45,7 @@ PREFERRED_PROVIDER_u-boot-default-script:mx8mq-generic-bsp = "u-boot-ostree-scr-
 IMAGE_BOOT_FILES:mx8mq-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE:mx8mq-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx8mq-generic-bsp = " kernel-lmp-fitimage "
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8mq-generic-bsp ?= "imx-2023.04"
 
 # iMX8MPEVK
 UBOOT_SIGN_ENABLE:mx8mp-generic-bsp = "1"

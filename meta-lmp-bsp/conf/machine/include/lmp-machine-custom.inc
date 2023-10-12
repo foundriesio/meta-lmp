@@ -281,6 +281,7 @@ LMP_BOOT_FIRMWARE_FILES:mx8ulp-nxp-bsp = "imx-boot u-boot.itb"
 PREFERRED_VERSION_optee-os-fio:mx8ulp-nxp-bsp = "3.20.0-imx"
 PREFERRED_VERSION_optee-os-fio-mfgtool:mx8ulp-nxp-bsp = "3.20.0-imx"
 PREFERRED_VERSION_optee-os-tadevkit:mx8ulp-nxp-bsp = "3.20.0-imx"
+PREFERRED_VERSION_u-boot-fio:mx8ulp-nxp-bsp ?= "imx-2023.04"
 ## iMX8ULP LPDDR4 EVK
 UBOOT_SIGN_ENABLE:sota:imx8ulp-lpddr4-evk ?= "1"
 OSTREE_KERNEL_ARGS:imx8ulp-lpddr4-evk ?= "console=tty1 console=ttyLP1,115200 earlycon rootfstype=ext4"

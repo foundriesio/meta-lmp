@@ -313,6 +313,7 @@ PREFERRED_PROVIDER_u-boot-default-script:mx8mq-generic-bsp = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:mx8mq-generic-bsp = "u-boot-ostree-scr-fit"
 KERNEL_IMAGETYPE:sota:mx8mq-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mq-generic-bsp = " kernel-lmp-fitimage "
+PREFERRED_VERSION_u-boot-fio:mx8mq-nxp-bsp ?= "imx-2023.04"
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mq-nxp-bsp ?= "linux-lmp-fslc-imx"
 WKS_FILE:sota:mx8mq-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"

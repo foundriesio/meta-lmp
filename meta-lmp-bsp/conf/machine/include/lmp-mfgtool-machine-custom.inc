@@ -93,6 +93,7 @@ IMAGE_BOOT_FILES:mx93-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE:mx93-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx93-generic-bsp = " kernel-lmp-fitimage "
 IMXBOOT_TARGETS:mx93-nxp-bsp = "flash_singleboot"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx93-generic-bsp ?= "imx-2023.04"
 
 # iMX8QM
 IMX_DEFAULT_BOOTLOADER:mx8qm-generic-bsp ?= "u-boot-fio-mfgtool"

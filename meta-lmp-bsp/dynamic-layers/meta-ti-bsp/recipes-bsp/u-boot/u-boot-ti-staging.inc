@@ -24,6 +24,12 @@ SRC_URI:append:beagleplay = " \
 "
 PACKAGECONFIG[optee] = "TEE=${STAGING_DIR_HOST}${nonarch_base_libdir}/firmware/tee-pager_v2.bin,,${PREFERRED_PROVIDER_virtual/optee-os}"
 
+do_deploy:append() {
+    # because TI uses multiconfig we can't have this name shared between machines in
+    # meta-lmp-base/recipes-bsp/u-boot/u-boot-lmp-common.inc
+    rm ${DEPLOYDIR}/${PN}-config
+}
+
 # setting DEPENDS create dependency loops so skip the check
 LMPSTAGING_DEPLOYED_CHECK_SKIP += "${PN}:do_deploy"
 

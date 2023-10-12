@@ -462,6 +462,7 @@ MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach"
 IMXBOOT_TARGETS:imx8mn-ddr4-evk ?= "flash_evk_spl_ddr4"
 ## iMX8MN DDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-ddr4-evk-sec = "ubootenv"
+PREFERRED_VERSION_u-boot-fio:imx8mn-ddr4-evk ?= "imx-2023.04"
 # iMX8MN LPDDR4 EVK
 UBOOT_SIGN_ENABLE:sota:imx8mn-lpddr4-evk ?= "1"
 KMACHINE:imx8mn-lpddr4-evk = "imx8mn-evk"

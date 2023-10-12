@@ -72,6 +72,7 @@ KERNEL_IMAGETYPE:mx8mn-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx8mn-generic-bsp = " kernel-lmp-fitimage "
 IMXBOOT_TARGETS:imx8mn-ddr4-evk = "flash_ddr4_evk"
 IMXBOOT_TARGETS:imx8mn-lpddr4-evk = "flash_evk"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8mn-generic-bsp = "imx-2023.04"
 
 # iMX8ULP
 UBOOT_SIGN_ENABLE:mx8ulp-generic-bsp = "1"

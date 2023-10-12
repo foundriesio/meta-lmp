@@ -475,6 +475,7 @@ BOOTSCR_LOAD_ADDR:imx8mn-lpddr4-evk = "0x44800000"
 MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-lpddr4-evk = " bluetooth-attach"
 IMXBOOT_TARGETS:imx8mn-lpddr4-evk ?= "flash_evk_spl"
 MACHINE_FEATURES:append:imx8mn-lpddr4-evk = " mxm-mwifiex-load"
+PREFERRED_VERSION_u-boot-fio:imx8mn-lpddr4-evk ?= "imx-2023.04"
 ## iMX8MN LPDDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-lpddr4-evk-sec = "ubootenv"
 

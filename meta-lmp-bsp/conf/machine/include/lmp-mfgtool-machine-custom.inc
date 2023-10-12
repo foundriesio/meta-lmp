@@ -102,6 +102,7 @@ KERNEL_CLASSES:mx8qm-generic-bsp = " kernel-lmp-fitimage "
 UBOOT_SIGN_ENABLE:mx8qm-generic-bsp = "1"
 UBOOT_CLASSES:mx8qm-generic-bsp = "uboot-fitimage"
 IMAGE_BOOT_FILES:mx8qm-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8qm-generic-bsp ?= "imx-2023.04"
 
 # STM32MP1
 INITRAMFS_IMAGE:stm32mp1common = "initramfs-ostree-lmp-recovery"

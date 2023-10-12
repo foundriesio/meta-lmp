@@ -82,6 +82,7 @@ IMAGE_BOOT_FILES:mx8ulp-generic-bsp  = "imx-boot u-boot.itb boot.itb"
 KERNEL_IMAGETYPE:mx8ulp-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx8ulp-generic-bsp = " kernel-lmp-fitimage "
 IMXBOOT_TARGETS:mx8ulp-nxp-bsp = "flash_singleboot_m33"
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx8ulp-generic-bsp ?= "imx-2023.04"
 
 # iMX93
 UBOOT_SIGN_ENABLE:mx93-generic-bsp = "1"

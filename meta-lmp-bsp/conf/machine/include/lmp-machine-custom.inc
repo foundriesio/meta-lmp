@@ -247,6 +247,7 @@ UBOOT_ENTRYPOINT:mx8qm-generic-bsp = "0x80280000"
 UBOOT_LOADADDRESS:mx8qm-generic-bsp = "0x80280000"
 UBOOT_DTB_LOADADDRESS:mx8qm-generic-bsp = "0x83000000"
 UBOOT_SIGN_ENABLE:sota:mx8qm-generic-bsp ??= "1"
+PREFERRED_VERSION_u-boot-fio:mx8qm-nxp-bsp ?= "imx-2023.04"
 ## iMX8QM MEK
 UBOOT_SIGN_ENABLE:sota:imx8qm-mek ?= "1"
 OSTREE_KERNEL_ARGS:imx8qm-mek ?= "pci=nomsi console=ttyLP0,115200 earlycon ${OSTREE_KERNEL_ARGS_COMMON}"

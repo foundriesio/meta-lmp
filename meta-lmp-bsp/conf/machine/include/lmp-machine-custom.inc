@@ -358,6 +358,7 @@ KERNEL_CLASSES:sota:mx8mm-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mm-nxp-bsp ?= "linux-lmp-fslc-imx"
 IMXBOOT_TARGETS:mx8mm-nxp-bsp = "flash_evk_spl"
+PREFERRED_VERSION_u-boot-fio:mx8mm-nxp-bsp ?= "imx-2023.04"
 ## LUKS
 OSTREE_SPLIT_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"

@@ -35,6 +35,7 @@ IMAGE_BOOT_FILES:remove:mx6ull-generic-bsp = "boot.scr uEnv.txt zImage"
 IMAGE_BOOT_FILES:append:mx6ull-generic-bsp = " boot.itb SPL u-boot.itb"
 KERNEL_IMAGETYPE:mx6ull-generic-bsp = "fitImage"
 KERNEL_CLASSES:mx6ull-generic-bsp = " kernel-lmp-fitimage "
+PREFERRED_VERSION_u-boot-fio-mfgtool:mx6ull-generic-bsp = "imx-2023.04"
 
 # iMX8MQ
 UBOOT_SIGN_ENABLE:mx8mq-generic-bsp = "1"

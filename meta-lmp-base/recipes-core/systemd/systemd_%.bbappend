@@ -46,16 +46,6 @@ PACKAGECONFIG ?= " \
     zstd \
 "
 
-PACKAGECONFIG[p11kit] = "-Dp11kit=true,-Dp11kit=false,p11-kit"
-PACKAGECONFIG[cryptsetup-plugins] = "-Dlibcryptsetup-plugins=true,-Dlibcryptsetup-plugins=false,cryptsetup,,cryptsetup"
-
-PACKAGE_BEFORE_PN += "${PN}-crypt"
-SUMMARY:${PN}-crypt = "Cryptographic tools and libraries for manipulating LUKS2 devices"
-FILES:${PN}-crypt = "${bindir}/systemd-cryptenroll \
-		     ${nonarch_libdir}/cryptsetup \
-		    "
-RRECOMMENDS:${PN} += "systemd-crypt"
-
 ALTERNATIVE_PRIORITY[resolv-conf] = "300"
 
 DEF_FALLBACK_NTP_SERVERS ?= "time1.google.com time2.google.com time3.google.com time.cloudflare.com pool.ntp.org"

@@ -418,6 +418,7 @@ OSTREE_KERNEL_ARGS:imx8mp-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 ear
 SOTA_CLIENT_FEATURES:append:imx8mp-lpddr4-evk = " ubootenv"
 UBOOT_MACHINE:imx8mp-lpddr4-evk = "imx8mp_evk_config"
 BOOTSCR_LOAD_ADDR:imx8mp-lpddr4-evk = "0x44800000"
+KERNEL_DEVICETREE:append:imx8mp-lpddr4-evk = " freescale/imx8mp-evk-revb4.dtb"
 ## iMX8MP EVK with secure boot support
 UBOOT_SIGN_ENABLE:sota:imx8mp-lpddr4-evk-sec ?= "1"
 SOTA_CLIENT_FEATURES:remove:sota:imx8mp-lpddr4-evk-sec = "ubootenv"

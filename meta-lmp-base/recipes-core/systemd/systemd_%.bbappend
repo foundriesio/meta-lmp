@@ -4,10 +4,10 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 ## NOTE: This list will have to be reviewed / updated on every systemd recipe update from OE-Core
 PACKAGECONFIG ?= " \
     ${@bb.utils.filter('DISTRO_FEATURES', 'acl audit efi ldconfig pam selinux smack usrmerge polkit seccomp', d)} \
+    ${@bb.utils.filter('MACHINE_FEATURES', 'tpm2', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'rfkill', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xkbcommon', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'efi', 'gnu-efi', '', d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'tpm2', 'tpm2', '', d)} \
     backlight \
     binfmt \
     cryptsetup \

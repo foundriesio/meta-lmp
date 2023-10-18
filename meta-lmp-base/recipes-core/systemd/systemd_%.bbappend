@@ -7,7 +7,6 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.filter('MACHINE_FEATURES', 'tpm2', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'rfkill', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xkbcommon', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'efi', 'gnu-efi', '', d)} \
     backlight \
     binfmt \
     cgroupv2 \

@@ -80,6 +80,7 @@ BUILD_OSTREE_TARBALL ?= "0"
 
 # LMP default classes and overwrites
 INHERIT += "lmp"
+INHERIT += "lmp-signing"
 INHERIT += "lmp-staging"
 INHERIT += "uninative"
 

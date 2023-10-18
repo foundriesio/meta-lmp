@@ -620,7 +620,7 @@ WKS_FILES:sota:versal = "sdimage-sota.wks"
 
 # TI Generic (BSP)
 UBOOT_SIGN_ENABLE:sota:k3 = "1"
-UBOOT_SIGN_KEYDIR:sota:k3 ?= "${TOPDIR}/conf/keys"
+UBOOT_SIGN_KEYDIR:k3 = "${TOPDIR}/conf/keys"
 FIT_HASH_ALG:sota:k3 ?= "sha256"
 FIT_SIGN_ALG:sota:k3 ?= "rsa2048"
 KERNEL_IMAGETYPE:sota:k3 = "fitImage"

@@ -188,7 +188,7 @@ IMAGE_BOOT_FILES:mx6ul-generic-bsp = " boot.scr uEnv.txt zImage ${@make_dtb_boot
 KERNEL_IMAGETYPE:sota:mx6ul-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx6ul-generic-bsp = " kernel-lmp-fitimage "
 WKS_FILE:mx6ul-generic-bsp:sota = "sdimage-imx6-spl-fit-sota.wks"
-PREFERRED_VERSION_u-boot-fio:mx6ul-generic-bsp ?= "imx-2023.04"
+PREFERRED_VERSION_u-boot-fio:mx6ul-nxp-bsp ?= "imx-2023.04"
 # iMX6UL EVK
 UBOOT_SIGN_ENABLE:sota:imx6ulevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ulevk = " ubootenv"
@@ -217,7 +217,7 @@ IMAGE_BOOT_FILES:mx6ull-generic-bsp = " boot.scr uEnv.txt zImage ${@make_dtb_boo
 KERNEL_IMAGETYPE:sota:mx6ull-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx6ull-generic-bsp = " kernel-lmp-fitimage "
 WKS_FILE:mx6ull-generic-bsp:sota = "sdimage-imx6-spl-fit-sota.wks"
-PREFERRED_VERSION_u-boot-fio:mx6ull-generic-bsp ?= "imx-2023.04"
+PREFERRED_VERSION_u-boot-fio:mx6ull-nxp-bsp ?= "imx-2023.04"
 # iMX6ULL EVK
 UBOOT_SIGN_ENABLE:sota:imx6ullevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ullevk = " ubootenv"
@@ -453,6 +453,7 @@ PREFERRED_PROVIDER_u-boot-default-script:mx8mn-generic-bsp = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:mx8mn-generic-bsp = "u-boot-ostree-scr-fit"
 KERNEL_IMAGETYPE:sota:mx8mn-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mn-generic-bsp = " kernel-lmp-fitimage "
+PREFERRED_VERSION_u-boot-fio:mx8mn-nxp-bsp ?= "imx-2023.04"
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mn-generic-bsp ?= "linux-lmp-fslc-imx"
 WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
@@ -467,7 +468,6 @@ MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-ddr4-evk = " bluetooth-attach"
 IMXBOOT_TARGETS:imx8mn-ddr4-evk ?= "flash_evk_spl_ddr4"
 ## iMX8MN DDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-ddr4-evk-sec = "ubootenv"
-PREFERRED_VERSION_u-boot-fio:imx8mn-ddr4-evk ?= "imx-2023.04"
 # iMX8MN LPDDR4 EVK
 UBOOT_SIGN_ENABLE:sota:imx8mn-lpddr4-evk ?= "1"
 KMACHINE:imx8mn-lpddr4-evk = "imx8mn-evk"
@@ -478,7 +478,6 @@ BOOTSCR_LOAD_ADDR:imx8mn-lpddr4-evk = "0x44800000"
 MACHINE_EXTRA_RRECOMMENDS:append:imx8mn-lpddr4-evk = " bluetooth-attach"
 IMXBOOT_TARGETS:imx8mn-lpddr4-evk ?= "flash_evk_spl"
 MACHINE_FEATURES:append:imx8mn-lpddr4-evk = " mxm-mwifiex-load"
-PREFERRED_VERSION_u-boot-fio:imx8mn-lpddr4-evk ?= "imx-2023.04"
 ## iMX8MN LPDDR4 EVK with secure boot support
 SOTA_CLIENT_FEATURES:remove:sota:imx8mn-lpddr4-evk-sec = "ubootenv"
 

@@ -37,6 +37,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     nss-altfiles \
     pam-plugin-mkhomedir \
     resize-helper \
+    luks-reencryption \
     mtd-utils \
     sudo \
     tzdata \

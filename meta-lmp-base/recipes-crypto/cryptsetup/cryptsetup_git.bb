@@ -22,7 +22,9 @@ LDFLAGS:append:libc-musl = " -largp"
 SRCREV = "3323690cbc5a18a1eadbc1fe1cb4ef5455c41ac0"
 PV = "2.7.0+git${SRCPV}"
 
-SRC_URI = "git://gitlab.com/cryptsetup/cryptsetup.git;protocol=https;branch=main"
+SRC_URI = "git://gitlab.com/cryptsetup/cryptsetup.git;protocol=https;branch=main \
+	file://0001-reencrypt-online-reencryption-with-TPM-PKCS11-tokens.patch \
+"
 
 S = "${WORKDIR}/git"
 

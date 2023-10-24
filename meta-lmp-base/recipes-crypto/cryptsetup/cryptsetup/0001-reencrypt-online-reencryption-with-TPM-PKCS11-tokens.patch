@@ -1,0 +1,276 @@
+From 45ee71b6955ac05bda470f004cdb1c1e06a551d2 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Mon, 23 Oct 2023 21:25:57 +0200
+Subject: [PATCH] reencrypt: online reencryption with TPM/PKCS11 tokens
+
+Whenever a TPM or PKCS11 key have been enrolled, they will be used for
+re-encryption without requiring a passphrase.
+
+Enable similar functionality for the repair action which might be needed
+if re-rencryption is interrupted.
+
+Upstream-Status: Inappropiate [LmP use case]
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ lib/Makemodule.am      |  2 ++
+ lib/keyslot_context.c  |  2 +-
+ lib/keyslot_context.h  |  6 +++++
+ lib/libcryptsetup.sym  |  1 +
+ lib/utils_passphrase.c | 55 ++++++++++++++++++++++++++++++++++++++++++
+ lib/utils_passphrase.h | 30 +++++++++++++++++++++++
+ src/cryptsetup.c       |  9 ++++++-
+ src/utils_reencrypt.c  | 38 +++++++++++++++++++++++++++--
+ 8 files changed, 139 insertions(+), 4 deletions(-)
+ create mode 100644 lib/utils_passphrase.c
+ create mode 100644 lib/utils_passphrase.h
+
+diff --git a/lib/Makemodule.am b/lib/Makemodule.am
+index ae5fab99..2de963a5 100644
+--- a/lib/Makemodule.am
++++ b/lib/Makemodule.am
+@@ -75,6 +75,8 @@ libcryptsetup_la_SOURCES = \
+ 	lib/tcrypt/tcrypt.c		\
+ 	lib/keyslot_context.h		\
+ 	lib/keyslot_context.c		\
++	lib/utils_passphrase.h		\
++	lib/utils_passphrase.c		\
+ 	lib/luks1/af.h			\
+ 	lib/luks1/af.c			\
+ 	lib/luks1/keyencryption.c	\
+diff --git a/lib/keyslot_context.c b/lib/keyslot_context.c
+index ab9d3dc2..9c9a263a 100644
+--- a/lib/keyslot_context.c
++++ b/lib/keyslot_context.c
+@@ -286,7 +286,7 @@ static int get_luks2_volume_key_by_token(struct crypt_device *cd,
+ 	return get_luks2_key_by_token(cd, kc, keyslot, CRYPT_DEFAULT_SEGMENT, r_vk);
+ }
+ 
+-static int get_passphrase_by_token(struct crypt_device *cd,
++int get_passphrase_by_token(struct crypt_device *cd,
+ 	struct crypt_keyslot_context *kc,
+ 	const char **r_passphrase,
+ 	size_t *r_passphrase_size)
+diff --git a/lib/keyslot_context.h b/lib/keyslot_context.h
+index 1e59eab2..6464ecbb 100644
+--- a/lib/keyslot_context.h
++++ b/lib/keyslot_context.h
+@@ -148,4 +148,10 @@ void crypt_keyslot_unlock_by_vk_in_keyring_internal(struct crypt_keyslot_context
+ 
+ const char *keyslot_context_type_string(const struct crypt_keyslot_context *kc);
+ 
++/* TPM2 re-rencrypt */
++int get_passphrase_by_token(struct crypt_device *cd,
++			    struct crypt_keyslot_context *kc,
++			    const char **r_passphrase,
++			    size_t *r_passphrase_size);
++
+ #endif /* KEYSLOT_CONTEXT_H */
+diff --git a/lib/libcryptsetup.sym b/lib/libcryptsetup.sym
+index 89d64680..7ae1862a 100644
+--- a/lib/libcryptsetup.sym
++++ b/lib/libcryptsetup.sym
+@@ -179,4 +179,5 @@ CRYPTSETUP_2.7 {
+ 		crypt_token_set_external_path;
+ 		crypt_set_keyring_to_link;
+ 		crypt_wipe_hw_opal;
++		crypt_get_passphrase_from_token;
+ } CRYPTSETUP_2.6;
+diff --git a/lib/utils_passphrase.c b/lib/utils_passphrase.c
+new file mode 100644
+index 00000000..9d682a32
+--- /dev/null
++++ b/lib/utils_passphrase.c
+@@ -0,0 +1,55 @@
++/*
++ * libcryptsetup - cryptsetup library
++ *
++ * Copyright (C) 2023 Foundries.IO Ltd.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#include <errno.h>
++#include <string.h>
++#include <stdio.h>
++#include "keyslot_context.h"
++
++int crypt_get_passphrase_from_token(struct crypt_device *cd,
++			     const char *token_type,
++			     char **passphrase, size_t *passphrase_size)
++{
++
++	struct crypt_keyslot_context kc = { };
++	char *password = NULL;
++	const char *p = NULL;
++	size_t plen = 0;
++	int r = 0;
++
++	crypt_keyslot_unlock_by_token_init_internal(&kc, -1, token_type,
++						    NULL, 0, NULL);
++	r = get_passphrase_by_token(cd, &kc, &p, &plen);
++	if (r >= 0) {
++		password = crypt_safe_alloc(plen);
++		if (!password)
++			r = -ENOMEM;
++		else
++			memcpy(password, p, plen);
++	}
++	crypt_keyslot_context_destroy_internal(&kc);
++
++	if (r >= 0) {
++		*passphrase = (char *)password;
++		*passphrase_size = plen;
++	}
++
++	return r;
++}
+\ No newline at end of file
+diff --git a/lib/utils_passphrase.h b/lib/utils_passphrase.h
+new file mode 100644
+index 00000000..c613da30
+--- /dev/null
++++ b/lib/utils_passphrase.h
+@@ -0,0 +1,30 @@
++/*
++ * utils - miscellaneous TPM2 utilities for cryptsetup
++ *
++  * Copyright (C) 2023 Foundries.IO Ltd.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#ifndef _CRYPTSETUP_UTILS_TPM2_H
++#define _CRYPTSETUP_UTILS_TPM2_H
++
++#include <stddef.h>
++
++int crypt_get_passphrase_from_token(struct crypt_device *cd,
++			     const char *type,
++			     char **passphrase, size_t *passphrase_size);
++
++#endif
+diff --git a/src/cryptsetup.c b/src/cryptsetup.c
+index cbe28a1d..1bc65414 100644
+--- a/src/cryptsetup.c
++++ b/src/cryptsetup.c
+@@ -26,6 +26,7 @@
+ #include "cryptsetup.h"
+ #include "cryptsetup_args.h"
+ #include "utils_luks.h"
++#include "utils_passphrase.h"
+ 
+ static char *keyfiles[MAX_KEYFILES];
+ static char *keyfile_stdin = NULL;
+@@ -1305,7 +1306,13 @@ static int luks2_reencrypt_repair(struct crypt_device *cd)
+ 	else
+ 		msg = _("Enter passphrase for reencryption recovery: ");
+ 
+-	r = tools_get_key(msg, &password, &passwordLen, ARG_UINT64(OPT_KEYFILE_OFFSET_ID),
++	r = crypt_get_passphrase_from_token(cd, "systemd-tpm2",
++					    &password, &passwordLen);
++	if (r < 0)
++		r = crypt_get_passphrase_from_token(cd, "systemd-pkcs11",
++						    &password, &passwordLen);
++	if (r < 0 )
++		r = tools_get_key(msg, &password, &passwordLen, ARG_UINT64(OPT_KEYFILE_OFFSET_ID),
+ 			  ARG_UINT32(OPT_KEYFILE_SIZE_ID), ARG_STR(OPT_KEY_FILE_ID), ARG_UINT32(OPT_TIMEOUT_ID),
+ 			  verify_passphrase(0), 0, cd);
+ 	if (r < 0)
+diff --git a/src/utils_reencrypt.c b/src/utils_reencrypt.c
+index fdaac1ab..7f521e44 100644
+--- a/src/utils_reencrypt.c
++++ b/src/utils_reencrypt.c
+@@ -25,6 +25,7 @@
+ #include "cryptsetup.h"
+ #include "cryptsetup_args.h"
+ #include "utils_luks.h"
++#include "utils_passphrase.h"
+ 
+ extern int64_t data_shift;
+ extern const char *device_type;
+@@ -317,7 +318,14 @@ static int reencrypt_luks2_load(struct crypt_device *cd, const char *data_device
+ 			goto out;
+ 	}
+ 
+-	r = tools_get_key(NULL, &password, &passwordLen,
++	/* Check if there was an enrolled TPM or PKCS11 token */
++	r = crypt_get_passphrase_from_token(cd, "systemd-tpm2",
++					    &password, &passwordLen);
++	if (r < 0)
++		r = crypt_get_passphrase_from_token(cd, "systemd-pkcs11",
++					    &password, &passwordLen);
++	if (r < 0)
++		r = tools_get_key(NULL, &password, &passwordLen,
+ 			ARG_UINT64(OPT_KEYFILE_OFFSET_ID), ARG_UINT32(OPT_KEYFILE_SIZE_ID),
+ 			ARG_STR(OPT_KEY_FILE_ID), ARG_UINT32(OPT_TIMEOUT_ID),
+ 			verify_passphrase(0), 0, cd);
+@@ -951,6 +959,32 @@ static int init_passphrase(struct keyslot_passwords *kp, size_t keyslot_password
+ 			return -ENOENT;
+ 	}
+ 
++	/* Check if there was an enrolled TPM or PKCS#11 token */
++	r = crypt_get_passphrase_from_token(cd, "systemd-tpm2",
++					    &password, &passwordLen);
++	if (r < 0)
++		r = crypt_get_passphrase_from_token(cd, "systemd-pkcs11",
++					    &password, &passwordLen);
++	if (r >= 0) {
++		r = crypt_activate_by_passphrase(cd, NULL, -1,
++						 password, passwordLen, 0);
++		if (r < 0) {
++			crypt_safe_free(password);
++			password = NULL;
++			passwordLen = 0;
++		}
++		if (r >= 0) {
++			tools_keyslot_msg(r, UNLOCKED);
++			if ((size_t)r >= keyslot_passwords_length) {
++				crypt_safe_free(password);
++				return -EINVAL;
++			}
++			kp[r].password = password;
++			kp[r].passwordLen = passwordLen;
++			goto out;
++		}
++	}
++
+ 	retry_count = set_tries_tty();
+ 
+ 	while (retry_count--) {
+@@ -987,7 +1021,7 @@ static int init_passphrase(struct keyslot_passwords *kp, size_t keyslot_password
+ 		}
+ 		tools_passphrase_msg(r);
+ 	}
+-
++out:
+ 	password = NULL;
+ 	passwordLen = 0;
+ 
+-- 
+2.34.1
+

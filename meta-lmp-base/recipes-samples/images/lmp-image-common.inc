@@ -38,6 +38,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     nss-altfiles \
     pam-plugin-mkhomedir \
     resize-helper \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'luks', 'luks-reencryption', '', d)} \
     mtd-utils \
     sudo \
     tzdata \

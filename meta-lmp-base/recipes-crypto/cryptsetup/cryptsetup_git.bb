@@ -19,10 +19,12 @@ DEPENDS = " \
 DEPENDS:append:libc-musl = " argp-standalone"
 LDFLAGS:append:libc-musl = " -largp"
 
-SRCREV = "3e4c69a01709d35322ffa17c5360608907a207d7"
+SRCREV = "593f22a9a86ce973c631347e213859ec80950b9f"
 PV = "2.5.0+git${SRCPV}"
 
-SRC_URI = "git://gitlab.com/cryptsetup/cryptsetup.git;protocol=https;branch=main"
+SRC_URI = "git://gitlab.com/cryptsetup/cryptsetup.git;protocol=https;branch=main \
+	file://0001-online-reencryption-with-TPM.patch \
+"
 
 S = "${WORKDIR}/git"
 

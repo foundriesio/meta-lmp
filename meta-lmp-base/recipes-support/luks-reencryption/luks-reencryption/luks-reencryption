@@ -1,0 +1,23 @@
+#!/bin/sh
+# Copyright (C) 2023 Foundries.IO
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Exit on error
+set -e
+
+[ $(whoami) = "root" ] || { echo "E: You must be root" && exit 1; }
+
+DEVICE=$(lsblk -f | awk '/crypto_LUKS/ {print $1}' | awk '{sub(/^[^a-zA-Z]*/, ""); print}')
+DEVICE="/dev/${DEVICE}"
+
+# Avoid using the PIN for OP-TEE supported PKCS#11 user authentication
+export CKTEEC_LOGIN_TYPE=user
+
+if cryptsetup luksDump ${DEVICE} | grep -q "online-reencrypt"; then
+	# Preemptively check if the volume needs to be repaired
+	yes "YES" | cryptsetup -v repair ${DEVICE}
+	# Resume reencryption
+	if ! cryptsetup reencrypt --resume-only ${DEVICE}; then
+		exit 1
+	fi
+fi

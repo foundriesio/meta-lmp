@@ -1,0 +1,12 @@
+[Unit]
+Description=Online LUKS2 disk re-encryption
+Wants=systemd-udevd.service systemd-udev-trigger.service
+After=systemd-remount-fs.service systemd-udevd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/luks-reencryption
+ExecStartPost=/bin/systemctl disable luks-reencryption.service
+
+[Install]
+WantedBy=basic.target

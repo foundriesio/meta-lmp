@@ -1,7 +1,7 @@
 [Unit]
 Description=Resize root filesystem to fit available disk space
 Wants=systemd-udevd.service systemd-udev-trigger.service
-After=systemd-remount-fs.service systemd-udevd.service
+After=systemd-remount-fs.service systemd-udevd.service luks-reencryption.service
 
 [Service]
 Type=oneshot

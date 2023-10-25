@@ -1,8 +1,16 @@
 # Copyright (C) 2022 Fondries.IO
 # SPDX-License-Identifier: MIT
 
+MODULE=/usr/lib/libckteec.so.0
+
 cryptfs_check_pkcs11() {
 	[ ! -c /dev/tee0 ] && fatal "Linux OP-TEE device node not found"
+}
+
+cryptfs_check_token_pkcs11() {
+	if ! pkcs11-tool --module $MODULE --token-label lmp --list-objects | grep -q "9d"; then
+		fatal "PKCS11 certificate not found!"
+	fi
 }
 
 cryptfs_pre_pkcs11() {
@@ -20,7 +28,6 @@ cryptfs_post_pkcs11() {
 cryptfs_enroll_pkcs11() {
 	root_dev=$1
 
-	MODULE=/usr/lib/libckteec.so.0
 	# We force usage of the second slot (1) to avoid clashes with lmp-device-register
 	pkcs11-tool --module $MODULE --init-token --slot 1 --label lmp --so-pin ""
 	pkcs11-tool --module $MODULE --token-label lmp --init-pin --so-pin foo --pin user:ef0180a3-13f3-5d1c-b7f5-888c0e21059a

@@ -8,7 +8,7 @@ DEPENDS = "optee-client optee-os-tadevkit"
 require optee-fio.inc
 
 SRC_URI = "git://github.com/foundriesio/optee-fiovb.git;protocol=https;branch=master"
-SRCREV = "8e898d1fe64d8d325470e548f6b7e33519c9f76b"
+SRCREV = "2c20a4af345a9dc1dcb4bb61e405301a9053065b"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

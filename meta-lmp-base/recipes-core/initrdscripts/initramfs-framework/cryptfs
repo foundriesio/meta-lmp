@@ -109,31 +109,52 @@ cryptfs_run() {
 		fi
 	fi
 
-	# Check if online encryption without enrolled keys is still in progress
+	# If online encryption is in progress
+	#     - repair the volume if required
+	#     - block the boot sequence until the re-encryption is done
 	if cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
-		if ! cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
+			# Opening at this point is not a valid operation
 			msg "${root_dev} encryption not yet finalized, running recovery"
-			# Run recovery process and wait until fully completed (encryption)
-			cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name}
-			cat /run/cryptsetup/passphrase | cryptsetup -v reencrypt --resume-only ${root_dev}
+
+			# Check for corruption and repair if required
+			yes "YES" | cryptsetup -v repair ${root_dev}
+
+			# Resume re-encryption
+			cryptsetup -v reencrypt --resume-only ${root_dev}
+
+			# Re-encryption complete
+			if cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
+				fatal "Unable complete unline reencryption"
+			fi
 			cryptsetup close ${luks_name}
-		fi
 	fi
 
-	! cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name} &&
-		fatal "Unable to open the LUKS partition ${root_dev}, invalid passphrase / ${luks_token} token"
+	if ! cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
+		msg "TPM not enrolled for ${root_dev}"
+		! cat /run/cryptsetup/passphrase | cryptsetup luksOpen ${root_dev} ${luks_name} &&
+			fatal "Unable to open the LUKS partition ${root_dev}, invalid passphrase"
+	else
+		msg "TPM enrolled for ${root_dev}"
+		! cryptsetup luksOpen ${root_dev} ${luks_name} &&
+			fatal "Unable to open the LUKS partition ${root_dev}, invalid ${luks_token} token"
+	fi
 
 	e2fsck_check /dev/mapper/${luks_name}
 
+	# If TPM is not enrolled
 	if ! cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
 		msg "Enrolling LUKS2 keyslot based on ${luks_token} token"
 		cryptfs_enroll_${luks_token} ${root_dev}
 	fi
 
-	if ! cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
+	# If TPM is enrolled
+	if cryptsetup luksDump ${root_dev} | grep -q "systemd-${luks_token}"; then
 		# CI encrypted uses keyslot 31 by default, forcing enrolled key to be 0
 		if cryptsetup luksDump ${root_dev} | grep -q "0: luks"; then
 			cryptsetup reencrypt --init-only ${root_dev}
+			if ! cryptsetup luksDump ${root_dev} | grep -q "online-reencrypt"; then
+				fatal "Unable to start online reencryption"
+			fi
 		fi
 	fi
 

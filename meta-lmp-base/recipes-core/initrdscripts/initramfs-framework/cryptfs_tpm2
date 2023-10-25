@@ -17,6 +17,10 @@ cryptfs_check_tpm2() {
 		fatal "Make sure a valid TPM 2.0 device is available, aborting."
 }
 
+cryptfs_check_token_tpm2() {
+	:
+}
+
 cryptfs_pre_tpm2() {
 	:
 }

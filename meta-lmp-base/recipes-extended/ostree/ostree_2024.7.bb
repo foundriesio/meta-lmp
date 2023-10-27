@@ -26,7 +26,7 @@ SRC_URI[sha256sum] = "72451efffe5a10acb4cfdd6eb849db97fa9e61a81e4113fc656eece77e
 
 S = "${WORKDIR}/libostree-${PV}"
 
-inherit autotools bash-completion gobject-introspection github-releases gtk-doc manpages pkgconfig ptest-gnome systemd
+inherit autotools bash-completion gobject-introspection gtk-doc manpages pkgconfig ptest-gnome systemd
 
 UNKNOWN_CONFIGURE_OPT_IGNORE += "--disable-introspection --enable-introspection"
 

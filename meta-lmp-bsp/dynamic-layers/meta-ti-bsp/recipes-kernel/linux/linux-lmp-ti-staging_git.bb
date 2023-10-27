@@ -1,6 +1,5 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-require recipes-kernel/linux/kernel-rdepends.inc
 include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 
 LINUX_VERSION ?= "6.1.33"

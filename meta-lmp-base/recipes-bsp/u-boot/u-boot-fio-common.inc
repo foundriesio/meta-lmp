@@ -17,8 +17,8 @@ SRC_URI = "${UBOOT_REPO};protocol=https;branch=${SRCBRANCH} \
 # Handle lmp / lmp-mfgtool distro configs set
 SRC_URI:append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr-common.cfg', 'file://lmp-common.cfg', d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
     ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', '', 'file://lmp-common-nosec.cfg', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr.cfg', 'file://lmp.cfg', d)} \
 "
 
 # LMP base requires different u-boot configuration fragments

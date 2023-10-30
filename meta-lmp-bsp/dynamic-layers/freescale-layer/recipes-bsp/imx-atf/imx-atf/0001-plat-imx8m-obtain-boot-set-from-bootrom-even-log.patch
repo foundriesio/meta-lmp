@@ -1,0 +1,114 @@
+From 58cd2feeb07e496c7884f6655f258eca2a25b7ff Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Fri, 18 Mar 2022 14:52:22 -0300
+Subject: [PATCH] feat(plat/imx8m): obtain boot image set for imx8mn/mp
+
+In i.MX8MM/MQ it is possible to have two copies of bootloader in
+SD/eMMC and switch between them. The switch is triggered either
+by the BootROM in case the bootloader image is faulty OR can be
+enforced by the user, and there is API introduced in
+9ce232fe ("feat(plat/imx8m): add SiP call for secondary boot"),
+which leverages this SoC feature.
+
+However neither i.MX8MP nor i.MX8MN don't have a dedicated bit
+which indicates what boot image set is currently booted.
+According to AN12853 [1] "i.MX ROMs Log Events", it is
+possible to determine whether fallback event occurred
+by parsing the BootROM event log. In case ROM event ID 0x51 is
+present,fallback event did occur and secondary boot image was booted.
+
+Knowing which boot image was booted might be useful for reliable
+bootloader A/B updates, detecting fallback event might be used for
+making decision if boot firmware rollback is required.
+
+This patche introduces implementation, that replicates the same
+imx_src_handler() behaviour as on i.MX8MM/MQ SoCs.
+
+The code is based on original U-Boot implementation [2].
+
+[1]: https://www.nxp.com/webapp/Download?colCode=AN12853
+[2]: https://github.com/u-boot/u-boot/commit/a5ee05cf7180b411ffdf148ca8cb220c029f2e19
+
+Upstream-Status: Submitted [https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/24403]
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+
+---
+ plat/imx/imx8m/gpc_common.c | 55 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/plat/imx/imx8m/gpc_common.c b/plat/imx/imx8m/gpc_common.c
+index 9e057b7df..e9e4e57c6 100644
+--- a/plat/imx/imx8m/gpc_common.c
++++ b/plat/imx/imx8m/gpc_common.c
+@@ -362,6 +362,55 @@ int imx_gpc_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2, u_regist
+ #define MCU_RDC_MAGIC "mcu_rdc"
+ #endif
+ 
++static bool is_secondary_boot(void)
++{
++	uint32_t *rom_log_addr = (uint32_t *)0x9e0;
++	bool is_secondary = false;
++	uint32_t *rom_log;
++	uint8_t event_id;
++
++	/* If the ROM event log pointer is not valid. */
++	if (*rom_log_addr < 0x900000 || *rom_log_addr >= 0xb00000 ||
++	    *rom_log_addr & 0x3)
++		return false;
++
++	/* Parse the ROM event ID version 2 log */
++	rom_log = (uint32_t *)(uintptr_t)(*rom_log_addr);
++	for (size_t i = 0; i < 128; i++) {
++		event_id = rom_log[i] >> 24;
++		switch (event_id) {
++		case 0x00: /* End of list */
++			return is_secondary;
++		/* Log entries with 1 parameter, skip 1 */
++		case 0x80: /* Start to perform the device initialization */
++		case 0x81: /* The boot device initialization completes */
++		case 0x82: /* Start to execute boot device driver pre-config */
++		case 0x8f: /* The boot device initialization fails */
++		case 0x90: /* Start to read data from boot device */
++		case 0x91: /* Reading data from boot device completes */
++		case 0x9f: /* Reading data from boot device fails */
++			i += 1;
++			continue;
++		/* Log entries with 2 parameters, skip 2 */
++		case 0xa0: /* Image authentication result */
++		case 0xc0: /* Jump to the boot image soon */
++
++			i += 2;
++			continue;
++		/* Boot from the primary boot image */
++		case 0x50:
++			is_secondary = false;
++			continue;
++		/* Boot from the secondary boot image */
++		case 0x51:
++			is_secondary = true;
++			continue;
++		}
++	}
++
++	return is_secondary;
++}
++
+ #pragma weak imx_src_handler
+ /* imx8mq/imx8mm need to verrride below function */
+ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
+@@ -436,6 +485,12 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
+ 		SMC_SET_GP(handle, CTX_GPREG_X1, ret1);
+ 		SMC_SET_GP(handle, CTX_GPREG_X2, ret2);
+ 		break;
++#if defined(PLAT_imx8mp) || defined(PLAT_imx8mn)
++	case IMX_SIP_SRC_SET_SECONDARY_BOOT:
++		break;
++	case IMX_SIP_SRC_IS_SECONDARY_BOOT:
++		return is_secondary_boot();
++#endif
+ 	default:
+ 		return SMC_UNK;
+ 
+-- 
+2.34.1
+

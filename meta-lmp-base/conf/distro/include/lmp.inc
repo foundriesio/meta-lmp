@@ -120,7 +120,7 @@ BBMASK += " \
 # meta-st-stm32mp: mask recipes and appends that are not required by lmp
 BBMASK += " \
     /meta-st-stm32mp/recipes-core/busybox/busybox_%.bbappend \
-    /meta-st-stm32mp/recipes-devtools/gcc/gcc-source_12.2.bbappend \
+    /meta-st-stm32mp/recipes-devtools/gcc/gcc-source_12.3.bbappend \
     /meta-st-stm32mp/recipes-graphics/drm/libdrm_2.4.115.bbappend \
     /meta-st-stm32mp/recipes-bsp/trusted-firmware-a/tf-a-stm32mp_2.6.bb \
 "

@@ -160,6 +160,7 @@ TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
 
 # imx targets (not reproducible)
 TOOLCHAIN:pn-imx-atf = "gcc"
+TOOLCHAIN:pn-qoriq-atf = "gcc"
 
 # kv260
 # vck190-versal

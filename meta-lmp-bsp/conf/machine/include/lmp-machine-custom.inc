@@ -758,6 +758,7 @@ LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx = " boot.itb"
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"
 
 # Nvidia Tegra
+EXTRA_IMAGEDEPENDS:append:tegra = " virtual/secure-os virtual/bootloader"
 DISTRO_FEATURES:append:tegra = " opengl"
 DISTRO_FEATURES_DEFAULT:remove:tegra = "modsign"
 PREFERRED_PROVIDER_virtual/kernel:tegra ?= "linux-tegra"

@@ -34,7 +34,5 @@ setenv update_primary_image2 'if test "${ostree_deploy_usr}" = "1"; then setenv 
 
 setenv update_primary_image 'run update_primary_image1; run update_primary_image2'
 
-setenv check_secondary_boot 'setenv fiovb.is_secondary_boot "0"'
-
 @@INCLUDE_COMMON_IMX@@
 @@INCLUDE_COMMON_ALTERNATIVE@@

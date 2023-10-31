@@ -702,6 +702,7 @@ KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE} ${@bb.utils.contains('MACHINE_F
 PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
 WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "1"
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:k3 = "kernel-image-image"
 
 # TI AM62x
 MACHINE_FEATURES:append:am62xx = " optee"
@@ -727,7 +728,6 @@ KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATU
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
 KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-sk-csi2-ov5640.dtbo ti/k3-am625-sk-csi2-tevi-ov5640.dtbo"
 MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
-MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:beagleplay = "kernel-image-image"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx = " optee"

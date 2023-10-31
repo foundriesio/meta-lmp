@@ -3,7 +3,9 @@ FIO_PUSH_CMD ?= "fiopush"
 FIO_CHECK_CMD ?= "fiocheck"
 SOTA_TUF_ROOT_DIR ?= "usr/lib/sota/tuf"
 
-IMAGE_FSTYPES += "${@bb.utils.contains('EFI_PROVIDER', 'systemd-boot', 'ota-esp', ' ', d)}"
+IMAGE_FSTYPES_OTA ?= ""
+IMAGE_FSTYPES_OTA:sota = "${@bb.utils.contains('EFI_PROVIDER', 'systemd-boot', 'ota-esp', '', d)}"
+IMAGE_FSTYPES += "${IMAGE_FSTYPES_OTA}"
 
 # Provided by meta-lmp-bsp or any other compatible BSP layer
 include conf/machine/include/lmp-machine-custom.inc

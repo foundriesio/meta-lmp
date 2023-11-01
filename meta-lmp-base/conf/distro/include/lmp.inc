@@ -113,6 +113,7 @@ BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-virtualization/dynamic-layers/xilinx/recipes-extended/xen/xen_4.14.bbappend \
     /meta-security/meta-integrity/recipes-core/systemd/systemd_%.bbappend \
+    /meta-st-stm32mp/recipes-st/images/st-image-bootfs-efi.bb \
 "
 
 # meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp

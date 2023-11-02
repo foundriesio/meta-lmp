@@ -13,11 +13,25 @@ DEVICE="/dev/${DEVICE}"
 # Avoid using the PIN for OP-TEE supported PKCS#11 user authentication
 export CKTEEC_LOGIN_TYPE=user
 
+# Back up the LUKS header (name must match the one in initramfs)
+LUKS_HEADER_BACKUP=luks.bin
+
 if cryptsetup luksDump ${DEVICE} | grep -q "online-reencrypt"; then
 	# Preemptively check if the volume needs to be repaired
 	yes "YES" | cryptsetup -v repair ${DEVICE}
 	# Resume reencryption
 	if ! cryptsetup reencrypt --resume-only ${DEVICE}; then
 		exit 1
+	fi
+
+	# Backup header file
+	if ! cryptsetup luksHeaderBackup ${DEVICE} --header-backup-file /boot/${LUKS_HEADER_BACKUP}; then
+		echo "WARNING: failed to create the LUKS backup header"
+	fi
+else
+	if [ ! -e /boot/${LUKS_HEADER_BACKUP} ]; then
+		if ! cryptsetup luksHeaderBackup ${DEVICE} --header-backup-file /boot/${LUKS_HEADER_BACKUP}; then
+			echo "WARNING: failed to create the LUKS backup header"
+		fi
 	fi
 fi

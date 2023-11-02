@@ -15,9 +15,9 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 STM32_BOOTIMAGE_SUFFIX ??= ""
 
-LMP_FLASHLAYOUT_TEMPLATE ??= "FlashLayout_stm32mp1-usb.tsv.in"
+LMP_MFGTOOL_FLASHLAYOUT_TEMPLATE ??= "FlashLayout_stm32mp1-usb.tsv.in"
 SRC_URI = " \
-    file://${LMP_FLASHLAYOUT_TEMPLATE} \
+    file://${LMP_MFGTOOL_FLASHLAYOUT_TEMPLATE} \
     file://provision.sh.in \
 "
 
@@ -31,10 +31,10 @@ do_compile() {
         -e 's/@@BOARD_OFFSET_FIP@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FIP}/' \
         -e 's/@@BOARD_OFFSET_ROOT@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_ROOT}/' \
         -e "s/@@STM32_BOOTIMAGE_SUFFIX@@/${STM32_BOOTIMAGE_SUFFIX}/" \
-        ${WORKDIR}/${LMP_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_FLASHLAYOUT}
+        ${WORKDIR}/${LMP_MFGTOOL_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_MFGTOOL_FLASHLAYOUT}
     sed -e 's/@@MACHINE@@/${MACHINE}/' \
         -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \
-        -e 's/@@FLASHLAYOUT_USB@@/${LMP_FLASHLAYOUT}/' \
+        -e 's/@@FLASHLAYOUT_USB@@/${LMP_MFGTOOL_FLASHLAYOUT}/' \
         ${WORKDIR}/provision.sh.in > ${WORKDIR}/provision.sh
 }
 

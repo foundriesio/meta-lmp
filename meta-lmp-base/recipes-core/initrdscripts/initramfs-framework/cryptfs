@@ -4,6 +4,9 @@
 #
 # Encrypt (reencrypt) root device with LUKS2
 
+# This name must match the name in the luks-reencryption service
+LUKS_HEADER_BACKUP=luks.bin
+
 cryptfs_enabled() {
 	return 0
 }
@@ -27,6 +30,59 @@ cryptfs_gen_passphrase() {
 	# Static as at this point we just need a key for encrypting and later enrolling a new keyslot
 	mkdir -p /run/cryptsetup
 	echo -n "fiopassphrase" > /run/cryptsetup/passphrase
+}
+
+cryptfs_backup_luks_header() {
+	root_dev=$1
+	boot_dev=`readlink -f /dev/disk/by-label/boot`
+
+	if [ ! -e ${boot_dev} ]; then
+		msg "WARNING: Backup drive for LUKS header not present!"
+		return
+	fi
+
+	space=$(df -P ${boot_dev} | awk 'NR==2 {print $4}')
+	if [ "space" -lt "16777216" ]; then
+		msg "WARNING: Not enough backup storage for the LUKS header!"
+		return
+	fi
+
+	mount ${boot_dev} ${ROOTFS_DIR}
+	if [ -e ${ROOTFS_DIR}/${LUKS_HEADER_BACKUP} ]; then
+		rm ${ROOTFS_DIR}/${LUKS_HEADER_BACKUP}
+	fi
+
+	if ! cryptsetup luksHeaderBackup ${root_dev} --header-backup-file ${ROOTFS_DIR}/${LUKS_HEADER_BACKUP} ; then
+		msg "WARNING: can't create LUKS backup header!"
+		umount ${ROOTFS_DIR}
+		return
+	fi
+
+	umount ${ROOTFS_DIR}
+	return
+}
+
+cryptfs_restore_luks_header() {
+	root_dev=$1
+	boot_dev=`readlink -f /dev/disk/by-label/boot`
+
+	if [ ! -e ${boot_dev} ]; then
+		msg "Backup drive for LUKS header not present"
+		return
+	fi
+
+	mount ${boot_dev} ${ROOTFS_DIR}
+	if [ ! -e ${ROOTFS_DIR}/${LUKS_HEADER_BACKUP} ]; then
+		msg "No LUKS backup header"
+		umount ${ROOTFS_DIR}
+		return
+	fi
+
+	msg "Restoring the LUKS header from storage"
+	yes "YES" | cryptsetup -v luksHeaderRestore ${root_dev} --header-backup-file ${ROOTFS_DIR}/${LUKS_HEADER_BACKUP}
+
+	umount ${ROOTFS_DIR}
+	return
 }
 
 cryptfs_run() {
@@ -123,6 +179,8 @@ cryptfs_run() {
 			yes "YES" | cryptsetup -v repair ${root_dev}
 			! cryptsetup -v reencrypt --resume-only ${root_dev} &&
 				fatal "Unable complete inline re-encryption"
+			# Create the LUKS header backup copy
+			cryptfs_backup_luks_header ${root_dev}
 		fi
 	fi
 
@@ -133,8 +191,13 @@ cryptfs_run() {
 	else
 		msg "${luks_token} enrolled for ${root_dev}"
 		cryptfs_check_token_${luks_token}
-		! cryptsetup luksOpen ${root_dev} ${luks_name} &&
-			fatal "Unable to open the LUKS partition ${root_dev}"
+
+		# If we cant open the LUKS device try restoring the backup header
+		if ! cryptsetup luksOpen ${root_dev} ${luks_name} ; then
+			cryptfs_restore_luks_header ${root_dev}
+			! cryptsetup luksOpen ${root_dev} ${luks_name} &&
+				fatal "Unable to open the LUKS partition ${root_dev}"
+		fi
 	fi
 
 	e2fsck_check /dev/mapper/${luks_name}

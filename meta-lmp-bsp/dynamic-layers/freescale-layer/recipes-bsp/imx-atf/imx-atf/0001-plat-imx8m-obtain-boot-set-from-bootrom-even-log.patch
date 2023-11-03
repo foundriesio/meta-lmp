@@ -1,4 +1,4 @@
-From 58cd2feeb07e496c7884f6655f258eca2a25b7ff Mon Sep 17 00:00:00 2001
+From a054eb4c8cf1e3f8ec26988be411f1584735365e Mon Sep 17 00:00:00 2001
 From: Igor Opaniuk <igor.opaniuk@foundries.io>
 Date: Fri, 18 Mar 2022 14:52:22 -0300
 Subject: [PATCH] feat(plat/imx8m): obtain boot image set for imx8mn/mp
@@ -33,17 +33,18 @@ Upstream-Status: Submitted [https://review.trustedfirmware.org/c/TF-A/trusted-fi
 Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
 
 ---
- plat/imx/imx8m/gpc_common.c | 55 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ plat/imx/imx8m/gpc_common.c | 57 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
 diff --git a/plat/imx/imx8m/gpc_common.c b/plat/imx/imx8m/gpc_common.c
-index 9e057b7df..e9e4e57c6 100644
+index 9e057b7df..b46ae9d90 100644
 --- a/plat/imx/imx8m/gpc_common.c
 +++ b/plat/imx/imx8m/gpc_common.c
-@@ -362,6 +362,55 @@ int imx_gpc_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2, u_regist
+@@ -362,6 +362,57 @@ int imx_gpc_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2, u_regist
  #define MCU_RDC_MAGIC "mcu_rdc"
  #endif
  
++#if defined(PLAT_imx8mp) || defined(PLAT_imx8mn)
 +static bool is_secondary_boot(void)
 +{
 +	uint32_t *rom_log_addr = (uint32_t *)0x9e0;
@@ -92,11 +93,12 @@ index 9e057b7df..e9e4e57c6 100644
 +
 +	return is_secondary;
 +}
++#endif
 +
  #pragma weak imx_src_handler
  /* imx8mq/imx8mm need to verrride below function */
  int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
-@@ -436,6 +485,12 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
+@@ -436,6 +487,12 @@ int imx_src_handler(uint32_t smc_fid, u_register_t x1, u_register_t x2,
  		SMC_SET_GP(handle, CTX_GPREG_X1, ret1);
  		SMC_SET_GP(handle, CTX_GPREG_X2, ret2);
  		break;

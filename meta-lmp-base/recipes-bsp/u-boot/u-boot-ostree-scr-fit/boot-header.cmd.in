@@ -86,6 +86,20 @@ else
 	setenv fiovb.debug "${debug}"
 fi
 
+# Add a line that force enables rollback protection if
+# LMP_ROLLBACK_PROTECTION_ENABLE flag was set.
+setenv rollback_force_protection_enable "@@LMP_ROLLBACK_PROTECTION_ENABLE@@"
+
+if test "${rollback_force_protection_enable}" = "1" && test "${fiovb.rollback_protection}" = "0"; then
+	setenv fiovb.rollback_protection "1"
+	# we also enable it in ubootenv/fiovb, so userland knows it's enabled
+	if test -n "${fiovb_rpmb}"; then
+		fiovb write_pvalue rollback_protection 1;
+	else
+		setenv rollback_protection 1;
+	fi
+fi
+
 if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} ################ Debug info ###############"
 	echo "${fio_msg} State machine variables:"

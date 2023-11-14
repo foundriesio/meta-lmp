@@ -38,6 +38,7 @@ def lmp_sstate_checkhashes(sq_data, d, **kwargs):
     if 'summary' not in kwargs or kwargs.get('summary'):
         mirrors = d.getVar("SSTATE_MIRRORS")
         if mirrors:
+            mirrors = " ".join(mirrors.split())
             bb.plain("SState mirrors: %s" % mirrors)
     return sstate_checkhashes(sq_data, d, **kwargs)
 

@@ -86,9 +86,9 @@ do_deploy() {
     ln -sf optee/tee-pager_v2.bin ${DEPLOYDIR}/tee.bin
 
     # Deploy optee_os config used during build
-    install -D -m 644 ${B}/conf.mk ${DEPLOYDIR}/${PN}-config-${MACHINE}-${PV}-${PR}
-    ln -sf ${PN}-config-${MACHINE}-${PV}-${PR} ${DEPLOYDIR}/${PN}-config-${MACHINE}
-    ln -sf ${PN}-config-${MACHINE}-${PV}-${PR} ${DEPLOYDIR}/${PN}-config
+    install -D -m 644 ${B}/conf.mk ${DEPLOYDIR}/${PN}-config-${MACHINE}-${PV}
+    ln -sf ${PN}-config-${MACHINE}-${PV} ${DEPLOYDIR}/${PN}-config-${MACHINE}
+    ln -sf ${PN}-config-${MACHINE}-${PV} ${DEPLOYDIR}/${PN}-config
 }
 
 addtask deploy before do_build after do_install

@@ -44,11 +44,15 @@ copy_uboot_spl() {
                                                          ${BOOT_STAGING}/u-boot-spl-nodtb.bin
     cp ${DEPLOY_DIR_IMAGE}/u-boot-spl.bin-${MACHINE}.dtb ${BOOT_STAGING}/u-boot-spl.dtb
 }
+SIGNED_IMX8M_FW = "signed_hdmi_imx8m.bin signed_dp_imx8m.bin"
 do_compile:prepend:mx8-nxp-bsp() {
     copy_uboot_spl
-    if [ -e "${DEPLOY_DIR_IMAGE}/signed_hdmi_imx8m.bin" ]; then
-        cp ${DEPLOY_DIR_IMAGE}/signed_hdmi_imx8m.bin ${BOOT_STAGING}/signed_hdmi_imx8m.bin
-    fi
+
+    for signedfw in ${SIGNED_IMX8M_FW}; do
+        if [ -e "${DEPLOY_DIR_IMAGE}/${signedfw}" ]; then
+            cp ${DEPLOY_DIR_IMAGE}/${signedfw} ${BOOT_STAGING}/${signedfw}
+        fi
+    done
 }
 do_compile:prepend:mx93-nxp-bsp() {
     copy_uboot_spl

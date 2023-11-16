@@ -11,13 +11,13 @@ UBOOT_SPL_SIGN_KEYNAME ??= "${UBOOT_SIGN_KEYNAME}"
 UBOOT_SPL_SIGN_KEYDIR ??= "${UBOOT_SIGN_KEYDIR}"
 
 # Default value for deployment filenames
-UBOOT_SPL_DTB_IMAGE ?= "${SPL_BINARYNAME}-${MACHINE}-${PV}-${PR}.dtb"
+UBOOT_SPL_DTB_IMAGE ?= "${SPL_BINARYNAME}-${MACHINE}-${PV}.dtb"
 UBOOT_SPL_DTB_BINARY ?= "${SPL_BINARYNAME}.dtb"
 UBOOT_SPL_DTB_SYMLINK ?= "${SPL_BINARYNAME}-${MACHINE}.dtb"
-UBOOT_ITB_IMAGE ?= "u-boot-${MACHINE}-${PV}-${PR}.itb"
+UBOOT_ITB_IMAGE ?= "u-boot-${MACHINE}-${PV}.itb"
 UBOOT_ITB_BINARY ?= "u-boot.itb"
 UBOOT_ITB_SYMLINK ?= "u-boot-${MACHINE}.itb"
-UBOOT_ITS_IMAGE ?= "u-boot-${MACHINE}-${PV}-${PR}.its"
+UBOOT_ITS_IMAGE ?= "u-boot-${MACHINE}-${PV}.its"
 UBOOT_ITS_BINARY ?= "u-boot.its"
 UBOOT_ITS_SYMLINK ?= "u-boot-${MACHINE}.its"
 
@@ -307,25 +307,25 @@ do_deploy:prepend() {
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
 					if [ -f spl/u-boot-spl.dtb ]; then
-						install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb
-						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}-${type}
-						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
-						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}-${type}
-						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
+						install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}.dtb
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}-${type}
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}-${type}
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
 
 					fi
 					if [ -f "${UBOOT_ITB_BINARY}" ]; then
-						install -m 644 ${UBOOT_ITB_BINARY} ${DEPLOYDIR}/u-boot-${MACHINE}-${type}-${PV}-${PR}.itb
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}-${type}
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_BINARY}-${type}
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.itb ${DEPLOYDIR}/${UBOOT_ITB_BINARY}
+						install -m 644 ${UBOOT_ITB_BINARY} ${DEPLOYDIR}/u-boot-${MACHINE}-${type}-${PV}.itb
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.itb ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.itb ${DEPLOYDIR}/${UBOOT_ITB_SYMLINK}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.itb ${DEPLOYDIR}/${UBOOT_ITB_BINARY}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.itb ${DEPLOYDIR}/${UBOOT_ITB_BINARY}
 
-						install -m 644 ${UBOOT_ITS_BINARY} ${DEPLOYDIR}/u-boot-${MACHINE}-${type}-${PV}-${PR}.its
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}-${type}
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_BINARY}-${type}
-						ln -sf u-boot-${MACHINE}-${type}-${PV}-${PR}.its ${DEPLOYDIR}/${UBOOT_ITS_BINARY}
+						install -m 644 ${UBOOT_ITS_BINARY} ${DEPLOYDIR}/u-boot-${MACHINE}-${type}-${PV}.its
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.its ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.its ${DEPLOYDIR}/${UBOOT_ITS_SYMLINK}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.its ${DEPLOYDIR}/${UBOOT_ITS_BINARY}-${type}
+						ln -sf u-boot-${MACHINE}-${type}-${PV}.its ${DEPLOYDIR}/${UBOOT_ITS_BINARY}
 					fi
 				fi
 			done

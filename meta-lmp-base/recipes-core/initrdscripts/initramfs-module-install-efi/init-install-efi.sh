@@ -138,17 +138,11 @@ if [ ! -e /etc/mtab ] && [ -e /proc/mounts ]; then
     ln -sf /proc/mounts /etc/mtab
 fi
 
-disk_info=$(parted -s ${device} unit mb print 2>&1 || true)
-if echo ${disk_info} | grep -q "unrecognised disk label"; then
-	echo "No valid disk label found, creating one"
-	parted -s ${device} -- mklabel gpt
+disk_info=$(gdisk -l ${device} 2>&1 || true)
+if echo ${disk_info} | grep -q "GPT: not present"; then
+	echo "No valid GPT partition table found, creating one"
+	echo -e "2\nw\nY\n" | gdisk ${device} > /dev/null
 fi
-disk_size=$(echo ${disk_info} | grep '^Disk .*: .*MB' | cut -d" " -f 3 | sed -e "s/MB//")
-
-rootfs_size=$((disk_size-boot_size))
-
-rootfs_start=$((boot_size))
-rootfs_end=$((rootfs_start+rootfs_size))
 
 # MMC devices are special in a couple of ways
 # 1) they use a partition prefix character 'p'
@@ -177,7 +171,8 @@ rootfs=${device}${part_prefix}2
 echo
 echo "Current partition table available on ${device}:"
 echo
-parted -s ${device} print
+gdisk -l ${device}
+echo
 
 # Get user choice for partition table
 while true; do
@@ -187,23 +182,19 @@ while true; do
         echo "Deleting partition table on ${device} ..."
         dd if=/dev/zero of=${device} bs=512 count=35
 
-        echo "*****************"
-        echo "Boot partition size:   $boot_size MB ($bootfs)"
-        echo "Rootfs partition size: $rootfs_size MB ($rootfs)"
-        echo "*****************"
-
         echo "Creating new partition table on ${device} ..."
-        parted -s ${device} mklabel gpt
+        echo -e "2\nw\nY\n" | gdisk ${device} > /dev/null 2>&1
 
         echo "Creating boot partition on $bootfs"
-        parted -s ${device} mkpart boot fat32 0% $boot_size
-        parted -s ${device} set 1 boot on
+        echo -e "n\n1\n\n${boot_size}M\nef00\nc\nboot\nw\nY\n" | gdisk ${device} > /dev/null
         format_boot="y"
 
         echo "Creating rootfs partition on $rootfs"
-        parted -s ${device} mkpart root ext4 $rootfs_start 100%
+        echo -e "n\n2\n\n\n8300\nc\n2\nroot\nw\nY\n" | gdisk ${device} > /dev/null
 
-        parted -s ${device} print
+        echo
+        gdisk -l ${device}
+        echo
 
         echo "Waiting for device nodes..."
         sleep 1

@@ -1,3 +1,5 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-RDEPENDS:${PN} += "efibootmgr"
+# Prefer gptfdisk instead of parted
+RDEPENDS:${PN}:remove = "parted dosfstools"
+RDEPENDS:${PN} += "efibootmgr gptfdisk"

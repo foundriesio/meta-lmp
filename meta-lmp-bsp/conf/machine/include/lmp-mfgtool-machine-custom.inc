@@ -109,7 +109,7 @@ PREFERRED_VERSION_u-boot-fio-mfgtool:mx8qm-nxp-bsp ?= "imx-2023.04"
 
 # STM32MP1
 INITRAMFS_IMAGE:stm32mp1common = "initramfs-ostree-lmp-recovery"
-EXTRA_IMAGEDEPENDS:remove:stm32mp1common = "flashlayouts-stm32mp1 u-boot-default-script"
+EXTRA_IMAGEDEPENDS:remove:stm32mp1common = "u-boot-default-script"
 TF_A_SIGN_ENABLE:stm32mp1common = "1"
 UBOOT_SIGN_ENABLE:stm32mp1common = "1"
 PREFERRED_PROVIDER_virtual/optee-os:stm32mp1common = "optee-os-fio-mfgtool"

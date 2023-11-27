@@ -498,6 +498,16 @@ UBOOT_SUFFIX:imx93-11x11-lpddr4x-evk = "bin"
 UBOOT_DTB_NAME:imx93-11x11-lpddr4x-evk ?= "imx93-11x11-evk.dtb"
 
 # STM32MP1
+### STM32 custom image.bin symlink
+stm32_imagebin_symlink() {
+       ln -sf ${LMP_FLASHLAYOUT_IMAGE} ${IMGDEPLOYDIR}/${MFGTOOL_FLASH_IMAGE}.bin
+}
+
+STM32_IMAGEBIN_SYMLINK = ""
+STM32_IMAGEBIN_SYMLINK:stm32mp1common = "stm32-imagebin-symlink"
+IMAGE_TYPES += "${STM32_IMAGEBIN_SYMLINK}"
+IMAGE_FSTYPES += "${STM32_IMAGEBIN_SYMLINK}"
+IMAGE_CMD:stm32-imagebin-symlink = "stm32_imagebin_symlink"
 PREFERRED_PROVIDER_virtual/kernel:stm32mp1common ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/bootloader:stm32mp1common ?= "u-boot-fio"
 PREFERRED_PROVIDER_u-boot:stm32mp1common ?= "u-boot-fio"
@@ -511,7 +521,6 @@ OSTREE_KERNEL_ARGS:stm32mp1common ?= "console=ttySTM0,115200 ${OSTREE_KERNEL_ARG
 PREFERRED_VERSION_gcc-arm-none-eabi-native:stm32mp1common = "11"
 IMAGE_CLASSES:remove:stm32mp1common = "st-partitions-image"
 IMAGE_CLASSES:remove:stm32mp1common = "image_types-stubi"
-ENABLE_FLASHLAYOUT_CONFIG:stm32mp1common = "0"
 IMAGE_ROOTFS_MAXSIZE:stm32mp1common = ""
 PREFERRED_PROVIDER_virtual/optee-os:stm32mp1common ?= "optee-os-fio"
 MACHINE_EXTRA_RRECOMMENDS:remove:stm32mp1common = "kernel-imagebootfs"
@@ -534,6 +543,73 @@ PREFERRED_PROVIDER_u-boot-default-script:stm32mp1common = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:stm32mp1common = "u-boot-ostree-scr-fit"
 # Remove standard ST BSP from SDK
 TOOLCHAIN_HOST_TASK:remove:stm32mp1common = "${ST_TOOLS_FOR_SDK} ${ST_DEPENDENCIES_BUILD_FOR_SDK}"
+STM32_BOOTIMAGE_SUFFIX ??= ""
+MFGTOOL_FLASH_IMAGE:stm32mp1common ?= "${IMAGE_BASENAME}-${MACHINE}"
+LMP_FLASHLAYOUT_IMAGE = "${MFGTOOL_FLASH_IMAGE}.ext4"
+LMP_FLASHLAYOUT_IMAGE:sota = "${MFGTOOL_FLASH_IMAGE}.ota-ext4"
+# Definitions used by flashlayout-stm32mp.class provided by ST layer for TSV file creation
+FLASHLAYOUT_BOOTSCHEME_LABELS = "lmp"
+FLASHLAYOUT_CONFIG_LABELS:lmp:stm32mp15-disco = "sdcard"
+FLASHLAYOUT_CONFIG_LABELS:lmp:stm32mp15-eval = "emmc"
+FLASHLAYOUT_TYPE_LABELS:lmp = "${STM32MP_DEVICETREE}"
+## USB FSBL
+FLASHLAYOUT_PARTITION_OFFSET:lmp:fsbl-boot = "0x0"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:fsbl-boot = "arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb${STM32_BOOTIMAGE_SUFFIX}.stm32"
+## USB FIP
+FLASHLAYOUT_PARTITION_OFFSET:lmp:fip-boot = "0x0"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:fip-boot = "fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin"
+FLASHLAYOUT_PARTITION_TYPE:lmp:fip-boot = "Binary"
+## eMMC
+FLASHLAYOUT_PARTITION_LABELS:lmp:emmc = "${FLASHLAYOUT_PROGRAMMER_SECTIONS} fsbl1 fsbl2 u-boot-env rootfs"
+FLASHLAYOUT_PARTITION_DEVICE:lmp:emmc = "none:${FLASHLAYOUT_PROGRAMMER_SECTIONS},${DEVICE:EMMC}:fsbl1 fsbl2 u-boot-env rootfs"
+# FSBL1
+FLASHLAYOUT_PARTITION_ENABLE:lmp:emmc:fsbl1 = "PD"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:emmc:fsbl1 = "boot1"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:emmc:fsbl1 = "fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin"
+# FSBL2
+FLASHLAYOUT_PARTITION_ENABLE:lmp:emmc:fsbl2 = "PD"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:emmc:fsbl2 = "boot2"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:emmc:fsbl2 = "fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin"
+# U-Boot env
+FLASHLAYOUT_PARTITION_ENABLE:lmp:emmc:u-boot-env = "PED"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:emmc:u-boot-env = "0x00080000"
+FLASHLAYOUT_PARTITION_TYPE:lmp:emmc:u-boot-env = "Binary"
+# RootFS
+FLASHLAYOUT_PARTITION_ENABLE:lmp:emmc:rootfs = "P"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:emmc:rootfs = "0x00100000"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:emmc:rootfs = "${MFGTOOL_FLASH_IMAGE}.bin"
+FLASHLAYOUT_PARTITION_TYPE:lmp:emmc:rootfs = "System"
+## SDCARD
+FLASHLAYOUT_PARTITION_LABELS:lmp:sdcard = "${FLASHLAYOUT_PROGRAMMER_SECTIONS} fsbl1 fsbl2 fip-a fip-b u-boot-env rootfs"
+FLASHLAYOUT_PARTITION_DEVICE:lmp:sdcard = "none:${FLASHLAYOUT_PROGRAMMER_SECTIONS},${DEVICE:SDCARD}:fsbl1 fsbl2 fip-a fip-b u-boot-env rootfs"
+# FSBL1
+FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:fsbl1 = "PD"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:fsbl1 = "0x00004400"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:sdcard:fsbl1 = "arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-sdcard${STM32_BOOTIMAGE_SUFFIX}.stm32"
+# FSBL2
+FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:fsbl2 = "PD"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:fsbl2 = "0x00044400"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:sdcard:fsbl2 = "arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-sdcard${STM32_BOOTIMAGE_SUFFIX}.stm32"
+# FIP-A
+FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:fip-a = "PD"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:fip-a = "0x00084400"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:sdcard:fip-a = "fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin"
+FLASHLAYOUT_PARTITION_TYPE:lmp:sdcard:fip-a = "Binary"
+# FIP-B
+FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:fip-b = "PD"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:fip-b = "0x00484400"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:sdcard:fip-b = "fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin"
+FLASHLAYOUT_PARTITION_TYPE:lmp:sdcard:fip-b = "Binary"
+# U-Boot env
+FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:u-boot-env = "PED"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:u-boot-env = "0x00900000"
+FLASHLAYOUT_PARTITION_TYPE:lmp:sdcard:u-boot-env = "Binary"
+# RootFS
+FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:rootfs = "P"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:rootfs = "0x00910000"
+FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:sdcard:rootfs = "${MFGTOOL_FLASH_IMAGE}.bin"
+FLASHLAYOUT_PARTITION_TYPE:lmp:sdcard:rootfs = "System"
+
 ## stm32mp15-eval
 TF_A_SIGN_ENABLE:sota:stm32mp15-eval = "1"
 UBOOT_SIGN_ENABLE:sota:stm32mp15-eval = "1"
@@ -554,8 +630,6 @@ SOTA_CLIENT_FEATURES:append:stm32mp15-eval = " ubootenv"
 IMAGE_FSTYPES:remove:stm32mp15-eval = "wic wic.gz wic.bmap"
 IMAGE_FSTYPES:append:stm32mp15-eval = " ext4"
 IMAGE_FSTYPES:remove:sota:stm32mp15-eval = "ext4"
-LMP_FLASHLAYOUT:stm32mp15-eval ?= "FlashLayout_emmc_stm32mp157c-ev1-optee.tsv"
-LMP_FLASHLAYOUT_TEMPLATE:stm32mp15-eval ?= "FlashLayout_emmc_stm32mp157c-ev1-optee.tsv.in"
 LMP_FLASHLAYOUT_BOARD_NAME:stm32mp15-eval = "stm32mp157c-ev1"
 LMP_BOOT_FIRMWARE_FILES:stm32mp15-eval = "arm-trusted-firmware/tf-a-stm32mp157c-ev1-emmc.stm32 fip/fip-stm32mp157c-ev1-optee.bin"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:append:stm32mp15-eval = " kernel kernel-devicetree u-boot-default-script"
@@ -573,8 +647,6 @@ STM32MP_DT_FILES_DK:remove:stm32mp15-disco = "stm32mp157f-dk2"
 SOTA_CLIENT_FEATURES:append:stm32mp15-disco = " ubootenv"
 IMAGE_FSTYPES:append:stm32mp15-disco = " ext4"
 IMAGE_FSTYPES:remove:sota:stm32mp15-disco = "ext4"
-LMP_FLASHLAYOUT:stm32mp15-disco ?= "FlashLayout_sd_stm32mp157c-dk2-optee.tsv"
-LMP_FLASHLAYOUT_TEMPLATE:stm32mp15-disco ?= "FlashLayout_sd_stm32mp157c-dk2-optee.tsv.in"
 LMP_FLASHLAYOUT_BOARD_NAME:stm32mp15-disco = "stm32mp157c-dk2"
 IMAGE_BOOT_FILES:stm32mp15-disco = "${KERNEL_IMAGETYPE} ${KERNEL_DEVICETREE} boot.scr uEnv.txt"
 IMAGE_BOOT_FILES:sota:stm32mp15-disco = ""

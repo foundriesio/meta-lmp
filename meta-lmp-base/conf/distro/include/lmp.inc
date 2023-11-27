@@ -37,7 +37,6 @@ PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
 PREFERRED_PROVIDER_qemu-helper-native ?= "qemu-helper-native"
 PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
-PREFERRED_PROVIDER_virtual/docker = "docker-ce"
 
 PREFERRED_VERSION_gcc-arm-none-eabi ?= "11"
 PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "11"

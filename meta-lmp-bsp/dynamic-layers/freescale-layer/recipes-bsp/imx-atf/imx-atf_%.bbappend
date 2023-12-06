@@ -5,6 +5,7 @@ RPROVIDES:${PN} += "virtual/trusted-firmware-a"
 
 SRC_URI:append = " \
     file://0001-plat-imx8m-obtain-boot-set-from-bootrom-even-log.patch \
+    file://0001-Revert-MA-20141-imx8m-enable-alarm-when-shutdown.patch \
 "
 
 SRC_URI:append:toradex = " \

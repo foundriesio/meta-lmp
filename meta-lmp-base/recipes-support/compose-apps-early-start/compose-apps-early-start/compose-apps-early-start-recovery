@@ -16,7 +16,6 @@ recover_restorable_apps() {
 	rm -rf /var/sota/compose-apps/*
 	rm -rf /var/lib/docker
 
-	systemctl restart compose-apps-register-images.service
 	systemctl start docker
 }
 

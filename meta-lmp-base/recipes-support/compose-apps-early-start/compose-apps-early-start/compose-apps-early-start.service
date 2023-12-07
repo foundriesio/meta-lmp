@@ -12,6 +12,7 @@ Type=oneshot
 RemainAfterExit=true
 ExecStart=/usr/bin/compose-apps-early-start
 Restart=on-failure
+ExecStartPost=/usr/bin/systemctl disable compose-apps-early-start.service
 
 [Install]
 WantedBy=multi-user.target

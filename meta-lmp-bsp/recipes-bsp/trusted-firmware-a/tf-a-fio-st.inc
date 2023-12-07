@@ -63,4 +63,22 @@ TF_A_DEPLOY_POSTFUNC ?= ""
 TF_A_DEPLOY_POSTFUNC:stm32mp15-eval-sec = "sign_binaries"
 TF_A_DEPLOY_POSTFUNC:stm32mp15-disco-sec = "sign_binaries"
 
-do_deploy[postfuncs] += "${@bb.utils.contains('STM32_ROT_SIGN_ENABLE', '1', '${TF_A_DEPLOY_POSTFUNC}', '', d)}"
+create_combo_image() {
+    if [ -f "${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc_Signed.stm32" ] && \
+       [ -f "${DEPLOYDIR}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin" ]; then
+        cp ${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc_Signed.stm32 \
+           ${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
+        dd if=${DEPLOYDIR}/arm-trusted-firmware/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
+           of=${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
+    else
+        if [ -f "${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32" ] && \
+           [ -f "${DEPLOYDIR}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin" ]; then
+            cp ${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32 \
+               ${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
+            dd if=${DEPLOYDIR}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
+               of=${DEPLOYDIR}/arm-trusted-firmware/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
+        fi
+    fi
+}
+
+do_deploy[postfuncs] += "${@bb.utils.contains('STM32_ROT_SIGN_ENABLE', '1', '${TF_A_DEPLOY_POSTFUNC}', '', d)} create_combo_image"

@@ -5,6 +5,7 @@ Requires=boot-complete.target
 ConditionPathExists=|/var/sota/sota.toml
 
 [Service]
+User=root
 RestartSec=180
 Restart=always
 ExecStartPre=/usr/bin/mkdir -p /run/aktualizr

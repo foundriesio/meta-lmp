@@ -50,9 +50,9 @@ FIP_DEPLOYDIR_FIP    ?= "${DEPLOYDIR}/fip"
 FIP_DEPLOYDIR_BL31   ?= "${DEPLOYDIR}/arm-trusted-firmware/bl31"
 FIP_DEPLOYDIR_TFA    ?= "${DEPLOYDIR}/arm-trusted-firmware/bl32"
 FIP_DEPLOYDIR_FWCONF ?= "${DEPLOYDIR}/arm-trusted-firmware/fwconfig"
-FIP_DEPLOYDIR_OPTEE  ?= "${DEPLOY_DIR}/images/${MACHINE}/optee"
-FIP_DEPLOYDIR_UBOOT  ?= "${DEPLOY_DIR}/images/${MACHINE}"
-FIP_DEPLOYDIR_BOOT_ITB  ?= "${DEPLOY_DIR}/images/${MACHINE}"
+FIP_DEPLOYDIR_OPTEE  ?= "${DEPLOY_DIR_IMAGE}/optee"
+FIP_DEPLOYDIR_UBOOT  ?= "${DEPLOY_DIR_IMAGE}"
+FIP_DEPLOYDIR_BOOT_ITB  ?= "${DEPLOY_DIR_IMAGE}"
 
 # Set default configuration to allow FIP signing
 FIP_SIGN_ENABLE ?= "${@bb.utils.contains('TF_A_SIGN_ENABLE', '1', '1', '', d)}"

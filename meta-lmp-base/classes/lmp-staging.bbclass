@@ -26,7 +26,7 @@ python __anonymous() {
     if bb.data.inherits_class('image_types_wic', d) and \
         'k3' in d.getVar('MACHINEOVERRIDES').split(':') and \
         all(bbmc.startswith('lmp-k3r5') for bbmc in d.getVar('BBMULTICONFIG').split()):
-            task = "do_image_complete"
+            task = "do_image"
             mcdepends = d.getVarFlag(task, 'mcdepends')
             d.setVarFlag(task, 'mcdepends', mcdepends.replace(':k3r5', ':lmp-k3r5'))
 }

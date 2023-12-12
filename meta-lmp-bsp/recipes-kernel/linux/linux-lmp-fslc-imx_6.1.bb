@@ -8,10 +8,10 @@ include recipes-kernel/linux/linux-lmp-fslc-imx.inc
 include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 
 # Use Freescale kernel by default
-LINUX_VERSION ?= "6.1.38"
-KERNEL_BRANCH ?= "6.1-2.0.x-imx"
+LINUX_VERSION ?= "6.1.57"
+KERNEL_BRANCH ?= "6.1-2.1.x-imx"
 
-SRCREV_machine = "b872b1170fc8843b55e9f8838dd373ff43bb7552"
+SRCREV_machine = "241e2f51bd87beb652196d1db92f0387c1209bfb"
 
 SRC_URI += " \
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \

@@ -140,6 +140,7 @@ TOOLCHAIN:pn-optee-os-tadevkit = "gcc"
 TOOLCHAIN:pn-optee-test = "gcc"
 TOOLCHAIN:pn-optee-client = "gcc"
 TOOLCHAIN:pn-optee-sks = "gcc"
+TOOLCHAIN:pn-optee-examples = "gcc"
 
 # qemuarm64
 ## clang only works with debug mode (not release)

@@ -23,4 +23,4 @@ do_install() {
 }
 
 FILES:${PN} += "${systemd_system_unitdir}/*.service"
-RDEPENDS:${PN} += "aktualizr-lite-apps"
+RDEPENDS:${PN} += "composectl"

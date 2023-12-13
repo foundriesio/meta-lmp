@@ -17,7 +17,6 @@ Environment="TMPDIR=/run/aktualizr"
 Environment="COMPOSE_HTTP_TIMEOUT=@@COMPOSE_HTTP_TIMEOUT@@"
 Environment="REGISTRY_AUTH_FILE=@@DOCKER_CRED_HELPER_CFG@@"
 # Allowed values are in the [1, 10] range. Aklite adjusts value to the corresponding limit if the specified value is higher or lower than [1, 10].
-Environment="SKOPEO_MAX_PARALLEL_PULLS=@@SKOPEO_MAX_PARALLEL_PULLS@@"
 ExecStart=/usr/bin/aktualizr-lite daemon
 
 [Install]

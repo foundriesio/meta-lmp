@@ -18,3 +18,7 @@ GO_EXTRA_LDFLAGS = "\
     -X '${GO_IMPORT}/cmd/composectl/cmd.composeRoot=/var/sota/compose-apps' \
     -X '${GO_IMPORT}/cmd/composectl/cmd.overrideConfigDir=/usr/lib/docker' \
 "
+do_install:append() {
+    cd ${D}/${bindir}
+    ln -sf composectl aklite-apps
+}

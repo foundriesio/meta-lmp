@@ -47,6 +47,9 @@ sign_binaries() {
                 if [ "${file_type}" = "bl2" ]; then
                     # Install TF-A binary
                     if [ -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" ]; then
+                        if [ -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}_Signed.${TF_A_SUFFIX}" ]; then
+			    rm -f "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}_Signed.${TF_A_SUFFIX}"
+                        fi
                         bbnote "Signing STM32 TF-A binary with ROT key: ${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}"
                         ${STM32_CUBE_PATH}/bin/STM32MP_SigningTool_CLI -bin "${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}.${TF_A_SUFFIX}" \
                                                                        -pubk ${STM32_ROT_KEY_PATH}/publicKey.pem -prvk ${STM32_ROT_KEY_PATH}/privateKey.pem \

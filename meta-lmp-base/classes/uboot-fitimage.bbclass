@@ -307,11 +307,11 @@ do_deploy:prepend() {
 					# Make SPL to generate a board-compatible binary via mkimage
 					oe_runmake -C ${S} O=${B}/${config} ${SPL_BINARY}
 					if [ -f spl/u-boot-spl.dtb ]; then
-						install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb
-						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}-${type}
-						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
-						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}-${type}
-						ln -sf ${SPL_BINARY}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
+						install -m 644 spl/u-boot-spl.dtb ${DEPLOYDIR}/${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}-${type}
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_SYMLINK}
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}-${type}
+						ln -sf ${SPL_BINARYNAME}-${MACHINE}-${type}-${PV}-${PR}.dtb ${DEPLOYDIR}/${UBOOT_SPL_DTB_BINARY}
 
 					fi
 					if [ -f "${UBOOT_ITB_BINARY}" ]; then

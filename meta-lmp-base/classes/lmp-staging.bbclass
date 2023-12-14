@@ -22,13 +22,6 @@ python __anonymous() {
 
     if pn in d.getVar('LMPSTAGING_LOCK_TO_AVOID_OOM').split():
         d.appendVarFlag('do_compile', 'lockfiles', " ${TMPDIR}/lmp-hack-avoid-oom-do_compile.lock")
-
-    if bb.data.inherits_class('image_types_wic', d) and \
-        'k3' in d.getVar('MACHINEOVERRIDES').split(':') and \
-        all(bbmc.startswith('lmp-k3r5') for bbmc in d.getVar('BBMULTICONFIG').split()):
-            task = "do_image"
-            mcdepends = d.getVarFlag(task, 'mcdepends')
-            d.setVarFlag(task, 'mcdepends', mcdepends.replace(':k3r5', ':lmp-k3r5'))
 }
 
 inherit ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}

@@ -24,8 +24,9 @@ TF_A_METADATA_JSON ?= "plat/st/stm32mp1/default_metadata.json"
 TF_A_SOC_NAME  = "${STM32MP_SOC_NAME}"
 
 sign_binaries() {
-    if [ -z "${STM32_CUBE_PATH}" ]; then
-        bbfatal "Fail to sign TF-A BL2 binaries, as STM32_CUBE_PATH variables are not set correctly"
+    STM32MP_SIGNINGTOOL="${STM32_CUBE_PATH}/bin/STM32MP_SigningTool_CLI"
+    if ! [ -f "${STM32MP_SIGNINGTOOL}" ]; then
+        bbfatal "Fail to sign TF-A BL2 binaries, as the STM32MP Signing Tool CLI not found at '${STM32MP_SIGNINGTOOL}'. \nThe STM32_CUBE_PATH variables are not set correctly"
     fi
     unset i
     for config in ${TF_A_CONFIG}; do
@@ -48,7 +49,7 @@ sign_binaries() {
                     # Install TF-A binary
                     config_src="${B}/${config}${soc_suffix}/${tfa_basename}-${dt}-${config}"
                     bbnote "Signing STM32 TF-A binary with ROT key: ${config_src}.${TF_A_SUFFIX}"
-                    ${STM32_CUBE_PATH}/bin/STM32MP_SigningTool_CLI -bin "${config_src}.${TF_A_SUFFIX}" \
+                    ${STM32MP_SIGNINGTOOL} -bin "${config_src}.${TF_A_SUFFIX}" \
                         -pubk ${STM32_ROT_KEY_PATH}/publicKey.pem -prvk ${STM32_ROT_KEY_PATH}/privateKey.pem \
                         -iv 5 -t fsbl -pwd ${STM32_ROT_KEY_PASSWORD} --silent
                     install -m 644 "${config_src}_Signed.${TF_A_SUFFIX}" "${DEPLOYDIR}/arm-trusted-firmware"

@@ -719,14 +719,10 @@ EFI_PROVIDER:am62xx = ""
 LMP_BOOT_FIRMWARE_FILES:am62xx = "tispl.bin u-boot.img tiboot3-am62x-gp-evm.bin tiboot3-am62x-hs-evm.bin tiboot3-am62x-hs-fs-evm.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx = " boot.itb"
 ## am62xx-evm
-BBMULTICONFIG:remove:am62xx-evm = "k3r5"
-BBMULTICONFIG:append:am62xx-evm = " lmp-k3r5"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
 KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'jailhouse uio_ivshmem', '', d)}"
 ## beagleplay
-BBMULTICONFIG:remove:beagleplay = "k3r5"
-BBMULTICONFIG:append:beagleplay = " lmp-k3r5"
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
 KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-sk-csi2-ov5640.dtbo ti/k3-am625-sk-csi2-tevi-ov5640.dtbo"
 MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
@@ -748,8 +744,6 @@ EFI_PROVIDER:am64xx = ""
 LMP_BOOT_FIRMWARE_FILES:am64xx = "tispl.bin u-boot.img tiboot3.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx = " boot.itb"
 ## am64xx-evm
-BBMULTICONFIG:remove:am64xx-evm = "k3r5"
-BBMULTICONFIG:append:am64xx-evm = " lmp-k3r5"
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"
 
 # Nvidia Tegra

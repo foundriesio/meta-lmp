@@ -12,12 +12,23 @@ do_deploy:append() {
                     cd ${DEPLOYDIR}
                     ln -sf ${PN}-config-${MACHINE}-${type}-${PV}-${PR} ${PN}-config-${MACHINE}-${type}
                     ln -sf ${PN}-config-${MACHINE}-${type}-${PV}-${PR} ${PN}-config-${type}
+                    # Make the first config the default one
+                    if [ ! -f "${DEPLOYDIR}/${PN}-config" ]; then
+                        ln -sf ${PN}-config-${MACHINE}-${type}-${PV}-${PR} ${PN}-config-${MACHINE}
+                        ln -sf ${PN}-config-${MACHINE}-${type}-${PV}-${PR} ${PN}-config
+                    fi
                     if [ -f ${B}/${config}/sit-${type}.bin ]; then
                         install -D -m 644 ${B}/${config}/sit-${type}.bin ${DEPLOYDIR}/${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR}
                         cd ${DEPLOYDIR}
                         ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} ${PN}-sit.bin-${MACHINE}-${type}
                         ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} sit-${MACHINE}-${type}.bin
                         ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} ${PN}-sit.bin-${type}
+                        # Make the first sit the default one
+                        if [ ! -f "${DEPLOYDIR}/${PN}-sit.bin" ]; then
+                            ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} ${PN}-sit.bin-${MACHINE}
+                            ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} sit-${MACHINE}.bin
+                            ln -sf ${PN}-sit.bin-${MACHINE}-${type}-${PV}-${PR} ${PN}-sit.bin
+                        fi
                     fi
                 fi
             done

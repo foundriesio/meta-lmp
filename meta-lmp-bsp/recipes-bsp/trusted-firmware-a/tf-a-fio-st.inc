@@ -64,14 +64,8 @@ sign_binaries() {
     done
 }
 
-do_deploy:append:stm32mp15-eval-sec() {
-    if [ "${STM32_ROT_SIGN_ENABLE}" = "1" ]; then
-        sign_binaries
-    fi
-}
+TF_A_DEPLOY_POSTFUNC ?= ""
+TF_A_DEPLOY_POSTFUNC:stm32mp15-eval-sec = "sign_binaries"
+TF_A_DEPLOY_POSTFUNC:stm32mp15-disco-sec = "sign_binaries"
 
-do_deploy:append:stm32mp15-disco-sec() {
-    if [ "${STM32_ROT_SIGN_ENABLE}" = "1" ]; then
-        sign_binaries
-    fi
-}
+do_deploy[postfuncs] += "${@bb.utils.contains('STM32_ROT_SIGN_ENABLE', '1', '${TF_A_DEPLOY_POSTFUNC}', '', d)}"

@@ -24,8 +24,8 @@ TF_A_METADATA_JSON ?= "plat/st/stm32mp1/default_metadata.json"
 TF_A_SOC_NAME  = "${STM32MP_SOC_NAME}"
 
 sign_binaries() {
-    if [ -z "${STM32_CUBE_PATH}" ] || [ -z "${STM32_ROT_KEY_PATH}" ] || [ -z "${STM32_ROT_KEY_PASSWORD}" ]; then
-        bbfatal "Fail to sign TF-A BL2 binaries, as STM32_CUBE_PATH/STM32_ROT_KEY_PATH/STM32_ROT_KEY_PASSWORD variables are not set correctly"
+    if [ -z "${STM32_CUBE_PATH}" ]; then
+        bbfatal "Fail to sign TF-A BL2 binaries, as STM32_CUBE_PATH variables are not set correctly"
     fi
     unset i
     for config in ${TF_A_CONFIG}; do

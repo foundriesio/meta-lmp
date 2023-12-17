@@ -7,6 +7,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 IMAGE_FSTYPES:append:intel-corei7-64 = " wic.vmdk wic.vdi wic.qcow2"
 
 inherit core-image features_check extrausers
+inherit flashlayout-stm32mp-archiver
 
 SRC_URI = "\
     file://sudoers \

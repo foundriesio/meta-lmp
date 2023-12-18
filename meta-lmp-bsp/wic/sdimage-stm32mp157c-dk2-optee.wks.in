@@ -17,6 +17,6 @@ part fip2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip-b 
 
 part u-boot-env --source empty --part-name=uboot-env --ondisk mmcblk --part-type 0x8301 --fixed-size 16K --offset 9216K
 part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --offset 16384K --size 16M
-part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root --align 4096K
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root --align 4096
 
 bootloader --ptable gpt

@@ -6,8 +6,7 @@ do_create_flashlayout_tarball() {
 }
 
 python __anonymous () {
-    machine = d.getVar("MACHINE", True)
-    if machine.find('stm32mp1') != -1:
+    if 'stm32mp1common' in d.getVar('MACHINEOVERRIDES').split(':'):
         tasks = filter(lambda k: d.getVarFlag(k, "task", True), d.keys())
         # Check that we have do_create_flashlayout_config() task added
         if 'do_create_flashlayout_config' in tasks:

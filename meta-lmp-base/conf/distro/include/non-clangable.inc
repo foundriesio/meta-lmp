@@ -178,6 +178,8 @@ TOOLCHAIN:pn-nvdisp-init = "gcc"
 TOOLCHAIN:pn-edk2-firmware-tegra = "gcc"
 # libnvidia-container-tools: unknown argument: '-fplan9-extensions'
 TOOLCHAIN:pn-libnvidia-container-tools = "gcc"
+# kernel module, needs to follow the toolchain used by the kernel
+TOOLCHAIN:pn-nvidia-display-driver = "gcc"
 # configure: error: unrecognized option: `-flto'
 TOOLCHAIN:pn-libgcc-8 = "gcc"
 TOOLCHAIN:pn-gcc-8-runtime = "gcc"

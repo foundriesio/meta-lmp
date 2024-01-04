@@ -39,6 +39,3 @@ UBOOT_CLASSES ?= ""
 inherit ${UBOOT_CLASSES} fio-u-boot-localversion
 
 PROVIDES += "u-boot"
-
-# setting DEPENDS create dependency loops so skip the check
-LMPSTAGING_DEPLOYED_CHECK_SKIP += "${PN}:do_deploy"

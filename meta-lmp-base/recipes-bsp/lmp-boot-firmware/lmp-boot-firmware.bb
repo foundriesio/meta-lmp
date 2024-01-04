@@ -84,8 +84,3 @@ FILES:${PN} = "\
 	${nonarch_base_libdir}/firmware \
 	${nonarch_base_libdir}/ostree-boot \
 "
-
-python() {
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    fix_deployed_depends('do_install', d)
-}

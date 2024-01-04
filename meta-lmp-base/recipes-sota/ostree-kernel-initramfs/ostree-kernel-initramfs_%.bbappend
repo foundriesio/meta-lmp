@@ -19,8 +19,3 @@ do_install:append() {
 
 INITRAMFS_RECOVERY_IMAGE ?= ""
 do_install[depends] += "virtual/kernel:do_deploy ${@['${INITRAMFS_RECOVERY_IMAGE}:do_image_complete', ''][d.getVar('INITRAMFS_RECOVERY_IMAGE') == '']}"
-
-python() {
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    fix_deployed_depends('do_install', d)
-}

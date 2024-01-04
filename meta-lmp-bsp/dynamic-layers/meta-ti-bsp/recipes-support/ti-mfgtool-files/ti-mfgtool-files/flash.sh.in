@@ -11,6 +11,9 @@ set -e
 scriptName="$(basename "$0")"
 scriptDir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
+# serial number of UMS disk
+diskSerial=""
+
 #######################
 # Functions
 #######################
@@ -32,6 +35,7 @@ function usage {
 	echo "  -h | --help              Do nothing, print this script usage and exit"
 	echo "  --board-type <type>      Board type: gp, hs, hs-fs"
 	echo "  --dev-id <type>          Board PID and VID in format '0451:6165'"
+	echo "  --serial <serial>        ID_SERIAL_SHORT of the UMS disk, i.e. '0000000000000396'"
 	echo "  --yes                    Non-interactive mode. Answer 'yes' to all questions."
 	echo "Boot Pins Cheat Sheet:"
 	echo "  eMMC boot:               00000000 11010011"
@@ -49,9 +53,17 @@ function get_ums_disk {
 		fi
 		eval "$(udevadm info -q property --export -p $sysPath)"
 		if [[ "$ID_SERIAL" == *"Linux_UMS_disk"* && "$devName" =~ ^"sd" && !("$devName" =~ [0-9]) ]]; then
-			echo "/dev/$devName"
-			break
+			if [[ -n "$diskSerial" ]]; then
+				if [[ "$ID_SERIAL_SHORT" = "$diskSerial" ]]; then
+					echo "/dev/$devName"
+					break
+				fi
+			else
+				echo "/dev/$devName"
+				break
+			fi
 		fi
+
 	done
 }
 
@@ -84,7 +96,7 @@ validate_commands
 # Parse Args
 #######################
 # NOTE: This requires GNU getopt.
-if ! PARSED_ARGS=$(getopt --longoptions "help,yes,wic:,board-type:,dev-id:" \
+if ! PARSED_ARGS=$(getopt --longoptions "help,yes,wic:,board-type:,dev-id:,serial:" \
 		--options "h" --name "${scriptName}" -- "$@") ; then
 	usage
 	error_exit "Unable to parse arguments - is GNU getopt installed?"
@@ -112,6 +124,7 @@ while true; do
 		--wic) wicFile="${2}"; shift 2 ;;
 		--board-type) boardType="${2}"; shift 2 ;;
 		--dev-id) devID="${2}"; shift 2 ;;
+		--serial) diskSerial="${2}"; shift 2 ;;
 		--yes) nonInteractive="y"; shift ;;
 		# -- means the end of the arguments; drop this, and break out of the while loop
 		--) shift; break ;;
@@ -189,6 +202,13 @@ echo "------------------------------------------"
 
 # For now we don't run any custom cmds in U-Boot
 fastboot continue
+
+# print disk serial if it's set
+if [[ -n "$diskSerial" ]]; then
+	echo "------------------------------------------"
+	echo "Waiting for disk with serial $diskSerial"
+	echo "------------------------------------------"
+fi
 
 # wait for ums to expose eMMC to host pc
 sleep 6

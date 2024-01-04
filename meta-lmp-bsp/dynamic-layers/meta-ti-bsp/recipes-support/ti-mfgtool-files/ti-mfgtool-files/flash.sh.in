@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2023 Foundries.IO
+# Copyright (C) 2023-2024 Foundries.IO
 # Copyright (C) 2022-2023 FORT Robotics
 #
 # SPDX-License-Identifier: MIT
@@ -202,7 +202,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "------------------------------------------"
 	echo " Unmounting all partitions from ${mmcPath}"
 	echo "------------------------------------------"
-	umount ${mmcPath}?*
+	umount ${mmcPath}?* || true
 	sleep 2
 	echo "------------------------------------------"
 	echo "  Flashing ${mmcPath} via UMS             "

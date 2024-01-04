@@ -41,37 +41,3 @@ def lmp_sstate_checkhashes(sq_data, d, **kwargs):
             mirrors = " ".join(mirrors.split())
             bb.plain("SState mirrors: %s" % mirrors)
     return sstate_checkhashes(sq_data, d, **kwargs)
-
-# don't check images
-LMPSTAGING_DEPLOYED_CHECK_SKIP ?= "${@d.getVar('PN') if bb.data.inherits_class('image', d) else ''}"
-
-# handler to warn when there are 'do_deploy' dependencies without setting the DEPENDS
-addhandler check_deployed_depends
-check_deployed_depends[eventmask] = "bb.build.TaskSucceeded"
-python check_deployed_depends() {
-    d = e.data
-
-    taskname = d.getVar('BB_RUNTASK')
-    pn = d.getVar('PN')
-    pn = [pn, '%s:%s' % (pn, taskname)]
-    excludes = (d.getVar('LMPSTAGING_DEPLOYED_CHECK_SKIP') or '').split()
-    for s in excludes:
-        if s in pn:
-            bb.debug(1, "skip '%s' deployed dependencies check" % s)
-            return
-
-    depends = (d.getVarFlag(taskname, 'depends') or '').split()
-    # remove duplicates
-    depends = [*set(depends)]
-    for depend in depends:
-        recipe, task = depend.split(':')
-        if task == 'do_deploy' and recipe not in d.getVar('DEPENDS'):
-            bb.warn("Task '%s' depends on '%s' but '%s' is not in DEPENDS" % (taskname, depend, recipe))
-}
-
-def fix_deployed_depends(task, d):
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    for depend in (d.getVarFlag(task, 'depends') or '').split():
-        recipe, task = depend.split(':')
-        if task == 'do_deploy':
-            d.appendVar('DEPENDS', ' %s' % recipe)

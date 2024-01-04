@@ -32,6 +32,7 @@ function usage {
 	echo "  -h | --help              Do nothing, print this script usage and exit"
 	echo "  --board-type <type>      Board type: gp, hs, hs-fs"
 	echo "  --dev-id <type>          Board PID and VID in format '0451:6165'"
+	echo "  --yes                    Non-interactive mode. Answer 'yes' to all questions."
 	echo "Boot Pins Cheat Sheet:"
 	echo "  eMMC boot:               00000000 11010011"
 	echo "  eMMC UDA boot:           00000000 11000010"
@@ -83,7 +84,7 @@ validate_commands
 # Parse Args
 #######################
 # NOTE: This requires GNU getopt.
-if ! PARSED_ARGS=$(getopt --longoptions "help,wic:,board-type:,dev-id:" \
+if ! PARSED_ARGS=$(getopt --longoptions "help,yes,wic:,board-type:,dev-id:" \
 		--options "h" --name "${scriptName}" -- "$@") ; then
 	usage
 	error_exit "Unable to parse arguments - is GNU getopt installed?"
@@ -104,11 +105,14 @@ boardType=
 wicFile=
 # dev PID and VID
 devID=
+# non-interactive mode
+nonInteractive="n"
 while true; do
 	case "$1" in
 		--wic) wicFile="${2}"; shift 2 ;;
 		--board-type) boardType="${2}"; shift 2 ;;
 		--dev-id) devID="${2}"; shift 2 ;;
+		--yes) nonInteractive="y"; shift ;;
 		# -- means the end of the arguments; drop this, and break out of the while loop
 		--) shift; break ;;
 		* ) usage; error_exit "Unrecognized option - ${1}" ;;
@@ -196,9 +200,11 @@ if [ -z "${mmcPath}" ]; then
 	error_exit "Can't detect UMS exposed device!"
 fi
 
-read -p "Confirm flashing ${wicFile} to ${mmcPath} (y/N) >" -n 1 -r
+if [[ $nonInteractive != "y" ]]; then
+	read -p "Confirm flashing ${wicFile} to ${mmcPath} (y/N) >" -n 1 -r
+fi
 echo ""
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [[ $nonInteractive = "y" ]] || [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "------------------------------------------"
 	echo " Unmounting all partitions from ${mmcPath}"
 	echo "------------------------------------------"

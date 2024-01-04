@@ -30,14 +30,6 @@ do_deploy:append() {
     rm ${DEPLOYDIR}/${PN}-config
 }
 
-# setting DEPENDS create dependency loops so skip the check
-LMPSTAGING_DEPLOYED_CHECK_SKIP += "${PN}:do_deploy"
-
-python() {
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    fix_deployed_depends('do_install', d)
-}
-
 # Root of Trust Key directory
 K3_ROT_KEYS ?= "CONFIG_SIGN_KEY_PATH=${TOPDIR}/conf/keys/platform/ti"
 EXTRA_OEMAKE += "$K3_ROT_KEYS"

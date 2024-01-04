@@ -30,8 +30,3 @@ do_deploy() {
 }
 
 addtask deploy after do_compile before do_build
-
-python() {
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    fix_deployed_depends('do_deploy', d)
-}

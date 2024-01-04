@@ -356,8 +356,3 @@ do_deploy:prepend() {
 		fi
 	fi
 }
-
-python() {
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    fix_deployed_depends('do_compile', d)
-}

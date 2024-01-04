@@ -59,8 +59,3 @@ do_deploy[depends] += "virtual/bootloader:do_deploy"
 do_deploy[depends] += "virtual/kernel:do_deploy"
 
 addtask deploy after do_compile before do_build
-
-python() {
-    # we need to set the DEPENDS as well to produce valid SPDX documents
-    fix_deployed_depends('do_deploy', d)
-}

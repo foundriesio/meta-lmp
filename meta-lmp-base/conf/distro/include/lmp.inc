@@ -17,6 +17,12 @@ require conf/distro/include/arm-defaults.inc
 require conf/distro/include/non-clangable.inc
 require conf/distro/include/security_flags.inc
 require conf/distro/include/yocto-uninative.inc
+include conf/distro/include/cve-extra-exclusions.inc
+include conf/distro/include/cve-lmp-extra-exclusions.inc
+
+# Default CVE check options
+CVE_CHECK_REPORT_PATCHED ?= "0"
+CVE_CHECK_SKIP_RECIPE ?= "qemu-native qemu-system-native"
 
 # Disable branch-protection=standard from clang until properly validated (causes issues on aktualizr)
 TUNE_CCARGS:remove:toolchain-clang = "${@bb.utils.contains('TUNE_FEATURES', 'aarch64', '-mbranch-protection=standard', '', d)}"

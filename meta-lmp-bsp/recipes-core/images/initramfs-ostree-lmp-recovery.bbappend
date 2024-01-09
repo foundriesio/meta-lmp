@@ -31,3 +31,10 @@ fakeroot do_populate_recovery_rootfs_custom () {
 }
 
 IMAGE_PREPROCESS_COMMAND:append:stm32mp1common = " do_populate_recovery_rootfs_custom; "
+
+python __anonymous () {
+    if 'stm32mp1common' in d.getVar('MACHINEOVERRIDES').split(':'):
+        bb.build.addtask('do_create_flashlayout_config', 'do_build', 'do_image_complete', d)
+        # Deploy TF-A binaries before creating flashlayout
+        d.appendVarFlag('do_create_flashlayout_config', 'depends', ' virtual/trusted-firmware-a:do_deploy')
+}

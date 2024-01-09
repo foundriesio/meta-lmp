@@ -211,7 +211,7 @@ fi
 
 # Set default values for parameters that wasn't specified explicitly
 [ -z "${hwPort}" ] && hwPort="USB1"
-[ -z "${tsvFile}" ] && tsvFile="stm32-mfgtool-files/@@FLASHLAYOUT_USB@@"
+[ -z "${tsvFile}" ] && tsvFile="@@FLASHLAYOUT_USB@@"
 
 ####
 # VALIDATE STM32 pubKeyFile

@@ -7,7 +7,7 @@ set -e
 
 [ $(whoami) = "root" ] || { echo "E: You must be root" && exit 1; }
 
-DEVICE=$(lsblk -f | awk '/crypto_LUKS/ {print $1}' | awk '{sub(/^[^a-zA-Z]*/, ""); print}')
+DEVICE=$(lsblk -f | awk '/crypto_LUKS/ {print $1; exit}' | awk '{sub(/^[^a-zA-Z]*/, ""); print}')
 DEVICE="/dev/${DEVICE}"
 
 # Avoid using the PIN for OP-TEE supported PKCS#11 user authentication

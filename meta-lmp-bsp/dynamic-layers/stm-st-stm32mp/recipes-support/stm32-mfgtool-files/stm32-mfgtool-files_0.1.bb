@@ -15,23 +15,11 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 STM32_BOOTIMAGE_SUFFIX ??= ""
 
-LMP_MFGTOOL_FLASHLAYOUT_TEMPLATE ??= "FlashLayout_stm32mp1-usb.tsv.in"
 SRC_URI = " \
-    file://${LMP_MFGTOOL_FLASHLAYOUT_TEMPLATE} \
     file://provision.sh.in \
 "
 
 do_compile() {
-    sed -e 's/@@IMAGE@@/${MFGTOOL_FLASH_IMAGE}/' \
-        -e 's/@@MACHINE@@/${MACHINE}/' \
-        -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \
-        -e 's/@@BOARD_DISK@@/${LMP_FLASHLAYOUT_BOARD_DISK}/' \
-        -e 's/@@BOARD_OFFSET_FSBL1@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL1}/' \
-        -e 's/@@BOARD_OFFSET_FSBL2@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FSBL2}/' \
-        -e 's/@@BOARD_OFFSET_FIP@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_FIP}/' \
-        -e 's/@@BOARD_OFFSET_ROOT@@/${LMP_FLASHLAYOUT_BOARD_OFFSET_ROOT}/' \
-        -e "s/@@STM32_BOOTIMAGE_SUFFIX@@/${STM32_BOOTIMAGE_SUFFIX}/" \
-        ${WORKDIR}/${LMP_MFGTOOL_FLASHLAYOUT_TEMPLATE} > ${WORKDIR}/${LMP_MFGTOOL_FLASHLAYOUT}
     sed -e 's/@@MACHINE@@/${MACHINE}/' \
         -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \
         -e 's/@@FLASHLAYOUT_USB@@/${LMP_MFGTOOL_FLASHLAYOUT}/' \
@@ -40,26 +28,8 @@ do_compile() {
 
 do_deploy() {
     install -d ${DEPLOYDIR}/${PN}
-    install -m 0755 ${WORKDIR}/*.tsv ${DEPLOYDIR}/${PN}
     install -m 0755 ${WORKDIR}/provision.sh ${DEPLOYDIR}/${PN}
-    install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb.stm32 ${DEPLOYDIR}/${PN}/
-    if [ -f "${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb_Signed.stm32" ]; then
-        install -m 0644 ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb_Signed.stm32 ${DEPLOYDIR}/${PN}/
-    fi
-    install -m 0644 ${DEPLOY_DIR_IMAGE}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin ${DEPLOYDIR}/${PN}/
-    install -m 0644 ${DEPLOY_DIR_IMAGE}/fitImage-${INITRAMFS_IMAGE}-${MACHINE}-${MACHINE} ${DEPLOYDIR}/${PN}/fitImage-mfgtool
-
-    tar -czf ${DEPLOYDIR}/${PN}-${MACHINE}.tar.gz \
-            --transform "s,^${PN},mfgtool-files-${MACHINE}," \
-            -C ${DEPLOYDIR} ${PN}
-
-    ln -s ${PN}-${MACHINE}.tar.gz ${DEPLOYDIR}/${PN}.tar.gz
 }
-
-# Make sure the signed fitImage and u-boot are deployed
-do_deploy[depends] += "virtual/trusted-firmware-a:do_deploy"
-do_deploy[depends] += "virtual/bootloader:do_deploy"
-do_deploy[depends] += "virtual/kernel:do_deploy"
 
 addtask deploy after do_compile before do_build
 

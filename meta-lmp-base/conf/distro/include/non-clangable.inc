@@ -176,8 +176,8 @@ TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 TOOLCHAIN:pn-nvdisp-init = "gcc"
 # edk2-tegra/edk2/MdeModulePkg/Include/Guid/ExtendedFirmwarePerformance.h:137:50: error: field Guid1 within 'FPDT_DUAL_GUID_STRING_EVENT_RECORD' is less aligned than 'EFI_GUID' (aka 'GUID') and is usually due to 'FPDT_DUAL_GUID_STRING_EVENT_RECORD' being packed, which can lead to unaligned accesses [-Werror,-Wunaligned-access]
 TOOLCHAIN:pn-edk2-firmware-tegra = "gcc"
-# libnvidia-container-tools: unknown argument: '-fplan9-extensions'
-TOOLCHAIN:pn-libnvidia-container-tools = "gcc"
+# libnvidia-container: unknown argument: '-fplan9-extensions'
+TOOLCHAIN:pn-libnvidia-container = "gcc"
 # kernel module, needs to follow the toolchain used by the kernel
 TOOLCHAIN:pn-nvidia-display-driver = "gcc"
 # configure: error: unrecognized option: `-flto'

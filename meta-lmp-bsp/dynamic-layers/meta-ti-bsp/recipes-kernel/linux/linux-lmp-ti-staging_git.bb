@@ -2,9 +2,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 
-LINUX_VERSION ?= "6.1.33"
+LINUX_VERSION ?= "6.1.69"
 KBRANCH = "ti-linux-6.1.y"
-SRCREV_machine = "8f7f371be250809e9c4af879cfa31d5f1839257d"
+SRCREV_machine = "82d2b827840254248a0444a9c50ab3dc395876cc"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

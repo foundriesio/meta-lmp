@@ -30,12 +30,13 @@ function usage {
 	echo "Usage: $scriptName"
 	echo
 	echo "Required Arguments:"
-	echo "  --wic <file_path>        WIC image to flash to destination eMMC"
+	echo "  --wic <file_path>        WIC image to flash to destination MMC"
 	echo "Optional Arguments:"
 	echo "  -h | --help              Do nothing, print this script usage and exit"
 	echo "  --board-type <type>      Board type: gp, hs, hs-fs"
 	echo "  --dev-id <type>          Board PID and VID in format '0451:6165'"
 	echo "  --serial <serial>        ID_SERIAL_SHORT of the UMS disk, i.e. '0000000000000396'"
+	echo "  --mmc-id <id>            MMC id to flash (0 = eMMC, 1 = SD)"
 	echo "  --yes                    Non-interactive mode. Answer 'yes' to all questions."
 	echo "Boot Pins Cheat Sheet:"
 	echo "  eMMC boot:               00000000 11010011"
@@ -96,7 +97,7 @@ validate_commands
 # Parse Args
 #######################
 # NOTE: This requires GNU getopt.
-if ! PARSED_ARGS=$(getopt --longoptions "help,yes,wic:,board-type:,dev-id:,serial:" \
+if ! PARSED_ARGS=$(getopt --longoptions "help,yes,wic:,mmc-id:,board-type:,dev-id:,serial:" \
 		--options "h" --name "${scriptName}" -- "$@") ; then
 	usage
 	error_exit "Unable to parse arguments - is GNU getopt installed?"
@@ -119,12 +120,15 @@ wicFile=
 devID=
 # non-interactive mode
 nonInteractive="n"
+# MMC ID to flash rootfs to
+mmcID=
 while true; do
 	case "$1" in
 		--wic) wicFile="${2}"; shift 2 ;;
 		--board-type) boardType="${2}"; shift 2 ;;
 		--dev-id) devID="${2}"; shift 2 ;;
 		--serial) diskSerial="${2}"; shift 2 ;;
+		--mmc-id) mmcID="${2}"; shift 2 ;;
 		--yes) nonInteractive="y"; shift ;;
 		# -- means the end of the arguments; drop this, and break out of the while loop
 		--) shift; break ;;
@@ -147,6 +151,7 @@ fi
 
 [ -z "${boardType}" ] && boardType="gp"
 [ -z "${devID}" ] && devID="$(lsusb | grep 'Texas Instruments, Inc.' | awk '{print $6}')"
+[ -z "${mmcID}" ] && mmcID="1"
 
 vid=$(echo "${devID}" | cut -d ':' -f 1)
 pid=$(echo "${devID}" | cut -d ':' -f 2)
@@ -196,10 +201,11 @@ if [[ ${dfuCheck} -ne 0 ]] && [[ ${dfuCheck} -ne 251 ]]; then
 fi
 sleep 2
 
-echo "------------------------------------------"
-echo "  Exposing eMMC via USB using UMS         "
-echo "------------------------------------------"
+echo "-------------------------------------------------------"
+echo "  Exposing MMC ID = ${mmcID} via USB using UMS         "
+echo "-------------------------------------------------------"
 
+fastboot oem run:"setenv mmcdev ${mmcID}"
 # For now we don't run any custom cmds in U-Boot
 fastboot continue
 
@@ -210,7 +216,7 @@ if [[ -n "$diskSerial" ]]; then
 	echo "------------------------------------------"
 fi
 
-# wait for ums to expose eMMC to host pc
+# wait for ums to expose SD/eMMC to host pc
 sleep 6
 
 mmcPath=$(get_ums_disk)

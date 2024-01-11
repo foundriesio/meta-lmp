@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d2
 GO_IMPORT = "github.com/foundriesio/composeapp"
 GO_IMPORT_PROTO ?= "https"
 SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=main"
-SRCREV = "38874e6afbf2a2f86171bae2509096abacadfd83"
+SRCREV = "06800cae019bad5071e08427fc4460a184ea225a"
 UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod

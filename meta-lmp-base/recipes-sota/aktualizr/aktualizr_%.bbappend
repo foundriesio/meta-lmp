@@ -10,7 +10,7 @@ SRC_URI:append:lmp = " \
     file://tmpfiles.conf \
     "
 
-PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml composectl"
+PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml"
 PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"

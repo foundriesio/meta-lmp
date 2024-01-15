@@ -727,7 +727,7 @@ KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES',
 KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'jailhouse uio_ivshmem', '', d)}"
 ## beagleplay
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
-KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-sk-csi2-ov5640.dtbo ti/k3-am625-sk-csi2-tevi-ov5640.dtbo"
+KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-beagleplay-csi2-ov5640.dtbo ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtbo"
 MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
 
 # TI AM64x

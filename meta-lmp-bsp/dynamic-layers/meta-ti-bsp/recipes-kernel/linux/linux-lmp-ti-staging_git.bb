@@ -2,14 +2,23 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 
+KERNEL_REPO ?= "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git"
+KERNEL_REPO_PROTOCOL ?= "https"
+KERNEL_BRANCH ?= "ti-linux-6.1.y"
+
 LINUX_VERSION ?= "6.1.69"
-KBRANCH = "ti-linux-6.1.y"
-SRCREV_machine = "82d2b827840254248a0444a9c50ab3dc395876cc"
-SRCREV_meta = "${KERNEL_META_COMMIT}"
+SRCREV_machine ?= "82d2b827840254248a0444a9c50ab3dc395876cc"
+SRCREV_meta ?= "${KERNEL_META_COMMIT}"
+
+# Beagleplay (has its own repo)
+KERNEL_REPO:beagleplay ?= "git://github.com/beagleboard/linux.git"
+KERNEL_BRANCH:beagleplay ?= "v6.1.46-ti-arm64-r13"
+LINUX_VERSION:beagleplay ?= "6.1.46"
+SRCREV_machine:beagleplay ?= "f47f74d11b19d8ae2f146de92c258f40e0930d86"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git;protocol=git;branch=${KBRANCH};name=machine; \
+SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANCH};name=machine; \
     ${KERNEL_META_REPO};protocol=${KERNEL_META_REPO_PROTOCOL};type=kmeta;name=meta;branch=${KERNEL_META_BRANCH};destsuffix=${KMETA} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', '${SRC_URI_JAILHOUSE}', '', d)} \
 "

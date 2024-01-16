@@ -20,9 +20,9 @@ SRC_URI = " \
 "
 
 do_compile() {
-    sed -e 's/@@MACHINE@@/${MACHINE}/' \
-        -e 's/@@BOARD_NAME@@/${LMP_FLASHLAYOUT_BOARD_NAME}/' \
-        -e 's/@@FLASHLAYOUT_USB@@/${LMP_MFGTOOL_FLASHLAYOUT}/' \
+    sed -e 's:@@MACHINE@@:${MACHINE}:' \
+        -e 's:@@BOARD_NAME@@:${LMP_FLASHLAYOUT_BOARD_NAME}:' \
+        -e 's:@@FLASHLAYOUT_USB@@:${LMP_MFGTOOL_FLASHLAYOUT}:' \
         ${WORKDIR}/provision.sh.in > ${WORKDIR}/provision.sh
 }
 

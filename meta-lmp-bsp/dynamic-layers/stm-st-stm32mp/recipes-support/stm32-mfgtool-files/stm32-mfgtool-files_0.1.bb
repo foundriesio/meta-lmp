@@ -13,8 +13,6 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-STM32_BOOTIMAGE_SUFFIX ??= ""
-
 SRC_URI = " \
     file://provision.sh.in \
 "

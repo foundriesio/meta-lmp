@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+
 me=$(basename "$0")
 here=$(readlink -f $(dirname "$0"))
 
@@ -433,7 +435,7 @@ write_to_device() {
         # the raw image name.
         # XXX
         simgname="${ROOTFS_IMAGE%.*}.img"
-        sed -i -e"s,$simgname,$ROOTFS_IMAGE," -e"s,APPFILE_b,$ROOTFS_IMAGE," -e"s,APPFILE,$ROOTFS_IMAGE," $datased initrd-flash.xml
+        sed -i -e"s,$simgname,$ROOTFS_IMAGE," -e"s,APPFILE_b,$ROOTFS_IMAGE," -e"s,APPFILE,$ROOTFS_IMAGE," -e"s,DTB_FILE,kernel_$DTBFILE," $datased initrd-flash.xml
     fi
     if "$here/make-sdcard" -y $opts $extraarg initrd-flash.xml "$dev"; then
 	rc=0

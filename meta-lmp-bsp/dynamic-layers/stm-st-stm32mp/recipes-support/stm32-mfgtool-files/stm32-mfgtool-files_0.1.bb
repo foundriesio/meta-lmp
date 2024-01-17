@@ -25,7 +25,6 @@ do_compile() {
         -e 's:@@FLASHLAYOUT_USB@@:${LMP_MFGTOOL_FLASHLAYOUT}:' \
         ${WORKDIR}/provision.sh.in > ${WORKDIR}/provision.sh
 }
-do_compile[vardeps] += "MACHINE LMP_FLASHLAYOUT_BOARD_NAME LMP_MFGTOOL_FLASHLAYOUT"
 
 do_deploy() {
     install -d ${DEPLOYDIR}/${PN}

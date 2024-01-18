@@ -70,6 +70,6 @@ def set_varfile_hash(varfile, d):
 def add_varfiles_hash_to_vardeps_of_var(varfiles, var, d):
     for varname in varfiles:
         varname_hash = set_varfile_hash(varname, d)
-        vardeps = d.getVarFlag(var, 'vardeps')
-        if vardeps and varname_hash not in vardeps:
+        vardeps = d.getVarFlag(var, 'vardeps') or ""
+        if varname_hash not in vardeps.split():
             d.appendVarFlag(var, 'vardeps', ' ' + varname_hash)

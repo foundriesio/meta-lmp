@@ -1,0 +1,71 @@
+#!/bin/sh
+################################################################
+#
+# This is a simple handler script used to show handling of
+# aktualizr-lite callbacks
+#
+#
+# Copyright (C) 2024 Foundries.IO
+#
+# SPDX-License-Identifier: MIT
+#
+################################################################
+
+function log()
+{
+    echo "$(date +"%b %e %T") handle-callback: $*"
+}
+
+# Environment variables supplied:
+# MESSAGE             - Always onf of the following
+# RESULT              - When there is a return
+# CURRENT_TARGET      - File name and path to the current target
+# CURRENT_TARGET_NAME - When name is known
+# INSTALL_TARGET_NAME - When there is a new target
+#
+# Current messages are:
+# - check-for-update-pre  return: none
+# - check-for-update-post return: OK or FAILED: *
+# - download-pre          return: none
+# - download-post         return: OK or FAILED
+# - install-pre           return: none
+# - install-post          return: NEEDS_COMPLETION, OK, or FAILED
+# - install-final-pre     return: none (this will happen after a reboot from NEED_COMPLETION)
+
+case ${MESSAGE} in
+    check-for-update-pre)
+        log "check-for-update-pre"
+        ;;
+    check-for-update-post)
+        log "check-for-update-post" "${RESULT}"
+        if [ "OK" = "${RESULT}" ]
+        then
+            if [ -n "${INSTALL_TARGET_NAME}" ]
+            then
+                log "${CURRENT_TARGET_NAME}" to "${INSTALL_TARGET_NAME}"
+            fi
+        fi
+        ;;
+    download-pre)
+        log "download-pre" "${INSTALL_TARGET_NAME}"
+        ;;
+    download-post)
+        log "download-post:" "${RESULT}"
+        if [ "${RESULT}" = "OK" ]
+        then
+            log "download-post:" "${INSTALL_TARGET_NAME}"
+        fi
+        ;;
+    install-pre)
+        log "install-pre" "${INSTALL_TARGET_NAME}"
+        ;;
+    install-post)
+        log "install-post:" "${RESULT}"
+        ;;
+    install-final-pre)
+        log "install-final-pre:" "${CURRENT_TARGET_NAME}" "${INSTALL_TARGET_NAME}"
+        ;;
+    *)
+        log "unknown" "${MESSAGE}"
+        ;;
+esac

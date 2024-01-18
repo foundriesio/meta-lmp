@@ -69,4 +69,5 @@ EXTRA_OEMAKE += "${@'EXT_DTB=${RECIPE_SYSROOT}/${DTB_PATH}/${DTB_NAME}' if (d.ge
 # Support additional u-boot classes such as u-boot-fitimage
 UBOOT_CLASSES ?= ""
 LOCALVERSION = "+xlnx"
-inherit ${UBOOT_CLASSES} fio-u-boot-localversion
+inherit fio-u-boot-localversion
+inherit_defer ${UBOOT_CLASSES}

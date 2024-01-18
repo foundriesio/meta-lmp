@@ -1,0 +1,2 @@
+[pacman]
+callback_program = /usr/bin/callback-handler

@@ -31,7 +31,7 @@ python __anonymous() {
         d.appendVarFlag('do_compile', 'lockfiles', " ${TMPDIR}/lmp-hack-avoid-oom-do_compile.lock")
 }
 
-inherit ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}
+inherit_defer ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}
 
 BB_HASHCHECK_FUNCTION:lmp = "lmp_sstate_checkhashes"
 def lmp_sstate_checkhashes(sq_data, d, **kwargs):

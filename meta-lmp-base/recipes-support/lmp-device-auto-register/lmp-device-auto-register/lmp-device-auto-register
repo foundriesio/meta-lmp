@@ -2,6 +2,7 @@
 
 TOKEN_FILE=${TOKEN_FILE-/etc/lmp-device-register-token}
 TAG=""
+HSM=""
 
 if [ -f /etc/sota/tag ] ; then
 	# tag file should contain only one tag
@@ -27,6 +28,14 @@ if [ -f /var/sota/sql.db ] ; then
 	exit 1
 fi
 
+# HSM auto registration
+if [ -f /etc/sota/hsm ]; then
+	. /etc/sota/hsm
+	if [ -n "${HSM_PIN}" ] && [ -n "${HSM_SOPIN}" ] && [ -n "${HSM_MODULE}" ]; then
+		HSM="--hsm-module ${HSM_MODULE} --hsm-so-pin ${HSM_SOPIN} --hsm-pin ${HSM_PIN}"
+	fi
+fi
+
 # Done in 2 parts. This first part will remove trailing \n's and make
 # the output all space separated. The 2nd part makes it comma separated.
 [ -d /var/sota/compose-apps ] && APPS=$(ls /var/sota/compose-apps)
@@ -38,4 +47,4 @@ else
 	echo "$0: Registering with all available apps"
 fi
 
-/usr/bin/lmp-device-register -T ${TOKEN} ${TAG} ${APPS}
+/usr/bin/lmp-device-register -T ${TOKEN} ${TAG} ${APPS} ${HSM}

@@ -703,6 +703,7 @@ WKS_FILES:sota:versal = "sdimage-sota.wks"
 # TI Generic (BSP)
 TI_COMMON_DEPLOY = "${DEPLOY_DIR}"
 DEPLOY_DIR_SPDX:append = "${@'/${MACHINE}' if 'ti-soc' in (d.getVar('SOC_FAMILY') or '').split(':') else ''}"
+LICENSE_DIRECTORY:append = "${@'/${MACHINE}' if 'ti-soc' in (d.getVar('SOC_FAMILY') or '').split(':') else ''}"
 UBOOT_SIGN_ENABLE:sota:k3 = "1"
 UBOOT_SIGN_KEYDIR:k3 ?= "${TOPDIR}/conf/keys"
 FIT_HASH_ALG:sota:k3 ?= "sha256"

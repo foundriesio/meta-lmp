@@ -701,7 +701,6 @@ IMAGE_BOOT_FILES:sota:versal = "boot.bin boot.itb"
 WKS_FILES:sota:versal = "sdimage-sota.wks"
 
 # TI Generic (BSP)
-TI_TMPDIR_APPEND = ""
 TI_COMMON_DEPLOY = "${DEPLOY_DIR}"
 DEPLOY_DIR_SPDX:append = "${@'/${MACHINE}' if 'ti-soc' in (d.getVar('SOC_FAMILY') or '').split(':') else ''}"
 UBOOT_SIGN_ENABLE:sota:k3 = "1"

@@ -47,7 +47,7 @@ INMATES_DTB_DIR ?= "${JH_DATADIR}/inmates/dtb"
 # Inmate dtbs are manually installed (empty == all)
 JH_INMATE_DTB ?= ""
 
-do_configure() {
+do_configure:prepend() {
    if [ -d ${STAGING_DIR_HOST}/${CELLCONF_DIR} ];
    then
       cp "${STAGING_DIR_HOST}/${CELLCONF_DIR}/"*.c ${S}/configs/${ARCH}/
@@ -61,7 +61,7 @@ do_compile:prepend() {
         KDIR=${STAGING_KERNEL_BUILDDIR}
 }
 
-do_install:prepend() {
+do_install:append() {
     oe_runmake \
         PYTHON=python3 \
         V=1 \

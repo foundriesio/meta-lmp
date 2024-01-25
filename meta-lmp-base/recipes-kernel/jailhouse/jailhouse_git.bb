@@ -31,7 +31,7 @@ DEPENDS = " \
     dtc-native \
 "
 
-inherit module python3native bash-completion deploy setuptools3
+inherit module bash-completion deploy setuptools3
 
 S = "${WORKDIR}/git"
 B = "${S}"

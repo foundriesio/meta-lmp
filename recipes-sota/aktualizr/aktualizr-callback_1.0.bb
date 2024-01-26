@@ -22,4 +22,4 @@ FILES:${PN} = " \
     ${bindir}/callback-handler \
 "
 
-RDEPENDS:${PN} = "atkualizr-lite"
+RDEPENDS:${PN} = "aktualizr-lite"

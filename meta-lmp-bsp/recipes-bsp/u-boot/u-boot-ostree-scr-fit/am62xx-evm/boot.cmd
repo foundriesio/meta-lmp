@@ -1,7 +1,7 @@
 # Default boot type and device
 setenv bootlimit 3
 setenv devtype mmc
-setenv devnum ${mmcdev}
+setenv devnum 0
 setenv bootpart 1
 setenv rootpart 2
 

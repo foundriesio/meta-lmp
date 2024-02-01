@@ -1,4 +1,4 @@
-From 10d9e53a64636bcaafcfdb05f3412631197cca81 Mon Sep 17 00:00:00 2001
+From 4c2f79265494ebe50972c043d334bd82cb7aff44 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Fri, 15 Sep 2023 21:27:51 +0200
 Subject: [PATCH] layer: Ensure layer files are synced to disk
@@ -22,36 +22,37 @@ simply 'broken'.
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Mike <mike.sul@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  layer/layer_store.go | 8 ++++++++
  1 file changed, 8 insertions(+)
 
 diff --git a/layer/layer_store.go b/layer/layer_store.go
-index 221c1df7ad..d4a46033c7 100644
+index 6c010070c3..83216d66e4 100644
 --- a/layer/layer_store.go
 +++ b/layer/layer_store.go
-@@ -7,6 +7,7 @@ import (
+@@ -8,6 +8,7 @@ import (
  	"os"
  	"path/filepath"
  	"sync"
 +	"syscall"
  
+ 	"github.com/containerd/log"
  	"github.com/docker/distribution"
- 	"github.com/docker/docker/daemon/graphdriver"
-@@ -351,6 +352,13 @@ func (ls *layerStore) registerWithDescriptor(ts io.Reader, parent ChainID, descr
+@@ -352,6 +353,13 @@ func (ls *layerStore) registerWithDescriptor(ts io.Reader, parent ChainID, descr
  		return existingLayer.getReference(), nil
  	}
  
 +	if layer.size > 0 {
-+		logrus.Infof("Syncing filesystem prior to committing the layer...; "+
++		log.G(context.TODO()).Infof("Syncing filesystem prior to committing the layer...; "+
 +			"size: %d, chain ID: %s, cache ID: %s", layer.size, layer.chainID, layer.cacheID)
 +		// Prior to committing the layer ensure the extracted layer files are saved to disk
 +		syscall.Sync()
 +	}
-+	logrus.Infof("Committing layer %s", layer.chainID)
++	log.G(context.TODO()).Infof("Committing layer %s", layer.chainID)
  	if cErr = tx.Commit(layer.chainID); cErr != nil {
  		return nil, cErr
  	}
 -- 
-2.40.1
+2.34.1
 

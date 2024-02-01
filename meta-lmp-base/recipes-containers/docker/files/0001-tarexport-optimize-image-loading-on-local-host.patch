@@ -1,4 +1,4 @@
-From d737cd24d2922c0bde11be945e19a0febbec42cb Mon Sep 17 00:00:00 2001
+From 41feac31b4c68ededc61d5f58474341e359f7b7f Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Fri, 22 Sep 2023 12:49:07 +0200
 Subject: [PATCH] tarexport: Optimize image loading on local host
@@ -25,24 +25,25 @@ of a loaded image.
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Mike <mike.sul@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  image/tarexport/load.go      | 59 ++++++++++++++++++++++--------------
  image/tarexport/tarexport.go |  1 +
  2 files changed, 38 insertions(+), 22 deletions(-)
 
 diff --git a/image/tarexport/load.go b/image/tarexport/load.go
-index d9f3873081..312dd78b52 100644
+index fe09f7191e..7e28a82a85 100644
 --- a/image/tarexport/load.go
 +++ b/image/tarexport/load.go
-@@ -8,6 +8,7 @@ import (
- 	"os"
+@@ -10,6 +10,7 @@ import (
  	"path/filepath"
+ 	"reflect"
  	"runtime"
 +	"strings"
  
- 	"github.com/docker/distribution"
- 	"github.com/docker/distribution/reference"
-@@ -66,11 +67,9 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
+ 	"github.com/containerd/log"
+ 	"github.com/distribution/reference"
+@@ -68,11 +69,9 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
  	}
  
  	var parentLinks []parentLink
@@ -55,7 +56,7 @@ index d9f3873081..312dd78b52 100644
  		if err != nil {
  			return err
  		}
-@@ -93,7 +92,7 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
+@@ -95,7 +94,7 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
  		}
  
  		for i, diffID := range img.RootFS.DiffIDs {
@@ -64,7 +65,7 @@ index d9f3873081..312dd78b52 100644
  			if err != nil {
  				return err
  			}
-@@ -117,25 +116,30 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
+@@ -119,25 +118,30 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
  		if err != nil {
  			return err
  		}
@@ -84,7 +85,7 @@ index d9f3873081..312dd78b52 100644
 +			if refSetErr := l.setLoadedNamedRef(named, imgID.Digest(), outStream); refSetErr == nil {
 +				imageRefs = append(imageRefs, reference.FamiliarString(named))
 +			} else {
-+				logrus.Warnf("failed to set loaded image reference: %s", refSetErr.Error())
++				log.G(context.TODO()).Warnf("failed to set loaded image reference: %s", refSetErr.Error())
  			}
 -			l.setLoadedTag(ref, imgID.Digest(), outStream)
 -			outStream.Write([]byte(fmt.Sprintf("Loaded image: %s\n", reference.FamiliarString(ref))))
@@ -92,7 +93,7 @@ index d9f3873081..312dd78b52 100644
  		}
  
  		parentLinks = append(parentLinks, parentLink{imgID, m.Parent})
- 		l.loggerImgEvent.LogImageEvent(imgID.String(), imgID.String(), "load")
+ 		l.loggerImgEvent.LogImageEvent(imgID.String(), imgID.String(), events.ActionLoad)
 +		var imageIDsStr string
 +		if len(imageRefs) > 0 {
 +			imageIDsStr = fmt.Sprintf("Image loaded; refs: %s", strings.Join(imageRefs, ", "))
@@ -100,12 +101,12 @@ index d9f3873081..312dd78b52 100644
 +			imageIDsStr = fmt.Sprintf("Image loaded; ID: %s", imgID)
 +		}
 +		if _, writeErr := outStream.Write([]byte(imageIDsStr)); writeErr != nil {
-+			logrus.Warnf("failed to output loaded image IDs: %s", writeErr.Error())
++			log.G(context.TODO()).Warnf("failed to output loaded image IDs: %s", writeErr.Error())
 +		}
  	}
  
  	for _, p := range validatedParentLinks(parentLinks) {
-@@ -146,10 +150,6 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
+@@ -148,10 +152,6 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
  		}
  	}
  
@@ -116,7 +117,7 @@ index d9f3873081..312dd78b52 100644
  	return nil
  }
  
-@@ -203,12 +203,19 @@ func (l *tarexporter) loadLayer(filename string, rootFS image.RootFS, id string,
+@@ -205,12 +205,19 @@ func (l *tarexporter) loadLayer(filename string, rootFS image.RootFS, id string,
  	return l.lss.Register(inflatedLayerData, rootFS.ChainID())
  }
  
@@ -139,7 +140,7 @@ index d9f3873081..312dd78b52 100644
  }
  
  func (l *tarexporter) legacyLoad(tmpDir string, outStream io.Writer, progressOutput progress.Output) error {
-@@ -262,7 +269,7 @@ func (l *tarexporter) legacyLoad(tmpDir string, outStream io.Writer, progressOut
+@@ -264,7 +271,7 @@ func (l *tarexporter) legacyLoad(tmpDir string, outStream io.Writer, progressOut
  			if err != nil {
  				return err
  			}
@@ -148,7 +149,7 @@ index d9f3873081..312dd78b52 100644
  		}
  	}
  
-@@ -371,6 +378,14 @@ func safePath(base, path string) (string, error) {
+@@ -373,6 +380,14 @@ func safePath(base, path string) (string, error) {
  	return symlink.FollowSymlinkInScope(filepath.Join(base, path), base)
  }
  
@@ -164,7 +165,7 @@ index d9f3873081..312dd78b52 100644
  	id, parentID image.ID
  }
 diff --git a/image/tarexport/tarexport.go b/image/tarexport/tarexport.go
-index 5bcad2265c..b8ec6872f9 100644
+index e97398c2fa..1563fe66b6 100644
 --- a/image/tarexport/tarexport.go
 +++ b/image/tarexport/tarexport.go
 @@ -21,6 +21,7 @@ type manifestItem struct {
@@ -176,5 +177,5 @@ index 5bcad2265c..b8ec6872f9 100644
  
  type tarexporter struct {
 -- 
-2.40.1
+2.34.1
 

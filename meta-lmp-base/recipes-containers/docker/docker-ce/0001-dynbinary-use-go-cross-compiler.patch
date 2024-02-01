@@ -1,4 +1,4 @@
-From 56ee7325790f20914ab3e6ee1ba0e20ba04c2183 Mon Sep 17 00:00:00 2001
+From 6c1d9dea0ef2000cdeec38b46d60b2db66160ed3 Mon Sep 17 00:00:00 2001
 From: Bruce Ashfield <bruce.ashfield@gmail.com>
 Date: Tue, 30 Jun 2020 22:23:33 -0400
 Subject: [PATCH] dynbinary: use go cross compiler
@@ -36,7 +36,7 @@ Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
  1 file changed, 8 insertions(+), 29 deletions(-)
 
 diff --git a/hack/make/.binary b/hack/make/.binary
-index b73051f2a9..832b972767 100644
+index 1dc9eeb88a..5911f8be9d 100644
 --- a/hack/make/.binary
 +++ b/hack/make/.binary
 @@ -3,7 +3,7 @@ set -e
@@ -100,12 +100,12 @@ index b73051f2a9..832b972767 100644
  		fi
  	fi
  
-@@ -78,7 +57,7 @@ source "${MAKEDIR}/.go-autogen"
+@@ -82,7 +61,7 @@ source "${MAKEDIR}/.go-autogen"
  	if [ -n "$DOCKER_DEBUG" ]; then
  		set -x
  	fi
--	./hack/with-go-mod.sh go build -mod=vendor -modfile=vendor.mod -o "$DEST/$BINARY_FULLNAME" "${BUILDFLAGS[@]}" -ldflags "$LDFLAGS $LDFLAGS_STATIC $DOCKER_LDFLAGS" "$GO_PACKAGE"
-+	./hack/with-go-mod.sh ${GO} build -trimpath -mod=vendor -modfile=vendor.mod -o "$DEST/$BINARY_FULLNAME" "${BUILDFLAGS[@]}" -ldflags "$LDFLAGS $LDFLAGS_STATIC $DOCKER_LDFLAGS" "$GO_PACKAGE"
+-	./hack/with-go-mod.sh go build -mod=vendor -modfile=vendor.mod -o "$DEST/$BINARY_FULLNAME" "${BUILDFLAGS[@]}" -ldflags "$LDFLAGS $LDFLAGS_STATIC $DOCKER_LDFLAGS" -gcflags="${GCFLAGS}" "$GO_PACKAGE"
++	./hack/with-go-mod.sh ${GO} build -trimpath -mod=vendor -modfile=vendor.mod -o "$DEST/$BINARY_FULLNAME" "${BUILDFLAGS[@]}" -ldflags "$LDFLAGS $LDFLAGS_STATIC $DOCKER_LDFLAGS" -gcflags="${GCFLAGS}" "$GO_PACKAGE"
  )
  
  echo "Created binary: $DEST/$BINARY_FULLNAME"

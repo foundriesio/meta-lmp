@@ -1,8 +1,8 @@
 include kmeta-linux-lmp-6.1.y.inc
 
-LINUX_VERSION ?= "6.1.67"
+LINUX_VERSION ?= "6.1.75"
 KBRANCH = "linux-v6.1.y"
-SRCREV_machine = "7385441fbfb5375be791289499ebb76e9d90b09d"
+SRCREV_machine = "bd65ff7a91629ee0a3154f83d375616f2a709781"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

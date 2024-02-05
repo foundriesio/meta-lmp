@@ -17,8 +17,12 @@ include conf/machine/include/lmp-partner-custom.inc
 include conf/machine/include/lmp-factory-custom.inc
 
 # Rootfs cleanup as a rootfs post process hook, before ostree
-sota_var_cleanup() {
+sota_ostree_cleanup() {
 	if ${@bb.utils.contains('IMAGE_FSTYPES', 'ota-ext4', 'true', 'false', d)}; then
+		# Remove /home stuff (ignored by ostree)
+		cd ${IMAGE_ROOTFS}/home
+		ostree_rmdir_helper root
+		cd -
 		# Remove /var stuff (ignored by ostree)
 		cd ${IMAGE_ROOTFS}/var
 		ostree_rmdir_helper backups
@@ -32,7 +36,7 @@ sota_var_cleanup() {
 		cd -
 	fi
 }
-ROOTFS_POSTPROCESS_COMMAND:append:sota = " sota_var_cleanup; "
+ROOTFS_POSTPROCESS_COMMAND:append:sota = " sota_ostree_cleanup; "
 
 provision_root_meta () {
 	if [ -n "${SOTA_TUF_ROOT_FETCHER}" ]; then

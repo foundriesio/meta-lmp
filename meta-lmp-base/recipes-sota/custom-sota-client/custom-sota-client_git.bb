@@ -11,7 +11,7 @@ SRC_URI = "\
 "
 
 BRANCH = "master"
-SRCREV = "05c4180840ef84c21b0632be4a542580d720491f"
+SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git/examples/custom-client-cxx"
 

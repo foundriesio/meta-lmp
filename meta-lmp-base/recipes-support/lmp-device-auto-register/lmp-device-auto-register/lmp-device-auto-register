@@ -3,6 +3,7 @@
 TOKEN_FILE=${TOKEN_FILE-/etc/lmp-device-register-token}
 TAG=""
 HSM=""
+NAME=""
 
 if [ -f /etc/sota/tag ] ; then
 	# tag file should contain only one tag
@@ -10,6 +11,10 @@ if [ -f /etc/sota/tag ] ; then
 	# single tag for device registration
 	TAG=$(</etc/sota/tag)
 	TAG="-t ${TAG}"
+fi
+
+if [ -n "${USE_HOSTNAME}" ]; then
+	NAME="-n $(cat /etc/hostname)"
 fi
 
 if [ ! -f ${TOKEN_FILE} ] ; then
@@ -47,4 +52,4 @@ else
 	echo "$0: Registering with all available apps"
 fi
 
-/usr/bin/lmp-device-register -T ${TOKEN} ${TAG} ${APPS} ${HSM}
+/usr/bin/lmp-device-register -T ${TOKEN} ${NAME} ${TAG} ${APPS} ${HSM}

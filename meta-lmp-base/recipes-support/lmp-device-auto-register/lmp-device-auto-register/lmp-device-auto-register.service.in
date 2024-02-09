@@ -5,6 +5,7 @@ After=network-online.target time-sync.target systemd-time-wait-sync.service
 ConditionPathExists=!/var/sota/sql.db
 
 [Service]
+Environment=USE_HOSTNAME=@@LMP_AUTO_REGISTER_USE_HOSTNAME@@
 Type=oneshot
 RemainAfterExit=true
 ExecStart=/usr/bin/lmp-device-auto-register

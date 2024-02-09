@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 RDEPENDS:${PN} += "lmp-device-register"
 
 SRC_URI = " \
-	file://lmp-device-auto-register.service \
+	file://lmp-device-auto-register.service.in \
 	file://lmp-device-auto-register \
 	file://api-token \
 "
@@ -13,6 +13,12 @@ SRC_URI = " \
 inherit systemd
 
 SYSTEMD_SERVICE:${PN} = "lmp-device-auto-register.service"
+LMP_AUTO_REGISTER_USE_HOSTNAME ?= ""
+
+do_compile() {
+    sed -e 's/@@LMP_AUTO_REGISTER_USE_HOSTNAME@@/${LMP_AUTO_REGISTER_USE_HOSTNAME}/' \
+        ${WORKDIR}/lmp-device-auto-register.service.in > ${WORKDIR}/lmp-device-auto-register.service
+}
 
 do_install() {
 	install -d ${D}${systemd_system_unitdir}

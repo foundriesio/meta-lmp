@@ -12,6 +12,7 @@ unavailable.
 
 Upstream-Status: Pending
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
 
  alsactl/90-alsa-restore.rules.in | 2 ++
@@ -20,23 +21,23 @@ Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
  3 files changed, 9 insertions(+)
 
 diff --git a/alsactl/90-alsa-restore.rules.in b/alsactl/90-alsa-restore.rules.in
-index c0c1b23..318752d 100644
+index 1a411c99..f673faeb 100644
 --- a/alsactl/90-alsa-restore.rules.in
 +++ b/alsactl/90-alsa-restore.rules.in
 @@ -2,6 +2,8 @@ ACTION=="add", SUBSYSTEM=="sound", KERNEL=="controlC*", KERNELS!="card*", TEST==
  GOTO="alsa_restore_end"
  
  LABEL="alsa_restore_go"
-+TEST!="@asoundrcfile@", TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl -f @initasoundrcfile@ nrestore $attr{device/number}", GOTO="alsa_restore_end"
-+TEST!="@asoundrcfile@", TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl -f @initasoundrcfile@ restore $attr{device/number}", GOTO="alsa_restore_end"
- TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl restore $attr{device/number}"
- TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl nrestore $attr{device/number}"
++TEST!="@asoundrcfile@", TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl -f @initasoundrcfile@ nrestore $devnode", GOTO="alsa_restore_end"
++TEST!="@asoundrcfile@", TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl -f @initasoundrcfile@ restore $devnode", GOTO="alsa_restore_end"
+ TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl restore $devnode"
+ TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl nrestore $devnode"
  
 diff --git a/alsactl/Makefile.am b/alsactl/Makefile.am
-index deff2cd..c6e3ced 100644
+index fb32c4f3..337efb5d 100644
 --- a/alsactl/Makefile.am
 +++ b/alsactl/Makefile.am
-@@ -44,6 +44,7 @@ edit = \
+@@ -47,6 +47,7 @@ edit = \
  		  -e 's,@mydatadir\@,$(mydatadir),g' \
  		  -e 's,@daemonswitch\@,$(ALSACTL_DAEMONSWITCH),g' \
  		  -e 's,@asoundrcfile\@,$(ASOUND_STATE_DIR)/asound.state,g' \
@@ -45,10 +46,10 @@ index deff2cd..c6e3ced 100644
  
  alsa-state.service: alsa-state.service.in
 diff --git a/configure.ac b/configure.ac
-index 92aec3a..8a14f58 100644
+index 02b47fcc..a6db1816 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -419,6 +419,12 @@ AC_ARG_WITH([asound-state-dir],
+@@ -439,6 +439,12 @@ AC_ARG_WITH([asound-state-dir],
          [ASOUND_STATE_DIR="/var/lib/alsa"])
  AC_SUBST(ASOUND_STATE_DIR)
  
@@ -62,5 +63,5 @@ index 92aec3a..8a14f58 100644
          AS_HELP_STRING([--with-alsactl-lock-dir=DIR], [Directory to place lock files in]),
          [ASOUND_LOCK_DIR="$withval"],
 -- 
-2.39.2
+2.43.0
 

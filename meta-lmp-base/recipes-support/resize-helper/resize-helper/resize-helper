@@ -34,7 +34,6 @@ fi
 # get the partition number and type
 INFO=$(udevadm info --query=property --name=${ROOT_DEVICE})
 PART_ENTRY_NUMBER=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NUMBER=' | cut -d'=' -f2)
-PART_ENTRY_NAME=$(echo "${INFO}" | { grep '^ID_PART_ENTRY_NAME=' || true; } | cut -d'=' -f2)
 
 # in case the root device is not on a partitioned media
 if [ "x$PART_ENTRY_NUMBER" = "x" ]; then
@@ -47,37 +46,40 @@ PART_TABLE_TYPE=$(echo "${INFO}" | grep '^ID_PART_TABLE_TYPE=' | cut -d'=' -f2)
 DEVICE=$(udevadm info --query=path --name=${ROOT_DEVICE} | awk -F'/' '{print $(NF-1)}')
 DEVICE="/dev/${DEVICE}"
 
-# only manipulate partition table if rootfs is the last partition
-LAST_PART=$(partx -s -o nr ${DEVICE} | tail -n1)
-if [ ${PART_ENTRY_NUMBER} -eq ${LAST_PART} ]; then
-	SIZE=$(blockdev --getsz ${DEVICE})
-	TYPE="p\n"
-	if [ "$PART_TABLE_TYPE" = "gpt" ]; then
-		${SGDISK} -e ${DEVICE}
-		SIZE=$(($SIZE - 33)) # the GPT end of disk is 34 sectors
-		TYPE=""
-	fi
+# only manipulate the last partition from the same disk used by the rootfs
+LAST_PART=$(partx -s -o nr ${DEVICE} | tail -n1 | awk -F' ' '{print $1}')
+RESIZE_PART="${DEVICE}${LAST_PART}"
+INFO=$(udevadm info --query=property --name=${RESIZE_PART})
+PART_ENTRY_NUMBER=$(echo "${INFO}" | grep '^ID_PART_ENTRY_NUMBER=' | cut -d'=' -f2)
+PART_ENTRY_NAME=$(echo "${INFO}" | { grep '^ID_PART_ENTRY_NAME=' || true; } | cut -d'=' -f2)
 
-	# Use fdisk to repartition
-	# fdisk uses a ram image of the parition table until a write is performed
-	# so the sequence is to delete the partition and recreate it at the same
-	# starting point but making it the size of the available disk.
-	#
-	END=$((${SIZE} - 1))
-	PARTOF=$(echo "${INFO}" | grep '^ID_PART_ENTRY_OFFSET=' | cut -d'=' -f2)
-	echo -e "d\n${PART_ENTRY_NUMBER}\nn\n${TYPE}${PART_ENTRY_NUMBER}\n${PARTOF}\n${END}\nw\n" | ${FDISK} ${DEVICE}
-
-	if [ -n "${PART_ENTRY_NAME}" ]; then
-		${SGDISK} --change-name=${PART_ENTRY_NUMBER}:"${PART_ENTRY_NAME}" ${DEVICE}
-	fi
-	${PARTX} -u ${DEVICE}
+# resize the partition first and after the actual file system
+SIZE=$(blockdev --getsz ${DEVICE})
+TYPE="p\n"
+if [ "$PART_TABLE_TYPE" = "gpt" ]; then
+	${SGDISK} -e ${DEVICE}
+	SIZE=$(($SIZE - 33)) # the GPT end of disk is 34 sectors
+	TYPE=""
 fi
+# Use fdisk to repartition
+# fdisk uses a ram image of the parition table until a write is performed
+# so the sequence is to delete the partition and recreate it at the same
+# starting point but making it the size of the available disk.
+#
+END=$((${SIZE} - 1))
+PARTOF=$(echo "${INFO}" | grep '^ID_PART_ENTRY_OFFSET=' | cut -d'=' -f2)
+echo -e "d\n${PART_ENTRY_NUMBER}\nn\n${TYPE}${PART_ENTRY_NUMBER}\n${PARTOF}\n${END}\nw\n" | ${FDISK} ${DEVICE}
+if [ -n "${PART_ENTRY_NAME}" ]; then
+	${SGDISK} --change-name=${PART_ENTRY_NUMBER}:"${PART_ENTRY_NAME}" ${DEVICE}
+fi
+${PARTX} -u ${DEVICE}
 
-if [ -n "${DM_NAME}" ] && cryptsetup isLuks ${ROOT_DEVICE}; then
+if command -v cryptsetup > /dev/null && cryptsetup isLuks ${RESIZE_PART}; then
 	# OP-TEE: use TEE Identity for pkcs11 authentication
 	export CKTEEC_LOGIN_TYPE=user
+	DM_NAME=`lsblk -n --list -o NAME,TYPE ${RESIZE_PART} | awk '$2=="crypt" {print $1}'`
 	cryptsetup resize --token-only ${DM_NAME}
 	${RESIZE2FS} "/dev/mapper/${DM_NAME}"
 else
-	${RESIZE2FS} "${ROOT_DEVICE}"
+	${RESIZE2FS} "${RESIZE_PART}"
 fi

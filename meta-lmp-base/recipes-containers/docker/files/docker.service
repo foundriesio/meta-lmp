@@ -2,14 +2,10 @@
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
 After=network-online.target docker.socket firewalld.service containerd.service fio-docker-fsck.service
-Before=boot-complete.target
 Wants=network-online.target containerd.service
 Requires=docker.socket
 StartLimitBurst=3
 StartLimitIntervalSec=60
-# Reboot the system in case docker daemon fails. This will trigger a rollback
-# after three consecutive failures.
-StartLimitAction=reboot
 
 [Service]
 Type=notify
@@ -40,4 +36,4 @@ KillMode=process
 OOMScoreAdjust=-500
 
 [Install]
-WantedBy=multi-user.target boot-complete.target
+WantedBy=multi-user.target

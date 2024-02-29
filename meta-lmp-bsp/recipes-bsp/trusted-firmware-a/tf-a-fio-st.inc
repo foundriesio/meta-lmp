@@ -68,7 +68,7 @@ create_combo_image() {
        [ -f "${DEPLOYDIR}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin" ]; then
         cp ${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc_Signed.stm32 \
            ${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
-        dd if=${DEPLOYDIR}/arm-trusted-firmware/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
+        dd if=${DEPLOYDIR}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
            of=${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
     else
         if [ -f "${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32" ] && \

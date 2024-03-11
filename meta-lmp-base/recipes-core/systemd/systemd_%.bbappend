@@ -57,7 +57,7 @@ RRECOMMENDS:${PN} += "systemd-crypt"
 
 ALTERNATIVE_PRIORITY[resolv-conf] = "300"
 
-DEF_FALLBACK_NTP_SERVERS ?= "time1.google.com time2.google.com time3.google.com time4.google.com time.cloudflare.com"
+DEF_FALLBACK_NTP_SERVERS ?= "time1.google.com time2.google.com time3.google.com time.cloudflare.com pool.ntp.org"
 EXTRA_OEMESON += ' \
 	-Dntp-servers="${DEF_FALLBACK_NTP_SERVERS}" \
 '

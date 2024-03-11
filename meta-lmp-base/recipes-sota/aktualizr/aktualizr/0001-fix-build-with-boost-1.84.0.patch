@@ -1,0 +1,52 @@
+From 7494dad27b06df58b8422e632c03ec6114c5d792 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Mon, 11 Mar 2024 16:44:24 +0000
+Subject: [PATCH] fix build with boost-1.84.0
+
+Upstream-Status: Pending
+
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ src/composeappmanager.cc          | 1 +
+ src/docker/restorableappengine.cc | 1 +
+ src/helpers.cc                    | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/src/composeappmanager.cc b/src/composeappmanager.cc
+index cdb6951..467cb92 100644
+--- a/src/composeappmanager.cc
++++ b/src/composeappmanager.cc
+@@ -4,6 +4,7 @@
+ 
+ #include <boost/format.hpp>
+ #include <boost/process.hpp>
++#include <boost/range/iterator_range_core.hpp>
+ 
+ #include "bootloader/bootloaderlite.h"
+ #include "docker/restorableappengine.h"
+diff --git a/src/docker/restorableappengine.cc b/src/docker/restorableappengine.cc
+index 0c4d3e7..fc41fb0 100644
+--- a/src/docker/restorableappengine.cc
++++ b/src/docker/restorableappengine.cc
+@@ -10,6 +10,7 @@
+ #include <boost/format.hpp>
+ #include <boost/lexical_cast.hpp>
+ #include <boost/process.hpp>
++#include <boost/range/iterator_range_core.hpp>
+ 
+ #include "crypto/crypto.h"
+ #include "docker/composeappengine.h"
+diff --git a/src/helpers.cc b/src/helpers.cc
+index ebf459f..3949423 100644
+--- a/src/helpers.cc
++++ b/src/helpers.cc
+@@ -1,5 +1,6 @@
+ #include "helpers.h"
+ 
++#include <boost/range/iterator_range_core.hpp>
+ #include <boost/uuid/uuid_generators.hpp>
+ #include <boost/uuid/uuid_io.hpp>
+ 
+-- 
+2.25.1
+

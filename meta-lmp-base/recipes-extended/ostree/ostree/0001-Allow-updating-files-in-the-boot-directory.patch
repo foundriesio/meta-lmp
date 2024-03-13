@@ -1,4 +1,4 @@
-From 91e63f287357f65a713425f4b2847b4a18cff072 Mon Sep 17 00:00:00 2001
+From 7c12b8576a9844c41f81d8f4a03f5545bae53fec Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
 Subject: [PATCH] Allow updating files in the /boot directory
@@ -23,10 +23,10 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index dfed9c1..826ca05 100644
+index a868380..691c689 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -155,6 +155,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -156,6 +156,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-signed-pull.sh \
  	tests/test-pre-signed-pull.sh \
  	tests/test-signed-pull-summary.sh \
@@ -35,7 +35,7 @@ index dfed9c1..826ca05 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index 2454a58..57e2c28 100644
+index b756c76..966c308 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -273,9 +273,52 @@ checksum_dir_recurse (int dfd, const char *path, OtChecksum *checksum, GCancella
@@ -127,7 +127,7 @@ index 2454a58..57e2c28 100644
          }
      }
  
-@@ -1837,6 +1891,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1889,6 +1943,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -135,7 +135,7 @@ index 2454a58..57e2c28 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -2005,6 +2060,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -2064,6 +2119,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  

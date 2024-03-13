@@ -1,4 +1,4 @@
-From 23985304d9a915131687c9449abde30b58c45539 Mon Sep 17 00:00:00 2001
+From 1351d90a6a01d635ce1c26ba471110eaf9f1d1e7 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
 Subject: [PATCH] u-boot: add 'bootdir' to the generated uEnv.txt

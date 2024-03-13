@@ -1,4 +1,4 @@
-From 8126bb8c6287e7e77b111f83faa4402f3291f114 Mon Sep 17 00:00:00 2001
+From 91e63f287357f65a713425f4b2847b4a18cff072 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
 Subject: [PATCH] Allow updating files in the /boot directory
@@ -23,10 +23,10 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index 32817704..73dab527 100644
+index dfed9c1..826ca05 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -154,6 +154,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -155,6 +155,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-signed-pull.sh \
  	tests/test-pre-signed-pull.sh \
  	tests/test-signed-pull-summary.sh \
@@ -35,7 +35,7 @@ index 32817704..73dab527 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index b87866ff..30e40117 100644
+index 2454a58..57e2c28 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -273,9 +273,52 @@ checksum_dir_recurse (int dfd, const char *path, OtChecksum *checksum, GCancella
@@ -127,7 +127,7 @@ index b87866ff..30e40117 100644
          }
      }
  
-@@ -1745,6 +1799,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1837,6 +1891,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -135,7 +135,7 @@ index b87866ff..30e40117 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -1913,6 +1968,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -2005,6 +2060,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  
@@ -214,7 +214,7 @@ index b87866ff..30e40117 100644
      return FALSE;
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
 new file mode 100755
-index 00000000..f69c1253
+index 0000000..f69c125
 --- /dev/null
 +++ b/tests/test-bootdir-update.sh
 @@ -0,0 +1,39 @@

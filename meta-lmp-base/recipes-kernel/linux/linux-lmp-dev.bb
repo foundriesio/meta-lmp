@@ -12,7 +12,7 @@ python __anonymous() {
 FIO_LMP_GIT_URL ?= "github.com"
 FIO_LMP_GIT_NAMESPACE ?= "foundriesio/"
 
-LINUX_VERSION ?= "6.5.0-rc2"
+LINUX_VERSION ?= "6.8.0"
 LINUX_VERSION_EXTENSION ?= "-lmpdev-${LINUX_KERNEL_TYPE}"
 PV = "${LINUX_VERSION}+git${SRCPV}"
 

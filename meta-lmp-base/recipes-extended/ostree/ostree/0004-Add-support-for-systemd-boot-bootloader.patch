@@ -253,7 +253,7 @@ index e6b26ce5..9c56328c 100644
  
  /**
 diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
-index 1796c87f..5a505b52 100644
+index 800bd21f..2aeffb67 100644
 --- a/src/libostree/ostree-sysroot.c
 +++ b/src/libostree/ostree-sysroot.c
 @@ -30,6 +30,7 @@

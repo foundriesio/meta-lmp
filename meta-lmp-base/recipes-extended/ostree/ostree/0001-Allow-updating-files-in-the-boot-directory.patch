@@ -35,7 +35,7 @@ index c6f9420e..eabd0462 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index df1254df..c94887a0 100644
+index f777b92f..0348fb41 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -282,9 +282,52 @@ checksum_dir_recurse (int dfd, const char *path, OtChecksum *checksum, GCancella
@@ -131,7 +131,7 @@ index df1254df..c94887a0 100644
            else
              {
                ot_journal_print (LOG_INFO,
-@@ -1864,6 +1918,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1888,6 +1942,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -139,7 +139,7 @@ index df1254df..c94887a0 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -2039,6 +2094,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -2056,6 +2111,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  

@@ -12,6 +12,8 @@ SRC_URI:append = " \
     file://0005-ostree-decrease-default-grub.cfg-timeout-and-set-def.patch \
 "
 
+PACKAGECONFIG:remove = "static"
+
 # glibc is built with gcc and hence encodes some libgcc specific builtins which are not found
 # when doing static linking with clang using compiler-rt, so use libgcc
 # undefined reference to `__unordtf2'

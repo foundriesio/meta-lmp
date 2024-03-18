@@ -60,10 +60,10 @@ index eabd0462..86147358 100644
  	tests/test-admin-deploy-whiteouts.sh \
  	tests/test-admin-deploy-emptyetc.sh \
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index c94887a0..582ce0e8 100644
+index 0348fb41..99c894ab 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -2366,10 +2366,60 @@ prepare_new_bootloader_link (OstreeSysroot *sysroot, int current_bootversion, in
+@@ -2383,10 +2383,60 @@ prepare_new_bootloader_link (OstreeSysroot *sysroot, int current_bootversion, in
    return TRUE;
  }
  
@@ -126,7 +126,7 @@ index c94887a0..582ce0e8 100644
  {
    GLNX_AUTO_PREFIX_ERROR ("Final bootloader swap", error);
  
-@@ -2379,12 +2429,22 @@ swap_bootloader (OstreeSysroot *sysroot, OstreeBootloader *bootloader, int curre
+@@ -2396,12 +2446,22 @@ swap_bootloader (OstreeSysroot *sysroot, OstreeBootloader *bootloader, int curre
    if (!_ostree_sysroot_ensure_boot_fd (sysroot, error))
      return FALSE;
  
@@ -155,7 +155,7 @@ index c94887a0..582ce0e8 100644
  
    /* Now we explicitly fsync this directory, even though it
     * isn't required for atomicity, for two reasons:
-@@ -2596,13 +2656,50 @@ write_deployments_bootswap (OstreeSysroot *self, GPtrArray *new_deployments,
+@@ -2613,13 +2673,50 @@ write_deployments_bootswap (OstreeSysroot *self, GPtrArray *new_deployments,
          return glnx_prefix_error (error, "Bootloader write config");
      }
  
@@ -209,7 +209,7 @@ index c94887a0..582ce0e8 100644
  
    if (out_subbootdir)
 diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
-index 5b4617fa..1796c87f 100644
+index a25d0b20..800bd21f 100644
 --- a/src/libostree/ostree-sysroot.c
 +++ b/src/libostree/ostree-sysroot.c
 @@ -601,6 +601,12 @@ compare_loader_configs_for_sorting (gconstpointer a_pp, gconstpointer b_pp)

@@ -253,7 +253,7 @@ index e6b26ce5..9c56328c 100644
  
  /**
 diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
-index fb9b5cd9..3f04bcc2 100644
+index 1796c87f..5a505b52 100644
 --- a/src/libostree/ostree-sysroot.c
 +++ b/src/libostree/ostree-sysroot.c
 @@ -30,6 +30,7 @@
@@ -264,7 +264,7 @@ index fb9b5cd9..3f04bcc2 100644
  #include "ostree-bootloader-zipl.h"
  #include "ostree-core-private.h"
  #include "ostree-deployment-private.h"
-@@ -1507,6 +1508,8 @@ _ostree_sysroot_new_bootloader_by_type (OstreeSysroot *sysroot,
+@@ -1510,6 +1511,8 @@ _ostree_sysroot_new_bootloader_by_type (OstreeSysroot *sysroot,
        return (OstreeBootloader *)_ostree_bootloader_aboot_new (sysroot);
      case CFG_SYSROOT_BOOTLOADER_OPT_UBOOT:
        return (OstreeBootloader *)_ostree_bootloader_uboot_new (sysroot);
@@ -273,7 +273,7 @@ index fb9b5cd9..3f04bcc2 100644
      case CFG_SYSROOT_BOOTLOADER_OPT_ZIPL:
        /* We never consider zipl as active by default, so it can only be created
         * if it's explicitly requested in the config */
-@@ -1544,6 +1547,7 @@ _ostree_sysroot_query_bootloader (OstreeSysroot *sysroot, OstreeBootloader **out
+@@ -1547,6 +1550,7 @@ _ostree_sysroot_query_bootloader (OstreeSysroot *sysroot, OstreeBootloader **out
          CFG_SYSROOT_BOOTLOADER_OPT_SYSLINUX,
          CFG_SYSROOT_BOOTLOADER_OPT_GRUB2,
          CFG_SYSROOT_BOOTLOADER_OPT_UBOOT,
@@ -282,7 +282,7 @@ index fb9b5cd9..3f04bcc2 100644
        for (int i = 0; i < G_N_ELEMENTS (probe); i++)
          {
 diff --git a/tests/libtest.sh b/tests/libtest.sh
-index d1c99eab..093454e2 100755
+index 2c2a33f0..6eb26538 100755
 --- a/tests/libtest.sh
 +++ b/tests/libtest.sh
 @@ -385,6 +385,13 @@ setup_os_boot_uboot() {

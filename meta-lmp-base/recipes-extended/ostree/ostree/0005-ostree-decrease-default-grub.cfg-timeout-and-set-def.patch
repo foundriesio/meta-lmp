@@ -12,7 +12,7 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/boot/grub2/ostree-grub-generator b/src/boot/grub2/ostree-grub-generator
-index d1436b6..3caebda 100644
+index d1436b65..3caebda6 100644
 --- a/src/boot/grub2/ostree-grub-generator
 +++ b/src/boot/grub2/ostree-grub-generator
 @@ -99,8 +99,8 @@ populate_header()

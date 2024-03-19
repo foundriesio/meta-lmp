@@ -10,6 +10,9 @@ SRC_URI:append = " \
     file://daemon.json.in \
     file://docker.service \
 "
+SRC_URI:remove = "file://cli-config-support-default-system-config.patch;patchdir=cli"
+SRC_URI:remove = "file://0001-tarexport-optimize-image-loading-on-local-host.patch;patchdir=src/import"
+SRC_URI:remove = "file://0001-layer-ensure-layer-files-are-synced-to-disk.patch;patchdir=src/import"
 
 DOCKER_MAX_CONCURRENT_DOWNLOADS ?= "3"
 DOCKER_MAX_DOWNLOAD_ATTEMPTS ?= "5"

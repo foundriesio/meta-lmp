@@ -136,7 +136,7 @@ EFI_PROVIDER:intel-corei7-64 = "systemd-boot"
 OSTREE_SPLIT_BOOT:intel-corei7-64 = "1"
 OSTREE_LOADER_LINK:intel-corei7-64 = "0"
 KERNEL_CLASSES:intel-corei7-64 = " kernel-lmp-efi "
-WKS_FILE:intel-corei7-64:sota ?= "efidisk-sota.wks.in"
+WKS_FILE:intel-corei7-64:sota ?= "${@bb.utils.contains('OSTREE_SPLIT_VAR', '1', 'efidisk-split-var-sota.wks.in', 'efidisk-sota.wks.in', d)}"
 WKS_FILE_DEPENDS:append:intel-corei7-64 = " ${INITRD_IMAGE_LIVE} efitools"
 WKS_FILE_DEPENDS_BOOTLOADERS:remove:intel-corei7-64 = "grub-efi"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES

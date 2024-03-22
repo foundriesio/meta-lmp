@@ -1,7 +1,7 @@
-From 40795e2dcf1bbb0a4c1e3a4b53925d970fb5c9ff Mon Sep 17 00:00:00 2001
+From 1351d90a6a01d635ce1c26ba471110eaf9f1d1e7 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
-Subject: [PATCH 2/2] u-boot: add 'bootdir' to the generated uEnv.txt
+Subject: [PATCH] u-boot: add 'bootdir' to the generated uEnv.txt
 
 When doing a full copy of:
 
@@ -26,24 +26,26 @@ bootdir=/boot/ostree/$os-$bootcsum/ is a better approach here, as
 Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+
 ---
  src/libostree/ostree-bootloader-uboot.c | 4 ++++
  tests/test-bootdir-update.sh            | 1 +
  2 files changed, 5 insertions(+)
 
 diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
-index 7e23001e..0ccb739f 100644
+index 41280cf1..bfdc5c91 100644
 --- a/src/libostree/ostree-bootloader-uboot.c
 +++ b/src/libostree/ostree-bootloader-uboot.c
-@@ -113,6 +113,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
-   g_autoptr(GPtrArray) boot_loader_configs = NULL;
+@@ -106,6 +106,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot *self, int bootver
+   g_autoptr (GPtrArray) boot_loader_configs = NULL;
    OstreeBootconfigParser *config;
    const char *val;
 +  g_autofree char *bootdir = NULL;
  
    if (!_ostree_sysroot_read_boot_loader_configs (self->sysroot, bootversion, &boot_loader_configs,
                                                   cancellable, error))
-@@ -136,6 +137,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot     *self,
+@@ -129,6 +130,9 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot *self, int bootver
          }
        g_ptr_array_add (new_lines, g_strdup_printf ("kernel_image%s=/boot%s", index_suffix, val));
  
@@ -64,6 +66,3 @@ index f69c1253..9365b29e 100755
 +assert_file_has_content sysroot/boot/uEnv.txt "bootdir="
  
  echo "ok boot dir with .ostree-bootcsumdir-source"
--- 
-2.34.1
-

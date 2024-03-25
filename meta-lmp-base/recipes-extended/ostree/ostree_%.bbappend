@@ -13,3 +13,5 @@ SRC_URI:append = " \
 "
 
 PACKAGECONFIG:remove = "static"
+
+SRC_URI:remove = "file://0001-ostree-fetcher-curl-set-a-timeout-for-an-overall-req.patch"

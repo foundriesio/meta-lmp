@@ -2,7 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
 
-KERNEL_REPO ?= "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git"
+KERNEL_REPO ?= "git://git.ti.com/git/ti-linux-kernel/ti-linux-kernel.git"
 KERNEL_REPO_PROTOCOL ?= "https"
 KERNEL_BRANCH ?= "ti-linux-6.1.y"
 

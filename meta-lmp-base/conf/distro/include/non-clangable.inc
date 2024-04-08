@@ -209,3 +209,6 @@ TOOLCHAIN:pn-u-boot-ti-staging = "gcc"
 
 # libmali-xlnx calls gcc directly on do_install
 TOOLCHAIN:pn-libmali-xlnx = "gcc"
+
+# isp-imx fails to build with clang
+TOOLCHAIN:pn-isp-imx = "gcc"

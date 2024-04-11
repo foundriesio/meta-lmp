@@ -1,3 +1,5 @@
+Upstream-Status: Inappropriate [lmp specific]
+
 --- weston-init/weston.service	2021-07-28 20:36:49.967058683 -0300
 +++ weston-init/weston.service_new	2021-07-28 20:37:49.593091101 -0300
 @@ -34,7 +34,10 @@

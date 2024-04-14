@@ -9,8 +9,15 @@ LMPSTAGING_INHERIT_KERNEL_MODSIGN = ""
 
 LMPSTAGING_LOCK_TO_AVOID_OOM = "clang-native rust-native rust-llvm-native"
 
+LMPSTAGING_KERN_ADD_ST_SUBDIR = ""
+
 python __anonymous() {
     pn = d.getVar('PN')
+
+    if pn == "linux-lmp" or pn == "linux-lmp-rt":
+        (major_ver, minor_ver, rest) = d.getVar('LINUX_VERSION').split(".")
+        if int(major_ver) > 6 or (int(major_ver) == 6 and int(minor_ver) >= 4):
+            d.setVar('LMPSTAGING_KERN_ADD_ST_SUBDIR',  'st/')
 
     if bb.data.inherits_class('module', d):
         d.appendVar('DEPENDS', ' virtual/kernel')

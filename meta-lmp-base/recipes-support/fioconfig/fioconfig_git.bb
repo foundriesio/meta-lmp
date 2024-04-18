@@ -1,8 +1,8 @@
 DESCRIPTION = "A daemon to handle configuration management for devices in a Foundries Factory"
 HOMEPAGE = "https://github.com/foundriesio/fioconfig"
 SECTION = "devel"
-LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d274dedb13"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=504a5c2455c8bb2fc5b7667833ab1a68"
 
 GO_IMPORT = "github.com/foundriesio/fioconfig"
 GO_IMPORT_PROTO ?= "https"

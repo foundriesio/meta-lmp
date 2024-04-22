@@ -129,6 +129,7 @@ IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-in
 
 # Intel
 MACHINE_FEATURES:append:intel-corei7-64 = " tpm2"
+DISTRO_FEATURES:append = " cfs"
 UEFI_SIGN_ENABLE:intel-corei7-64 = "1"
 OSTREE_BOOTLOADER:intel-corei7-64 ?= "none"
 OSTREE_KERNEL_ARGS:intel-corei7-64 ?= "console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

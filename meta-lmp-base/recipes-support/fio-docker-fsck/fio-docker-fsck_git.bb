@@ -1,8 +1,8 @@
 DESCRIPTION = "A tool to check and fix an image&layer store of the docker daemon"
 HOMEPAGE = "https://github.com/foundriesio/fio-docker-fsck"
 SECTION = "devel"
-LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=6da28bf14f8fa478195ced00edf4ab7b"
 
 GO_IMPORT = "github.com/foundriesio/fio-docker-fsck"
 GO_IMPORT_PROTO ?= "https"
@@ -10,7 +10,7 @@ SRC_URI = " \
 	git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=${SRCBRANCH} \
 	file://fio-docker-fsck.service \
 "
-SRCREV = "337b94e6f828adb55eab18499b472661d7607dfa"
+SRCREV = "c939707c8f424cfd02c8d3c42605ffdb3439d653"
 SRCBRANCH = "main"
 
 UPSTREAM_CHECK_COMMITS = "1"

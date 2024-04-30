@@ -13,6 +13,7 @@ SRC_URI:append = " \
 "
 
 PACKAGECONFIG:remove = "static"
+PACKAGECONFIG:append = " composefs ed25519-libsodium"
 
 # glibc is built with gcc and hence encodes some libgcc specific builtins which are not found
 # when doing static linking with clang using compiler-rt, so use libgcc

@@ -7,8 +7,17 @@ ostree_enabled() {
 }
 
 ostree_run() {
+	COMPOSEFS_CONF="/usr/lib/ostree/prepare-root.conf"
+
 	if [ -n "$ROOTFS_DIR" ]; then
-		info "Preparing OSTree root at '$ROOTFS_DIR'..."
+		if [ -e "$COMPOSEFS_CONF" ]; then
+			if [ -e /etc/ostree/composefs ]; then
+				. /etc/ostree/composefs
+				ostree_composefs_prepare
+			fi
+		fi
+
+		msg "Preparing OSTree root at '$ROOTFS_DIR'..."
 		/usr/lib/ostree/ostree-prepare-root $ROOTFS_DIR
 	else
 		debug "No rootfs has been set"

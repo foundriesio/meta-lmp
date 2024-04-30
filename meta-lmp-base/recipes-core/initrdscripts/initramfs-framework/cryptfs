@@ -143,6 +143,8 @@ cryptfs_run() {
 	if ! cryptsetup isLuks ${root_dev}; then
 		# Partition not yet encrypted
 		msg "${root_dev} not yet encrypted, encrypting with LUKS2"
+		# Enable fs-verify early
+		[ -n "$bootparam_composefs" ] && tune2fs -O verity ${root_dev} 2>/dev/null
 		e2fsck_check ${root_dev}
 		block_size=`dumpe2fs -h ${root_dev} 2>/dev/null | grep "^Block size" | cut -d ':' -f 2 | tr -d ' '`
 		block_count=`dumpe2fs -h ${root_dev} 2>/dev/null | grep "^Block count" | cut -d ':' -f 2 | tr -d ' '`

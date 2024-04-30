@@ -1,0 +1,57 @@
+#!/bin/sh
+# Copyright (C) 2024 Open Source Foundries Ltd.
+# Licensed on MIT
+
+ostree_composefs_prepare() {
+	COMPOSEFS_CONF="/usr/lib/ostree/prepare-root.conf"
+	COMPOSEFS_NAME=".ostree.cfs"
+	SYSROOT_DIR="/sysroot"
+
+	composefs=$(sed -n '/\[composefs\]/{:a;n;/enabled/{s/.*=//p;q};ba}' "$COMPOSEFS_CONF")
+	[ "$composefs" != "signed" ] && return 0
+
+	# Store kernel configs in a variable
+	kernel_config=$(zcat /proc/config.gz)
+
+	# Check kernel configs
+	missing_configs=""
+	for config in "CONFIG_EROFS_FS=y" "CONFIG_OVERLAY_FS=y" "CONFIG_FS_VERITY=y"; do
+		echo "$kernel_config" | grep -q "$config" || missing_configs="$missing_configs $config"
+	done
+
+	[ -n "$missing_configs" ] && fatal "FATAL: Make sure your kernel enabled$missing_configs !!!"
+
+	# Composefs uses SYSROOT_DIR
+	ln -sf "$ROOTFS_DIR" "$SYSROOT_DIR"
+
+	force=""
+	# Check if all measurements are already available
+	for cfsfile_ in "${SYSROOT_DIR}/ostree/deploy"/*/deploy/*/"${COMPOSEFS_NAME}"; do
+		# If enabled already, skip
+		if ! fsverity measure "${cfsfile_}" > /dev/null 2>/dev/null; then
+			force="true"
+			break
+		fi
+	done
+
+	# CI already enabled fs-verity on the deployment
+	[ ! -n "$force" ] && return 0
+
+	msg "Enabling signed Composefs with fs-verity"
+
+	# Try to enable fs-verity on the disk
+	[ -n "$bootparam_root" ] && tune2fs -O verity $bootparam_root > /dev/null 2>/dev/null
+
+	# Track time spent
+	t0="$(date '+%s')"
+
+	# Enable on all repo objects
+	find "${SYSROOT_DIR}/ostree/repo/objects" -exec fsverity enable '{}' \; 2>/dev/null
+
+	# Enable on all composefs images
+	find "${SYSROOT_DIR}/ostree/deploy" -type f -name "${COMPOSEFS_NAME}" -exec fsverity enable '{}' \; 2>/dev/null
+	t1="$(date '+%s')"
+
+	# Output time spent
+	msg "fsverity: $((t1 - t0)) seconds."
+}

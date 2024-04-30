@@ -43,6 +43,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     sudo \
     tzdata \
     zram \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'cfs', 'fsverity-utils', '', d)} \
 "
 
 # Additional packages when sota is available

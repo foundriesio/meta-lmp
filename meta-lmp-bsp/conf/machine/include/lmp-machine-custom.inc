@@ -766,9 +766,9 @@ OSTREE_DEPLOY_DEVICETREE:tegra = "1"
 PREFERRED_PROVIDER_virtual/optee-os:tegra = "optee-os"
 MACHINE_FEATURES:append:tegra = " optee"
 ## jetson-agx-xavier-devkit (tegra194)
-OSTREE_KERNEL_ARGS:tegra194 ?= "\${cbootargs} root=LABEL=otaroot rootwait rootfstype=ext4 mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off sdhci_tegra.en_boot_part_access=1"
+OSTREE_KERNEL_ARGS:tegra194 ?= "\${cbootargs} ${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off sdhci_tegra.en_boot_part_access=1"
 ## jetson-agx-orin-devkit (tegra234)
-OSTREE_KERNEL_ARGS:tegra234 ?= "root=/dev/mmcblk0p1 rootwait rootfstype=ext4 mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off"
+OSTREE_KERNEL_ARGS:tegra234 ?= "${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off"
 
 # Allwinner (sun8i)
 PREFERRED_PROVIDER_virtual/bootloader:sun8i = "u-boot-fio"

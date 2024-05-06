@@ -1,6 +1,10 @@
 DESCRIPTION = "Common Foundries.io Linux microPlatform Kernel"
 
-PV = "${LINUX_VERSION}+git${SRCPV}"
+# Save the original PV as KSHORT_VER for further use
+python __anonymous () {
+    d.setVar('KSHORT_VER', d.getVar("PV"))
+    d.setVar('PV', d.getVar("LINUX_VERSION") + d.getVar("SRCPV"))
+}
 
 KERNEL_FEATURES += "${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', ' features/jailhouse/jailhouse.scc', '', d)}"
 

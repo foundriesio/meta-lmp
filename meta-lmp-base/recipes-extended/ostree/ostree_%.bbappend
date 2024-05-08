@@ -31,3 +31,9 @@ COMPILER_RT:libc-glibc:toolchain-clang:x86 = " \
     ${@bb.utils.contains('PACKAGECONFIG', 'static', '-rtlib=libgcc --unwindlib=libgcc', '', d)}"
 COMPILER_RT:libc-glibc:toolchain-clang:x86-64 = " \
     ${@bb.utils.contains('PACKAGECONFIG', 'static', '-rtlib=libgcc --unwindlib=libgcc', '', d)}"
+
+PV .= "+git${SRCPV}"
+SRC_URI = "gitsm://github.com/ostreedev/ostree;protocol=https;branch=main"
+SRCREV = "f911d40b986182d0d34b9c94d0d1b987da61d1ed"
+S = "${WORKDIR}/git"
+DEPENDS += "composefs"

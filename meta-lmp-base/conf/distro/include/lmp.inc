@@ -30,6 +30,9 @@ TUNE_CCARGS:remove:toolchain-clang = "${@bb.utils.contains('TUNE_FEATURES', 'aar
 # Include distro features in pre-build configuration output
 BUILDCFG_VARS += "DISTRO_FEATURES"
 
+# FIXME: just for testing the composefs
+PREFERRED_VERSION_linux-lmp = "6.6%"
+
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/optee-os ?= "optee-os-fio"
 PREFERRED_PROVIDER_u-boot-fw-utils ?= "libubootenv"

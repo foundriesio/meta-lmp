@@ -155,6 +155,7 @@ TOOLCHAIN:pn-optee-fiovb = "gcc"
 # tegra (xavier and orin)
 TOOLCHAIN:pn-optee-os = "gcc"
 TOOLCHAIN:pn-optee-nvsamples = "gcc"
+TOOLCHAIN:pn-standalone-mm-optee-tegra = "gcc"
 
 # lmp-mfgtool distro
 TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"

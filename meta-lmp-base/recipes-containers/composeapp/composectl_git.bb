@@ -1,13 +1,13 @@
 DESCRIPTION = "A CLI utility to manage compose apps"
 
 SECTION = "devel"
-LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d274dedb13"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=504a5c2455c8bb2fc5b7667833ab1a68"
 
 GO_IMPORT = "github.com/foundriesio/composeapp"
 GO_IMPORT_PROTO ?= "https"
 SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=main"
-SRCREV = "5419dab59df5b546f78269570bb47bb871654b8f"
+SRCREV = "ebbba333aaefb642edbdb5e55e71f8d0c390322e"
 UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod

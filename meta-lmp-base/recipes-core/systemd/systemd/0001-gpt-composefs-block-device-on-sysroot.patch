@@ -1,0 +1,28 @@
+From 9b349290800149bbab6747b63931f1a404c4ef63 Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Sun, 12 May 2024 09:46:07 +0200
+Subject: [PATCH] gpt: composefs: block device on sysroot
+
+rootfs corresponds to the composefs overlay: use sysroot instead.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ src/gpt-auto-generator/gpt-auto-generator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gpt-auto-generator/gpt-auto-generator.c b/src/gpt-auto-generator/gpt-auto-generator.c
+index 64ca9bb2f9..a7c564ca5c 100644
+--- a/src/gpt-auto-generator/gpt-auto-generator.c
++++ b/src/gpt-auto-generator/gpt-auto-generator.c
+@@ -774,7 +774,7 @@ static int add_mounts(void) {
+          * here. */
+         r = readlink_malloc("/run/systemd/volatile-root", &p);
+         if (r == -ENOENT) { /* volatile-root not found */
+-                r = get_block_device_harder("/", &devno);
++                r = get_block_device_harder("/sysroot", &devno);
+                 if (r == -EUCLEAN)
+                         return btrfs_log_dev_root(LOG_ERR, r, "root file system");
+                 if (r < 0)
+-- 
+2.34.1
+

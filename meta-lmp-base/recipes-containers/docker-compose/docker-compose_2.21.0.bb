@@ -27,7 +27,7 @@ go_do_compile() {
 	export TMPDIR="${GOTMPDIR}"
 	mkdir -p ${B}/cli-plugins/bin
 	${GO} mod download -modcacherw
-	cp -f ${S}/src/github.com/docker/cli/cli/config/config.go ${B}/pkg/mod/github.com/docker/cli@v24.0.5+incompatible/cli/config/config.go
+	cp -f ${S}/src/github.com/docker/cli/cli/config/config.go ${B}/.mod/github.com/docker/cli@v24.0.5+incompatible/cli/config/config.go
 	# remove prebuilt binaries to avoid qa issues
 	rm -f ${B}/pkg/mod/github.com/laurazard/godog*/bin/staticcheck*
 	rm -f ${B}/pkg/mod/github.com/in-toto/in-toto-golang*/test/data/helloworld

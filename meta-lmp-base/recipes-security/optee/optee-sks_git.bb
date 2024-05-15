@@ -8,7 +8,7 @@ DEPENDS = "optee-os-tadevkit optee-client"
 require optee-fio.inc
 
 SRC_URI = "git://github.com/foundriesio/optee-sks.git;protocol=https;branch=master"
-SRCREV = "c5e0ae747c84b496585c4de7e4bded025e24959b"
+SRCREV = "048c0cad8449e31d5b495a228a6bd4a2e5cc71f5"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

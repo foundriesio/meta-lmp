@@ -2,6 +2,8 @@ SUMMARY = "Produces a Manufacturing Tool compatible Linux Kernel"
 DESCRIPTION = "Linux Kernel recipe that produces a Manufacturing Tool \
 compatible Linux Kernel to be used in updater environment"
 
+KERNEL_DEVICETREE_32BIT_COMPATIBILITY_UPDATE = "1"
+
 # Use Freescale kernel by default
 KERNEL_REPO ?= "git://github.com/Freescale/linux-fslc.git"
 KERNEL_REPO_PROTOCOL ?= "https"

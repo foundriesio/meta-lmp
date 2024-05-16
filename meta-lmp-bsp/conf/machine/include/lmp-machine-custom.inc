@@ -7,7 +7,7 @@ WKS_FILE_DEPENDS:append:beaglebone-yocto = " u-boot-default-script"
 PREFERRED_PROVIDER_u-boot-default-script:beaglebone-yocto = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES:append:beaglebone-yocto = " ubootenv"
 OSTREE_KERNEL_ARGS:beaglebone-yocto ?= "console=ttyS0,115200n8 ${OSTREE_KERNEL_ARGS_COMMON}"
-KERNEL_DEVICETREE:append:beaglebone-yocto = " am335x-boneblack-wireless.dtb"
+KERNEL_DEVICETREE:append:beaglebone-yocto = " ti/omap/am335x-boneblack-wireless.dtb"
 IMAGE_BOOT_FILES:beaglebone-yocto = "u-boot.img MLO boot.itb"
 KERNEL_IMAGETYPE:beaglebone-yocto = "fitImage"
 KERNEL_CLASSES:beaglebone-yocto = " kernel-lmp-fitimage "
@@ -190,7 +190,7 @@ PREFERRED_VERSION_u-boot-fio:mx6ul-nxp-bsp ?= "imx-2023.04"
 # iMX6UL EVK
 UBOOT_SIGN_ENABLE:sota:imx6ulevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ulevk = " ubootenv"
-KERNEL_DEVICETREE:imx6ulevk = "imx6ul-14x14-evk.dtb"
+KERNEL_DEVICETREE:imx6ulevk = "nxp/imx/imx6ul-14x14-evk.dtb"
 BOOTSCR_LOAD_ADDR:imx6ulevk = "0x85000000"
 
 # iMX6ULL
@@ -218,7 +218,7 @@ PREFERRED_VERSION_u-boot-fio:mx6ull-nxp-bsp ?= "imx-2023.04"
 # iMX6ULL EVK
 UBOOT_SIGN_ENABLE:sota:imx6ullevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ullevk = " ubootenv"
-KERNEL_DEVICETREE:imx6ullevk = "imx6ull-14x14-evk.dtb"
+KERNEL_DEVICETREE:imx6ullevk = "nxp/imx/imx6ull-14x14-evk.dtb"
 BOOTSCR_LOAD_ADDR:imx6ullevk = "0x85000000"
 
 # iMX8QM
@@ -634,7 +634,7 @@ LMP_FLASHLAYOUT_BOARD_NAME:stm32mp15-eval = "stm32mp157c-ev1"
 LMP_BOOT_FIRMWARE_FILES:stm32mp15-eval = "arm-trusted-firmware/tf-a-stm32mp157c-ev1-emmc.stm32 fip/fip-stm32mp157c-ev1-optee.bin"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:append:stm32mp15-eval = " kernel kernel-devicetree u-boot-default-script"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:sota:stm32mp15-eval = "kernel kernel-devicetree u-boot-default-script"
-KERNEL_DEVICETREE:stm32mp15-eval = "${LMPSTAGING_KERN_ADD_ST_SUBDIR}stm32mp157c-ev1-scmi.dtb"
+KERNEL_DEVICETREE:stm32mp15-eval = "st/stm32mp157c-ev1-scmi.dtb"
 ## stm32mp15-disco
 TF_A_SIGN_ENABLE:sota:stm32mp15-disco = "1"
 UBOOT_SIGN_ENABLE:sota:stm32mp15-disco = "1"
@@ -656,7 +656,7 @@ WKS_FILE_DEPENDS:remove:stm32mp15-disco = "st-image-bootfs st-image-userfs"
 WKS_FILE:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee.wks.in"
 WKS_FILE:sota:stm32mp15-disco = "sdimage-stm32mp157c-dk2-optee-sota.wks.in"
 LMP_BOOT_FIRMWARE_FILES:stm32mp15-disco = "arm-trusted-firmware/tf-a-stm32mp157c-dk2-sdcard.stm32 fip/fip-stm32mp157c-dk2-optee.bin"
-KERNEL_DEVICETREE:stm32mp15-disco = "${LMPSTAGING_KERN_ADD_ST_SUBDIR}stm32mp157c-dk2-scmi.dtb"
+KERNEL_DEVICETREE:stm32mp15-disco = "st/stm32mp157c-dk2-scmi.dtb"
 ## stm32mp15-eval-sec
 SOTA_CLIENT_FEATURES:remove:sota:stm32mp15-eval-sec = "ubootenv"
 

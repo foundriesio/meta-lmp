@@ -7,18 +7,18 @@ Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
+ iMX93/soc.mak | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- iMX9/soc.mak | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/iMX9/soc.mak b/iMX9/soc.mak
-index b17db6b..1607495 100644
---- a/iMX9/soc.mak
-+++ b/iMX9/soc.mak
-@@ -156,6 +156,10 @@ oei-m33-ddr.bin: $(OEI_M33_IMG) $(lpddr_imem) $(lpddr_dmem) fw-header.bin
- u-boot-spl-ddr-v2.bin: u-boot-spl.bin $(lpddr_imem) $(lpddr_dmem) fw-header.bin
- 	$(call append_ddrfw_v2,u-boot-spl.bin,u-boot-spl-ddr-v2.bin)
+diff --git a/iMX93/soc.mak b/iMX93/soc.mak
+index d94d115..3099af7 100644
+--- a/iMX93/soc.mak
++++ b/iMX93/soc.mak
+@@ -80,6 +80,10 @@ lpddr4_imem_qb = lpddr4_imem_qb$(LPDDR_FW_VERSION).bin
+ lpddr4_dmem_qb = lpddr4_dmem_qb$(LPDDR_FW_VERSION).bin
+ lpddr4_qb_data = lpddr4_qb_data.bin
  
 +# use this to trigger re-combining u-boot-spl.bin u-boot-spl.dtb
 +u-boot-spl-combine:
@@ -27,25 +27,26 @@ index b17db6b..1607495 100644
  u-boot-spl-ddr.bin: u-boot-spl.bin $(lpddr4_imem_1d) $(lpddr4_dmem_1d) $(lpddr4_imem_2d) $(lpddr4_dmem_2d)
  	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(lpddr4_imem_1d) lpddr4_pmu_train_1d_imem_pad.bin
  	@objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 $(lpddr4_dmem_1d) lpddr4_pmu_train_1d_dmem_pad.bin
-@@ -283,6 +287,8 @@ flash_singleboot_stmm_capsule: overlay flash_singleboot
+@@ -207,6 +211,9 @@ flash_singleboot_stmm_capsule: overlay flash_singleboot
  flash_singleboot_stmm: flash_singleboot_stmm_capsule
  endif
  
 +flash_singleboot_spl: $(MKIMG) $(AHAB_IMG) u-boot-spl-combine u-boot-spl-ddr.bin
 +	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
++
  
- flash_singleboot: $(MKIMG) $(AHAB_IMG) $(SPL_A55_IMG) u-boot-atf-container.img $(OEI_A55_DDR)
- 	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c $(OEI_OPT_A55) \
-@@ -333,6 +339,9 @@ flash_singleboot_m33_flexspi: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-atf-cont
+ flash_singleboot: $(MKIMG) $(AHAB_IMG) $(SPL_A55_IMG) u-boot-atf-container.img
+ 	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -ap $(SPL_A55_IMG) a55 $(SPL_LOAD_ADDR) -out flash.bin
+@@ -252,6 +259,9 @@ flash_singleboot_m33_flexspi: $(MKIMG) $(AHAB_IMG) $(UPOWER_IMG) u-boot-atf-cont
  	$(call append_container,u-boot-atf-container.img,1)
  	$(call append_fcb)
  
 +flash_singleboot_spl_m33: $(MKIMG) $(AHAB_IMG) $(MCU_IMG) u-boot-spl-combine u-boot-spl-ddr.bin
 +	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c -m33 $(MCU_IMG) 0 $(MCU_TCM_ADDR) $(MCU_TCM_ADDR_ACORE_VIEW) -ap u-boot-spl-ddr.bin a35 $(SPL_LOAD_ADDR) -out flash.bin
 +
- flash_singleboot_all: $(MKIMG) $(AHAB_IMG) u-boot-atf-container.img $(MCU_IMG) $(M7_IMG) $(SPL_A55_IMG) $(OEI_A55_DDR)
- 	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c $(OEI_OPT_A55) \
- 		   -m33 $(MCU_IMG) 0 $(MCU_TCM_ADDR) $(MCU_TCM_ADDR_ACORE_VIEW) \
+ 
+ flash_lpboot: $(MKIMG) $(AHAB_IMG) $(MCU_IMG)
+ 	./$(MKIMG) -soc IMX9 -append $(AHAB_IMG) -c \
 -- 
-2.44.0
+2.45.1
 

@@ -223,6 +223,16 @@ UBOOT_SIGN_ENABLE:sota:imx6ullevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ullevk = " ubootenv"
 KERNEL_DEVICETREE:imx6ullevk = "imx6ull-14x14-evk.dtb"
 BOOTSCR_LOAD_ADDR:imx6ullevk = "0x85000000"
+# conf/machine/imx6ullevk.conf
+KERNEL_DEVICETREE:remove:imx6ullevk = " \
+    nxp/imx/imx6ull-14x14-evk-btwifi.dtb \
+    nxp/imx/imx6ull-14x14-evk-emmc.dtb \
+    nxp/imx/imx6ull-14x14-evk-gpmi-weim.dtb \
+    nxp/imx/imx6ull-14x14-evk-reve.dtb \
+    nxp/imx/imx6ull-14x14-evk-reve-btwifi.dtb \
+    nxp/imx/imx6ull-14x14-evk-reve-emmc.dtb \
+    nxp/imx/imx6ull-14x14-evk-reve-gpmi-weim.dtb \
+"
 
 # iMX8QM
 SOTA_CLIENT_FEATURES:append:mx8qm-generic-bsp = " ubootenv"

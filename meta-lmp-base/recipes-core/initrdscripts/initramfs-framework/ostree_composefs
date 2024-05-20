@@ -2,56 +2,82 @@
 # Copyright (C) 2024 Open Source Foundries Ltd.
 # Licensed on MIT
 
+ostree_composefs_conf() {
+    COMPOSEFS_CONF="/usr/lib/ostree/prepare-root.conf"
+
+    composefs=$(sed -n '/\[composefs\]/{:a;n;/enabled/{s/.*=//p;q};ba}' "$COMPOSEFS_CONF")
+    [ "$composefs" = "signed" ] && return 2
+    [ "$composefs" = "yes" ] && return 1
+    return 0
+}
+
+ostree_check_kernel() {
+    # Store kernel configs in a variable
+    kernel_config=$(zcat /proc/config.gz)
+
+    # Check kernel configs
+    missing_configs=""
+    for config in "CONFIG_EROFS_FS=y" "CONFIG_OVERLAY_FS=y" "CONFIG_FS_VERITY=y"; do
+        # Check if composefs is signed and skip CONFIG_FS_VERITY=y check if not
+        ostree_composefs_conf
+        composefs_status=$?
+        if [ "$composefs_status" -ne 2 ] && [ "$config" = "CONFIG_FS_VERITY=y" ]; then
+            continue
+        fi
+
+        echo "$kernel_config" | grep -q "$config" || missing_configs="$missing_configs $config"
+    done
+
+    [ -n "$missing_configs" ] && echo "FATAL: Make sure your kernel enabled$missing_configs !!!" && exit 1
+}
+
 ostree_composefs_prepare() {
-	COMPOSEFS_CONF="/usr/lib/ostree/prepare-root.conf"
-	COMPOSEFS_NAME=".ostree.cfs"
-	SYSROOT_DIR="/sysroot"
+    COMPOSEFS_CONF="/usr/lib/ostree/prepare-root.conf"
+    COMPOSEFS_NAME=".ostree.cfs"
+    SYSROOT_DIR="/sysroot"
 
-	composefs=$(sed -n '/\[composefs\]/{:a;n;/enabled/{s/.*=//p;q};ba}' "$COMPOSEFS_CONF")
-	[ "$composefs" != "signed" ] && return 0
+    # Check if composefs enabled
+    ostree_composefs_conf
+    composefs_status=$?
+    [ "$composefs_status" -eq 0 ] && return 0
 
-	# Store kernel configs in a variable
-	kernel_config=$(zcat /proc/config.gz)
+    # Check kernel config
+    ostree_check_kernel
 
-	# Check kernel configs
-	missing_configs=""
-	for config in "CONFIG_EROFS_FS=y" "CONFIG_OVERLAY_FS=y" "CONFIG_FS_VERITY=y"; do
-		echo "$kernel_config" | grep -q "$config" || missing_configs="$missing_configs $config"
-	done
+    # Composefs uses SYSROOT_DIR
+    ln -sf "$ROOTFS_DIR" "$SYSROOT_DIR"
 
-	[ -n "$missing_configs" ] && fatal "FATAL: Make sure your kernel enabled$missing_configs !!!"
+    [ "$composefs_status" -eq 1 ] && return 0
 
-	# Composefs uses SYSROOT_DIR
-	ln -sf "$ROOTFS_DIR" "$SYSROOT_DIR"
+    # Signed and fs-verity enabled kernel
+    force=""
+    # Check if all measurements are already available
+    for cfsfile_ in "${SYSROOT_DIR}/ostree/deploy"/*/deploy/*/"${COMPOSEFS_NAME}"; do
+        # If enabled already, skip
+        if ! fsverity measure "${cfsfile_}" > /dev/null 2>/dev/null; then
+            force="true"
+            break
+        fi
+    done
 
-	force=""
-	# Check if all measurements are already available
-	for cfsfile_ in "${SYSROOT_DIR}/ostree/deploy"/*/deploy/*/"${COMPOSEFS_NAME}"; do
-		# If enabled already, skip
-		if ! fsverity measure "${cfsfile_}" > /dev/null 2>/dev/null; then
-			force="true"
-			break
-		fi
-	done
+    # CI already enabled fs-verity on the deployment
+    [ ! -n "$force" ] && return 0
 
-	# CI already enabled fs-verity on the deployment
-	[ ! -n "$force" ] && return 0
+    msg "Enabling signed Composefs with fs-verity"
 
-	msg "Enabling signed Composefs with fs-verity"
+    # Try to enable fs-verity on the disk
+    [ -n "$bootparam_root" ] && tune2fs -O verity "$bootparam_root" > /dev/null 2>/dev/null
 
-	# Try to enable fs-verity on the disk
-	[ -n "$bootparam_root" ] && tune2fs -O verity $bootparam_root > /dev/null 2>/dev/null
+    # Track time spent
+    t0="$(date '+%s')"
 
-	# Track time spent
-	t0="$(date '+%s')"
+    # Enable on all repo objects
+    find "${SYSROOT_DIR}/ostree/repo/objects" -exec fsverity enable '{}' \; 2>/dev/null
 
-	# Enable on all repo objects
-	find "${SYSROOT_DIR}/ostree/repo/objects" -exec fsverity enable '{}' \; 2>/dev/null
+    # Enable on all composefs images
+    find "${SYSROOT_DIR}/ostree/deploy" -type f -name "${COMPOSEFS_NAME}" -exec fsverity enable '{}' \; 2>/dev/null
+    t1="$(date '+%s')"
 
-	# Enable on all composefs images
-	find "${SYSROOT_DIR}/ostree/deploy" -type f -name "${COMPOSEFS_NAME}" -exec fsverity enable '{}' \; 2>/dev/null
-	t1="$(date '+%s')"
-
-	# Output time spent
-	msg "fsverity: $((t1 - t0)) seconds."
+    # Output time spent
+    msg "fsverity: $((t1 - t0)) seconds."
 }

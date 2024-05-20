@@ -7,6 +7,7 @@ SRC_URI:append = " \
 	file://ostree \
 	file://ostree_composefs \
 	file://ostree_composefs.conf \
+	file://ostree_composefs_signed.conf \
 	file://ostree_factory_reset \
 	file://ostree_recovery \
 	file://run-tmpfs.patch \
@@ -21,6 +22,7 @@ PACKAGES:append = " \
 	initramfs-module-ostree-factory-reset \
 	initramfs-module-ostree-recovery \
 "
+
 
 SUMMARY:initramfs-module-cryptfs = "initramfs support for encrypted filesystems"
 RDEPENDS:initramfs-module-cryptfs = "${PN}-base libgcc e2fsprogs-resize2fs e2fsprogs-e2fsck e2fsprogs-dumpe2fs systemd-crypt"
@@ -42,7 +44,7 @@ FILES:initramfs-module-ostree = "/init.d/98-ostree"
 
 SUMMARY:initramfs-module-ostree-composefs = "composefs support for ostree"
 RDEPENDS:initramfs-module-ostree-composefs = "initramfs-module-ostree e2fsprogs-tune2fs fsverity-utils"
-FILES:initramfs-module-ostree-composefs = "${sysconfdir}/ostree/composefs ${sysconfdir}/ostree/initramfs-root-binding.key /usr/lib/ostree/prepare-root.conf"
+FILES:initramfs-module-ostree-composefs = "${sysconfdir}/ostree/composefs ${sysconfdir}/ostree/initramfs-root-binding.key ${libdir}/ostree/prepare-root.conf"
 
 SUMMARY:initramfs-module-ostree-factory-reset = "initramfs support for ostree based filesystems"
 RDEPENDS:initramfs-module-ostree-factory-reset = "${PN}-base ostree-switchroot"
@@ -60,14 +62,20 @@ do_install:append() {
 	install -m 0644 ${WORKDIR}/cryptfs_tpm2 ${D}/${sysconfdir}/cryptfs/tpm2
 	install -m 0755 ${WORKDIR}/cryptfs ${D}/init.d/80-cryptfs
 
-	install -d ${D}/${sysconfdir}/ostree
-	install -m 0644 ${WORKDIR}/ostree_composefs ${D}/${sysconfdir}/ostree/composefs
-	install -d ${D}/usr/lib/ostree
-	install -m 0644 ${WORKDIR}/ostree_composefs.conf ${D}/usr/lib/ostree/prepare-root.conf
-	install -m 0644 ${CFS_SIGN_KEYDIR}/${CFS_SIGN_KEYNAME}.pub \
-	                    ${D}${sysconfdir}/ostree/initramfs-root-binding.key
-	install -m 0755 ${WORKDIR}/ostree ${D}/init.d/98-ostree
+	if echo "${DISTRO_FEATURES}" | grep -q -e " cfs"; then
+		install -d ${D}/${sysconfdir}/ostree
+		install -d ${D}/${libdir}/ostree
+		install -m 0644 ${WORKDIR}/ostree_composefs ${D}/${sysconfdir}/ostree/composefs
+		if echo "${DISTRO_FEATURES}" | grep -q -e " cfs-signed"; then
+			install -m 0644 ${WORKDIR}/ostree_composefs_signed.conf ${D}${libdir}/ostree/prepare-root.conf
+			install -m 0644 ${CFS_SIGN_KEYDIR}/${CFS_SIGN_KEYNAME}.pub \
+				${D}${sysconfdir}/ostree/initramfs-root-binding.key
+		else
+			install -m 0644 ${WORKDIR}/ostree_composefs.conf ${D}${libdir}/ostree/prepare-root.conf
+		fi
+	fi
 
+	install -m 0755 ${WORKDIR}/ostree ${D}/init.d/98-ostree
 	install -m 0755 ${WORKDIR}/ostree_factory_reset ${D}/init.d/98-ostree_factory_reset
 	install -m 0755 ${WORKDIR}/ostree_recovery ${D}/init.d/98-ostree_recovery
 }

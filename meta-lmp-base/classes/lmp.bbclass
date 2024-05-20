@@ -157,7 +157,7 @@ IMAGE_TYPES += "ota-esp"
 EXTRA_IMAGECMD:ota-esp ?= ""
 IMAGE_CMD:ota-esp = "oe_mkotaespfs ota-esp ${EXTRA_IMAGECMD}"
 
-EXTRA_OSTREE_COMMIT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'cfs', ' --generate-composefs-metadata --sign-from-file=${CFS_SIGN_KEYDIR}/${CFS_SIGN_KEYNAME}.sec --sign-type=ed25519 ', '', d)}"
+EXTRA_OSTREE_COMMIT:append = "${@bb.utils.contains('DISTRO_FEATURES', 'cfs-signed', ' --generate-composefs-metadata --sign-from-file=${CFS_SIGN_KEYDIR}/${CFS_SIGN_KEYNAME}.sec --sign-type=ed25519 ', '', d)}"
 IMAGE_CMD:ostreecommit[vardeps] += "EXTRA_OSTREE_COMMIT "
 
 # LMP specific cleanups after the main ostree image from meta-updater

@@ -1,4 +1,5 @@
 SUMMARY = "Linux microPlatform OSF OTA+ device registration tool"
+HOMEPAGE = "https://github.com/foundriesio/lmp-device-register"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 

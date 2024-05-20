@@ -1,5 +1,5 @@
 DESCRIPTION = "A CLI utility to manage compose apps"
-
+HOMEPAGE = "https://github.com/foundriesio/composeapp"
 SECTION = "devel"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=504a5c2455c8bb2fc5b7667833ab1a68"

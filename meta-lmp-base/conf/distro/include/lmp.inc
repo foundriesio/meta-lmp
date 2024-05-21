@@ -32,6 +32,7 @@ BUILDCFG_VARS += "DISTRO_FEATURES"
 
 # FIXME: just for testing the composefs
 PREFERRED_VERSION_linux-lmp = "6.6%"
+PREFERRED_VERSION_linux-lmp-fslc-imx = "6.6%"
 
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-lmp"
 PREFERRED_PROVIDER_virtual/optee-os ?= "optee-os-fio"

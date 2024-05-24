@@ -10,6 +10,7 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'efi', 'gnu-efi', '', d)} \
     backlight \
     binfmt \
+    cgroupv2 \
     cryptsetup \
     cryptsetup-plugins \
     gshadow \

@@ -1,4 +1,4 @@
 require optee-os-fio.inc
 
-SRCREV = "6120b1aa3bb758a0eb1711cb4ff8e4de222306ea"
+SRCREV = "9048d3d2873b7d7d9f2b5594ce55c342b4cb6049"
 SRCBRANCH = "3.21+fio"

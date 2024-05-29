@@ -7,7 +7,7 @@ KERNEL_REPO_PROTOCOL ?= "https"
 KERNEL_BRANCH ?= "ti-linux-6.1.y"
 
 LINUX_VERSION ?= "6.1.69"
-SRCREV_machine ?= "82d2b827840254248a0444a9c50ab3dc395876cc"
+SRCREV_machine ?= "2233af66faf7b81b6c286285e50cda5595dc410d"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
 
 # Beagleplay (has its own repo)

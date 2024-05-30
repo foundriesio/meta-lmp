@@ -6,7 +6,7 @@ RDEPENDS:${PN} = "python3-core python3-pyyaml"
 inherit python3-dir
 
 REPO = "git://github.com/genotrance/fru-tool.git;protocol=https"
-BRANCH = "master"
+BRANCH = "main"
 SRCREV = "96f02c8897f89e297dfde88f5ad266163d166168"
 
 BRANCHARG = "${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"

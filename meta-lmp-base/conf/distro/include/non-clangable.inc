@@ -212,3 +212,6 @@ TOOLCHAIN:pn-libmali-xlnx = "gcc"
 
 # isp-imx fails to build with clang
 TOOLCHAIN:pn-isp-imx = "gcc"
+
+# zmq_bind missing when built with clang, causing crashes at runtime
+TOOLCHAIN:pn-zeromq = "gcc"

@@ -10,8 +10,9 @@ SRC_URI:append:lmp = " \
     file://tmpfiles.conf \
     "
 
-PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} libfyaml"
-PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback"
+PACKAGECONFIG += "${@bb.utils.filter('MACHINE_FEATURES', 'fiovb', d)} ${@bb.utils.filter('MACHINE_FEATURES', 'fioefi', d)} libfyaml"
+PACKAGECONFIG[fiovb] = ",,,optee-fiovb aktualizr-fiovb-env-rollback,,fioefi"
+PACKAGECONFIG[fioefi] = ",,,fioefi aktualizr-fioefi-env-rollback,,fiovb"
 PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env aktualizr-uboot-env-rollback"
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"
 PACKAGECONFIG[aklite-offline] = "-DBUILD_AKLITE_OFFLINE=ON,-DBUILD_AKLITE_OFFLINE=OFF,"

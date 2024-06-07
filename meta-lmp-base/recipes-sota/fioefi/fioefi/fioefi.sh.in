@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# Copyright (C) 2024 Foundries.IO
+#
+# SPDX-License-Identifier: MIT
+#
+set -e
+
+scriptName="$(basename "$0")"
+
+error_exit() {
+	if [ -n "${1}" ] ; then
+		echo "ERROR:  ${1}"
+	else
+		echo "ERROR: Command execution failure"
+	fi
+	exit 1
+}
+
+debug() {
+	if [ -n "${1}" ] ; then
+		echo "DEBUG: ${1}"
+	else
+		echo "DEBUG: Command execution failure"
+	fi
+}
+
+matches() {
+	input="$1"
+	pattern="$2"
+	echo "$input" | grep -q "$pattern"
+}
+
+@@INCLUDE_SOC_FUNCTIONS@@
+
+# Mock functions. On real targets only *_soc implementations
+# should be used
+getenv() {
+	debug "Get value of '${1}'"
+}
+
+setenv() {
+	debug "Assign value '${1} = ${2}'"
+}
+
+if matches "$scriptName" "printenv"; then
+	if type 'getenv_soc' 2>/dev/null | grep -q 'function'; then
+		getenv_soc "${1}"
+	else
+		getenv "${1}"
+	fi
+elif matches "$scriptName" "setenv"; then
+	if type 'setenv_soc' 2>/dev/null | grep -q 'function'; then
+		setenv_soc "${1}" "${2}"
+	else
+		setenv "${1}" "${2}"
+	fi
+fi

@@ -1,0 +1,23 @@
+CAPSULE_FILE="tegra-bl.cap"
+CAPSULE_PATH="${FIO_OSTREE_TARGET_SYSROOT}/usr/lib/firmware/"
+EFI_DIR=/boot/efi/EFI/UpdateCapsule
+
+getenv_soc() {
+	exit 0
+}
+
+setenv_soc() {
+	rc=0
+	if [ "${1}" = "bootupgrade_available" ]; then
+		if [ -z "${FIO_OSTREE_TARGET_SYSROOT}" ]; then
+			exit 1
+		fi
+		if [ -e "$CAPSULE_PATH/$CAPSULE_FILE" ]; then
+			cp $CAPSULE_PATH/$CAPSULE_FILE $EFI_DIR || rc=1
+			oe4t-set-uefi-OSIndications || rc=1
+		else
+			rc=1
+		fi
+	fi
+	exit $rc
+}

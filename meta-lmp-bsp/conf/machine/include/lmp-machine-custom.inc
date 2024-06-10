@@ -702,7 +702,7 @@ KERNEL_IMAGETYPE:sota:k3 = "fitImage"
 KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE} ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'Image', '', d)}"
 PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
 WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
-OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "1"
+OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:k3 = "kernel-image-image"
 
 # TI AM62x

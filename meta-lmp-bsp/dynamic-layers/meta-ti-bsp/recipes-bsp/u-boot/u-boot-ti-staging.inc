@@ -1,11 +1,5 @@
 include recipes-bsp/u-boot/u-boot-lmp-common.inc
 
-SRC_URI:append = " \
-    file://lib-zlib-Fix-a-bug-when-getting-a-gzip-header-extra-field.patch \
-    file://k3-accept-filesystem-path-to-the-RoT-key.patch \
-    file://k3-set-env-variable-device_type.patch \
-"
-
 SRC_URI:append:am64xx-evm = " \
     file://fw_env.config \
     file://lmp.cfg \

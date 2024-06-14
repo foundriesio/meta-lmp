@@ -1,0 +1,9 @@
+# short-description: Create an OTA-enabled EFI disk image
+# long-description: Creates an OTA-enabled EFI disk image that the user
+# can directly dd to boot media.
+
+part /boot --source bootimg-sota-efi --sourceparams="loader=${EFI_PROVIDER}" --rootfs-dir=${WORKDIR}/ota-boot --ondisk sda --active --align 1024 --use-uuid ${OSTREE_WKS_EFI_SIZE} --label boot
+part / --source otaimage --ondisk sda --part-name=otaroot --fstype=ext4 --align 1024 --use-uuid
+part /var --source rootfs --ondisk sda --rootfs-dir=${WORKDIR}/ota-var --fstype=ext4 --part-name var --label var --part-type 0x8310 --align 4096 --use-uuid
+
+bootloader --source bootimg-sota-efi --timeout=1 --ptable gpt

@@ -3,6 +3,8 @@
 # recipe available in -rt recipe.
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
+KERNEL_DEVICETREE_32BIT_COMPATIBILITY_UPDATE = "1"
+
 include recipes-kernel/linux/linux-lmp-fslc-imx.inc
 
 include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc

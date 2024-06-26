@@ -1,0 +1,43 @@
+From e8bbbc4f7064c794ac28597d4c6227265f6ab47c Mon Sep 17 00:00:00 2001
+From: Vanessa Maegima <vanessa.maegima@foundries.io>
+Date: Tue, 29 Mar 2022 15:44:59 -0300
+Subject: [PATCH] [FIO internal] arch: arm64: dts: imx8mp: enable I2C5 bus
+
+Enable I2C5 bus to connect SE050. I2C5 shares pins with flexcan1, so
+disable the latter.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Vanessa Maegima <vanessa.maegima@foundries.io>
+Signed-off-by: Oleksandr Suvorov <cryosay@gmail.com>
+---
+
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 966be019c433b..a14bbd2f163b3 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -416,7 +416,7 @@ &flexcan1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_flexcan1>;
+ 	xceiver-supply = <&reg_can1_stby>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &flexcan2 {
+@@ -708,7 +708,8 @@ &i2c5 {
+ 	clock-frequency = <100000>; /* Lower clock speed for external bus. */
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_i2c5>;
+-	status = "disabled"; /* can1 pins conflict with i2c5 */
++	pinctrl-assert-gpios = <&pca6416 2 GPIO_ACTIVE_HIGH>; /* set high to select i2c5 instead of flexcan1 */
++	status = "okay";
+ 
+ 	/* GPIO 2 of PCA6416 is used to switch between CAN1 and I2C5 functions:
+ 	 *     LOW:  CAN1 (default, pull-down)
+-- 
+2.45.0
+

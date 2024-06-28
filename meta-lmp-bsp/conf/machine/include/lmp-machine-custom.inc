@@ -151,8 +151,8 @@ OSTREE_KERNEL_ARGS:mx6ull-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${
 OSTREE_KERNEL_ARGS:mx7d-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:mx7ulp-generic-bsp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 
-PREFERRED_VERSION_meson ?= "0.61.3"
-PREFERRED_VERSION_meson:imx-generic-bsp ?= "0.63.3.imx"
+PREFERRED_VERSION_meson:imx8-nxp-bsp ?= "0.63.3.imx"
+PREFERRED_VERSION_meson:imx9-nxp-bsp ?= "0.63.3.imx"
 
 # Embedded Artists i.MX7ULP COM
 UBOOT_SIGN_ENABLE:sota:imx7ulpea-ucom ?= "1"

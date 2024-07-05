@@ -24,9 +24,6 @@ include conf/distro/include/cve-lmp-extra-exclusions.inc
 CVE_CHECK_REPORT_PATCHED ?= "0"
 CVE_CHECK_SKIP_RECIPE ?= "qemu-native qemu-system-native"
 
-# Disable branch-protection=standard from clang until properly validated (causes issues on aktualizr)
-TUNE_CCARGS:remove:toolchain-clang = "${@bb.utils.contains('TUNE_FEATURES', 'aarch64', '-mbranch-protection=standard', '', d)}"
-
 # Include distro features in pre-build configuration output
 BUILDCFG_VARS += "DISTRO_FEATURES"
 

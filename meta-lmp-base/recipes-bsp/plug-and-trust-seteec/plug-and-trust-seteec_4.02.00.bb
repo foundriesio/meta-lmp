@@ -37,17 +37,22 @@ EXTRA_OECMAKE += "\
     -DWithSETEEC=ON -DEL2GO_HOSTNAME="${EL2GO_HOSTNAME}" \
 "
 
+PACKAGES =+ "${PN}-agent"
+
 FILES:${PN} += "\
     ${libdir}/liba7x_utils.so \
     ${libdir}/libex_common.so \
     ${libdir}/libmwlog.so \
-    ${libdir}/libnxp_iot_agent_common.so \
-    ${libdir}/libnxp_iot_agent.so \
     ${libdir}/libse05x.so \
     ${libdir}/libsmCom.so \
     ${libdir}/libSSS_APIs.so \
     ${libdir}/libSEMS_LITE_AGENT_APIs.so \
     ${libdir}/libsssapisw.so \
     ${libdir}/engines-3 \
+"
+FILES:${PN}-agent += "\
+    ${bindir}/nxp_iot_agent_demo \
+    ${libdir}/libnxp_iot_agent_common.so \
+    ${libdir}/libnxp_iot_agent.so \
 "
 FILES:${PN}-dev = "${includedir} ${libdir}/libpaho*.so ${libdir}/cmake ${datadir}/cmake ${datadir}/se05x"

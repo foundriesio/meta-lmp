@@ -1,19 +1,19 @@
 DESCRIPTION = "Custom SOTA Client example based on the aktualizr-lite C++ API"
 SECTION = "base"
-LICENSE = "MPL-2.0"
-LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=504a5c2455c8bb2fc5b7667833ab1a68"
 
 inherit pkgconfig cmake systemd
 
 SRC_URI = "\
-    git://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH} \
+    git://github.com/foundriesio/sotactl;protocol=https;branch=${BRANCH} \
     file://systemd.service \
 "
 
-BRANCH = "v94"
-SRCREV = "d2cd79e1dc6a3c992d37de4d1609d4bdf9b750ec"
+BRANCH = "main"
+SRCREV = "45d4ebba834e9e80ac13c1386841b38939449699"
 
-S = "${WORKDIR}/git/examples/custom-client-cxx"
+S = "${WORKDIR}/git"
 
 DEPENDS = "jsoncpp boost aktualizr"
 

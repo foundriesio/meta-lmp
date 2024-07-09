@@ -10,7 +10,7 @@ RestartSec=180
 Restart=always
 ExecStartPre=/usr/bin/mkdir -p /run/aktualizr
 Environment="TMPDIR=/run/aktualizr"
-ExecStart=/usr/bin/custom-sota-client
+ExecStart=/usr/bin/sotactl
 
 [Install]
 WantedBy=multi-user.target

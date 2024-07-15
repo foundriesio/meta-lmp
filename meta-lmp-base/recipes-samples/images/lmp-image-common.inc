@@ -48,6 +48,7 @@ CORE_IMAGE_BASE_INSTALL += " \
 # Additional packages when sota is available
 CORE_IMAGE_BASE_INSTALL:append:sota = " \
     ostree-recovery-initramfs \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'fioefi', 'fioefi', '' , d)} \
 "
 
 # Configure NSS ALTFILES based on NSS_ALT_TYPES

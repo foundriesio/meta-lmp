@@ -609,7 +609,7 @@ FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:u-boot-env = "0x00900000"
 FLASHLAYOUT_PARTITION_TYPE:lmp:sdcard:u-boot-env = "Binary"
 # RootFS
 FLASHLAYOUT_PARTITION_ENABLE:lmp:sdcard:rootfs = "P"
-FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:rootfs = "0x00910000"
+FLASHLAYOUT_PARTITION_OFFSET:lmp:sdcard:rootfs = "0x00904000"
 FLASHLAYOUT_PARTITION_BIN2LOAD:lmp:sdcard:rootfs = "${MFGTOOL_FLASH_IMAGE}.bin"
 FLASHLAYOUT_PARTITION_TYPE:lmp:sdcard:rootfs = "System"
 

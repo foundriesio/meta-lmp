@@ -13,7 +13,7 @@ cryptfs_enabled() {
 
 e2fsck_check() {
 	if [ -n "`which e2fsck`" ]; then
-		fsckout=`e2fsck -p -v ${1}`
+		fsckout=`e2fsck -p -v -f ${1}`
 		fsckret=$?
 		# Avoid empty newline after summary
 		echo "e2fsck: ${fsckout}" >/dev/kmsg

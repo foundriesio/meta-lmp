@@ -13,7 +13,7 @@ cryptfs_enabled() {
 
 e2fsck_check() {
 	if [ -n "`which e2fsck`" ]; then
-		fsckout=`e2fsck -p -v ${1}`
+		fsckout=`e2fsck -p -v ${2} ${1}`
 		fsckret=$?
 		# Avoid empty newline after summary
 		echo "e2fsck: ${fsckout}" >/dev/kmsg
@@ -143,7 +143,7 @@ cryptfs_run() {
 	if ! cryptsetup isLuks ${root_dev}; then
 		# Partition not yet encrypted
 		msg "${root_dev} not yet encrypted, encrypting with LUKS2"
-		e2fsck_check ${root_dev}
+		e2fsck_check ${root_dev} -f
 		block_size=`dumpe2fs -h ${root_dev} 2>/dev/null | grep "^Block size" | cut -d ':' -f 2 | tr -d ' '`
 		block_count=`dumpe2fs -h ${root_dev} 2>/dev/null | grep "^Block count" | cut -d ':' -f 2 | tr -d ' '`
 		luks_size=33554432 # 32M

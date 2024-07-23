@@ -1,5 +1,7 @@
 include kmeta-linux-lmp-6.1.y.inc
 
+KERNEL_DEVICETREE_32BIT_COMPATIBILITY_UPDATE = "1"
+
 LINUX_VERSION ?= "6.1.90"
 KBRANCH = "linux-v6.1.y"
 SRCREV_machine = "a2b013df5c954bd03726c9888bb48dbd7b79e80c"

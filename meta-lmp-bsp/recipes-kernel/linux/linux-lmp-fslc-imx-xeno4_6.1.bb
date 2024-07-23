@@ -1,4 +1,4 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/linux-lmp-fslc-imx:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:${THISDIR}/linux-lmp-fslc-imx/${KSHORT_VER}:${THISDIR}/linux-lmp-fslc-imx:"
 
 include linux-lmp-fslc-imx_6.1.bb
 

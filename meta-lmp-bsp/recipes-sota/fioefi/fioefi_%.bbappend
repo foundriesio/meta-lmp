@@ -8,3 +8,5 @@ do_compile:prepend() {
     sed -e '/@@INCLUDE_SOC_FUNCTIONS@@/ {' -e 'r ${S}/fioefi-soc.sh.in' -e 'd' -e '}' \
         ${S}/fioefi.sh.in > ${B}/fioefi
 }
+
+COMPATIBLE_MACHINE = "(tegra)"

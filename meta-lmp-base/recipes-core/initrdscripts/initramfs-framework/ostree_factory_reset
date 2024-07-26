@@ -15,6 +15,8 @@ ostree_factory_reset_enabled() {
 factory_reset() {
 	keep_sota=$1
 	keep_docker=$2
+	keep_rpmb="false"
+	aktualizr_uses_rpmb="false"
 
 	msg "Performing factory reset..."
 
@@ -34,15 +36,34 @@ factory_reset() {
 	if [ "${keep_sota}" = "true" ]; then
 		msg "Keeping current ${OSTREE_DISTRO} SOTA content"
 		FIND_EXCLUDE="${FIND_EXCLUDE} ! -name 'sota'"
+		keep_rpmb="true"
 	fi
 	if [ "${keep_docker}" = "true" ]; then
 		msg "Keeping current docker content"
 		FIND_EXCLUDE="${FIND_EXCLUDE} ! -name 'lib'"
 	fi
 
+	cd ${OSTREE_VAR}
+
+	# Validate if aktualizr-lite was configured to use
+	# RPMB storage for the device certificate and keys.
+	sota_rpmb=$(grep pkey_source sota/sota.toml | cut -d'"' -f 2)
+	if [ "${sota_rpmb}" = "pkcs11" ]; then
+		aktualizr_uses_rpmb="true"
+	fi
+
+	# Cleanup RPMB before /var gets removed since we need some
+	# parameters which are stored in /var/sota/sota.toml
+	if [ "${keep_rpmb}" = "false" ] && [ "${aktualizr_uses_rpmb}" = "true" ]; then
+		ptool_module=$(grep module sota/sota.toml | cut -d'"' -f 2)
+
+		# Reinitializing a PKCS11 token destroys all objects which
+		# were associated with that slot.
+		pkcs11-tool --module ${ptool_module} --init-token --label "unused" --slot ${AKTUALIZR_SLOT}
+	fi
+
 	# Clear /var, stored under the shared ostree folder, not
 	# available after prepare-root (mounted later by systemd)
-	cd ${OSTREE_VAR}
 	eval find . -maxdepth 1 ${FIND_EXCLUDE} -exec rm -rf {} "';'"
 	if [ "${keep_docker}" = "true" ] && [ -d lib ]; then
 		find lib -maxdepth 1 ! -name "lib" ! -name "docker" -exec rm -rf {} ';'
@@ -51,7 +72,6 @@ factory_reset() {
 	fi
 	cd - >/dev/null
 
-	# TODO: Erase HSM/Secure storage content?
 	# TODO: U-Boot/fiovb env?
 }
 

@@ -10,8 +10,8 @@ SRC_URI = "\
     file://systemd.service \
 "
 
-BRANCH = "master"
-SRCREV = "95ecfb878f60c8ee3c6c6b67b618567c6db5777e"
+BRANCH = "v94"
+SRCREV = "d2cd79e1dc6a3c992d37de4d1609d4bdf9b750ec"
 
 S = "${WORKDIR}/git/examples/custom-client-cxx"
 

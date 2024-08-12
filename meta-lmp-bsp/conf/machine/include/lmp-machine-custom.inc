@@ -746,7 +746,7 @@ UBOOT_ENTRYPOINT:am64xx = "0x82000000"
 UBOOT_LOADADDRESS:am64xx = "0x82000000"
 UBOOT_DTB_LOADADDRESS:am64xx = "0x88000000"
 EFI_PROVIDER:am64xx = ""
-LMP_BOOT_FIRMWARE_FILES:am64xx = "tispl.bin u-boot.img tiboot3.bin"
+LMP_BOOT_FIRMWARE_FILES:am64xx = "tispl.bin u-boot.img tiboot3-am64x-gp-evm.bin tiboot3-am64x_sr2-hs-evm.bin tiboot3-am64x_sr2-hs-fs-evm.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx = " boot.itb"
 ## am64xx-evm
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"

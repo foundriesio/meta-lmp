@@ -1,6 +1,6 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/linux-lmp-fslc-imx:"
-
 include linux-lmp-fslc-imx_6.1.bb
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 # Merge branch 'expand-stack': fixes use-after-frer-by-RCU vulnerability
 SRC_URI += " \

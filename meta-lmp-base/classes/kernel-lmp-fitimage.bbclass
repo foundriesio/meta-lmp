@@ -6,9 +6,6 @@ inherit kernel-fitimage
 FPGA_BINARY ?= "fpga.bin"
 FIT_LOADABLES ?= ""
 
-# Allow transition to cover CVE-2021-27097 and CVE-2021-27138
-FIT_NODE_SEPARATOR ?= "-"
-
 # Recovery
 INITRAMFS_RECOVERY_IMAGE ?= ""
 INITRAMFS_RECOVERY_IMAGE_NAME ?= "${@['${INITRAMFS_RECOVERY_IMAGE}-${MACHINE}', ''][d.getVar('INITRAMFS_RECOVERY_IMAGE') == '']}"
@@ -39,7 +36,7 @@ fitimage_emit_section_kernel() {
 	fi
 
 	cat << EOF >> ${1}
-                kernel${FIT_NODE_SEPARATOR}${2} {
+                kernel-${2} {
                         description = "Linux kernel";
                         data = /incbin/("${3}");
                         type = "kernel";
@@ -88,7 +85,7 @@ fitimage_emit_section_dtb() {
 		dtb_loadline="load = <${UBOOT_DTB_LOADADDRESS}>;"
 	fi
 	cat << EOF >> ${1}
-                fdt${FIT_NODE_SEPARATOR}${2} {
+                fdt-${2} {
                         description = "Flattened Device Tree blob";
                         data = /incbin/("${3}");
                         type = "flat_dt";
@@ -125,7 +122,7 @@ fitimage_emit_section_boot_script() {
 	bootscr_sign_keyname="${UBOOT_SIGN_IMG_KEYNAME}"
 
 	cat << EOF >> ${1}
-                bootscr${FIT_NODE_SEPARATOR}${2} {
+                bootscr-${2} {
                         description = "U-boot script";
                         data = /incbin/("${3}");
                         type = "script";
@@ -160,7 +157,7 @@ fitimage_emit_section_setup() {
 	setup_csum="${FIT_HASH_ALG}"
 
 	cat << EOF >> ${1}
-                setup${FIT_NODE_SEPARATOR}${2} {
+                setup-${2} {
                         description = "Linux setup.bin";
                         data = /incbin/("${3}");
                         type = "x86_setup";
@@ -199,7 +196,7 @@ fitimage_emit_section_ramdisk() {
 	fi
 
 	cat << EOF >> ${1}
-                ramdisk${FIT_NODE_SEPARATOR}${2} {
+                ramdisk-${2} {
                         description = "${3}";
                         data = /incbin/("${4}");
                         type = "ramdisk";
@@ -259,7 +256,7 @@ fitimage_emit_section_config() {
 	# Test if we have any DTBs at all
 	sep=""
 	conf_desc=""
-	conf_node="conf${FIT_NODE_SEPARATOR}"
+	conf_node="conf-"
 	kernel_line=""
 	fdt_line=""
 	ramdisk_line=""
@@ -279,37 +276,37 @@ fitimage_emit_section_config() {
 	if [ -n "${kernel_id}" ]; then
 		conf_desc="Linux kernel"
 		sep=", "
-		kernel_line="kernel = \"kernel${FIT_NODE_SEPARATOR}${kernel_id}\";"
+		kernel_line="kernel = \"kernel-${kernel_id}\";"
 	fi
 
 	if [ -n "${dtb_image}" ]; then
 		conf_desc="${conf_desc}${sep}FDT blob"
 		sep=", "
-		fdt_line="fdt = \"fdt${FIT_NODE_SEPARATOR}${dtb_image}\";"
+		fdt_line="fdt = \"fdt-${dtb_image}\";"
 	fi
 
 	if [ -n "${ramdisk_id}" ]; then
 		conf_desc="${conf_desc}${sep}ramdisk"
 		sep=", "
-		ramdisk_line="ramdisk = \"ramdisk${FIT_NODE_SEPARATOR}${ramdisk_id}\";"
+		ramdisk_line="ramdisk = \"ramdisk-${ramdisk_id}\";"
 	fi
 
 	if [ -n "${bootscr_id}" ]; then
 		conf_desc="${conf_desc}${sep}u-boot script"
 		sep=", "
-		bootscr_line="bootscr = \"bootscr${FIT_NODE_SEPARATOR}${bootscr_id}\";"
+		bootscr_line="bootscr = \"bootscr-${bootscr_id}\";"
 	fi
 
 	if [ -n "${config_id}" ]; then
 		conf_desc="${conf_desc}${sep}setup"
 		sep=", "
-		setup_line="setup = \"setup${FIT_NODE_SEPARATOR}${config_id}\";"
+		setup_line="setup = \"setup-${config_id}\";"
 	fi
 
 	if [ -n "${fpga_id}" ]; then
 		conf_desc="${conf_desc}${sep}fpga"
 		sep=", "
-		fpga_line="fpga = \"fpga${FIT_NODE_SEPARATOR}${fpga_id}\";"
+		fpga_line="fpga = \"fpga-${fpga_id}\";"
 	fi
 
 	if [ -n "${loadable_id}" ]; then
@@ -320,7 +317,7 @@ fitimage_emit_section_config() {
 				if [ -z "${loadable_line}" ]; then
 					conf_desc="${conf_desc}${sep}loadables"
 				fi
-				loadable_line="${loadable_line}loadable_${loadable_counter} = \"loadable${FIT_NODE_SEPARATOR}${LOADABLE}\"; "
+				loadable_line="${loadable_line}loadable_${loadable_counter} = \"loadable-${LOADABLE}\"; "
 			fi
 		done
 	fi
@@ -328,9 +325,9 @@ fitimage_emit_section_config() {
 	if [ "${default_flag}" = "1" ]; then
 		# default node is selected based on dtb ID if it is present
 		if [ -n "${dtb_image}" ]; then
-			default_line="default = \"conf${FIT_NODE_SEPARATOR}${dtb_image}\";"
+			default_line="default = \"conf-${dtb_image}\";"
 		else
-			default_line="default = \"conf${FIT_NODE_SEPARATOR}\";"
+			default_line="default = \"conf-\";"
 		fi
 	fi
 
@@ -425,7 +422,7 @@ fitimage_emit_section_fpga() {
 	fi
 
 	cat << EOF >> ${1}
-                fpga${FIT_NODE_SEPARATOR}${2} {
+                fpga-${2} {
                         description = "FPGA binary";
                         data = /incbin/("${3}");
                         type = "fpga";
@@ -450,7 +447,7 @@ fitimage_emit_section_loadable() {
 	loadable_csum="${FIT_HASH_ALG}"
 
 	cat << EOF >> ${1}
-                loadable${FIT_NODE_SEPARATOR}${2} {
+                loadable-${2} {
                         description = "Loadable";
                         data = /incbin/("${3}");
                         type = "loadable";

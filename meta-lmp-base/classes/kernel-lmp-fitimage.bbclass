@@ -3,7 +3,6 @@
 inherit kernel-fitimage
 
 # Default value for deployment filenames
-FPGA_BINARY ?= "fpga.bin"
 FIT_LOADABLES ?= ""
 
 # Recovery
@@ -232,9 +231,8 @@ EOF
 # $4 ... ramdisk ID
 # $5 ... u-boot script ID
 # $6 ... config ID
-# $7 ... fpga ID (LmP specific)
-# $8 ... loadable ID (LmP specific)
-# $9 ... default flag
+# $7 ... loadable ID (LmP specific)
+# $8 ... default flag
 fitimage_emit_section_config() {
 
 	conf_csum="${FIT_HASH_ALG}"
@@ -249,9 +247,8 @@ fitimage_emit_section_config() {
 	ramdisk_id="${4}"
 	bootscr_id="${5}"
 	config_id="${6}"
-	fpga_id="${7}"
-	loadable_id="${8}"
-	default_flag="${9}"
+	loadable_id="${7}"
+	default_flag="${8}"
 
 	# Test if we have any DTBs at all
 	sep=""
@@ -262,7 +259,6 @@ fitimage_emit_section_config() {
 	ramdisk_line=""
 	bootscr_line=""
 	setup_line=""
-	fpga_line=""
 	loadable_line=""
 	default_line=""
 
@@ -303,12 +299,6 @@ fitimage_emit_section_config() {
 		setup_line="setup = \"setup-${config_id}\";"
 	fi
 
-	if [ -n "${fpga_id}" ]; then
-		conf_desc="${conf_desc}${sep}fpga"
-		sep=", "
-		fpga_line="fpga = \"fpga-${fpga_id}\";"
-	fi
-
 	if [ -n "${loadable_id}" ]; then
 		loadable_counter=0
 		for LOADABLE in ${loadable_id}; do
@@ -340,7 +330,6 @@ fitimage_emit_section_config() {
                         ${ramdisk_line}
                         ${bootscr_line}
                         ${setup_line}
-                        ${fpga_line}
                         ${loadable_line}
                         hash-1 {
                                 algo = "${conf_csum}";
@@ -376,10 +365,6 @@ EOF
 			sign_line="${sign_line}${sep}\"setup\""
 		fi
 
-		if [ -n "${fpga_id}" ]; then
-			sign_line="${sign_line}${sep}\"fpga\""
-		fi
-
 		if [ -n "${loadable_id}" ]; then
 			loadable_counter=0
 			for LOADABLE in ${loadable_id}; do
@@ -402,36 +387,6 @@ EOF
 	fi
 
 	cat << EOF >> ${its_file}
-                };
-EOF
-}
-
-#
-# Emit the fitImage ITS fpga section
-#
-# $1 ... .its filename
-# $2 ... Image counter
-# $3 ... Path to fpga image
-fitimage_emit_section_fpga() {
-
-	fpga_csum="${FIT_HASH_ALG}"
-	fpga_loadline=""
-
-	if [ -n "${FPGA_LOADADDRESS}" ]; then
-		fpga_loadline="load = <${FPGA_LOADADDRESS}>;"
-	fi
-
-	cat << EOF >> ${1}
-                fpga-${2} {
-                        description = "FPGA binary";
-                        data = /incbin/("${3}");
-                        type = "fpga";
-                        arch = "${UBOOT_ARCH}";
-                        compression = "none";
-                        ${fpga_loadline}
-                        hash-1 {
-                                algo = "${fpga_csum}";
-                        };
                 };
 EOF
 }
@@ -477,7 +432,6 @@ fitimage_assemble() {
 	ramdisk_bundle=${5}
 	setupcount=""
 	bootscr_id=""
-	fpgacount=""
 	rm -f ${1} arch/${ARCH}/boot/${2}
 
 	if [ ! -z "${UBOOT_SIGN_IMG_KEYNAME}" -a "${UBOOT_SIGN_KEYNAME}" = "${UBOOT_SIGN_IMG_KEYNAME}" ]; then
@@ -569,15 +523,7 @@ fitimage_assemble() {
 	fi
 
 	#
-	# Step 5: Prepare a fpga section.
-	#
-	if [ -e ${DEPLOY_DIR_IMAGE}/${FPGA_BINARY} ]; then
-		fpgacount=1
-		fitimage_emit_section_fpga ${1} "${fpgacount}" ${DEPLOY_DIR_IMAGE}/${FPGA_BINARY}
-	fi
-
-	#
-	# Step 5a: Prepare a loadable sections.
+	# Step 5: Prepare a loadable sections.
 	#
 	if [ -n "${FIT_LOADABLES}" ]; then
 		for LOADABLE in ${FIT_LOADABLES}; do
@@ -631,14 +577,14 @@ fitimage_assemble() {
 			if [ "${dtb_ext}" = "dtbo" ]; then
 				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "" "" "`expr ${dtb_idx} = ${dtbcount}`"
 			else
-				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "`expr ${dtb_idx} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${FIT_LOADABLES}" "`expr ${dtb_idx} = ${dtbcount}`"
 			fi
 			dtb_idx=`expr ${dtb_idx} + 1`
 		done
         unset dtb_idx
 	else
 		defaultconfigcount=1
-		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${fpgacount}" "${FIT_LOADABLES}" "${defaultconfigcount}"
+		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${FIT_LOADABLES}" "${defaultconfigcount}"
 	fi
 
 	fitimage_emit_section_maint ${1} sectend

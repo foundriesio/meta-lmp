@@ -18,6 +18,7 @@ GO_EXTRA_LDFLAGS = "\
     -X '${GO_IMPORT}/cmd/composectl/cmd.storeRoot=/var/sota/reset-apps' \
     -X '${GO_IMPORT}/cmd/composectl/cmd.composeRoot=/var/sota/compose-apps' \
     -X '${GO_IMPORT}/cmd/composectl/cmd.baseSystemConfig=/usr/lib/docker' \
+    -X '${GO_IMPORT}/cmd/composectl/cmd.commit=${SRCREV}' \
 "
 do_install:append() {
     cd ${D}/${bindir}

@@ -1,5 +1,11 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
 # Ostree handles the default boot configuration
 RDEPENDS:${PN}:remove:sota = "virtual-systemd-bootconf"
+
+SRC_URI:append = " \
+    file://0001-boot-add-support-for-ostree-rollback.patch \
+"
 
 # Install systemd-boot at expected path for tools such as bootctl
 do_install:append() {

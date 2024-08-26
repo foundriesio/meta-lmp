@@ -1,0 +1,121 @@
+From c4a24f91f3b30727c6094baa991ede1cddd1626f Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@foundries.io>
+Date: Mon, 26 Aug 2024 14:48:54 +0200
+Subject: [PATCH] boot: add support for ostree rollback
+
+Check BootChainFwCurrent-781e084c-a330-417c-b678-38e696380cb9 EFI
+variable, which provides a hint if we need to rollback and boot
+use fallback ostree sysroot deployment.
+
+Upstream-Status: Inappropriate [lmp specific]
+Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+---
+ src/boot/efi/boot.c        |  9 +++++++++
+ src/boot/efi/meson.build   |  2 ++
+ src/boot/efi/slot-handle.c | 29 +++++++++++++++++++++++++++++
+ src/boot/efi/slot-handle.h |  8 ++++++++
+ 4 files changed, 48 insertions(+)
+ create mode 100644 src/boot/efi/slot-handle.c
+ create mode 100644 src/boot/efi/slot-handle.h
+
+diff --git a/src/boot/efi/boot.c b/src/boot/efi/boot.c
+index e3dc336f30..89cfb57e70 100644
+--- a/src/boot/efi/boot.c
++++ b/src/boot/efi/boot.c
+@@ -18,6 +18,7 @@
+ #include "random-seed.h"
+ #include "secure-boot.h"
+ #include "shim.h"
++#include "slot-handle.h"
+ #include "util.h"
+ #include "xbootldr.h"
+ 
+@@ -1669,6 +1670,14 @@ static void config_default_entry_select(Config *config) {
+ 
+         assert(config);
+ 
++        if (slot_handle_is_rollback() == TRUE) {
++                i = config_entry_find(config, slot_handle_rollback_entry());
++                if (i >= 0) {
++                        config->idx_default = i;
++                        return;
++                }
++        }
++
+         i = config_entry_find(config, config->entry_oneshot);
+         if (i >= 0) {
+                 config->idx_default = i;
+diff --git a/src/boot/efi/meson.build b/src/boot/efi/meson.build
+index 2c283b8c7b..34bddd250f 100644
+--- a/src/boot/efi/meson.build
++++ b/src/boot/efi/meson.build
+@@ -307,6 +307,7 @@ efi_headers = files(
+         'pe.h',
+         'random-seed.h',
+         'shim.h',
++        'slot-handle.h',
+         'splash.h',
+         'util.h',
+         'xbootldr.h',
+@@ -319,6 +320,7 @@ common_sources = files(
+         'graphics.c',
+         'measure.c',
+         'pe.c',
++        'slot-handle.c',
+         'secure-boot.c',
+         'util.c',
+ )
+diff --git a/src/boot/efi/slot-handle.c b/src/boot/efi/slot-handle.c
+new file mode 100644
+index 0000000000..317ac8fc88
+--- /dev/null
++++ b/src/boot/efi/slot-handle.c
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++
++#include "slot-handle.h"
++#include "util.h"
++
++/* 781e084c-a330-417c-b678-38e696380cb9 */
++#define BOOT_CHAIN_GUID \
++        &(const EFI_GUID) { 0x781e084c, 0xa330, 0x417c, { 0xb6, 0x78, 0x38, 0xe6, 0x96, 0x38, 0x0c, 0xb9 } }
++
++#define ROLLBACK_BOOT_ENTRY L"ostree-1-lmp.conf\0"
++
++BOOLEAN slot_handle_is_rollback(void) {
++        UINT32 bootchain;
++        EFI_STATUS err;
++
++        err = efivar_get_uint32_le(BOOT_CHAIN_GUID, L"BootChainFwCurrent", &bootchain);
++
++        /* if BootChainFwCurrent == 1, we should rollback*/
++        if (!EFI_ERROR(err) && (bootchain == 1)) {
++            return TRUE;
++        }
++
++        /* if variable does not exist, is not 4 bytes or has a value other than 1, boot A chain/slot */
++        return FALSE;
++}
++
++CHAR16 *slot_handle_rollback_entry(void) {
++        return (CHAR16*) ROLLBACK_BOOT_ENTRY;
++}
+\ No newline at end of file
+diff --git a/src/boot/efi/slot-handle.h b/src/boot/efi/slot-handle.h
+new file mode 100644
+index 0000000000..836d260be9
+--- /dev/null
++++ b/src/boot/efi/slot-handle.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++#pragma once
++
++#include <efi.h>
++#include "efivars-fundamental.h"
++
++BOOLEAN slot_handle_is_rollback(void);
++CHAR16 *slot_handle_rollback_entry(void);
+\ No newline at end of file
+-- 
+2.34.1
+

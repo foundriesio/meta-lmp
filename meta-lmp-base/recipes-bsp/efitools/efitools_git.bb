@@ -13,6 +13,7 @@ SRC_URI += " \
     file://0001-Enable-RISC-V-build.patch \
     file://build-keys-for-lockdown-only.patch \
     file://allow-local-auths.patch \
+    file://lockdown.conf \
 "
 
 COMPATIBLE_HOST = "(i.86|x86_64|arm|aarch64|riscv64).*-linux"
@@ -50,5 +51,6 @@ do_prepare_local_auths[vardeps] += "UEFI_SIGN_ENABLE UEFI_SIGN_KEYDIR"
 do_deploy() {
     install -d ${DEPLOYDIR}
     install -m 0600 ${D}${datadir}/efitools/efi/LockDown.efi ${DEPLOYDIR}
+    install -m 0600 ${WORKDIR}/lockdown.conf ${DEPLOYDIR}
 }
 addtask deploy after do_install before do_build

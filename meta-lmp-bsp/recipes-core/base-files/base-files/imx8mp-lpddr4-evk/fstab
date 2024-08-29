@@ -5,4 +5,4 @@ tmpfs                /run                 tmpfs      mode=0755,nodev,nosuid,stri
 tmpfs                /var/volatile        tmpfs      defaults              0  0
 
 # boot partition
-/dev/mmcblk2p1       /mnt/boot            vfat       noatime,sync          0  2
+/dev/mmcblk2p1       /mnt/boot            vfat       x-systemd.automount,x-systemd.idle-timeout=2,noatime,sync          0  2

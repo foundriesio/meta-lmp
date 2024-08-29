@@ -70,7 +70,6 @@ if test "${fiovb.is_secondary_boot}" = "0"; then
 			fiovb write_pvalue bootfirmware_version "${bootfirmware_version}";
 		else
 			setenv bootupgrade_available 0;
-			setenv bootfirmware_version "${bootfirmware_version}";
 			setenv fiovb.bootfirmware_version "${bootfirmware_version}";
 		fi
 

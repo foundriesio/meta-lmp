@@ -72,7 +72,7 @@ else
 	if test -z "${bootupgrade_available}"; then setenv bootupgrade_available 0; setenv envsave 1; fi
 	if test -z "${bootupgrade_primary_updated}"; then setenv bootupgrade_primary_updated 0; setenv envsave 1; fi
 	if test -z "${debug}"; then setenv debug 0; setenv envsave 1; fi
-	if test -z "${bootfirmware_version}"; then run bootcmd_bootenv; setenv envsave 1; fi
+	if test -z "${bootfirmware_version}"; then run bootcmd_bootenv; setenv fiovb.bootfirmware_version "${bootfirmware_version}"; setenv envsave 1; fi
 	# Call saveenv if not yet set (e.g. first boot after clean flash)
 	if test "${envsave}" = "1"; then setenv envsave; run saveenv_mmc; fi
 
@@ -81,7 +81,6 @@ else
 	setenv fiovb.rollback_protection "${rollback_protection}"
 	setenv fiovb.upgrade_available "${upgrade_available}"
 	setenv fiovb.bootupgrade_available "${bootupgrade_available}"
-	setenv fiovb.bootfirmware_version "${bootfirmware_version}"
 	setenv fiovb.bootupgrade_primary_updated "${bootupgrade_primary_updated}"
 	setenv fiovb.debug "${debug}"
 fi
@@ -110,7 +109,7 @@ if test "${fiovb.debug}" = "1"; then
 	echo "${fio_msg} fiovb.upgrade_available = ${fiovb.upgrade_available}"
 	echo "${fio_msg} fiovb.bootupgrade_available = ${fiovb.bootupgrade_available}"
 	echo "${fio_msg} fiovb.bootupgrade_primary_updated = ${fiovb.bootupgrade_primary_updated}"
-	echo "${fio_msg} bootfirmware_version = ${bootfirmware_version}"
+	echo "${fio_msg} fiovb.bootfirmware_version = ${fiovb.bootfirmware_version}"
 	echo "${fio_msg}"
 	echo "${fio_msg} Other variables:"
 	echo "${fio_msg} ostree deploy usr = ${ostree_deploy_usr}"

@@ -20,9 +20,6 @@ B = "${WORKDIR}/build"
 # fitImage Hash Algo
 FIT_HASH_ALG ?= "sha256"
 
-# Allow transition to cover CVE-2021-27097 and CVE-2021-27138
-FIT_NODE_SEPARATOR ?= "-"
-
 inherit deploy
 
 do_configure[noexec] = "1"
@@ -41,8 +38,7 @@ do_compile() {
 			boot.cmd.in
 	sed -i -e '/@@INCLUDE_COMMON_FOOTER@@/ {' -e 'r ${S}/boot-footer.cmd.in' -e 'd' -e '}' \
 			boot.cmd.in
-	sed -e 's/@@FIT_NODE_SEPARATOR@@/${FIT_NODE_SEPARATOR}/g' \
-	    -e 's/@@OSTREE_SPLIT_BOOT@@/${OSTREE_SPLIT_BOOT}/g' \
+	sed -e 's/@@OSTREE_SPLIT_BOOT@@/${OSTREE_SPLIT_BOOT}/g' \
 	    -e 's/@@LMP_ROLLBACK_PROTECTION_ENABLE@@/${LMP_ROLLBACK_PROTECTION_ENABLE}/g' \
 	    -e 's/@@OSTREE_DEPLOY_USR_OSTREE_BOOT@@/${OSTREE_DEPLOY_USR_OSTREE_BOOT}/g' \
 			boot.cmd.in > boot.cmd

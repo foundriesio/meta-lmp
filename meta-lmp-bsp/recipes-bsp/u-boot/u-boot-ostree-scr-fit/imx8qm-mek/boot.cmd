@@ -21,9 +21,9 @@ setenv fdt_file_final freescale_${fdt_file}
 setenv bootcmd_boot_hdmi 'hdp load ${loadaddr}'
 setenv bootcmd_boot_m4_0 'dcache flush; bootaux ${loadaddr} 0'
 setenv bootcmd_boot_m4_1 'dcache flush; bootaux ${loadaddr} 1'
-setenv bootcmd_load_hdmi 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file} loadable@@FIT_NODE_SEPARATOR@@${hdmi_image} ${loadaddr}; then run bootcmd_boot_hdmi; fi'
-setenv bootcmd_load_m4_0 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file} loadable@@FIT_NODE_SEPARATOR@@${m4_0_image} ${loadaddr}; then run bootcmd_boot_m4_0; fi;'
-setenv bootcmd_load_m4_1 'if imxtract ${ramdisk_addr_r}#conf@@FIT_NODE_SEPARATOR@@freescale_${fdt_file} loadable@@FIT_NODE_SEPARATOR@@${m4_1_image} ${loadaddr}; then run bootcmd_boot_m4_1; fi;'
+setenv bootcmd_load_hdmi 'if imxtract ${ramdisk_addr_r}#conf-freescale_${fdt_file} loadable-${hdmi_image} ${loadaddr}; then run bootcmd_boot_hdmi; fi'
+setenv bootcmd_load_m4_0 'if imxtract ${ramdisk_addr_r}#conf-freescale_${fdt_file} loadable-${m4_0_image} ${loadaddr}; then run bootcmd_boot_m4_0; fi;'
+setenv bootcmd_load_m4_1 'if imxtract ${ramdisk_addr_r}#conf-freescale_${fdt_file} loadable-${m4_1_image} ${loadaddr}; then run bootcmd_boot_m4_1; fi;'
 setenv bootcmd_load_fw 'run bootcmd_load_hdmi; run bootcmd_load_m4_0; run bootcmd_load_m4_1;'
 
 # Boot firmware updates

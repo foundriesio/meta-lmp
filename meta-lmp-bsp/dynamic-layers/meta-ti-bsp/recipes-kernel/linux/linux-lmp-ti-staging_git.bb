@@ -10,12 +10,6 @@ LINUX_VERSION ?= "6.1.83"
 SRCREV_machine ?= "c1c2f1971fbf6ddad93a8c94314fe8221e7aa6be"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
 
-# Beagleplay (has its own repo)
-KERNEL_REPO:beagleplay ?= "git://github.com/beagleboard/linux.git"
-KERNEL_BRANCH:beagleplay ?= "v6.1.46-ti-arm64-r13"
-LINUX_VERSION:beagleplay ?= "6.1.46"
-SRCREV_machine:beagleplay ?= "f47f74d11b19d8ae2f146de92c258f40e0930d86"
-
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANCH};name=machine; \

@@ -13,8 +13,12 @@ do_efi_sign() {
 			else
 				kernel=${B}/${KERNEL_OUTPUT_DIR}/$imageType
 			fi
-			sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key --cert ${UEFI_SIGN_KEYDIR}/DB.crt $kernel
-			sbverify --cert ${UEFI_SIGN_KEYDIR}/DB.crt $kernel.signed
+			if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key --cert ${UEFI_SIGN_KEYDIR}/DB.crt $kernel; then
+				bbfatal "Failed to sign kernel: ${kernel}"
+			fi
+			if ! sbverify --cert ${UEFI_SIGN_KEYDIR}/DB.crt $kernel.signed; then
+				bbfatal "sbverify failed for kernel: ${kernel}.signed"
+			fi
 			mv $kernel.signed $kernel
 		done
 	fi

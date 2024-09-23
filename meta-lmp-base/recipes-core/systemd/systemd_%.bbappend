@@ -54,7 +54,6 @@ EXTRA_OEMESON += ' \
 
 SRC_URI:append = " \
 	file://0001-tmpfiles-tmp.conf-reduce-cleanup-age-to-half.patch \
-	file://systemd-timesyncd-update.service \
 "
 
 # Depend on systemd-boot as the efi payload is provided by a different recipe
@@ -74,10 +73,6 @@ do_install:append() {
 		sed -i '/\[Service\]/aExecStartPre=-/bin/rm -f /var/log' ${D}${systemd_system_unitdir}/systemd-journal-flush.service
 		(cd ${D}${localstatedir}; rmdir -v --parents log/journal)
 	fi
-
-	# Workaround for https://github.com/systemd/systemd/issues/11329
-	install -m 0644 ${WORKDIR}/systemd-timesyncd-update.service ${D}${systemd_system_unitdir}
-	ln -sf ../systemd-timesyncd-update.service ${D}${systemd_system_unitdir}/sysinit.target.wants/systemd-timesyncd-update.service
 
 	# Remove systemd-boot as it is provided by a separated recipe and we can't disable via pkgconfig
 	if ${@bb.utils.contains('PACKAGECONFIG', 'efi', 'true', 'false', d)}; then

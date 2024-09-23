@@ -702,7 +702,7 @@ UBOOT_SIGN_KEYDIR:k3 ?= "${TOPDIR}/conf/keys"
 FIT_HASH_ALG:sota:k3 ?= "sha256"
 FIT_SIGN_ALG:sota:k3 ?= "rsa2048"
 KERNEL_IMAGETYPE:sota:k3 = "fitImage"
-KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE} ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'Image', '', d)}"
+KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE}"
 PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
 WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
@@ -726,8 +726,6 @@ LMP_BOOT_FIRMWARE_FILES:am62xx = "tispl.bin u-boot.img tiboot3-am62x-gp-evm.bin 
 LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx = " boot.itb"
 ## am62xx-evm
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
-KERNEL_DEVICETREE:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'ti/k3-am625-base-board-jailhouse.dtbo', '', d)}"
-KERNEL_MODULE_AUTOLOAD:append:am62xx-evm = " ${@bb.utils.contains('MACHINE_FEATURES', 'jailhouse', 'jailhouse uio_ivshmem', '', d)}"
 ## beagleplay
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
 KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-beagleplay-csi2-ov5640.dtbo ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtbo"

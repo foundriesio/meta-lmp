@@ -5,9 +5,6 @@ setenv devnum 0
 setenv bootpart 1
 setenv rootpart 2
 
-# Use "#conf-ti_overlayname.dtbo"
-# setenv dtoverlay "#conf-ti_k3-am625-base-board-jailhouse.dtbo"
-
 setenv loadaddr 0x90000000
 setenv fit_addr "${loadaddr}"
 

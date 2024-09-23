@@ -6,8 +6,8 @@ KERNEL_REPO ?= "git://git.ti.com/git/ti-linux-kernel/ti-linux-kernel.git"
 KERNEL_REPO_PROTOCOL ?= "https"
 KERNEL_BRANCH ?= "ti-linux-6.1.y"
 
-LINUX_VERSION ?= "6.1.69"
-SRCREV_machine ?= "2233af66faf7b81b6c286285e50cda5595dc410d"
+LINUX_VERSION ?= "6.1.83"
+SRCREV_machine ?= "c1c2f1971fbf6ddad93a8c94314fe8221e7aa6be"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
 
 # Beagleplay (has its own repo)

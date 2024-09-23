@@ -3,9 +3,6 @@ setenv bootlimit 3
 setenv devtype mmc
 setenv devnum ${mmcdev}
 
-# Use "#conf-ti_overlayname.dtbo"
-# setenv dtoverlay "#conf-ti_k3-am625-base-board-jailhouse.dtbo"
-
 setenv loadaddr 0x90000000
 
 setenv bootcmd_resetvars 'setenv kernel_image; setenv bootargs; setenv kernel_image2; setenv bootargs2'

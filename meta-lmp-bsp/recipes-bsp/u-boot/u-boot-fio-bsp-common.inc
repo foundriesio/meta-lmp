@@ -24,7 +24,7 @@ deploy_nxp_imx() {
                             if [ ! -f "${DEPLOYDIR}/${BOOT_TOOLS}/${dtb_name}" ]; then
                                 # When sign is enabled the final DTB should be copied from deploy dir
                                 if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then
-                                    install -m 0644 ${DEPLOY_DIR_IMAGE}/${UBOOT_DTB_IMAGE}  ${DEPLOYDIR}/${BOOT_TOOLS}/${dtb_name}
+                                    install -m 0644 ${DEPLOYDIR}/${UBOOT_DTB_IMAGE}  ${DEPLOYDIR}/${BOOT_TOOLS}/${dtb_name}
                                 else
                                     install -m 0644 ${B}/${config}/arch/arm/dts/${dtb_name}  ${DEPLOYDIR}/${BOOT_TOOLS}/${dtb_name}
                                 fi

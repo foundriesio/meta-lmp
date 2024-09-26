@@ -77,7 +77,8 @@ UBOOT_ENTRYPOINT:qemuarm64 = "0x40080000"
 MACHINE_FEATURES:append:qemuarm64-secureboot = " optee"
 OSTREE_SPLIT_BOOT:qemuarm64-secureboot = "1"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:qemuarm64-secureboot = "1"
-INITRAMFS_RECOVERY_IMAGE:qemuarm64-secureboot = "initramfs-ostree-lmp-recovery"
+# https://github.com/foundriesio/meta-lmp/pull/663/commits/a2adf25f3894f1dcd53a5ab641f68be7eb0330a5
+#INITRAMFS_RECOVERY_IMAGE:qemuarm64-secureboot = "initramfs-ostree-lmp-recovery"
 WKS_FILE:sota:qemuarm64-secureboot = "sdimage-split-boot-sota.wks.in"
 ## Use same minimal memory amount as suggested by op-tee
 QB_MEM:qemuarm64-secureboot = "-m 1057"

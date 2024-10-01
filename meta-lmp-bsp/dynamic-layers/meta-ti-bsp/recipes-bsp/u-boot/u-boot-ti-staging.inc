@@ -23,10 +23,6 @@ do_deploy:append() {
     rm ${DEPLOYDIR}/${PN}-config
 }
 
-do_deploy:append:am62xx () {
-    rm ${DEPLOYDIR}/${PN}-config-evm
-}
-
 # Root of Trust Key directory
 K3_ROT_KEYS ?= "CONFIG_SIGN_KEY_PATH=${TOPDIR}/conf/keys/platform/ti"
 EXTRA_OEMAKE += "$K3_ROT_KEYS"

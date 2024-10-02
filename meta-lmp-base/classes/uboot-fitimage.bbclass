@@ -125,12 +125,9 @@ uboot_fitimage_assemble() {
 	fi
 
 	# u-boot dtb location depends on sign enable
-	if [ "${UBOOT_SIGN_ENABLE}" = "1" ]; then
+	if [ "${UBOOT_SIGN_ENABLE}" = "1" -a -n "${UBOOT_DTB_BINARY}" ]; then
 		uboot_dtb="${UBOOT_DTB_SIGNED}"
 	else
-		uboot_dtb="${UBOOT_DTB_BINARY}"
-	fi
-	if [uboot_dtb == "" ]; then
 		uboot_dtb="u-boot.dtb"
 	fi
 

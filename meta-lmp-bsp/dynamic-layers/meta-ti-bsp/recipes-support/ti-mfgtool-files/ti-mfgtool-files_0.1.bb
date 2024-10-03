@@ -36,5 +36,7 @@ do_deploy() {
 
 # Make sure the fitImage and u-boot are deployed
 do_deploy[depends] += "virtual/bootloader:do_deploy"
+# for tiboot3*.bin
+do_deploy[mcdepends] += "mc::k3r5:virtual/bootloader:do_deploy"
 
 addtask deploy after do_compile before do_build

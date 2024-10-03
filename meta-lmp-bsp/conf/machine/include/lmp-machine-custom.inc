@@ -734,6 +734,8 @@ SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 ## beagleplay
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
 MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
+LMP_BOOT_FIRMWARE_FILES:beagleplay = "tispl.bin u-boot.img tiboot3.bin"
+LMP_BOOT_FIRMWARE_FILES:append:sota:beagleplay = " boot.itb"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx = " optee"

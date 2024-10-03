@@ -25,3 +25,11 @@ module_conf_rpmsg_client_sample = "blacklist rpmsg_client_sample"
 module_conf_ti_k3_r5_remoteproc = "softdep ti_k3_r5_remoteproc pre: virtio_rpmsg_bus"
 module_conf_ti_k3_dsp_remoteproc = "softdep ti_k3_dsp_remoteproc pre: virtio_rpmsg_bus"
 KERNEL_MODULE_PROBECONF += "rpmsg_client_sample ti_k3_r5_remoteproc ti_k3_dsp_remoteproc"
+
+# TODO: remove on the next kernel update
+KERNEL_DEVICETREE:remove:am64xx = " \
+    ti/k3-am642-hummingboard-t-pcie.dtbo \
+    ti/k3-am642-hummingboard-t-usb3.dtbo \
+    ti/k3-am642-hummingboard-t.dtb \
+    ti/k3-am642-phyboard-electra-gpio-fan.dtbo \
+"

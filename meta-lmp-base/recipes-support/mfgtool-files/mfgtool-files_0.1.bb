@@ -30,6 +30,8 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+COMPATIBLE_MACHINE = "(imx-generic-bsp|imx-nxp-bsp)"
+
 do_compile() {
     sed -e 's/@@MACHINE@@/${MACHINE}/' ${S}/bootloader.uuu.in > bootloader.uuu
     sed -e 's/@@MACHINE@@/${MACHINE}/' \

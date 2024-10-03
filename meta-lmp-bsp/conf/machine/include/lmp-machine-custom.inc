@@ -744,7 +744,6 @@ LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx = " boot.itb"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 ## beagleplay
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
-KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-beagleplay-csi2-ov5640.dtbo ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtbo"
 MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
 
 # TI AM64x

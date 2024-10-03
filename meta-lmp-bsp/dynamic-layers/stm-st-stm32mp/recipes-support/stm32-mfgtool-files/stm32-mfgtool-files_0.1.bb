@@ -13,6 +13,8 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+COMPATIBLE_MACHINE = "(stm32mpcommon)"
+
 SRC_URI = " \
     file://provision.sh.in \
 "

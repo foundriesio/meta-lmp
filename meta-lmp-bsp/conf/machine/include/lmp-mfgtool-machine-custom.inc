@@ -139,10 +139,10 @@ EXTRA_IMAGEDEPENDS:remove:k3 = "u-boot-default-script"
 PREFERRED_PROVIDER_virtual/optee-os:k3 = "optee-os-fio-mfgtool"
 KERNEL_IMAGETYPE:k3 = "fitImage"
 KERNEL_CLASSES:k3 = " kernel-lmp-fitimage "
-PREFERRED_PROVIDER_virtual/bootloader:k3 = "u-boot-ti-staging-mfgtool"
-PREFERRED_PROVIDER_u-boot:k3 = "u-boot-ti-staging-mfgtool"
+UBOOT_SIGN_ENABLE:k3 = "0"
 # TI AM62XX EVM
-UBOOT_MACHINE:am62xx-evm-k3r5 = "am62x_evm_r5_usbdfu_defconfig"
+#UBOOT_CONFIG_FRAGMENTS:am62xx-evm = "am62x_a53_usbdfu.config"
+UBOOT_CONFIG_FRAGMENTS:am62xx-evm-k3r5 = "am62x_r5_usbdfu.config"
 
 # Cross machines / BSPs
 PREFERRED_VERSION_u-boot-fio-mfgtool:imx-nxp-bsp ?= "imx-2022.04"

@@ -15,6 +15,11 @@ SRC_URI:append:beagleplay = " \
     file://fw_env.config \
     file://lmp.cfg \
 "
+
+# lmp-mfgtool
+SRC_URI:remove:lmp-mfgtool = "file://fw_env.config file://lmp.cfg"
+SRC_URI:append:lmp-mfgtool = " file://lmp-mfgtool.cfg"
+
 PACKAGECONFIG[optee] = "TEE=${STAGING_DIR_HOST}${nonarch_base_libdir}/firmware/tee-pager_v2.bin,,${PREFERRED_PROVIDER_virtual/optee-os}"
 
 do_deploy:append() {

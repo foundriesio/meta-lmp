@@ -9,6 +9,8 @@ S = "${WORKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+COMPATIBLE_MACHINE = "(ti-soc)"
+
 SRC_URI = " \
     file://flash.sh.in \
 "

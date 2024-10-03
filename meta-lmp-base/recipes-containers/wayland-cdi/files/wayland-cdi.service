@@ -1,0 +1,13 @@
+[Unit]
+Description=CDI device entry generator for Wayland
+After=weston.service
+Before=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/wayland-cdi-generate
+RemainAfterExit=yes
+
+[Install]
+WantedBy=weston.service
+RequiredBy=docker.service

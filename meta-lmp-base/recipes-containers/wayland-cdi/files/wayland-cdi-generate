@@ -1,0 +1,47 @@
+#!/bin/sh
+
+cditmp="/run/cdi/.wayland.yaml.tmp"
+
+mkdir -p /run/cdi
+cat >${cditmp} <<EOF
+cdiVersion: "0.6.0"
+kind: org.wayland/display
+devices:
+EOF
+
+mounts=""
+for x in `find /run/user -mindepth 2 -maxdepth 2 -type s -name wayland-\*` ; do
+	echo Found Wayland instance: $x
+	found=1
+	xdg_dir="$(dirname $x)"
+	display_name="$(basename $x)"
+	mounts="${mounts} ${xdg_dir}"
+	cat >>${cditmp} <<EOF
+- name: ${display_name}
+  containerEdits:
+    env:
+    - WAYLAND_DISPLAY=${display_name}
+    - XDG_RUNTIME_DIR=${xdg_dir}
+EOF
+done
+
+if [ -n "${mounts}" ] ; then
+	cat >>${cditmp} <<EOF
+containerEdits:
+  mounts:
+EOF
+
+	for x in ${mounts} ; do
+		cat >>${cditmp} <<EOF
+  - type: bind
+    hostPath: ${x}
+    containerPath: ${x}
+    options:
+    - rbind
+    - rprivate
+EOF
+	done
+	mv ${cditmp} /run/cdi/wayland.yaml
+else
+	rm ${cditmp}
+fi

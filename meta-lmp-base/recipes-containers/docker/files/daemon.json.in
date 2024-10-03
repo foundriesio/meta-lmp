@@ -3,6 +3,9 @@
   "log-opts": {
     "tag": "{{.Name}}"
   },
+  "features": {
+    "cdi": true
+  },
   @@DOCKER_DAEMON_JSON_CUSTOM@@
   "max-concurrent-downloads": @@MAX_CONCURRENT_DOWNLOADS@@,
   "max-download-attempts": @@MAX_DOWNLOAD_ATTEMPTS@@

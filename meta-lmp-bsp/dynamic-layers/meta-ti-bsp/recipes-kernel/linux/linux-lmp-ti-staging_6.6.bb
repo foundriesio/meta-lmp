@@ -1,13 +1,13 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
+include recipes-kernel/linux/kmeta-linux-lmp-${PV}.y.inc
 
 KERNEL_REPO ?= "git://git.ti.com/git/ti-linux-kernel/ti-linux-kernel.git"
 KERNEL_REPO_PROTOCOL ?= "https"
-KERNEL_BRANCH ?= "ti-linux-6.1.y"
+KERNEL_BRANCH ?= "ti-linux-6.6.y"
 
-LINUX_VERSION ?= "6.1.83"
-SRCREV_machine ?= "c1c2f1971fbf6ddad93a8c94314fe8221e7aa6be"
+LINUX_VERSION ?= "6.6.44"
+SRCREV_machine ?= "325ad3650d0b50a4943b9151fb43411f08ad5d0c"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

@@ -141,7 +141,7 @@ WKS_FILE_DEPENDS:append:intel-corei7-64 = " ${INITRD_IMAGE_LIVE} efitools"
 WKS_FILE_DEPENDS_BOOTLOADERS:remove:intel-corei7-64 = "grub-efi"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
 IMAGE_BOOT_FILES:intel-corei7-64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'systemd-bootx64.efi;EFI/BOOT/bootx64.efi systemd-bootx64.efi;EFI/systemd/systemd-bootx64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
-IMAGE_EFI_BOOT_FILES:append:intel-corei7-64 = " lockdown.conf;loader/entries/lockdown.conf LockDown.efi ${@make_efi_cer_boot_files(d)}"
+IMAGE_EFI_BOOT_FILES:append:intel-corei7-64 = " lockdown.conf;loader/entries/lockdown.conf unlock.conf;loader/entries/unlock.conf LockDown.efi UnLock-signed.efi ${@make_efi_cer_boot_files(d)}"
 
 # Common for iMX targets
 ## Prefer IMX_DEFAULT_BSP=nxp as mainline removes every common machine override

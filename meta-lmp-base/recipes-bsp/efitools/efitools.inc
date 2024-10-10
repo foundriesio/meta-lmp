@@ -58,4 +58,4 @@ do_install() {
     oe_runmake install DESTDIR='${D}${base_prefix}'
 }
 
-SSTATE_ALLOW_OVERLAP_FILES += "${DEPLOY_DIR_IMAGE}/LockDown.efi"
+SSTATE_ALLOW_OVERLAP_FILES += "${DEPLOY_DIR_IMAGE}/LockDown.efi ${DEPLOY_DIR_IMAGE}/UnLock-signed.efi"

@@ -201,7 +201,6 @@ IMAGE_CMD:ota-ext4:append () {
 		if [ -z "${OSTREE_OTA_EXT4_LUKS_PASSPHRASE}" ]; then
 			bbfatal "Unable to find passphrase for LUKS-based ota-ext4 (define OSTREE_OTA_EXT4_LUKS_PASSPHRASE)"
 		fi
-		cp ${IMGDEPLOYDIR}/${IMAGE_NAME}.ota-ext4 ${IMGDEPLOYDIR}/${IMAGE_NAME}.ota-ext4-orig
 
 		block_size=`dumpe2fs -h ${IMGDEPLOYDIR}/${IMAGE_NAME}.ota-ext4 | grep "^Block size" | cut -d ':' -f 2 | tr -d ' '`
 		block_count=`dumpe2fs -h ${IMGDEPLOYDIR}/${IMAGE_NAME}.ota-ext4 | grep "^Block count" | cut -d ':' -f 2 | tr -d ' '`

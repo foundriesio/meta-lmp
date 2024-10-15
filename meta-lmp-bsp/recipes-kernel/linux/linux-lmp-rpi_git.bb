@@ -1,8 +1,8 @@
-include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
+include recipes-kernel/linux/kmeta-linux-lmp-6.6.y.inc
 
-LINUX_VERSION ?= "6.1.77"
-KBRANCH = "rpi-6.1.y"
-SRCREV_machine = "77fc1fbcb5c013329af9583307dd1ff3cd4752aa"
+LINUX_VERSION ?= "6.6.22"
+KBRANCH = "rpi-6.6.y"
+SRCREV_machine = "c04af98514c26014a4f29ec87b3ece95626059bd"
 SRCREV_meta = "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

@@ -35,10 +35,12 @@ ENABLE_UART:rpi = "1"
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL:rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 KERNEL_SERIAL:raspberrypi-cm3 ?= "console=ttyAMA0,115200"
+KERNEL_SERIAL:raspberrypi5 ?= "console=ttyAMA10,115200"
 OSTREE_KERNEL_ARGS_COMMON_RPI ?= "coherent_pool=1M 8250.nr_uarts=1 console=tty1 cgroup_enable=memory ${KERNEL_SERIAL} ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:raspberrypi3 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS:raspberrypi-cm3 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS:raspberrypi4 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
+OSTREE_KERNEL_ARGS:raspberrypi5 ?= "pci=pcie_bus_safe vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 ## U-Boot entrypoints for rpi
 UBOOT_ENTRYPOINT:rpi = "0x00200000"
 UBOOT_DTB_LOADADDRESS:rpi = "0x02600000"

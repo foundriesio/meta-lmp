@@ -9,6 +9,20 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
+check_secure_boot() {
+    if [ ! -d /sys/firmware/efi/efivars ]; then
+        echo "EFI vars sysfs mount point not found"
+	exit 1
+    fi
+
+    efi_secure=`efivar --name=8be4df61-93ca-11d2-aa0d-00e098032b8c-SecureBoot --print-decimal`
+    efi_mode=`efivar --name=8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode --print-decimal`
+    if [ "${efi_secure}" != "1" ] || [ "${efi_mode}" != "0" ]; then
+	echo "UEFI SecureBoot not enabled, installation aborted"
+	exit 1
+    fi
+}
+
 # Recommended ESP partition size is 512m
 boot_size=512
 
@@ -254,17 +268,32 @@ mkdir /tgt_root
 mkdir /src_root
 mkdir -p /boot
 
-# Path /rnu/media/<label>-sdX (check wks used)
+# Path /run/media/<label>-sdX (check wks used)
 install_mount=`ls /run/media | grep install-`
 otaboot_mount=`ls /run/media | grep otaboot- || true`
 rootfs_mount=`ls /run/media | grep image-`
 
 # Handling of the target root partition
 mount $rootfs /tgt_root
-mount -o rw,loop,noatime,nodiratime /run/media/${rootfs_mount}/rootfs.img /src_root
+
+if cryptsetup isLuks /run/media/${rootfs_mount}/rootfs.img; then
+    check_secure_boot
+    echo "Handle encrypted rootfs..."
+    # TODO: fiopassphrase MUST removed from the initrd and provided as a configuration variable for LmP
+    echo -n "fiopassphrase" | cryptsetup luksOpen --key-file=- /run/media/${rootfs_mount}/rootfs.img rootfs_luks
+    mount -o rw,loop,noatime,nodiratime /dev/mapper/rootfs_luks /src_root
+else
+    echo "Handle non-encrypted rootfs..."
+    mount -o rw,loop,noatime,nodiratime /run/media/${rootfs_mount}/rootfs.img /src_root
+fi
+
 echo "Copying rootfs files..."
 cp -a /src_root/* /tgt_root
 umount /src_root
+
+if cryptsetup isLuks /run/media/${rootfs_mount}/rootfs.img; then
+    cryptsetup luksClose rootfs_luks
+fi
 
 # LMP preloaded containers (containers and updated installed_versions)
 if [ -d /run/media/${rootfs_mount}/ostree/deploy/lmp/var/lib/docker ]; then

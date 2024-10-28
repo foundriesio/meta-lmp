@@ -498,6 +498,8 @@ PREFERRED_VERSION_optee-os-fio-mfgtool:mx93-nxp-bsp = "3.21.0-imx"
 PREFERRED_VERSION_optee-os-tadevkit:mx93-nxp-bsp = "3.21.0-imx"
 PREFERRED_PROVIDER_virtual/kernel:mx93-nxp-bsp ?= "linux-lmp-fslc-imx"
 PREFERRED_VERSION_u-boot-fio:mx93-nxp-bsp ?= "imx-2023.04"
+# linux-lmp-fslc-imx_6.1 does't have this devicetrees
+KERNEL_DEVICETREE:remove:mx93-nxp-bsp = "freescale/${KERNEL_DEVICETREE_BASENAME}-i2c-spi-slave.dtb freescale/${KERNEL_DEVICETREE_BASENAME}-iw612-otbr.dtb"
 ## iMX93 DDR4 EVK
 UBOOT_SIGN_ENABLE:sota:imx93-11x11-lpddr4x-evk ?= "1"
 OSTREE_KERNEL_ARGS:imx93-11x11-lpddr4x-evk ?= "console=tty1 console=ttyLP0,115200 earlycon rootfstype=ext4"

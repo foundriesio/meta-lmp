@@ -51,15 +51,11 @@ python do_prepare_local_auths() {
 addtask prepare_local_auths after do_configure before do_compile
 do_prepare_local_auths[vardeps] += "UEFI_SIGN_ENABLE UEFI_SIGN_KEYDIR"
 
-do_deploy() {
-    install -d ${DEPLOYDIR}
-    install -m 0600 ${D}${datadir}/efitools/efi/LockDown.efi ${DEPLOYDIR}
-    install -m 0600 ${WORKDIR}/lockdown.conf ${DEPLOYDIR}
-
+do_install:append:class-target() {
     if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key \
                 --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
-		--output ${D}${datadir}/efitools/efi/UnLock-signed.efi \
-		${D}${datadir}/efitools/efi/UnLock.efi; then
+                --output ${D}${datadir}/efitools/efi/UnLock-signed.efi \
+                ${D}${datadir}/efitools/efi/UnLock.efi; then
         bbfatal "Failed to sign UnLock.efi"
     fi
 
@@ -67,7 +63,12 @@ do_deploy() {
                    ${D}${datadir}/efitools/efi/UnLock-signed.efi; then
         bbfatal "Failed to verify UnLock-signed.efi"
     fi
+}
 
+do_deploy() {
+    install -d ${DEPLOYDIR}
+    install -m 0600 ${D}${datadir}/efitools/efi/LockDown.efi ${DEPLOYDIR}
+    install -m 0600 ${WORKDIR}/lockdown.conf ${DEPLOYDIR}
     install -m 0600 ${D}${datadir}/efitools/efi/UnLock-signed.efi ${DEPLOYDIR}
     install -m 0600 ${WORKDIR}/unlock.conf ${DEPLOYDIR}
 }

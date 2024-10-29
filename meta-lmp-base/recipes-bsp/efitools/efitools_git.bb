@@ -55,19 +55,6 @@ do_deploy() {
     install -d ${DEPLOYDIR}
     install -m 0600 ${D}${datadir}/efitools/efi/LockDown.efi ${DEPLOYDIR}
     install -m 0600 ${WORKDIR}/lockdown.conf ${DEPLOYDIR}
-
-    if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key \
-                --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
-		--output ${D}${datadir}/efitools/efi/UnLock-signed.efi \
-		${D}${datadir}/efitools/efi/UnLock.efi; then
-        bbfatal "Failed to sign UnLock.efi"
-    fi
-
-    if ! sbverify --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
-                   ${D}${datadir}/efitools/efi/UnLock-signed.efi; then
-        bbfatal "Failed to verify UnLock-signed.efi"
-    fi
-
     install -m 0600 ${D}${datadir}/efitools/efi/UnLock-signed.efi ${DEPLOYDIR}
     install -m 0600 ${WORKDIR}/unlock.conf ${DEPLOYDIR}
 }

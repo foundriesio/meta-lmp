@@ -58,4 +58,18 @@ do_install() {
     oe_runmake install DESTDIR='${D}${base_prefix}'
 }
 
+do_install:append:class-target() {
+    if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key \
+                --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
+                --output ${D}${datadir}/efitools/efi/UnLock-signed.efi \
+                ${D}${datadir}/efitools/efi/UnLock.efi; then
+        bbfatal_log "Failed to sign UnLock.efi"
+    fi
+
+    if ! sbverify --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
+                   ${D}${datadir}/efitools/efi/UnLock-signed.efi; then
+        bbfatal_log "Failed to verify UnLock-signed.efi"
+    fi
+}
+
 SSTATE_ALLOW_OVERLAP_FILES += "${DEPLOY_DIR_IMAGE}/LockDown.efi ${DEPLOY_DIR_IMAGE}/UnLock-signed.efi"

@@ -14,9 +14,10 @@ SRC_URI += " \
     file://build-keys-for-lockdown-only.patch \
     file://allow-local-auths.patch \
     file://lockdown.conf \
-    file://unlock.patch \
-    file://unlock.conf \
 "
+
+# UnLock needs the user keys
+SRC_URI:append = "${@bb.utils.contains('UEFI_SIGN_ENABLE', '1', ' file://unlock.patch file://unlock.conf', '', d)}"
 
 COMPATIBLE_HOST = "(i.86|x86_64|arm|aarch64|riscv64).*-linux"
 
@@ -53,22 +54,24 @@ do_prepare_local_auths[vardeps] += "UEFI_SIGN_ENABLE UEFI_SIGN_KEYDIR"
 
 do_deploy() {
     install -d ${DEPLOYDIR}
-    install -m 0600 ${D}${datadir}/efitools/efi/LockDown.efi ${DEPLOYDIR}
+    install -m 0600 ${B}/LockDown.efi ${DEPLOYDIR}
     install -m 0600 ${WORKDIR}/lockdown.conf ${DEPLOYDIR}
 
-    if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key \
-                --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
-		--output ${D}${datadir}/efitools/efi/UnLock-signed.efi \
-		${D}${datadir}/efitools/efi/UnLock.efi; then
-        bbfatal "Failed to sign UnLock.efi"
-    fi
+    if [ "${UEFI_SIGN_ENABLE}" = "1" ]; then
+        if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key \
+                    --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
+                     --output ${WORKDIR}/UnLock-signed.efi \
+                    ${B}/UnLock.efi; then
+            bbfatal "Failed to sign UnLock.efi"
+        fi
 
-    if ! sbverify --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
-                   ${D}${datadir}/efitools/efi/UnLock-signed.efi; then
-        bbfatal "Failed to verify UnLock-signed.efi"
-    fi
+        if ! sbverify --cert ${UEFI_SIGN_KEYDIR}/DB.crt \
+                    ${WORKDIR}/UnLock-signed.efi; then
+            bbfatal "Failed to verify UnLock-signed.efi"
+        fi
 
-    install -m 0600 ${D}${datadir}/efitools/efi/UnLock-signed.efi ${DEPLOYDIR}
-    install -m 0600 ${WORKDIR}/unlock.conf ${DEPLOYDIR}
+        install -m 0600 ${WORKDIR}/UnLock-signed.efi ${DEPLOYDIR}
+        install -m 0600 ${WORKDIR}/unlock.conf ${DEPLOYDIR}
+    fi
 }
 addtask deploy after do_install before do_build

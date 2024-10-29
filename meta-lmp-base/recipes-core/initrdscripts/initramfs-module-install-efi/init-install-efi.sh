@@ -17,7 +17,7 @@ check_secure_boot() {
 
     efi_secure=`efivar --name=8be4df61-93ca-11d2-aa0d-00e098032b8c-SecureBoot --print-decimal`
     efi_mode=`efivar --name=8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode --print-decimal`
-    if [ "${efi_secure}" != "1" ] || [ "${efi_mode}" != "0" ]; then
+    if [ "${efi_secure}" -ne 1 ] || [ "${efi_mode}" -ne 0 ]; then
 	echo "UEFI SecureBoot not enabled, installation aborted"
 	exit 1
     fi

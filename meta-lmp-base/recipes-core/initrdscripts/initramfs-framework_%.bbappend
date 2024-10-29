@@ -20,7 +20,7 @@ PACKAGES:append = " \
 "
 
 SUMMARY:initramfs-module-cryptfs = "initramfs support for encrypted filesystems"
-RDEPENDS:initramfs-module-cryptfs = "${PN}-base libgcc e2fsprogs-resize2fs e2fsprogs-e2fsck e2fsprogs-dumpe2fs systemd-crypt"
+RDEPENDS:initramfs-module-cryptfs = "${PN}-base libgcc e2fsprogs-resize2fs e2fsprogs-e2fsck e2fsprogs-dumpe2fs systemd-crypt efivar"
 FILES:initramfs-module-cryptfs = "/init.d/80-cryptfs"
 
 SUMMARY:initramfs-module-cryptfs-pkcs11 = "encrypted filesystems with support for pkcs11"

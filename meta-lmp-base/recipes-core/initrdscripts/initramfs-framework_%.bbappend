@@ -45,6 +45,18 @@ SUMMARY:initramfs-module-ostree-recovery = "recovery initramfs for ostree based 
 RDEPENDS:initramfs-module-ostree-recovery = "${PN}-base ostree"
 FILES:initramfs-module-ostree-recovery = "/init.d/98-ostree_recovery /recovery.d"
 
+do_configure:append() {
+    if [ "${OSTREE_OTA_EXT4_LUKS}" = "1" ]; then
+        if [ -z "${OSTREE_OTA_EXT4_LUKS_PASSPHRASE}" ]; then
+	   bbfatal "Unable to find passphrase for LUKS-based ota-ext4 (define OSTREE_OTA_EXT4_LUKS_PASSPHRASE)"
+	fi
+        file="${S}/cryptfs"
+        watermark="fiopassphrase"
+        passphrase="${OSTREE_OTA_EXT4_LUKS_PASSPHRASE}"
+        sed -i "s|${watermark}|${passphrase}|g" "$file"
+    fi
+}
+
 do_install:append() {
 	install -d ${D}/recovery.d
 	install -d ${D}/${sysconfdir}/cryptfs

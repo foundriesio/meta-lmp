@@ -279,7 +279,6 @@ mount $rootfs /tgt_root
 if cryptsetup isLuks /run/media/${rootfs_mount}/rootfs.img; then
     check_secure_boot
     echo "Handle encrypted rootfs..."
-    # TODO: fiopassphrase MUST removed from the initrd and provided as a configuration variable for LmP
     echo -n "fiopassphrase" | cryptsetup luksOpen --key-file=- /run/media/${rootfs_mount}/rootfs.img rootfs_luks
     mount -o rw,loop,noatime,nodiratime /dev/mapper/rootfs_luks /src_root
 else

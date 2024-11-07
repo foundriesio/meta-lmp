@@ -1,13 +1,25 @@
 CAPSULE_FILE="tegra-bl.cap"
 CAPSULE_PATH="${FIO_OSTREE_TARGET_SYSROOT}/usr/lib/firmware"
 EFI_CAPSULE_DIR=/boot/EFI/UpdateCapsule
+ESRT_FW_VERSION=/sys/firmware/efi/esrt/entries/entry0/fw_version
 
 getenv_soc() {
-	exit 0
+	rc=0
+
+	if [ "${1}" = "bootfirmware_version" ]; then
+		if [ -e "$ESRT_FW_VERSION" ]; then
+			cat $ESRT_FW_VERSION || rc=1
+		else
+			error_exit "Can't obtain boot firmware version"
+		fi
+	fi
+
+	exit $rc
 }
 
 setenv_soc() {
 	rc=0
+
 	if [ "${1}" = "bootupgrade_available" ]; then
 		if [ -e "$CAPSULE_PATH/$CAPSULE_FILE" ]; then
 			mkdir -p $EFI_CAPSULE_DIR

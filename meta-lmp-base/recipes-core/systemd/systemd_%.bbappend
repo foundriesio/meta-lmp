@@ -81,4 +81,9 @@ do_install:append() {
 	fi
 
 	(cd ${D}${localstatedir}; rmdir -v --parents lib/systemd)
+
+    # systemd-bless-boot is manually invoked by ak-lite if fioefi is enabled
+    if [ "${@bb.utils.contains("MACHINE_FEATURES", "fioefi", "1", "0", d)}" = "1" ]; then
+        rm -f ${D}/${systemd_unitdir}/system/systemd-bless-boot.service
+    fi
 }

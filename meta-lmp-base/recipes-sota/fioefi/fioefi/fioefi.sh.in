@@ -7,6 +7,7 @@
 set -e
 
 scriptName="$(basename "$0")"
+BLS_DIR=/boot/loader/entries
 
 error_exit() {
 	if [ -n "${1}" ] ; then
@@ -31,16 +32,40 @@ matches() {
 	echo "$input" | grep -q "$pattern"
 }
 
+get_target_sysroot () {
+	if ls $BLS_DIR/ostree-2*.conf &>/dev/null; then
+		bls_id=2
+	else
+		bls_id=1
+	fi
+
+	sysroot_path=$(cat $BLS_DIR/ostree-${bls_id}*.conf | grep "options "| awk '{split($0,a,"ostree="); print a[2]}')
+	echo "$sysroot_path"
+}
+
+if [ -z "${FIO_OSTREE_TARGET_SYSROOT}" ]; then
+	# Try to parse it from the target sysroot boot entry
+	FIO_OSTREE_TARGET_SYSROOT=$(get_target_sysroot)
+fi
+
 @@INCLUDE_SOC_FUNCTIONS@@
 
-# Mock functions. On real targets only *_soc implementations
-# should be used
+# SoC-agnostic functions. Create fioefi_soc.sh.in with SoC-specific
+# implementation
 getenv() {
-	debug "Get value of '${1}'"
+	exit 0
 }
 
 setenv() {
-	debug "Assign value '${1} = ${2}'"
+	rc=0
+
+	if [ "${1}" = "upgrade_available" ]; then
+		if [ "${2}" = "0" ]; then
+			/usr/lib/systemd/systemd-bless-boot good || rc=1
+		fi
+	fi
+
+	exit $rc
 }
 
 if matches "$scriptName" "printenv"; then

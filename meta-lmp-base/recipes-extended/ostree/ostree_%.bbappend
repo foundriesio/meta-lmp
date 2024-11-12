@@ -11,6 +11,7 @@ SRC_URI:append = " \
     file://0004-Add-support-for-systemd-boot-bootloader.patch \
     file://0005-ostree-decrease-default-grub.cfg-timeout-and-set-def.patch \
     file://0006-Add-support-systemd-boot-automatic-boot-assesment.patch \
+    file://0007-sort-key.patch \
 "
 
 PACKAGECONFIG:remove = "static"

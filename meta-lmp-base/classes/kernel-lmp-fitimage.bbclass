@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: MIT
 #
 
+FIT_CONF_PREFIX:am62xx = "conf-ti_"
+FIT_CONF_PREFIX:am64xx = "conf-ti_"
+FIT_CONF_PREFIX:mx8-nxp-bsp = "conf-freescale_"
+FIT_CONF_PREFIX:mx9-nxp-bsp = "conf-freescale_"
+
 inherit kernel-uboot kernel-artifact-names uboot-config
 
 def get_fit_replacement_type(d):

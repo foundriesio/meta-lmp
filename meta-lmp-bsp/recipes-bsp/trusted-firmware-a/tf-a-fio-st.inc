@@ -76,7 +76,7 @@ create_combo_image() {
             cp ${DEPLOYDIR}/arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-emmc.stm32 \
                ${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin
             dd if=${DEPLOYDIR}/fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin \
-               of=${DEPLOYDIR}/arm-trusted-firmware/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
+               of=${DEPLOYDIR}/fip/combo-emmc-tfa-fip-${LMP_FLASHLAYOUT_BOARD_NAME}.bin bs=1024 seek=256 conv=notrunc
         fi
     fi
 }

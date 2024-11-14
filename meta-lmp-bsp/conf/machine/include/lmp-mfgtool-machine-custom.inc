@@ -145,3 +145,7 @@ UBOOT_CONFIG_FRAGMENTS:am62xx-evm-k3r5 = "am62x_r5_usbdfu.config"
 
 # Cross machines / BSPs
 PREFERRED_VERSION_u-boot-fio-mfgtool:imx-nxp-bsp ?= "imx-2022.04"
+FIT_CONF_PREFIX:mx8-nxp-bsp = "conf-freescale_"
+FIT_CONF_PREFIX:mx9-nxp-bsp = "conf-freescale_"
+FIT_CONF_PREFIX:am62xx = "conf-ti_"
+FIT_CONF_PREFIX:am64xx = "conf-ti_"

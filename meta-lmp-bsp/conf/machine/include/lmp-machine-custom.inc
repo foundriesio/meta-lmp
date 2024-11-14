@@ -153,6 +153,8 @@ OSTREE_KERNEL_ARGS:mx6-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OST
 OSTREE_KERNEL_ARGS:mx6ull-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:mx7d-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:mx7ulp-generic-bsp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
+FIT_CONF_PREFIX:mx8-nxp-bsp = "conf-freescale_"
+FIT_CONF_PREFIX:mx9-nxp-bsp = "conf-freescale_"
 
 # Embedded Artists i.MX7ULP COM
 UBOOT_SIGN_ENABLE:sota:imx7ulpea-ucom ?= "1"
@@ -729,6 +731,7 @@ MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:k3 = "kernel-image-image"
 KERNEL_DEVICETREE:beaglebone-yocto = "${DTB_FILES}"
 
 # TI AM62x
+FIT_CONF_PREFIX:am62xx = "conf-ti_"
 MACHINE_FEATURES:append:am62xx = " optee"
 PREFERRED_PROVIDER_u-boot-fw-utils:am62xx = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils:am62xx = "libubootenv"
@@ -753,6 +756,7 @@ LMP_BOOT_FIRMWARE_FILES:beagleplay = "tispl.bin u-boot.img tiboot3.bin"
 LMP_BOOT_FIRMWARE_FILES:append:sota:beagleplay = " boot.itb"
 
 # TI AM64x
+FIT_CONF_PREFIX:am64xx = "conf-ti_"
 MACHINE_FEATURES:append:am64xx = " optee"
 PREFERRED_PROVIDER_u-boot-fw-utils:am64xx = "libubootenv"
 PREFERRED_RPROVIDER_u-boot-fw-utils:am64xx = "libubootenv"

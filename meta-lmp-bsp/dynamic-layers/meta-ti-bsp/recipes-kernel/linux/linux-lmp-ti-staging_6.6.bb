@@ -7,7 +7,7 @@ KERNEL_REPO_PROTOCOL ?= "https"
 KERNEL_BRANCH ?= "ti-linux-6.6.y"
 
 LINUX_VERSION ?= "6.6.44"
-SRCREV_machine ?= "e3b431a6194fc1b074802d20c9eede8442382b2a"
+SRCREV_machine ?= "541c20281af79a7df96bb94b4e3a923092d7ceff"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

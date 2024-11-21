@@ -46,9 +46,6 @@ PACKAGECONFIG ?= " \
     zstd \
 "
 
-PACKAGECONFIG[p11kit] = "-Dp11kit=true,-Dp11kit=false,p11-kit"
-PACKAGECONFIG[cryptsetup-plugins] = "-Dlibcryptsetup-plugins=true,-Dlibcryptsetup-plugins=false,cryptsetup,,cryptsetup"
-
 PACKAGE_BEFORE_PN += "${PN}-crypt"
 SUMMARY:${PN}-crypt = "Cryptographic tools and libraries for manipulating LUKS2 devices"
 FILES:${PN}-crypt = "${bindir}/systemd-cryptenroll \

@@ -22,7 +22,7 @@ PROVIDES = "virtual/optee-os"
 
 SRCBRANCH ?= "master"
 OPTEE_OS_REPO ?= "git://git.codelinaro.org/clo/foundriesio/optee_os.git"
-SRC_URI = "${OPTEE_OS_REPO};protocol=https;branch=${SRCBRANCH}"
+SRC_URI = "${OPTEE_OS_REPO};protocol=https;name=optee-os-fio;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"

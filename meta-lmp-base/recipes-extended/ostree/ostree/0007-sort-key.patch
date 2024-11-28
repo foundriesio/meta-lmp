@@ -1,0 +1,46 @@
+From 17b91cfdf0299535dcb82e3e4f2201c0bd77d6db Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Tue, 12 Nov 2024 21:32:36 +0100
+Subject: [PATCH] systemd-boot display order
+
+Use sort-key to display ostree deployments at the top. Other factors
+might alter the position but they should always be above the secure boot
+uefi EFI applications.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ src/libostree/ostree-bootconfig-parser.c | 2 +-
+ src/libostree/ostree-sysroot-deploy.c    | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/libostree/ostree-bootconfig-parser.c b/libostree/ostree-bootconfig-parser.c
+index 4c3e80d..d3fb6b3 100644
+--- a/src/libostree/ostree-bootconfig-parser.c
++++ b/src/libostree/ostree-bootconfig-parser.c
+@@ -210,7 +210,7 @@ ostree_bootconfig_parser_write_at (OstreeBootconfigParser *self, int dfd, const
+    * in the bootconfig example of the BootLoaderspec document:
+    * https://systemd.io/BOOT_LOADER_SPECIFICATION
+    */
+-  const char *fields[] = { "title", "version", "options", "devicetree", "linux", "initrd" };
++	const char *fields[] = { "title", "version", "options", "devicetree", "linux", "initrd", "sort-key" };
+   g_autoptr (GHashTable) keys_written = g_hash_table_new (g_str_hash, g_str_equal);
+   g_autoptr (GString) buf = g_string_new ("");
+
+diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
+index f9c496d..0df24df 100644
+--- a/src/libostree/ostree-sysroot-deploy.c
++++ b/src/libostree/ostree-sysroot-deploy.c
+@@ -2290,6 +2290,11 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+   g_autofree char *version_key
+       = g_strdup_printf ("%d", n_deployments - ostree_deployment_get_index (deployment));
+   ostree_bootconfig_parser_set (bootconfig, OSTREE_COMMIT_META_KEY_VERSION, version_key);
++
++g_autofree char *sort_key
++      = g_strdup_printf ("%d", 0);
++  ostree_bootconfig_parser_set (bootconfig, "sort-key", sort_key);
++
+   g_autofree char *boot_relpath
+       = g_strconcat (bootprefix, bootcsumdir, "/", kernel_layout->kernel_namever, NULL);
+   ostree_bootconfig_parser_set (bootconfig, "linux", boot_relpath);
+--
+2.34.1

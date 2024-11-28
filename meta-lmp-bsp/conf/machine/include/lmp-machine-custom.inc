@@ -35,10 +35,12 @@ ENABLE_UART:rpi = "1"
 ## Mimic meta-raspberrypi behavior
 KERNEL_SERIAL:rpi ?= "${@oe.utils.conditional("ENABLE_UART", "1", "console=ttyS0,115200", "", d)}"
 KERNEL_SERIAL:raspberrypi-cm3 ?= "console=ttyAMA0,115200"
+KERNEL_SERIAL:raspberrypi5 ?= "console=ttyAMA10,115200"
 OSTREE_KERNEL_ARGS_COMMON_RPI ?= "coherent_pool=1M 8250.nr_uarts=1 console=tty1 cgroup_enable=memory ${KERNEL_SERIAL} ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:raspberrypi3 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS:raspberrypi-cm3 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 OSTREE_KERNEL_ARGS:raspberrypi4 ?= "vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
+OSTREE_KERNEL_ARGS:raspberrypi5 ?= "pci=pcie_bus_safe vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000 ${OSTREE_KERNEL_ARGS_COMMON_RPI}"
 ## U-Boot entrypoints for rpi
 UBOOT_ENTRYPOINT:rpi = "0x00200000"
 UBOOT_DTB_LOADADDRESS:rpi = "0x02600000"
@@ -496,6 +498,8 @@ PREFERRED_VERSION_optee-os-fio-mfgtool:mx93-nxp-bsp = "3.21.0-imx"
 PREFERRED_VERSION_optee-os-tadevkit:mx93-nxp-bsp = "3.21.0-imx"
 PREFERRED_PROVIDER_virtual/kernel:mx93-nxp-bsp ?= "linux-lmp-fslc-imx"
 PREFERRED_VERSION_u-boot-fio:mx93-nxp-bsp ?= "imx-2023.04"
+# linux-lmp-fslc-imx_6.1 does't have this devicetrees
+KERNEL_DEVICETREE:remove:mx93-nxp-bsp = "freescale/${KERNEL_DEVICETREE_BASENAME}-i2c-spi-slave.dtb freescale/${KERNEL_DEVICETREE_BASENAME}-iw612-otbr.dtb"
 ## iMX93 DDR4 EVK
 UBOOT_SIGN_ENABLE:sota:imx93-11x11-lpddr4x-evk ?= "1"
 OSTREE_KERNEL_ARGS:imx93-11x11-lpddr4x-evk ?= "console=tty1 console=ttyLP0,115200 earlycon rootfstype=ext4"
@@ -733,8 +737,9 @@ LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx = " boot.itb"
 SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
 ## beagleplay
 SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
-KERNEL_DEVICETREE:beagleplay = "ti/k3-am625-beagleplay.dtb ti/k3-am625-beagleplay-csi2-ov5640.dtbo ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtbo"
 MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
+LMP_BOOT_FIRMWARE_FILES:beagleplay = "tispl.bin u-boot.img tiboot3.bin"
+LMP_BOOT_FIRMWARE_FILES:append:sota:beagleplay = " boot.itb"
 
 # TI AM64x
 MACHINE_FEATURES:append:am64xx = " optee"
@@ -800,6 +805,8 @@ PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.21.0"
 PREFERRED_VERSION_optee-examples:mx9-nxp-bsp = "3.21.0"
 PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.21.0"
 PREFERRED_VERSION_optee-test:mx9-nxp-bsp = "3.21.0"
+## We don't use imx-boot-container just yet
+UBOOT_PROVIDES_BOOT_CONTAINER:mx8m-generic-bsp = "0"
 ## No need to install u-boot, already a WKS dependency
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:imx-generic-bsp = "u-boot-fslc"
 ## OP-TEE is a dependency of u-boot (fit), no need for WKS_FILE_DEPENDS

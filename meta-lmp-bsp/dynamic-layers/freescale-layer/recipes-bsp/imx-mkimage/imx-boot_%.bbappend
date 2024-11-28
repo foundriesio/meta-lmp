@@ -61,7 +61,7 @@ do_compile:prepend:mx93-nxp-bsp() {
 do_compile:append() {
     for type in ${UBOOT_CONFIG}; do
         UBOOT_CONFIG_EXTRA="$type"
-        BOOT_CONFIG_MACHINE_EXTRA="${BOOT_NAME}-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
+        BOOT_CONFIG_MACHINE_EXTRA="imx-boot-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
         for target in ${IMXBOOT_TARGETS}; do
             if [ -e "${BOOT_STAGING}/flash.bin-nohdmi" ]; then
                 cp ${BOOT_STAGING}/flash.bin-nohdmi ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}-nohdmi
@@ -73,7 +73,7 @@ do_compile:append() {
 do_install:append() {
     for type in ${UBOOT_CONFIG}; do
         UBOOT_CONFIG_EXTRA="$type"
-        BOOT_CONFIG_MACHINE_EXTRA="${BOOT_NAME}-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
+        BOOT_CONFIG_MACHINE_EXTRA="imx-boot-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
         for target in ${IMXBOOT_TARGETS}; do
             if [ -e "${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}-nohdmi" ]; then
                 install -m 0644 ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}-nohdmi ${D}/boot/
@@ -85,20 +85,20 @@ do_install:append() {
 do_deploy:append() {
     for type in ${UBOOT_CONFIG}; do
         UBOOT_CONFIG_EXTRA="$type"
-        BOOT_CONFIG_MACHINE_EXTRA="${BOOT_NAME}-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
+        BOOT_CONFIG_MACHINE_EXTRA="imx-boot-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
         for target in ${IMXBOOT_TARGETS}; do
             if [ -e "${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}-nohdmi" ]; then
                 install -m 0644 ${S}/${BOOT_CONFIG_MACHINE_EXTRA}-${target}-nohdmi ${DEPLOYDIR}
-                if [ ! -e "${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}-nohdmi" ]; then
-                    ln -sf ${BOOT_CONFIG_MACHINE_EXTRA}-${IMAGE_IMXBOOT_TARGET}-nohdmi ${DEPLOYDIR}/${BOOT_NAME}-nohdmi
-                    ln -sf ${BOOT_CONFIG_MACHINE_EXTRA}-${IMAGE_IMXBOOT_TARGET}-nohdmi ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}-nohdmi
+                if [ ! -e "${DEPLOYDIR}/imx-boot-${MACHINE}-nohdmi" ]; then
+                    ln -sf ${BOOT_CONFIG_MACHINE_EXTRA}-${IMAGE_IMXBOOT_TARGET}-nohdmi ${DEPLOYDIR}/imx-boot-nohdmi
+                    ln -sf ${BOOT_CONFIG_MACHINE_EXTRA}-${IMAGE_IMXBOOT_TARGET}-nohdmi ${DEPLOYDIR}/imx-boot-${MACHINE}-nohdmi
                 fi
             fi
         done
 
         # Also create imx-boot link with the machine name (with the default IMXBOOT_TARGET)
-        if [ ! -e "${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}" ]; then
-            ln -sf ${BOOT_CONFIG_MACHINE_EXTRA}-${IMAGE_IMXBOOT_TARGET} ${DEPLOYDIR}/${BOOT_NAME}-${MACHINE}
+        if [ ! -e "${DEPLOYDIR}/imx-boot-${MACHINE}" ]; then
+            ln -sf ${BOOT_CONFIG_MACHINE_EXTRA}-${IMAGE_IMXBOOT_TARGET} ${DEPLOYDIR}/imx-boot-${MACHINE}
         fi
     done
 }

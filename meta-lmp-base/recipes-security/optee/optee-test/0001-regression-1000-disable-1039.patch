@@ -1,6 +1,6 @@
-From 9cdaa16531f91c28621d8d8592560df817860eb0 Mon Sep 17 00:00:00 2001
+From 9c6fd3bba91930deaf7d86f4af1739999e805934 Mon Sep 17 00:00:00 2001
 From: Jorge Ramirez-Ortiz <jorge@foundries.io>
-Date: Wed, 29 Mar 2023 14:16:55 +0200
+Date: Wed, 20 Nov 2024 17:43:27 +0100
 Subject: [PATCH] regression 1000: disable 1039
 
 This test requires the TA to be signed with a key located
@@ -17,10 +17,10 @@ Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
  1 file changed, 2 insertions(+)
 
 diff --git a/host/xtest/regression_1000.c b/host/xtest/regression_1000.c
-index de32c41..1aa2e8b 100644
+index 9981d01..226e5dc 100644
 --- a/host/xtest/regression_1000.c
 +++ b/host/xtest/regression_1000.c
-@@ -3197,6 +3197,7 @@ out:
+@@ -3269,6 +3269,7 @@ out:
  ADBG_CASE_DEFINE(regression, 1038, xtest_tee_test_1038,
  		 "Test MTE (Memory Tag Extension)");
  
@@ -28,11 +28,14 @@ index de32c41..1aa2e8b 100644
  static void xtest_tee_test_1039(ADBG_Case_t *c)
  {
  	TEEC_Session session = { };
-@@ -3221,3 +3222,4 @@ static void xtest_tee_test_1039(ADBG_Case_t *c)
- 
+@@ -3291,6 +3292,7 @@ static void xtest_tee_test_1039(ADBG_Case_t *c)
+ }
  ADBG_CASE_DEFINE(regression, 1039, xtest_tee_test_1039,
  		 "Test subkey verification");
 +#endif
+
+ struct test_1040_thread_arg {
+	TEEC_Result res;
 -- 
 2.34.1
 

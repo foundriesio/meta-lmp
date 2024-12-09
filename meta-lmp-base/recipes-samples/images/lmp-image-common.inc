@@ -43,6 +43,7 @@ CORE_IMAGE_BASE_INSTALL += " \
     sudo \
     tzdata \
     zram \
+    fio-diag \
 "
 
 # Additional packages when sota is available

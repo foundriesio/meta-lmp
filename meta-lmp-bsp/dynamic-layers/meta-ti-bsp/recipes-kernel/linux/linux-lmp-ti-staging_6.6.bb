@@ -1,20 +1,14 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-include recipes-kernel/linux/kmeta-linux-lmp-6.1.y.inc
+include recipes-kernel/linux/kmeta-linux-lmp-${PV}.y.inc
 
 KERNEL_REPO ?= "git://git.ti.com/git/ti-linux-kernel/ti-linux-kernel.git"
 KERNEL_REPO_PROTOCOL ?= "https"
-KERNEL_BRANCH ?= "ti-linux-6.1.y"
+KERNEL_BRANCH ?= "ti-linux-6.6.y"
 
-LINUX_VERSION ?= "6.1.69"
-SRCREV_machine ?= "2233af66faf7b81b6c286285e50cda5595dc410d"
+LINUX_VERSION ?= "6.6.44"
+SRCREV_machine ?= "541c20281af79a7df96bb94b4e3a923092d7ceff"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
-
-# Beagleplay (has its own repo)
-KERNEL_REPO:beagleplay ?= "git://github.com/beagleboard/linux.git"
-KERNEL_BRANCH:beagleplay ?= "v6.1.46-ti-arm64-r13"
-LINUX_VERSION:beagleplay ?= "6.1.46"
-SRCREV_machine:beagleplay ?= "f47f74d11b19d8ae2f146de92c258f40e0930d86"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 

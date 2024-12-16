@@ -220,7 +220,7 @@ PREFERRED_VERSION_u-boot-fio:mx6ull-nxp-bsp ?= "imx-2023.04"
 # iMX6ULL EVK
 UBOOT_SIGN_ENABLE:sota:imx6ullevk ?= "1"
 SOTA_CLIENT_FEATURES:append:imx6ullevk = " ubootenv"
-KERNEL_DEVICETREE:imx6ullevk = "imx6ull-14x14-evk.dtb"
+KERNEL_DEVICETREE:imx6ullevk = "nxp/imx/imx6ull-14x14-evk.dtb"
 BOOTSCR_LOAD_ADDR:imx6ullevk = "0x85000000"
 
 # iMX8QM

@@ -8,15 +8,16 @@ This fixes the Murata 1MW bluetooth initialization
 
 Signed-off-by: Michael Scott <mike@foundries.io>
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
  arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
-index 6c2d66cdd2f4b..b0c09ca92ecc7 100644
+index 548d5695b59a..111b5b23e83b 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi
-@@ -47,6 +47,14 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+@@ -59,6 +59,14 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
  		enable-active-high;
  	};
  
@@ -31,15 +32,15 @@ index 6c2d66cdd2f4b..b0c09ca92ecc7 100644
  	ir-receiver {
  		compatible = "gpio-ir-receiver";
  		gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
-@@ -476,6 +484,7 @@ &uart1 { /* BT */
+@@ -488,6 +496,7 @@ &uart1 { /* BT */
  	assigned-clocks = <&clk IMX8MN_CLK_UART1>;
  	assigned-clock-parents = <&clk IMX8MN_SYS_PLL1_80M>;
- 	fsl,uart-has-rtscts;
+ 	uart-has-rtscts;
 +	resets = <&modem_reset>;
  	status = "okay";
- };
  
-@@ -502,8 +511,10 @@ &usdhc1 {
+ 	bluetooth {
+@@ -538,8 +547,10 @@ &usdhc1 {
  	pinctrl-1 = <&pinctrl_usdhc1_100mhz>, <&pinctrl_wlan>;
  	pinctrl-2 = <&pinctrl_usdhc1_200mhz>, <&pinctrl_wlan>;
  	bus-width = <4>;
@@ -48,9 +49,9 @@ index 6c2d66cdd2f4b..b0c09ca92ecc7 100644
  	non-removable;
 +	cap-power-off-card;
  	wakeup-source;
- 	fsl,sdio-async-interrupt-enabled;
- 	/delete-property/ vmmc-supply;
-@@ -751,6 +762,7 @@ MX8MN_IOMUXC_UART1_RXD_UART1_DCE_RX	0x140
+ 	vmmc-supply = <&reg_usdhc1_vmmc>;
+ 	status = "okay";
+@@ -773,6 +784,7 @@ MX8MN_IOMUXC_UART1_RXD_UART1_DCE_RX	0x140
  			MX8MN_IOMUXC_UART1_TXD_UART1_DCE_TX	0x140
  			MX8MN_IOMUXC_UART3_RXD_UART1_DCE_CTS_B	0x140
  			MX8MN_IOMUXC_UART3_TXD_UART1_DCE_RTS_B	0x140
@@ -59,5 +60,5 @@ index 6c2d66cdd2f4b..b0c09ca92ecc7 100644
  	};
  
 -- 
-2.38.1
+2.47.1
 

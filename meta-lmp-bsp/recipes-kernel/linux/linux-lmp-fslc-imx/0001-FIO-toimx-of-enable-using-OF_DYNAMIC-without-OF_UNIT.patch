@@ -1,4 +1,4 @@
-From c7ad24edca81bd463235ebe8399bac243bae177b Mon Sep 17 00:00:00 2001
+From 80f22266bcd157eeb1ce2b4a5725eeccfa1b4aa0 Mon Sep 17 00:00:00 2001
 From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Date: Tue, 30 May 2023 17:59:47 +0300
 Subject: [PATCH 1/2] [FIO toimx] of: enable using OF_DYNAMIC without
@@ -14,15 +14,14 @@ commit a553d46954894 ("MLK-17275-1 drm/bridge: adv7511: Add support for OF_DYNAM
 Upstream-Status: Pending
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 ---
-
  drivers/of/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-index 80b5fd44ab1c7..89204c537b06c 100644
+index da9826accb1b..d9ce37d6ddc6 100644
 --- a/drivers/of/Kconfig
 +++ b/drivers/of/Kconfig
-@@ -55,7 +55,7 @@ config OF_KOBJ
+@@ -67,7 +67,7 @@ config OF_KOBJ
  # Hardly any platforms need this.  It is safe to select, but only do so if you
  # need it.
  config OF_DYNAMIC
@@ -31,6 +30,5 @@ index 80b5fd44ab1c7..89204c537b06c 100644
  	select OF_KOBJ
  	help
  	  On some platforms, the device tree can be manipulated at runtime.
--- 
-2.40.1
-
+--
+2.25.1

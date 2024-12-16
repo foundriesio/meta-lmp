@@ -1,7 +1,9 @@
-From 952f4b90ceee9deb3f266f17623e718272306105 Mon Sep 17 00:00:00 2001
+From b9c1cc917961ef85deb21903eb7019a1324edb54 Mon Sep 17 00:00:00 2001
 From: Jorge Ramirez-Ortiz <jorge@foundries.io>
 Date: Fri, 17 Jul 2020 09:09:37 +0200
 Subject: [PATCH] hwrng: optee: support generic crypto
+
+Upstream-Status: Pending
 
 Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
@@ -10,7 +12,7 @@ Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
-index 135a82590923..bb21e025687f 100644
+index 96b5d546d136..23d0b55dea86 100644
 --- a/drivers/char/hw_random/optee-rng.c
 +++ b/drivers/char/hw_random/optee-rng.c
 @@ -272,6 +272,8 @@ static int optee_rng_remove(struct device *dev)
@@ -21,7 +23,6 @@ index 135a82590923..bb21e025687f 100644
 +		   0x94, 0x51, 0xc6, 0xfd, 0xff, 0x28, 0xad, 0x65)},
  	{}
  };
- 
--- 
-2.25.1
 
+--
+2.25.1

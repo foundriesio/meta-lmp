@@ -2,7 +2,7 @@ DESCRIPTION = "Tools used to push an ostree repo to and check if it is synced wi
 HOMEPAGE = "https://github.com/foundriesio/ostreeuploader"
 SECTION = "devel"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=2a944942e1496af1886903d274dedb13"
+LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=6da28bf14f8fa478195ced00edf4ab7b"
 
 GO_IMPORT = "github.com/foundriesio/ostreeuploader"
 GO_IMPORT_PROTO ?= "https"

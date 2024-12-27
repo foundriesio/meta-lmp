@@ -363,7 +363,6 @@ MACHINE_FIRMWARE:append:imx8mm-lpddr4-evk = " linux-firmware-qca"
 KERNEL_DEVICETREE:append:imx8mm-lpddr4-evk = " freescale/imx8mm-evkb.dtb"
 KMACHINE:imx8mm-lpddr4-evk = "imx8mmevk"
 OSTREE_KERNEL_ARGS:imx8mm-lpddr4-evk ?= "console=tty1 console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200 rootfstype=ext4"
-PREFERRED_PROVIDER_virtual/dtb:imx8mm-lpddr4-evk ?= "lmp-device-tree"
 SOTA_CLIENT_FEATURES:append:imx8mm-lpddr4-evk = " ubootenv"
 BOOTSCR_LOAD_ADDR:imx8mm-lpddr4-evk = "0x44800000"
 ## iMX8MM EVK with secure boot support

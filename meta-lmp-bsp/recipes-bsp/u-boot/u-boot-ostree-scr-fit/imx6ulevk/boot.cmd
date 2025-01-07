@@ -2,7 +2,7 @@
 run findfdt
 echo "Using ${fdt_file}"
 
-setenv fdt_file_final ${fdt_file}
+setenv fdt_file_final nxp_imx_${fdt_file}
 
 # Default boot type and device
 setenv bootlimit 3

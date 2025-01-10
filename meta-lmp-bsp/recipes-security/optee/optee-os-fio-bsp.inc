@@ -12,8 +12,6 @@ OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
 OPTEEMACHINE:imx8ulp-lpddr4-evk = "imx-mx8ulpevk"
 OPTEEMACHINE:imx93-11x11-lpddr4x-evk = "imx-mx93evk"
 OPTEEMACHINE:qemuarm64 = "vexpress-qemu_armv8a"
-OPTEEMACHINE:zynqmp = "zynqmp-zcu102"
-OPTEEMACHINE:versal = "versal-generic"
 OPTEEMACHINE:stm32mp15-disco = "stm32mp1-157C_DK2"
 OPTEEMACHINE:stm32mp15-eval = "stm32mp1-157C_EV1"
 
@@ -34,19 +32,6 @@ EXTRA_OEMAKE:append:mx8qm-nxp-bsp = " \
 "
 EXTRA_OEMAKE:append:mx93-nxp-bsp = " \
     CFG_DT=y CFG_EXTERNAL_DTB_OVERLAY=y CFG_DT_ADDR=0x83200000 \
-"
-EXTRA_OEMAKE:append:zynqmp = " \
-    CFG_TZDRAM_START=0x7e000000 CFG_TZDRAM_SIZE=0x1c00000 \
-    CFG_SHMEM_START=0x7fc00000 CFG_SHMEM_SIZE=0x400000 \
-    CFG_DT=y CFG_GENERATE_DTB_OVERLAY=y CFG_DT_ADDR=0x22000000 \
-    CFG_ENABLE_EMBEDDED_TESTS=y \
-"
-EXTRA_OEMAKE:append:kv260 = " \
-   CFG_UART_BASE=UART1_BASE CFG_UART_IT=IT_UART1 CFG_UART_CLK_HZ=UART1_CLK_IN_HZ \
-"
-EXTRA_OEMAKE:append:versal = " \
-    CFG_DT=y CFG_DT_ADDR=0x00001000 \
-    CFG_ENABLE_EMBEDDED_TESTS=y \
 "
 
 # Machine Settings
@@ -126,10 +111,6 @@ EXTRA_OEMAKE:append:imx8mn-ddr4-evk-sec = " \
 "
 EXTRA_OEMAKE:append:imx8mn-lpddr4-evk-sec = " \
     CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_FS_DEV_ID=2 \
-"
-EXTRA_OEMAKE:append:uz3eg-iocc-sec = " \
-    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y \
-    CFG_RPMB_FS_DEV_ID=0 \
 "
 
 EXTRA_OEMAKE:append:stm32mp15-eval-sec = " \

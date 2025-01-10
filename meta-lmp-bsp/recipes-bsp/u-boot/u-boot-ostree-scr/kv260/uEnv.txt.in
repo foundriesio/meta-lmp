@@ -1,6 +1,0 @@
-bootcmd_setovl=setenv dtoverlay zynqmp-sck-kv-g-rev${card1_rev}.dtbo
-bootcmd_load_env=load ${devtype} ${devnum}:2 ${scriptaddr} /boot/loader/uEnv.txt
-bootcmd_run_env=env import -t ${scriptaddr} ${filesize}
-bootcmd_load_k=load ${devtype} ${devnum}:2 ${pxefile_addr_r} ${kernel_image}
-bootcmd_run=bootm ${pxefile_addr_r}#conf-system-top.dtb#conf-${dtoverlay}
-bootcmd=run bootcmd_load_env; run bootcmd_run_env; run bootcmd_setovl; run bootcmd_load_k; run bootcmd_run

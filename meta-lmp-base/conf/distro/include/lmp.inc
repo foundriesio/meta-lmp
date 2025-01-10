@@ -123,15 +123,8 @@ MIRRORS =+ "\
 # Compatibility with other layers
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
-    /meta-virtualization/dynamic-layers/xilinx/recipes-extended/xen/xen_4.14.bbappend \
     /meta-security/meta-integrity/recipes-core/systemd/systemd_%.bbappend \
     /meta-st-stm32mp/recipes-st/images/st-image-bootfs-efi.bb \
-"
-
-# meta-xilinx/meta-xilinx-tools: mask recipes not required for lmp
-BBMASK += " \
-    /meta-xilinx-tools/recipes-bsp/ai-engine/aiefal_1.0.bb \
-    /meta-xilinx-tools/recipes-bsp/u-boot/u-boot-xlnx_%.bbappend \
 "
 # meta-st-stm32mp: mask recipes and appends that are not required by lmp
 BBMASK += " \
@@ -144,9 +137,6 @@ BBMASK += " \
 BBMASK += " \
     /meta-ti/meta-ti-bsp/recipes-security/optee \
 "
-
-# disable xsct tarball by default (xilinx)
-USE_XSCT_TARBALL = "0"
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \

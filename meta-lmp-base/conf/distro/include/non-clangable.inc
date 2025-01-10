@@ -102,8 +102,6 @@ OBJCOPY:pn-linux-lmp-ea-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-ea-imx:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-xlnx:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-xlnx:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-toradex-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-toradex-imx:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
@@ -140,7 +138,6 @@ TOOLCHAIN:pn-edk2-firmware = "gcc"
 
 # imx8mm-lpddr4-evk-sec
 # imx8mp-lpddr4-evk-sec
-# uz3eg-iocc-ebbr-sec
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-fiovb_git.bb:do_compile
 TOOLCHAIN:pn-optee-fiovb = "gcc"
 
@@ -155,11 +152,6 @@ TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
 # imx targets (not reproducible)
 TOOLCHAIN:pn-imx-atf = "gcc"
 TOOLCHAIN:pn-qoriq-atf = "gcc"
-
-# kv260
-# vck190-versal
-# uz3eg-iocc-ebbr-sec
-TOOLCHAIN:pn-arm-trusted-firmware = "gcc"
 
 # am64xx-evm
 TOOLCHAIN:pn-ti-sci-fw = "gcc"
@@ -201,11 +193,7 @@ TOOLCHAIN:pn-runc-opencontainers = "gcc"
 # U-boot does compile with clang but clang-15 crashes compiling it :(
 TOOLCHAIN:pn-u-boot-fio = "gcc"
 TOOLCHAIN:pn-u-boot-fio-mfgtool = "gcc"
-TOOLCHAIN:pn-u-boot-xlnx = "gcc"
 TOOLCHAIN:pn-u-boot-ti-staging = "gcc"
-
-# libmali-xlnx calls gcc directly on do_install
-TOOLCHAIN:pn-libmali-xlnx = "gcc"
 
 # isp-imx fails to build with clang
 TOOLCHAIN:pn-isp-imx = "gcc"

@@ -1,18 +1,3 @@
-# Embedded Artists i.MX7ULP COM
-UBOOT_SIGN_ENABLE:imx7ulpea-ucom = "1"
-PREFERRED_PROVIDER_virtual/kernel:imx7ulpea-ucom = "linux-lmp-dev-mfgtool"
-KERNEL_REPO:imx7ulpea-ucom ?= "git://github.com/foundriesio/linux.git"
-LINUX_VERSION:imx7ulpea-ucom ?= "5.10.y"
-KERNEL_BRANCH:imx7ulpea-ucom ?= "linux-ea-v5.10.y"
-KERNEL_COMMIT:imx7ulpea-ucom ?= "4026a5c637c4237dabffbaea1c1b38fddcf73fba"
-PREFERRED_PROVIDER_virtual/bootloader:imx7ulpea-ucom = "u-boot-fio-mfgtool"
-PREFERRED_PROVIDER_u-boot:imx7ulpea-ucom = "u-boot-fio-mfgtool"
-PREFERRED_PROVIDER_u-boot-default-script:imx7ulpea-ucom = "u-boot-ostree-scr-fit"
-UBOOT_CLASSES:imx7ulpea-ucom = "uboot-fitimage"
-IMAGE_BOOT_FILES:imx7ulpea-ucom = "boot.itb SPL u-boot.itb"
-KERNEL_IMAGETYPE:imx7ulpea-ucom = "fitImage"
-KERNEL_CLASSES:imx7ulpea-ucom = " kernel-lmp-fitimage "
-
 # iMX6UL
 UBOOT_SIGN_ENABLE:mx6ul-generic-bsp = "1"
 PREFERRED_PROVIDER_virtual/kernel:mx6ul-nxp-bsp = "linux-lmp-dev-mfgtool"

@@ -150,22 +150,6 @@ IMAGE_EFI_BOOT_FILES:append:intel-corei7-64 = " lockdown.conf;loader/entries/dop
 IMX_DEFAULT_BSP = "nxp"
 OSTREE_KERNEL_ARGS:mx6-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
 OSTREE_KERNEL_ARGS:mx6ull-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
-OSTREE_KERNEL_ARGS:mx7d-generic-bsp ?= "console=tty1 console=ttymxc0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
-OSTREE_KERNEL_ARGS:mx7ulp-generic-bsp ?= "console=tty1 console=ttyLP0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"
-
-# Embedded Artists i.MX7ULP COM
-UBOOT_SIGN_ENABLE:sota:imx7ulpea-ucom ?= "1"
-PREFERRED_PROVIDER_u-boot-default-script:imx7ulpea-ucom = "u-boot-base-scr"
-PREFERRED_PROVIDER_u-boot-default-script:sota:imx7ulpea-ucom = "u-boot-ostree-scr-fit"
-LMP_BOOT_FIRMWARE:imx7ulpea-ucom = "SPL u-boot.itb"
-IMAGE_BOOT_FILES:imx7ulpea-ucom = "boot.scr uEnv.txt zImage ${@make_dtb_boot_files(d)}"
-IMAGE_BOOT_FILES:sota:imx7ulpea-ucom = "boot.itb"
-KERNEL_IMAGETYPE:sota:imx7ulpea-ucom = "fitImage"
-KERNEL_CLASSES:sota:imx7ulpea-ucom = " kernel-lmp-fitimage "
-OSTREE_KERNEL_ARGS_COMMON:imx7ulpea-ucom ?= "earlycon rootfstype=ext4"
-SOTA_CLIENT_FEATURES:append:imx7ulpea-ucom = " ubootenv"
-UBOOT_CLASSES:imx7ulpea-ucom = "uboot-fitimage"
-BOOTSCR_LOAD_ADDR:imx7ulpea-ucom = "0x60800000"
 
 # iMX6UL
 UBOOT_SIGN_ENABLE:sota:mx6ul-generic-bsp ??= "1"

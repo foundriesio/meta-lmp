@@ -31,22 +31,6 @@ do_install:append:imx-nxp-bsp () {
     install -m 0644 ${WORKDIR}/imx-firmware/cyw-wifi-bt/1CX_CYW4356/BCM4354A2.1CX.hcd ${D}${nonarch_base_libdir}/firmware/brcm/BCM4356A2.hcd
 }
 
-do_install:append:stm32mpcommon() {
-    # Install calibration file (stm32mp15) for SCMI-ready machines
-    install -m 0644 ${WORKDIR}/nvram-murata/cyfmac43430-sdio.1DX.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157c-dk2-scmi.txt
-    install -m 0644 ${WORKDIR}/nvram-murata/cyfmac43430-sdio.1DX.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157f-dk2-scmi.txt
-
-    # Set BFL3_EXT_LPO_ISCLOCK for wifi to work with upstream 5.15
-    sed -i "s/^boardflags3=0x08/boardflags3=0x02/g" ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.st,stm32mp157*
-}
-
-do_install:append() {
-    # Avoid conflicts when wl18xx-fw is used instead by the target machine
-    if ${@bb.utils.contains('MACHINE_EXTRA_RRECOMMENDS', 'wl18xx-fw', 'true', 'false', d)}; then
-        rm -rf ${D}${nonarch_base_libdir}/firmware/ti-connectivity/wl18xx-fw-4.bin
-    fi
-}
-
 FILES:${PN}-bcm43455 += " \
        ${nonarch_base_libdir}/firmware/brcm/BCM4345C0.hcd \
        ${nonarch_base_libdir}/firmware/brcm/brcmfmac43455-sdio.fsl,${MACHINE}.txt \

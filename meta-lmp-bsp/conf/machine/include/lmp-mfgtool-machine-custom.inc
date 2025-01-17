@@ -107,32 +107,6 @@ UBOOT_CLASSES:mx8qm-generic-bsp = "uboot-fitimage"
 IMAGE_BOOT_FILES:mx8qm-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
 PREFERRED_VERSION_u-boot-fio-mfgtool:mx8qm-nxp-bsp ?= "imx-2023.04"
 
-# STM32MP1
-INITRAMFS_IMAGE:stm32mp1common = "initramfs-ostree-lmp-recovery"
-EXTRA_IMAGEDEPENDS:remove:stm32mp1common = "u-boot-default-script"
-TF_A_SIGN_ENABLE:stm32mp1common = "1"
-UBOOT_SIGN_ENABLE:stm32mp1common = "1"
-PREFERRED_PROVIDER_virtual/optee-os:stm32mp1common = "optee-os-fio-mfgtool"
-PREFERRED_PROVIDER_virtual/bootloader:stm32mp1common = "u-boot-fio-mfgtool"
-PREFERRED_PROVIDER_u-boot:stm32mp1common = "u-boot-fio-mfgtool"
-PREFERRED_PROVIDER_android-tools-conf:stm32mp1common = "android-tools-conf-configfs"
-KERNEL_IMAGETYPE:stm32mp1common = "fitImage"
-KERNEL_CLASSES:stm32mp1common = " kernel-lmp-fitimage "
-LMP_MFGTOOL_FLASHLAYOUT:stm32mp15-disco = "flashlayout_initramfs-ostree-lmp-recovery/lmp-mfgtool/FlashLayout_sdcard.tsv"
-LMP_MFGTOOL_FLASHLAYOUT:stm32mp15-eval = "flashlayout_initramfs-ostree-lmp-recovery/lmp-mfgtool/FlashLayout_emmc.tsv"
-FLASHLAYOUT_BOOTSCHEME_LABELS:append = " lmp-mfgtool"
-FLASHLAYOUT_BOOTSCHEME_LABELS:remove = "lmp"
-FLASHLAYOUT_TYPE_LABELS:lmp-mfgtool = "${STM32MP_DEVICETREE}"
-FLASHLAYOUT_PARTITION_LABELS:lmp-mfgtool = "${FLASHLAYOUT_PROGRAMMER_SECTIONS}"
-FLASHLAYOUT_PARTITION_DEVICE:lmp-mfgtool = "none:${FLASHLAYOUT_PROGRAMMER_SECTIONS}"
-## USB FSBL
-FLASHLAYOUT_PARTITION_OFFSET:lmp-mfgtool:fsbl-boot = "0x0"
-FLASHLAYOUT_PARTITION_BIN2LOAD:lmp-mfgtool:fsbl-boot = "arm-trusted-firmware/tf-a-${LMP_FLASHLAYOUT_BOARD_NAME}-usb${STM32_BOOTIMAGE_SUFFIX}.stm32"
-## USB FIP
-FLASHLAYOUT_PARTITION_OFFSET:lmp-mfgtool:fip-boot = "0x0"
-FLASHLAYOUT_PARTITION_BIN2LOAD:lmp-mfgtool:fip-boot = "fip/fip-${LMP_FLASHLAYOUT_BOARD_NAME}-optee.bin"
-FLASHLAYOUT_PARTITION_TYPE:lmp-mfgtool:fip-boot = "Binary"
-
 # TI Generic (BSP)
 INITRAMFS_IMAGE:k3 = "initramfs-ostree-lmp-recovery"
 EXTRA_IMAGEDEPENDS:remove:k3 = "u-boot-default-script"

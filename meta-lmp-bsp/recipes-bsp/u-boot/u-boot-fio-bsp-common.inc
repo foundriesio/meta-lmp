@@ -65,27 +65,6 @@ do_deploy:append:mx9-nxp-bsp() {
     deploy_nxp_imx
 }
 
-do_deploy:append:stm32mp1common() {
-    if [ "${UBOOT_SIGN_ENABLE}" != "1" -a -n "${UBOOT_CONFIG}" ]; then
-        for config in ${UBOOT_MACHINE}; do
-            machine_idx=$(expr $machine_idx + 1);
-            for type in ${UBOOT_CONFIG}; do
-                type_idx=$(expr $type_idx + 1);
-                if [ $type_idx -eq $machine_idx ]; then
-                    for devicetree in ${UBOOT_DEVICETREE}; do
-                        install -m 0644 ${B}/${config}/u-boot-nodtb.bin ${DEPLOYDIR}
-                        install -m 0644 ${B}/${config}/arch/arm/dts/${devicetree}.dtb ${DEPLOYDIR}/u-boot-${devicetree}.dtb
-                        # Latest takes preference as we don't support multiple dtbs/fips
-                        ln -sf u-boot-${devicetree}.dtb ${DEPLOYDIR}/${UBOOT_DTB_BINARY}
-                    done
-                fi
-            done
-            unset type_idx
-        done
-        unset machine_idx
-    fi
-}
-
 do_compile:append:imx-generic-bsp() {
     cat << EOF > sit_template
 #! /usr/bin/perl -w

@@ -5,8 +5,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/tf-a-fio:"
 inherit deploy
 inherit fip-utils
 
-include ${@'recipes-bsp/trusted-firmware-a/tf-a-fio-st.inc' if 'stm32mp1common' in d.getVar("MACHINEOVERRIDES").split(":") else ''}
-
 # ------------------------------------
 # Set MBEDTLS support
 TFA_MBEDTLS_DIR ?= "mbedtls"

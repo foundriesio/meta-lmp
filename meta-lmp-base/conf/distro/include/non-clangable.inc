@@ -169,10 +169,6 @@ TOOLCHAIN:pn-nvidia-display-driver = "gcc"
 TOOLCHAIN:pn-libgcc-8 = "gcc"
 TOOLCHAIN:pn-gcc-8-runtime = "gcc"
 
-# stm32mp1
-TOOLCHAIN:pn-tf-a-stm32mp = "gcc"
-TOOLCHAIN:pn-tf-a-fio = "gcc"
-
 # qemuriscv64
 TOOLCHAIN:pn-opensbi = "gcc"
 

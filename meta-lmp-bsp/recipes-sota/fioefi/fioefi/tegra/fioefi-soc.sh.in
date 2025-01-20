@@ -1,0 +1,41 @@
+CAPSULE_FILE="tegra-bl.cap"
+CAPSULE_PATH="${FIO_OSTREE_TARGET_SYSROOT}/usr/lib/firmware"
+EFI_CAPSULE_DIR=/boot/EFI/UpdateCapsule
+ESRT_FW_VERSION=/sys/firmware/efi/esrt/entries/entry0/fw_version
+
+getenv_soc() {
+	rc=0
+
+	if [ "${1}" = "bootfirmware_version" ]; then
+		if [ -e "$ESRT_FW_VERSION" ]; then
+			cat $ESRT_FW_VERSION || rc=1
+		else
+			error_exit "Can't obtain boot firmware version"
+		fi
+	fi
+
+	exit $rc
+}
+
+setenv_soc() {
+	rc=0
+
+	if [ "${1}" = "bootupgrade_available" ]; then
+		if [ -e "$CAPSULE_PATH/$CAPSULE_FILE" ]; then
+			mkdir -p $EFI_CAPSULE_DIR
+			cp $CAPSULE_PATH/$CAPSULE_FILE $EFI_CAPSULE_DIR || rc=1
+			oe4t-set-uefi-OSIndications || rc=1
+		else
+			error_exit "$CAPSULE_PATH/$CAPSULE_FILE doesn't exist"
+		fi
+	fi
+	if [ "${1}" = "upgrade_available" ]; then
+		if [ "${2}" = "0" ]; then
+			# nvbootctrl can report errors which is expected
+			/usr/sbin/nvbootctrl verify || rc=0
+			/usr/lib/systemd/systemd-bless-boot good || rc=1
+		fi
+	fi
+
+	exit $rc
+}

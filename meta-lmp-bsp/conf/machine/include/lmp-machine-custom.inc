@@ -441,9 +441,9 @@ PREFERRED_PROVIDER_u-boot-default-script:mx93-generic-bsp = "u-boot-base-scr"
 PREFERRED_PROVIDER_u-boot-default-script:sota:mx93-generic-bsp = "u-boot-ostree-scr-fit"
 SOTA_CLIENT_FEATURES:append:mx93-generic-bsp = " ubootenv"
 LMP_BOOT_FIRMWARE_FILES:mx93-nxp-bsp = "imx-boot u-boot.itb"
-PREFERRED_VERSION_optee-os-fio:mx93-nxp-bsp = "3.21.0-imx"
-PREFERRED_VERSION_optee-os-fio-mfgtool:mx93-nxp-bsp = "3.21.0-imx"
-PREFERRED_VERSION_optee-os-tadevkit:mx93-nxp-bsp = "3.21.0-imx"
+PREFERRED_VERSION_optee-os-fio:mx93-nxp-bsp = "4.2.0-imx"
+PREFERRED_VERSION_optee-os-fio-mfgtool:mx93-nxp-bsp = "4.2.0-imx"
+PREFERRED_VERSION_optee-os-tadevkit:mx93-nxp-bsp = "4.2.0-imx"
 PREFERRED_PROVIDER_virtual/kernel:mx93-nxp-bsp ?= "linux-lmp-fslc-imx"
 PREFERRED_VERSION_u-boot-fio:mx93-nxp-bsp ?= "imx-2023.04"
 ## iMX93 DDR4 EVK
@@ -562,12 +562,12 @@ OSTREE_KERNEL_ARGS:sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_
 ## iMX targets should use the u-boot release based on the NXP BSP
 PREFERRED_VERSION_u-boot-fio:imx-nxp-bsp ?= "imx-2022.04"
 ## Prefer OP-TEE releases from our layer instead of using the .imx fork
-PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "3.21.0"
-PREFERRED_VERSION_optee-client:mx9-nxp-bsp = "3.21.0"
-PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "3.21.0"
-PREFERRED_VERSION_optee-examples:mx9-nxp-bsp = "3.21.0"
-PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "3.21.0"
-PREFERRED_VERSION_optee-test:mx9-nxp-bsp = "3.21.0"
+PREFERRED_VERSION_optee-client:mx8-nxp-bsp = "4.2.0"
+PREFERRED_VERSION_optee-client:mx9-nxp-bsp = "4.2.0"
+PREFERRED_VERSION_optee-examples:mx8-nxp-bsp = "4.2.0"
+PREFERRED_VERSION_optee-examples:mx9-nxp-bsp = "4.2.0"
+PREFERRED_VERSION_optee-test:mx8-nxp-bsp = "4.2.0"
+PREFERRED_VERSION_optee-test:mx9-nxp-bsp = "4.2.0"
 ## We don't use imx-boot-container just yet
 UBOOT_PROVIDES_BOOT_CONTAINER:mx8m-generic-bsp = "0"
 ## No need to install u-boot, already a WKS dependency

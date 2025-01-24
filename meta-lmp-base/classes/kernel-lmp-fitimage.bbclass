@@ -38,7 +38,7 @@ fitimage_emit_section_kernel() {
                 kernel-${2} {
                         description = "Linux kernel";
                         data = /incbin/("${3}");
-                        type = "kernel";
+                        type = "${UBOOT_MKIMAGE_KERNEL_TYPE}";
                         arch = "${UBOOT_ARCH}";
                         os = "linux";
                         compression = "${4}";
@@ -109,6 +109,7 @@ EOF
 	fi
 }
 
+#
 # Emit the fitImage ITS u-boot script section
 #
 # $1 ... .its filename
@@ -233,10 +234,12 @@ EOF
 # $6 ... config ID
 # $7 ... loadable ID (LmP specific)
 # $8 ... default flag
+# $9 ... default DTB image name
 fitimage_emit_section_config() {
 
 	conf_csum="${FIT_HASH_ALG}"
 	conf_sign_algo="${FIT_SIGN_ALG}"
+	conf_padding_algo="${FIT_PAD_ALG}"
 	if [ "${UBOOT_SIGN_ENABLE}" = "1" ] ; then
 		conf_sign_keyname="${UBOOT_SIGN_KEYNAME}"
 	fi
@@ -249,6 +252,7 @@ fitimage_emit_section_config() {
 	config_id="${6}"
 	loadable_id="${7}"
 	default_flag="${8}"
+	default_dtb_image="${9}"
 
 	# Test if we have any DTBs at all
 	sep=""
@@ -261,12 +265,30 @@ fitimage_emit_section_config() {
 	setup_line=""
 	loadable_line=""
 	default_line=""
+	compatible_line=""
+
+	dtb_image_sect=$(symlink_points_below $dtb_image "${EXTERNAL_KERNEL_DEVICETREE}")
+	if [ -z "$dtb_image_sect" ]; then
+		dtb_image_sect=$dtb_image
+	fi
+
+	dtb_path="${EXTERNAL_KERNEL_DEVICETREE}/${dtb_image_sect}"
+	if [ -f "$dtb_path" ] || [ -L "$dtb_path" ]; then
+		compat=$(fdtget -t s "$dtb_path" / compatible | sed 's/ /", "/g')
+		if [ -n "$compat" ]; then
+			compatible_line="compatible = \"$compat\";"
+		fi
+	fi
+
+	dtb_image=$(echo $dtb_image | tr '/' '_')
+	dtb_image_sect=$(echo "${dtb_image_sect}" | tr '/' '_')
 
 	# conf node name is selected based on dtb ID if it is present,
-	# otherwise no index is used (differs from kernel-fitimage, which
-	# uses kernel ID, but then breaks current qemu boot.cmds)
+	# otherwise its selected based on kernel ID
 	if [ -n "${dtb_image}" ]; then
 		conf_node=$conf_node${dtb_image}
+	else
+		conf_node=$conf_node${kernel_id}
 	fi
 
 	if [ -n "${kernel_id}" ]; then
@@ -278,7 +300,7 @@ fitimage_emit_section_config() {
 	if [ -n "${dtb_image}" ]; then
 		conf_desc="${conf_desc}${sep}FDT blob"
 		sep=", "
-		fdt_line="fdt = \"fdt-${dtb_image}\";"
+		fdt_line="fdt = \"fdt-${dtb_image_sect}\";"
 	fi
 
 	if [ -n "${ramdisk_id}" ]; then
@@ -315,9 +337,15 @@ fitimage_emit_section_config() {
 	if [ "${default_flag}" = "1" ]; then
 		# default node is selected based on dtb ID if it is present
 		if [ -n "${dtb_image}" ]; then
-			default_line="default = \"conf-${dtb_image}\";"
+			# Select default node as user specified dtb when
+			# multiple dtb exists.
+			if [ -n "${default_dtb_image}" ]; then
+				default_line="default = \"conf-${default_dtb_image}\";"
+			else
+				default_line="default = \"conf-${dtb_image}\";"
+			fi
 		else
-			default_line="default = \"conf-\";"
+			default_line="default = \"conf-${kernel_id}\";"
 		fi
 	fi
 
@@ -325,6 +353,7 @@ fitimage_emit_section_config() {
                 ${default_line}
                 $conf_node {
                         description = "${default_flag} ${conf_desc}";
+                        ${compatible_line}
                         ${kernel_line}
                         ${fdt_line}
                         ${ramdisk_line}
@@ -381,6 +410,7 @@ EOF
                         signature-1 {
                                 algo = "${conf_csum},${conf_sign_algo}";
                                 key-name-hint = "${conf_sign_keyname}";
+                                padding = "$conf_padding_algo";
                                 ${sign_line}
                         };
 EOF
@@ -432,6 +462,7 @@ fitimage_assemble() {
 	ramdisk_bundle=${5}
 	setupcount=""
 	bootscr_id=""
+	default_dtb_image=""
 	rm -f ${1} arch/${ARCH}/boot/${2}
 
 	if [ ! -z "${UBOOT_SIGN_IMG_KEYNAME}" -a "${UBOOT_SIGN_KEYNAME}" = "${UBOOT_SIGN_IMG_KEYNAME}" ]; then
@@ -480,24 +511,58 @@ fitimage_assemble() {
 				continue
 			fi
 
-			DTB_PATH="arch/${ARCH}/boot/dts/${DTB}"
+			DTB_PATH="${KERNEL_OUTPUT_DIR}/dts/$DTB"
 			if [ ! -e "${DTB_PATH}" ]; then
-				DTB_PATH="arch/${ARCH}/boot/${DTB}"
+				DTB_PATH="${KERNEL_OUTPUT_DIR}/$DTB"
 			fi
 
-			DTB=$(echo "${DTB}" | tr '/' '_')
+			# Strip off the path component from the filename
+			if "${@'false' if oe.types.boolean(d.getVar('KERNEL_DTBVENDORED')) else 'true'}"; then
+				DTB=`basename $DTB`
+			fi
+
+			# Set the default dtb image if it exists in the devicetree.
+			if [ ${FIT_CONF_DEFAULT_DTB} = $DTB ];then
+				default_dtb_image=$(echo "$DTB" | tr '/' '_')
+			fi
+
+			DTB=$(echo "$DTB" | tr '/' '_')
+
+			# Skip DTB if we've picked it up previously
+			echo "$DTBS" | tr ' ' '\n' | grep -xq "$DTB" && continue
+
 			DTBS="${DTBS} ${DTB}"
+			DTB=$(echo $DTB | tr '/' '_')
 			fitimage_emit_section_dtb ${1} ${DTB} ${DTB_PATH}
 		done
 	fi
 
 	if [ -n "${EXTERNAL_KERNEL_DEVICETREE}" ]; then
 		dtbcount=1
-		for DTB in $(find "${EXTERNAL_KERNEL_DEVICETREE}" \( -name '*.dtb' -o -name '*.dtbo' \) -printf '%P\n' | sort); do
-			DTB=$(echo "${DTB}" | tr '/' '_')
+		for DTB in $(find "${EXTERNAL_KERNEL_DEVICETREE}" -name '*.dtb' -printf '%P\n' | sort) \
+		$(find "${EXTERNAL_KERNEL_DEVICETREE}" -name '*.dtbo' -printf '%P\n' | sort); do
+			# Set the default dtb image if it exists in the devicetree.
+			if [ ${FIT_CONF_DEFAULT_DTB} = $DTB ];then
+				default_dtb_image=$(echo "$DTB" | tr '/' '_')
+			fi
+
+			DTB=$(echo "$DTB" | tr '/' '_')
+
+			# Skip DTB/DTBO if we've picked it up previously
+			echo "$DTBS" | tr ' ' '\n' | grep -xq "$DTB" && continue
+
 			DTBS="${DTBS} ${DTB}"
+
+			# Also skip if a symlink. We'll later have each config section point at it
+			[ $(symlink_points_below $DTB "${EXTERNAL_KERNEL_DEVICETREE}") ] && continue
+
+			DTB=$(echo $DTB | tr '/' '_')
 			fitimage_emit_section_dtb ${1} ${DTB} "${EXTERNAL_KERNEL_DEVICETREE}/${DTB}"
 		done
+	fi
+
+	if [ -n "${FIT_CONF_DEFAULT_DTB}" ] && [ -z $default_dtb_image ]; then
+		bbwarn "${FIT_CONF_DEFAULT_DTB} is not available in the list of device trees."
 	fi
 
 	#
@@ -517,9 +582,9 @@ fitimage_assemble() {
 	#
 	# Step 4: Prepare a setup section. (For x86)
 	#
-	if [ -e arch/${ARCH}/boot/setup.bin ]; then
+	if [ -e ${KERNEL_OUTPUT_DIR}/setup.bin ]; then
 		setupcount=1
-		fitimage_emit_section_setup ${1} "${setupcount}" arch/${ARCH}/boot/setup.bin
+		fitimage_emit_section_setup ${1} "${setupcount}" ${KERNEL_OUTPUT_DIR}/setup.bin
 	fi
 
 	#
@@ -575,16 +640,16 @@ fitimage_assemble() {
 		for DTB in ${DTBS}; do
 			dtb_ext=${DTB##*.}
 			if [ "${dtb_ext}" = "dtbo" ]; then
-				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "" "" "`expr ${dtb_idx} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "" "${DTB}" "" "" "" "" "" "`expr ${dtb_idx} = ${dtbcount}`" "${default_dtb_image}"
 			else
-				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${FIT_LOADABLES}" "`expr ${dtb_idx} = ${dtbcount}`"
+				fitimage_emit_section_config ${1} "${kernelcount}" "${DTB}" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${FIT_LOADABLES}" "`expr ${dtb_idx} = ${dtbcount}`" "${default_dtb_image}"
 			fi
 			dtb_idx=`expr ${dtb_idx} + 1`
 		done
         unset dtb_idx
 	else
 		defaultconfigcount=1
-		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${FIT_LOADABLES}" "${defaultconfigcount}"
+		fitimage_emit_section_config ${1} "${kernelcount}" "" "${ramdiskcount}" "${bootscr_id}" "${setupcount}" "${FIT_LOADABLES}" "${defaultconfigcount}" "${default_dtb_image}"
 	fi
 
 	fitimage_emit_section_maint ${1} sectend
@@ -597,24 +662,16 @@ fitimage_assemble() {
 	${UBOOT_MKIMAGE} \
 		${@'-D "${UBOOT_MKIMAGE_DTCOPTS}"' if len('${UBOOT_MKIMAGE_DTCOPTS}') else ''} \
 		-f ${1} \
-		arch/${ARCH}/boot/${2}
+		${KERNEL_OUTPUT_DIR}/${2}
 
 	#
-	# Step 9: Sign the image and add public key to U-Boot dtb
+	# Step 9: Sign the image
 	#
 	if [ "${UBOOT_SIGN_ENABLE}" = "1" ] ; then
-		add_key_to_u_boot=""
-		if [ -n "${UBOOT_DTB_BINARY}" ]; then
-			# The u-boot.dtb is a symlink to UBOOT_DTB_IMAGE, so we need copy
-			# both of them, and don't dereference the symlink.
-			cp -P ${STAGING_DATADIR}/u-boot*.dtb ${B}
-			add_key_to_u_boot="-K ${B}/${UBOOT_DTB_BINARY}"
-		fi
 		${UBOOT_MKIMAGE_SIGN} \
 			${@'-D "${UBOOT_MKIMAGE_DTCOPTS}"' if len('${UBOOT_MKIMAGE_DTCOPTS}') else ''} \
 			-F -k "${UBOOT_SIGN_KEYDIR}" \
-			$add_key_to_u_boot \
-			-r arch/${ARCH}/boot/${2} \
+			-r ${KERNEL_OUTPUT_DIR}/${2} \
 			${UBOOT_MKIMAGE_SIGN_ARGS}
 	fi
 }
@@ -624,7 +681,8 @@ do_assemble_fitimage_initramfs() {
 		cd ${B}
 		if test -n "${INITRAMFS_IMAGE}" ; then
 			if [ "${INITRAMFS_IMAGE_BUNDLE}" = "1" ]; then
-				fitimage_assemble fit-image-${INITRAMFS_IMAGE}.its fitImage "" "" ${INITRAMFS_IMAGE_BUNDLE}
+				fitimage_assemble fit-image-${INITRAMFS_IMAGE}.its fitImage-bundle "" "" ${INITRAMFS_IMAGE_BUNDLE}
+				ln -sf fitImage-bundle ${B}/${KERNEL_OUTPUT_DIR}/fitImage
 			else
 				fitimage_assemble fit-image-${INITRAMFS_IMAGE}.its fitImage-${INITRAMFS_IMAGE} 1 ${INITRAMFS_IMAGE_NAME} 0
 			fi
@@ -646,7 +704,7 @@ kernel_do_deploy:append() {
 			fi
 
 			bbnote "Copying fitImage-${INITRAMFS_RECOVERY_IMAGE} file..."
-			install -m 0644 ${B}/arch/${ARCH}/boot/fitImage-${INITRAMFS_RECOVERY_IMAGE} "$deployDir/fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}${KERNEL_FIT_BIN_EXT}"
+			install -m 0644 ${B}/${KERNEL_OUTPUT_DIR}/fitImage-${INITRAMFS_RECOVERY_IMAGE} "$deployDir/fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}${KERNEL_FIT_BIN_EXT}"
 			if [ -n "${KERNEL_FIT_LINK_NAME}" ] ; then
 				ln -snf fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_NAME}${KERNEL_FIT_BIN_EXT} "$deployDir/fitImage-${INITRAMFS_RECOVERY_IMAGE_NAME}-${KERNEL_FIT_LINK_NAME}"
 			fi

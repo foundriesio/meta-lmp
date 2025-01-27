@@ -62,16 +62,6 @@ IMXBOOT_TARGETS:imx8mn-ddr4-evk = "flash_ddr4_evk"
 IMXBOOT_TARGETS:imx8mn-lpddr4-evk = "flash_evk"
 PREFERRED_VERSION_u-boot-fio-mfgtool:mx8mn-nxp-bsp ?= "imx-2023.04"
 
-# iMX8ULP
-UBOOT_SIGN_ENABLE:mx8ulp-generic-bsp = "1"
-IMX_DEFAULT_BOOTLOADER:mx8ulp-generic-bsp ?= "u-boot-fio-mfgtool"
-PREFERRED_PROVIDER_u-boot-default-script:mx8ulp-generic-bsp = "u-boot-ostree-scr-fit"
-IMAGE_BOOT_FILES:mx8ulp-generic-bsp  = "imx-boot u-boot.itb boot.itb"
-KERNEL_IMAGETYPE:mx8ulp-generic-bsp = "fitImage"
-KERNEL_CLASSES:mx8ulp-generic-bsp = " kernel-lmp-fitimage "
-IMXBOOT_TARGETS:mx8ulp-nxp-bsp = "flash_singleboot_m33"
-PREFERRED_VERSION_u-boot-fio-mfgtool:mx8ulp-nxp-bsp ?= "imx-2023.04"
-
 # iMX93
 UBOOT_SIGN_ENABLE:mx93-generic-bsp = "1"
 IMX_DEFAULT_BOOTLOADER:mx93-generic-bsp ?= "u-boot-fio-mfgtool"

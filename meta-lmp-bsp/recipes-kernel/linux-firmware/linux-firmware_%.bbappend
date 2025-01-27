@@ -58,3 +58,15 @@ FILES:${PN}-bcm4356-pcie += " \
 "
 
 PACKAGES:remove:imx-nxp-bsp = "${PN}-imx-sdma-license ${PN}-imx-sdma-imx6q ${PN}-imx-sdma-imx7d"
+
+PACKAGES =+ "${PN}-nxp8987-sdio ${PN}-nxp-common"
+
+FILES:${PN}-nxp8987-sdio = " \
+        ${nonarch_base_libdir}/firmware/nxp/*8987* \
+"
+RDEPENDS:${PN}-nxp8987-sdio += "${PN}-nxp-common"
+
+FILES:${PN}-nxp-common = " \
+        ${nonarch_base_libdir}/firmware/nxp/wifi_mod_para.conf \
+        ${nonarch_base_libdir}/firmware/nxp/helper_uart_3000000.bin \
+"

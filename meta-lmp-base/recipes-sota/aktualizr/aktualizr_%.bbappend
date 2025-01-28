@@ -38,6 +38,13 @@ do_compile:append:lmp() {
 }
 
 do_install:prepend:lmp() {
+    # asn1c tool places the full absolute path for the asn1 file at the header comment of the generated source files
+    # pdu_collection.c also lists, as comments, the reference asn1 files paths
+    # Making the paths in the comments relative to ${S} avoids Yocto TMPDIR reference warnings
+    sed -i "s|${S}/||g" ${B}/aktualizr/src/libaktualizr-posix/asn1/generated/asn1/*.[ch]
+}
+
+do_install:prepend:lmp() {
     # link the path to config so aktualizr's do_install:append will find config files
     [ -e ${S}/config ] || ln -s ${S}/aktualizr/config ${S}/config
     # link so native build will find sota_tools

@@ -1,6 +1,11 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
 # Ostree handles the default boot configuration
 RDEPENDS:${PN}:remove:sota = "virtual-systemd-bootconf"
 
+SRC_URI:append = " \
+	file://efi-boot-display-sort-key-default.patch \
+"
 # Install systemd-boot at expected path for tools such as bootctl
 do_install:append() {
 	install -d ${D}${nonarch_base_libdir}/systemd/boot/efi

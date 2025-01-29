@@ -1,0 +1,33 @@
+From 01f64cfa48f5a2b38f35dac1b18482a2707fce0e Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Wed, 29 Jan 2025 15:43:31 +0100
+Subject: [PATCH] [PATCH] boot: efi: enable new style display order
+
+The UEFI provisioning applications should be displayed after all other
+entries.
+
+To avoid defaulting to the old display order - causing the provisioning
+applications to raise to the top of the display menu - move undefined
+configs to the top of the display.
+
+Upstream-Status: Inappropriate [lmp specific]
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+---
+ src/boot/efi/boot.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/boot/efi/boot.c b/src/boot/efi/boot.c
+index 83207a5afe..688d9454a2 100644
+--- a/src/boot/efi/boot.c
++++ b/src/boot/efi/boot.c
+@@ -1430,6 +1430,7 @@ static void boot_entry_add_type1(
+         *entry = (BootEntry) {
+                 .tries_done = -1,
+                 .tries_left = -1,
++                .sort_key = xstrdup16(L"00"),
+         };
+
+         while ((line = line_get_key_value(content, " \t", &pos, &key, &value)))
+--
+2.34.1

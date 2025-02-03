@@ -17,6 +17,7 @@ PACKAGECONFIG[ubootenv] = ",,u-boot-fw-utils,u-boot-fw-utils u-boot-default-env 
 PACKAGECONFIG[libfyaml] = ",,,libfyaml"
 PACKAGECONFIG[aklite-offline] = "-DBUILD_AKLITE_OFFLINE=ON,-DBUILD_AKLITE_OFFLINE=OFF,"
 PACKAGECONFIG[hsm] = "-DBUILD_P11=ON -DPKCS11_ENGINE_PATH=${PKCS11_ENGINE_PATH},-DBUILD_P11=OFF,libp11,aktualizr-pkcs11-label"
+PACKAGECONFIG[auto-downgrade] = "-DAUTO_DOWNGRADE=ON"
 
 SYSTEMD_PACKAGES += "${PN}-lite"
 SYSTEMD_SERVICE:${PN}-lite = "aktualizr-lite.service"

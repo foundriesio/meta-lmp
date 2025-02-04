@@ -6,8 +6,8 @@ KERNEL_REPO ?= "git://git.ti.com/git/ti-linux-kernel/ti-linux-kernel.git"
 KERNEL_REPO_PROTOCOL ?= "https"
 KERNEL_BRANCH ?= "ti-linux-6.6.y"
 
-LINUX_VERSION ?= "6.6.44"
-SRCREV_machine ?= "541c20281af79a7df96bb94b4e3a923092d7ceff"
+LINUX_VERSION ?= "6.6.58"
+SRCREV_machine ?= "a7758da17c2807e5285d6546b6797aae1d34a7d6"
 SRCREV_meta ?= "${KERNEL_META_COMMIT}"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

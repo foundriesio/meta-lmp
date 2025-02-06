@@ -468,6 +468,8 @@ WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:k3 = "kernel-image-image"
 OSTREE_KERNEL_ARGS:k3 ?= "console=ttyS2,115200n8 earlycon=ns16550a,mmio32,0x02800000 ${OSTREE_KERNEL_ARGS_COMMON}"
+# we found some issues on ti-6_12 who is the one that comes by default in 11.00.01 so still with ti-6_6 for now
+TI_PREFERRED_BSP = "ti-6_6"
 
 # TI AM62x
 MACHINE_FEATURES:append:am62xx = " optee"

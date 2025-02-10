@@ -85,6 +85,9 @@ IMAGE_FSTYPES += "wic wic.gz wic.bmap"
 IMAGE_FSTYPES += "${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'ota-ext4.gz', ' ', d)}"
 IMAGE_FSTYPES:remove = "tar.gz tar.xz tar.bz2 wic.xz wic.bz2"
 
+# Default image suffix name
+IMAGE_NAME_SUFFIX = ""
+
 # No Ostree tarball by default (prefer ota instead)
 BUILD_OSTREE_TARBALL ?= "0"
 

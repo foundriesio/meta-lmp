@@ -36,6 +36,7 @@ do_compile() {
     sed -e 's/@@MACHINE@@/${MACHINE}/' ${S}/bootloader.uuu.in > bootloader.uuu
     sed -e 's/@@MACHINE@@/${MACHINE}/' \
         -e 's/@@MFGTOOL_FLASH_IMAGE@@/${MFGTOOL_FLASH_IMAGE}/' \
+        -e 's/@@IMAGE_NAME_SUFFIX@@/${IMAGE_NAME_SUFFIX}/' \
         ${S}/full_image.uuu.in > full_image.uuu
 }
 

@@ -8,7 +8,7 @@ setenv rootpart 2
 setenv loadaddr 0x90000000
 setenv fit_addr "${loadaddr}"
 
-setenv bootcmd_custom_run 'run findfdt; run get_fit_config; bootm ${fit_addr}#${name_fit_config}${dtoverlay}'
+setenv fdt_file_final k3-am625-sk.dtb
 
 setenv bootloader1_src_image "tiboot3-am62x-gp-evm.bin"
 setenv board_is_closed "0"

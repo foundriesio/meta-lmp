@@ -4,12 +4,10 @@ setenv devtype mmc
 setenv devnum ${mmcdev}
 setenv bootpart 1
 setenv rootpart 2
-setenv name_fdt ti/k3-am642-sk.dtb
+setenv fdt_file_final k3-am642-sk.dtb
 
 setenv loadaddr 0x90000000
 setenv fit_addr "${loadaddr}"
-
-setenv bootcmd_custom_run 'run findfdt; setenv fdtfile ${name_fdt}; run get_fit_config; bootm ${loadaddr}#${name_fit_config}'
 
 setenv bootloader1_src_image "tiboot3-am64x-gp-evm.bin"
 setenv board_is_closed "0"

@@ -1,4 +1,4 @@
-echo "Using freescale_${fdt_file}"
+echo "Using ${fdt_file}"
 
 # Default boot type and device
 setenv bootlimit 3
@@ -8,7 +8,7 @@ setenv bootpart 1
 setenv rootpart 2
 
 # Boot image files
-setenv fdt_file_final freescale_${fdt_file}
+setenv fdt_file_final ${fdt_file}
 setenv fit_addr ${initrd_addr}
 
 # Boot firmware updates

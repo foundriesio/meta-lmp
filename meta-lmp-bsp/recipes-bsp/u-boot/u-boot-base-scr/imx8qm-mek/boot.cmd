@@ -1,5 +1,5 @@
 setenv fdt_file imx8qm-mek.dtb
-echo "Using freescale_${fdt_file}"
+echo "Using ${fdt_file}"
 
 # Default boot type and device
 setenv devtype mmc

@@ -259,7 +259,7 @@ KERNEL_CLASSES:sota:mx8mq-generic-bsp = " kernel-lmp-fitimage "
 PREFERRED_VERSION_u-boot-fio:mx8mq-nxp-bsp ?= "imx-2023.04"
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mq-nxp-bsp ?= "linux-lmp-fslc-imx"
-WKS_FILE:sota:mx8mq-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
+WKS_FILE:sota:mx8mq-nxp-bsp = "sdimage-imx8m-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mq-nxp-bsp = "flash_evk_spl"
 ## iMX8MQ EVK
 UBOOT_SIGN_ENABLE:sota:imx8mq-evk ?= "1"
@@ -305,7 +305,7 @@ PREFERRED_VERSION_u-boot-fio:mx8mm-nxp-bsp ?= "imx-2023.04"
 ## LUKS
 OSTREE_SPLIT_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
 OSTREE_DEPLOY_USR_OSTREE_BOOT:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
-WKS_FILE:sota:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', 'sdimage-imx8-spl-split-boot-sota.wks.in', 'sdimage-imx8-spl-sota.wks.in', d)}"
+WKS_FILE:sota:mx8mm-nxp-bsp = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', 'sdimage-imx8m-spl-split-boot-sota.wks.in', 'sdimage-imx8m-spl-sota.wks.in', d)}"
 ## iMX8MM EVK
 UBOOT_SIGN_ENABLE:sota:imx8mm-lpddr4-evk ?= "1"
 MACHINE_FIRMWARE:append:imx8mm-lpddr4-evk = " linux-firmware-qca"
@@ -350,7 +350,7 @@ KERNEL_IMAGETYPE:sota:mx8mp-generic-bsp = "fitImage"
 KERNEL_CLASSES:sota:mx8mp-generic-bsp = " kernel-lmp-fitimage "
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mp-nxp-bsp ?= "linux-lmp-fslc-imx"
-WKS_FILE:sota:mx8mp-nxp-bsp = "sdimage-imx8-spl-sota.wks.in"
+WKS_FILE:sota:mx8mp-nxp-bsp = "sdimage-imx8m-spl-sota.wks.in"
 IMXBOOT_TARGETS:mx8mp-nxp-bsp ?= "flash_evk_spl"
 PREFERRED_VERSION_u-boot-fio:mx8mp-nxp-bsp ?= "imx-2023.04"
 ## iMX8MP EVK
@@ -397,7 +397,7 @@ KERNEL_CLASSES:sota:mx8mn-generic-bsp = " kernel-lmp-fitimage "
 PREFERRED_VERSION_u-boot-fio:mx8mn-nxp-bsp ?= "imx-2023.04"
 ## iMX8: Use latest NXP BSP downstream kernel
 PREFERRED_PROVIDER_virtual/kernel:mx8mn-generic-bsp ?= "linux-lmp-fslc-imx"
-WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8-spl-sota.wks.in"
+WKS_FILE:sota:mx8mn-generic-bsp = "sdimage-imx8m-spl-sota.wks.in"
 # iMX8MN DDR4 EVK
 UBOOT_SIGN_ENABLE:sota:imx8mn-ddr4-evk ?= "1"
 KMACHINE:imx8mn-ddr4-evk = "imx8mn-evk"

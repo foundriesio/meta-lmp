@@ -1,4 +1,4 @@
-setenv fdt_file_final freescale_imx8mq-evk.dtb
+setenv fdt_file_final imx8mq-evk.dtb
 echo "Using ${fdt_file_final}"
 
 # Default boot type and device

@@ -18,6 +18,8 @@ SRC_URI += " \
 
 # UnLock needs the user keys
 SRC_URI:append = "${@bb.utils.contains('UEFI_SIGN_ENABLE', '1', ' file://unlock.patch file://unlock.conf', '', d)}"
+# the above UEFI_SIGN_ENABLE makes this recipe machine specific
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 COMPATIBLE_HOST = "(i.86|x86_64|arm|aarch64|riscv64).*-linux"
 

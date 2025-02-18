@@ -1,0 +1,8 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+UEFI_SECURE_BOOT_PROVISIONING = ""
+UEFI_SECURE_BOOT_PROVISIONING:intel-x86-common = "efitools-UEFI-secure-boot-provisioning.inc"
+
+require ${UEFI_SECURE_BOOT_PROVISIONING}

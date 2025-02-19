@@ -1,7 +1,9 @@
 [Unit]
 Description=TEE Supplicant
+ConditionPathExistsGlob=/dev/teepriv[0-9]*
 
 [Service]
+User=root
 EnvironmentFile=-/etc/default/tee-supplicant
 ExecStart=/usr/sbin/tee-supplicant $OPTARGS
 

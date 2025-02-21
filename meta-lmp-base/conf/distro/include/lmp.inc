@@ -76,8 +76,8 @@ ETC_GROUP_MEMBERS ?= "sudo audio video plugdev users docker"
 
 # Use staticids for deterministic uid/gid values
 USERADDEXTENSION = "useradd-staticids"
-USERADD_UID_TABLES = "files/lmp-passwd-table"
-USERADD_GID_TABLES = "files/lmp-group-table"
+USERADD_UID_TABLES = "files/lmp-passwd-table files/lmp-passwd-table-default"
+USERADD_GID_TABLES = "files/lmp-group-table files/lmp-group-table-default"
 USERADD_ERROR_DYNAMIC = "error"
 
 # Default image formats
@@ -144,8 +144,13 @@ ERROR_QA:remove = "version-going-backwards"
 # Required to avoid removing libraries used during signing
 RM_WORK_EXCLUDE += "make-mod-scripts"
 
+# changing the default user also requires overriding the below files with the same user and group
+# in some other layer with higth priority
+#  files/lmp-passwd-table-default
+#  files/lmp-group-table-default
 LMP_USER ?= "fio"
+
 # LMP_PASSWORD is a hassed password. To generate the hash use the following command on a host machine
-# mkpasswd -m sha512crypt
-# When copy and pasting the hash, remember to escape any $ character as in the following example
+# that will take care to escape the $ character:
+#  echo "LMP_PASSWORD = \"$(mkpasswd -m sha512crypt mysecretpass | sed 's:\$:\\$:g')\""
 LMP_PASSWORD ?= "\$6\$OxIhuUvtdFqmUyLv\$gnwD.Qz53y.hvkLc5LyClP8MSRMtG8VZHz.qg/OvRep93ls.2CGzYvINCOrdXYU4yi1q394gWXqixRxO9yCSU/"

@@ -1,5 +1,6 @@
-# tadevkit requires a matching version on the base recipe
-# meta-arm kirkstone is using 3.16 by default
+# tadevkit requires a matching version on the base recipe.
+# control recipe prioritization with DEFAULT_PREFERENCE, as other
+# layers (e.g., meta-arm) may provide different OP-TEE versions.
 DEFAULT_PREFERENCE = "${@bb.utils.contains('PREFERRED_PROVIDER_virtual/optee-os', 'optee-os', '-1', '0', d)}"
 
 # Compatible with optee-os-fio and optee-os from meta-arm

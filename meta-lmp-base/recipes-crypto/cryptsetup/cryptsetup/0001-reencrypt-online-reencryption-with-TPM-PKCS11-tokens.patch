@@ -9,7 +9,7 @@ re-encryption without requiring a passphrase.
 Enable similar functionality for the repair action which might be needed
 if re-rencryption is interrupted.
 
-Upstream-Status: Inappropiate [LmP use case]
+Upstream-Status: Inappropriate [LmP use case]
 
 Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>

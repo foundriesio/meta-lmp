@@ -36,7 +36,7 @@ do_configure:prepend:lmp() {
 do_compile:append:lmp() {
     sed -e 's|@@COMPOSE_HTTP_TIMEOUT@@|${COMPOSE_HTTP_TIMEOUT}|g' \
         -e 's|@@DOCKER_CRED_HELPER_CFG@@|${DOCKER_CRED_HELPER_CFG}|g' \
-        ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
+        ${UNPACKDIR}/aktualizr-lite.service.in > ${UNPACKDIR}/aktualizr-lite.service
 }
 
 do_install:prepend:lmp() {
@@ -55,9 +55,9 @@ do_install:prepend:lmp() {
 
 do_install:append:lmp() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
     install -d ${D}${nonarch_libdir}/tmpfiles.d
-    install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
+    install -m 0644 ${UNPACKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
 }
 
 PACKAGES += "${PN}-get \

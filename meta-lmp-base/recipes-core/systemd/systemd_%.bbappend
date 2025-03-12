@@ -64,17 +64,6 @@ RDEPENDS:${PN} += "${@bb.utils.contains('EFI_PROVIDER', 'systemd-boot', 'systemd
 RDEPENDS:${PN}:remove = "volatile-binds"
 
 do_install:append() {
-	# drop /run/lock as it is already provided via legacy.conf
-	sed -i '/\/run\/lock/d' ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
-	if [ ${@ oe.types.boolean('${VOLATILE_LOG_DIR}') } = True ]; then
-		sed -i '/^d \/var\/log /d' ${D}${nonarch_libdir}/tmpfiles.d/var.conf
-		echo 'L+ /var/log - - - - /var/volatile/log' >> ${D}${nonarch_libdir}/tmpfiles.d/00-create-volatile.conf
-	else
-		# Make sure /var/log is not a link to volatile (e.g. after system updates)
-		sed -i '/\[Service\]/aExecStartPre=-/bin/rm -f /var/log' ${D}${systemd_system_unitdir}/systemd-journal-flush.service
-		(cd ${D}${localstatedir}; rmdir -v --parents log/journal)
-	fi
-
 	# Remove systemd-boot as it is provided by a separated recipe and we can't disable via pkgconfig
 	if ${@bb.utils.contains('PACKAGECONFIG', 'efi', 'true', 'false', d)}; then
 		rm -r ${D}${nonarch_libdir}/systemd/boot

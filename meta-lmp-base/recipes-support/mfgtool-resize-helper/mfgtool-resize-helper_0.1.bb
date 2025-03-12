@@ -10,7 +10,7 @@ RDEPENDS:${PN} += "udev e2fsprogs-resize2fs e2fsprogs-e2fsck gptfdisk parted"
 SRC_URI = "file://mfgtool-resize-helper \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

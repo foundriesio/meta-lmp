@@ -6,7 +6,7 @@ inherit allarch
 
 SRC_URI = "file://sysctl-panic.conf"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

@@ -8,7 +8,7 @@ GO_IMPORT = "github.com/foundriesio/composeapp"
 GO_IMPORT_PROTO ?= "https"
 SRCBRANCH = "v95"
 SRCREV = "b06f6d1194cb67398f5ad7c009f32eb0362dc3ab"
-SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=${SRCBRANCH}"
+SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=${SRCBRANCH};destsuffix=${GO_SRCURI_DESTSUFFIX}"
 UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod

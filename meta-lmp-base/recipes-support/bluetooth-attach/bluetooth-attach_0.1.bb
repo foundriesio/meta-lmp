@@ -15,7 +15,7 @@ SRC_URI = " \
     file://hciattach-custom.sh \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

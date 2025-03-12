@@ -14,7 +14,7 @@ INHIBIT_DEFAULT_DEPS = "1"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 LMP_BOOT_FIRMWARE_VERSION ?= "0"
 
 # Can be replaced by the user (via bbappend), which will reflect into version.txt

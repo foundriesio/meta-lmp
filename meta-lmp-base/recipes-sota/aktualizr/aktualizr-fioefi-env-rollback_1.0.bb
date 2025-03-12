@@ -8,7 +8,7 @@ inherit allarch
 
 SRC_URI = "file://sota-fioefi-env.toml"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
     install -m 0700 -d ${D}${libdir}/sota/conf.d

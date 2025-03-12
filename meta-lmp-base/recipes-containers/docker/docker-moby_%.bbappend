@@ -22,16 +22,16 @@ do_install:prepend() {
     sed -e 's/@@MAX_CONCURRENT_DOWNLOADS@@/${DOCKER_MAX_CONCURRENT_DOWNLOADS}/' \
         -e 's/@@MAX_DOWNLOAD_ATTEMPTS@@/${DOCKER_MAX_DOWNLOAD_ATTEMPTS}/' \
         -e 's/@@DOCKER_DAEMON_JSON_CUSTOM@@/${DOCKER_DAEMON_JSON_CUSTOM}/' \
-        ${WORKDIR}/daemon.json.in > ${WORKDIR}/daemon.json
+        ${UNPACKDIR}/daemon.json.in > ${UNPACKDIR}/daemon.json
 }
 
 do_install:append() {
     install -d ${D}${libdir}/docker
-    install -m 0644 ${WORKDIR}/daemon.json ${D}${libdir}/docker/
+    install -m 0644 ${UNPACKDIR}/daemon.json ${D}${libdir}/docker/
 
     # Replace default docker.service with the one provided by this recipe
     if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
-        install -m 644 ${WORKDIR}/docker.service ${D}/${systemd_unitdir}/system
+        install -m 644 ${UNPACKDIR}/docker.service ${D}/${systemd_unitdir}/system
     fi
 }
 

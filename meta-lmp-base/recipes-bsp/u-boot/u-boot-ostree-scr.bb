@@ -14,8 +14,7 @@ SRC_URI = " \
 KERNEL_BOOTCMD ??= "bootz"
 KERNEL_BOOTCMD:aarch64 ?= "booti"
 
-S = "${WORKDIR}"
-B = "${WORKDIR}/build"
+S = "${UNPACKDIR}"
 
 inherit deploy
 

@@ -64,10 +64,10 @@ python () {
 
 fakeroot do_populate_recovery_rootfs () {
 	if ${@bb.utils.contains('SOTA_CLIENT_FEATURES', 'ubootenv', 'true', 'false', d)}; then
-		install -m 0755 ${WORKDIR}/uboot_env.sh ${IMAGE_ROOTFS}/recovery.d/10-uboot_env
+		install -m 0755 ${UNPACKDIR}/uboot_env.sh ${IMAGE_ROOTFS}/recovery.d/10-uboot_env
 	fi
-	install -m 0755 ${WORKDIR}/udhcpc.sh ${IMAGE_ROOTFS}/recovery.d/20-udhcpc
-	install -m 0755 ${WORKDIR}/image_download.sh ${IMAGE_ROOTFS}/recovery.d/30-image_download
+	install -m 0755 ${UNPACKDIR}/udhcpc.sh ${IMAGE_ROOTFS}/recovery.d/20-udhcpc
+	install -m 0755 ${UNPACKDIR}/image_download.sh ${IMAGE_ROOTFS}/recovery.d/30-image_download
 }
 
 IMAGE_PREPROCESS_COMMAND += "do_populate_recovery_rootfs; "

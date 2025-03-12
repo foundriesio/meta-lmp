@@ -9,7 +9,7 @@ SRC_URI = " \
 	file://ostree-pending-reboot.timer.in \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

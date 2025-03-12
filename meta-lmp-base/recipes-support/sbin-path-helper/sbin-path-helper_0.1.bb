@@ -6,7 +6,7 @@ inherit allarch
 
 SRC_URI = "file://path-sbin.sh"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

@@ -10,15 +10,15 @@ do_install() {
     if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
         sed -i -e "s:#VARSTATEDIR#:${VAR_STATEDIR}:g" \
                -e "s:#SYSSTATEDIR#:${SYS_STATEDIR}:g" \
-               ${WORKDIR}/alsa-state-init
+               ${UNPACKDIR}/alsa-state-init
         install -d ${D}${sysconfdir}/init.d
-        install -m 0755 ${WORKDIR}/alsa-state-init ${D}${sysconfdir}/init.d/alsa-state
+        install -m 0755 ${UNPACKDIR}/alsa-state-init ${D}${sysconfdir}/init.d/alsa-state
     fi
 
     install -d ${D}/${SYS_STATEDIR}
     install -d ${D}${sysconfdir}
-    install -m 0644 ${WORKDIR}/asound.conf ${D}${sysconfdir}
-    install -m 0644 ${WORKDIR}/*.state ${D}${SYS_STATEDIR}
+    install -m 0644 ${UNPACKDIR}/asound.conf ${D}${sysconfdir}
+    install -m 0644 ${UNPACKDIR}/*.state ${D}${SYS_STATEDIR}
 }
 
 pkg_postinst:${PN}() {

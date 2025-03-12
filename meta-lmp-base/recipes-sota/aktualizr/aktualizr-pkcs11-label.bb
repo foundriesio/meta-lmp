@@ -12,11 +12,11 @@ INHIBIT_DEFAULT_DEPS = "1"
 
 PV = "1.0"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
     install -m 0700 -d ${D}${libdir}/sota/conf.d
-    install -m 0644 ${WORKDIR}/pkcs11-label.toml ${D}${libdir}/sota/conf.d/46-pkcs11-label.toml
+    install -m 0644 ${UNPACKDIR}/pkcs11-label.toml ${D}${libdir}/sota/conf.d/46-pkcs11-label.toml
 }
 
 FILES:${PN} = " \

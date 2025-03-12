@@ -26,9 +26,9 @@ SYSTEMD_SERVICE:${PN} = "fioconfig.service fioconfig-extract.service fioconfig.p
 
 do_install:append() {
 	install -d ${D}${systemd_system_unitdir}
-	install -m 0644 ${WORKDIR}/fioconfig.service ${D}${systemd_system_unitdir}/
-	install -m 0644 ${WORKDIR}/fioconfig.path ${D}${systemd_system_unitdir}/
-	install -m 0644 ${WORKDIR}/fioconfig-extract.service ${D}${systemd_system_unitdir}/
+	install -m 0644 ${UNPACKDIR}/fioconfig.service ${D}${systemd_system_unitdir}/
+	install -m 0644 ${UNPACKDIR}/fioconfig.path ${D}${systemd_system_unitdir}/
+	install -m 0644 ${UNPACKDIR}/fioconfig-extract.service ${D}${systemd_system_unitdir}/
 	install -d ${D}${datadir}/fioconfig/handlers
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/aktualizr-toml-update ${D}${datadir}/fioconfig/handlers
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/factory-config-vpn ${D}${datadir}/fioconfig/handlers

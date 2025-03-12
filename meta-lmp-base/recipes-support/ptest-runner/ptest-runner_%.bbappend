@@ -5,7 +5,7 @@ SRC_URI:append:lmp = " \
 "
 
 do_install:append:lmp() {
-	install -D -m 0755 ${WORKDIR}/ptest-lmp-runner.sh ${D}${bindir}/ptest-lmp-runner
+	install -D -m 0755 ${UNPACKDIR}/ptest-lmp-runner.sh ${D}${bindir}/ptest-lmp-runner
 }
 
 FILES:${PN}:append:lmp = " ${bindir}/ptest-lmp-runner"

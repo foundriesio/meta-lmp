@@ -14,8 +14,7 @@ SRC_URI = "file://boot.cmd \
 	file://boot.its.in \
 "
 
-S = "${WORKDIR}"
-B = "${WORKDIR}/build"
+S = "${UNPACKDIR}"
 
 # fitImage Hash Algo
 FIT_HASH_ALG ?= "sha256"

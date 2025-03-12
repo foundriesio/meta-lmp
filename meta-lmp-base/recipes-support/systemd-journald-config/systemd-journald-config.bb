@@ -7,7 +7,7 @@ inherit allarch
 
 SRC_URI = "file://forward-console.conf"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

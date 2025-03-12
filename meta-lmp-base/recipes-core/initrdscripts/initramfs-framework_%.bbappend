@@ -60,11 +60,11 @@ do_configure:append() {
 do_install:append() {
 	install -d ${D}/recovery.d
 	install -d ${D}/${sysconfdir}/cryptfs
-	install -m 0644 ${WORKDIR}/cryptfs_pkcs11 ${D}/${sysconfdir}/cryptfs/pkcs11
-	install -m 0644 ${WORKDIR}/cryptfs_tpm2 ${D}/${sysconfdir}/cryptfs/tpm2
+	install -m 0644 ${UNPACKDIR}/cryptfs_pkcs11 ${D}/${sysconfdir}/cryptfs/pkcs11
+	install -m 0644 ${UNPACKDIR}/cryptfs_tpm2 ${D}/${sysconfdir}/cryptfs/tpm2
 
-	install -m 0755 ${WORKDIR}/cryptfs ${D}/init.d/80-cryptfs
-	install -m 0755 ${WORKDIR}/ostree ${D}/init.d/98-ostree
-	install -m 0755 ${WORKDIR}/ostree_factory_reset ${D}/init.d/98-ostree_factory_reset
-	install -m 0755 ${WORKDIR}/ostree_recovery ${D}/init.d/98-ostree_recovery
+	install -m 0755 ${UNPACKDIR}/cryptfs ${D}/init.d/80-cryptfs
+	install -m 0755 ${UNPACKDIR}/ostree ${D}/init.d/98-ostree
+	install -m 0755 ${UNPACKDIR}/ostree_factory_reset ${D}/init.d/98-ostree_factory_reset
+	install -m 0755 ${UNPACKDIR}/ostree_recovery ${D}/init.d/98-ostree_recovery
 }

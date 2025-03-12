@@ -11,7 +11,7 @@ SRC_URI = "file://resize-helper \
     file://resize-helper.service \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

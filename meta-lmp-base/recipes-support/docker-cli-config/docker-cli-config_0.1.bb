@@ -6,7 +6,7 @@ inherit allarch
 
 SRC_URI = "file://config.json.in"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -14,7 +14,7 @@ FIO_HUB_URL ?= "hub.foundries.io"
 
 do_compile() {
     sed -e 's|@@HUB_URL@@|${FIO_HUB_URL}|g' \
-        ${WORKDIR}/config.json.in > ${B}/config.json
+        ${UNPACKDIR}/config.json.in > ${B}/config.json
 }
 
 do_install() {

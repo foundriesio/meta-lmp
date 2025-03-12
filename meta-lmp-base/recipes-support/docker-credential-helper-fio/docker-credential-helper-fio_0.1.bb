@@ -7,7 +7,7 @@ inherit allarch
 RDEPENDS:${PN} = "aktualizr-get"
 
 SRC_URI = "file://docker-credential-fio-helper"
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

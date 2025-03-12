@@ -9,7 +9,7 @@ SRC_URI = "file://luks-reencryption \
     file://luks-reencryption.service \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install () {
 	install -d ${D}${sbindir}

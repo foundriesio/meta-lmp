@@ -10,7 +10,7 @@ SRC_URI = "file://sota-fiovb-env.toml"
 
 PV = "1.0"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
     install -m 0700 -d ${D}${libdir}/sota/conf.d

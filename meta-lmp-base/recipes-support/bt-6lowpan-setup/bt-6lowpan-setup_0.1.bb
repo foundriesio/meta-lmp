@@ -9,7 +9,7 @@ SRC_URI = " \
 	file://modules-6lowpan.conf \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

@@ -12,7 +12,7 @@ SRC_URI = " \
     file://docker-network-ref.service \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 DOCKER_NETWORK_NAME ?= "docker-network-ref"
 

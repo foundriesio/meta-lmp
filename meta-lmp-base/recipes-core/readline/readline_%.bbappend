@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI:append = " file://inputrc.lmp"
+SRC_URI += "file://inputrc.lmp"
 
 do_install:append () {
-	install -m 0644 ${WORKDIR}/inputrc.lmp ${D}${sysconfdir}/inputrc
+	install -m 0644 ${UNPACKDIR}/inputrc.lmp ${D}${sysconfdir}/inputrc
 }

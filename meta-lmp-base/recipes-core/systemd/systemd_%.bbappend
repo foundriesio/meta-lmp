@@ -28,6 +28,7 @@ PACKAGECONFIG ?= " \
     nss-resolve \
     openssl \
     quotacheck \
+    pstore \
     p11kit \
     randomseed \
     resolved \

@@ -30,9 +30,9 @@ sota_ostree_cleanup() {
 		ostree_rmdir_helper local
 		ostree_rmdir_helper lib/misc
 		ostree_rmdir_helper volatile
-		ostree_rmdir_helper ${@'' if oe.types.boolean('${VOLATILE_LOG_DIR}') else 'log'}
+		ostree_rmdir_helper log
 		# symlinks
-		rm -v run lock tmp ${@'log' if oe.types.boolean('${VOLATILE_LOG_DIR}') else ''}
+		rm -v run lock tmp
 		cd -
 	fi
 }

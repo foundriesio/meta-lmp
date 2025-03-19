@@ -22,9 +22,9 @@ python do_prepare_local_auths() {
         src = os.path.join(dir, file)
         if not os.path.isfile(src):
             if _ in ('noPK', 'noKEK'):
-                bb.note("Generating '%s' in WORKDIR" % file)
-                esl_file = os.path.join(d.getVar('WORKDIR'), _ + '.esl')
-                auth_file = os.path.join(d.getVar('WORKDIR'), file)
+                bb.note("Generating '%s' in '%s'" % (file, d.getVar('B')))
+                esl_file = os.path.join(d.getVar('B'), _ + '.esl')
+                auth_file = os.path.join(d.getVar('B'), file)
                 os.system('touch ' + esl_file)
                 os.system('sign-efi-sig-list -t "$(date --date=\'1 second\' +\'%Y-%m-%d %H:%M:%S\')" \
                     -c ' + os.path.join(dir, _.upper()[2:] + '.crt') + ' \
@@ -34,7 +34,7 @@ python do_prepare_local_auths() {
                 if not os.path.isfile(src):
                     bb.fatal("File '%s' not found!" % src)
                 else:
-                    bb.note("Using '%s' from WORKDIR" % file)
+                    bb.note("Using '%s' from '%s'" % (file, d.getVar('B')))
             else:
                 bb.fatal("File '%s' not found!" % src)
         shutil.copyfile(src, os.path.join(d.getVar('S'), file))
@@ -43,7 +43,7 @@ python do_prepare_local_auths() {
 do_deploy() {
     install -d ${DEPLOYDIR}
     install -m 0600 ${B}/LockDown.efi ${DEPLOYDIR}
-    install -m 0600 ${WORKDIR}/lockdown.conf ${DEPLOYDIR}
+    install -m 0600 ${UNPACKDIR}/lockdown.conf ${DEPLOYDIR}
 
     if [ "${UEFI_SIGN_ENABLE}" = "1" ]; then
         if ! sbsign --key ${UEFI_SIGN_KEYDIR}/DB.key \
@@ -59,6 +59,6 @@ do_deploy() {
         fi
 
         install -m 0600 ${WORKDIR}/UnLock-signed.efi ${DEPLOYDIR}
-        install -m 0600 ${WORKDIR}/unlock.conf ${DEPLOYDIR}
+        install -m 0600 ${UNPACKDIR}/unlock.conf ${DEPLOYDIR}
     fi
 }

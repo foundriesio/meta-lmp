@@ -1,4 +1,4 @@
-From 8126bb8c6287e7e77b111f83faa4402f3291f114 Mon Sep 17 00:00:00 2001
+From 11c25a1c9a782e6cbf142f45318e0e1b58e26a20 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 11:32:16 +0200
 Subject: [PATCH] Allow updating files in the /boot directory
@@ -14,19 +14,18 @@ Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
-
 ---
  Makefile-tests.am                     |   1 +
- src/libostree/ostree-sysroot-deploy.c | 141 ++++++++++++++++++++++++--
+ src/libostree/ostree-sysroot-deploy.c | 140 ++++++++++++++++++++++++--
  tests/test-bootdir-update.sh          |  39 +++++++
- 3 files changed, 173 insertions(+), 8 deletions(-)
+ 3 files changed, 173 insertions(+), 7 deletions(-)
  create mode 100755 tests/test-bootdir-update.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index c6f9420e..eabd0462 100644
+index abf61af..b482cb7 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -158,6 +158,7 @@ _installed_or_uninstalled_test_scripts = \
+@@ -160,6 +160,7 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-signed-pull.sh \
  	tests/test-pre-signed-pull.sh \
  	tests/test-signed-pull-summary.sh \
@@ -35,7 +34,7 @@ index c6f9420e..eabd0462 100644
  
  if USE_GPGME
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index f777b92f..0348fb41 100644
+index 953b652..bca8b5a 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -282,9 +282,52 @@ checksum_dir_recurse (int dfd, const char *path, OtChecksum *checksum, GCancella
@@ -47,7 +46,7 @@ index f777b92f..0348fb41 100644
 +                     const char *src_subpath,
 +                     int         dest_dfd,
 +                     const char *dest_subpath,
-+                     OstreeSysrootDebugFlags flags,
++                     GLnxFileCopyFlags copy_flags,
 +                     GCancellable  *cancellable,
 +                     GError       **error)
 +{
@@ -55,7 +54,7 @@ index f777b92f..0348fb41 100644
 +    {
 +      if (G_IN_SET (errno, EMLINK, EXDEV))
 +        return glnx_file_copy_at (src_dfd, src_subpath, NULL, dest_dfd, dest_subpath,
-+                                  sysroot_flags_to_copy_flags (0, flags),
++                                  sysroot_flags_to_copy_flags (0, copy_flags),
 +                                  cancellable, error);
 +      else
 +        return glnx_throw_errno_prefix (error, "linkat(%s)", dest_subpath);
@@ -69,15 +68,15 @@ index f777b92f..0348fb41 100644
 +                  int              dest_parent_dfd,
 +                  const char      *name,
 +                  gboolean         hardlink,
-+                  OstreeSysrootDebugFlags flags,
++                  GLnxFileCopyFlags copy_flags,
 +                  GCancellable    *cancellable,
 +                  GError         **error);
 +
  static gboolean
  copy_dir_recurse (int src_parent_dfd, int dest_parent_dfd, const char *name,
-                   OstreeSysrootDebugFlags flags, GCancellable *cancellable, GError **error)
+                   GLnxFileCopyFlags copy_flags, GCancellable *cancellable, GError **error)
 +{
-+  return hardlink_or_copy_dir_recurse (src_parent_dfd, dest_parent_dfd, name, FALSE, flags, cancellable, error);
++  return hardlink_or_copy_dir_recurse (src_parent_dfd, dest_parent_dfd, name, FALSE, copy_flags, cancellable, error);
 +}
 +
 +static gboolean
@@ -85,20 +84,20 @@ index f777b92f..0348fb41 100644
 +                  int              dest_parent_dfd,
 +                  const char      *name,
 +                  gboolean         hardlink,
-+                  OstreeSysrootDebugFlags flags,
++                  GLnxFileCopyFlags copy_flags,
 +                  GCancellable    *cancellable,
 +                  GError         **error)
  {
    g_auto (GLnxDirFdIterator) src_dfd_iter = {
      0,
-@@ -320,20 +363,31 @@ copy_dir_recurse (int src_parent_dfd, int dest_parent_dfd, const char *name,
+@@ -320,19 +363,31 @@ copy_dir_recurse (int src_parent_dfd, int dest_parent_dfd, const char *name,
  
        if (S_ISDIR (child_stbuf.st_mode))
          {
--          if (!copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name, flags, cancellable,
+-          if (!copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name, copy_flags, cancellable,
 -                                 error))
 +          if (!hardlink_or_copy_dir_recurse (src_dfd_iter.fd, dest_dfd, dent->d_name, hardlink,
-+                                 flags, cancellable, error))
++                                 copy_flags, cancellable, error))
              return FALSE;
          }
        else
@@ -106,8 +105,7 @@ index f777b92f..0348fb41 100644
            if (S_ISLNK (child_stbuf.st_mode) || S_ISREG (child_stbuf.st_mode))
              {
 -              if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf, dest_dfd,
--                                      dent->d_name,
--                                      sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
+-                                      dent->d_name, GLNX_FILE_COPY_OVERWRITE | copy_flags,
 -                                      cancellable, error))
 -                return glnx_prefix_error (error, "Copying %s", dent->d_name);
 -            }
@@ -115,7 +113,7 @@ index f777b92f..0348fb41 100644
 +                {
 +                  if (!hardlink_or_copy_at (src_dfd_iter.fd, dent->d_name,
 +                                            dest_dfd, dent->d_name,
-+                                            sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
++                                            sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, copy_flags),
 +                                            cancellable, error))
 +                    return FALSE;
 +                }
@@ -123,7 +121,7 @@ index f777b92f..0348fb41 100644
 +                {
 +                  if (!glnx_file_copy_at (src_dfd_iter.fd, dent->d_name, &child_stbuf, dest_dfd,
 +                                          dent->d_name,
-+                                          sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, flags),
++                                          sysroot_flags_to_copy_flags (GLNX_FILE_COPY_OVERWRITE, copy_flags),
 +                                          cancellable, error))
 +                    return glnx_prefix_error (error, "Copying %s", dent->d_name);
 +                }
@@ -131,7 +129,7 @@ index f777b92f..0348fb41 100644
            else
              {
                ot_journal_print (LOG_INFO,
-@@ -1888,6 +1942,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1840,6 +1895,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
  
  {
    GLNX_AUTO_PREFIX_ERROR ("Installing kernel", error);
@@ -139,7 +137,7 @@ index f777b92f..0348fb41 100644
    OstreeBootconfigParser *bootconfig = ostree_deployment_get_bootconfig (deployment);
    g_autofree char *deployment_dirpath = ostree_sysroot_get_deployment_dirpath (sysroot, deployment);
    glnx_autofd int deployment_dfd = -1;
-@@ -2056,6 +2111,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -2010,6 +2066,76 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
        g_ptr_array_add (overlay_initrds, g_steal_pointer (&destpath));
      }
  
@@ -218,7 +216,7 @@ index f777b92f..0348fb41 100644
      return FALSE;
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
 new file mode 100755
-index 00000000..f69c1253
+index 0000000..f69c125
 --- /dev/null
 +++ b/tests/test-bootdir-update.sh
 @@ -0,0 +1,39 @@

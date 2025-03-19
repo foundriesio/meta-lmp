@@ -5,7 +5,7 @@ Subject: [PATCH] UnLock: unprovision secure boot
 
 Disactivate secure boot by clearing PK.
 
-Upstream-status: Inactive-Upstream [ v1.9.2: 2019-01-08 ]
+Upstream-Status: Inactive-Upstream
 
 Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
 ---

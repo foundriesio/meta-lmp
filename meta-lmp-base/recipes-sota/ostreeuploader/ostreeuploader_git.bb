@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=6da28bf14f8fa478195ced00
 
 GO_IMPORT = "github.com/foundriesio/ostreeuploader"
 GO_IMPORT_PROTO ?= "https"
-SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=master"
+SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=master;destsuffix=${GO_SRCURI_DESTSUFFIX}"
 SRCREV = "5cd2cf990d85a8459c7e9a3f156894d009485e86"
 
 UPSTREAM_CHECK_COMMITS = "1"

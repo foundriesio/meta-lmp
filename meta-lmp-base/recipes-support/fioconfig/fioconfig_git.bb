@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=504a5c2455c8bb2fc5b76678
 
 GO_IMPORT = "github.com/foundriesio/fioconfig"
 GO_IMPORT_PROTO ?= "https"
-SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=v94 \
+SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=v94;destsuffix=${GO_SRCURI_DESTSUFFIX} \
 	file://fioconfig.service \
 	file://fioconfig.path \
 	file://fioconfig-extract.service \

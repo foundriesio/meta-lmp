@@ -5,6 +5,8 @@ Subject: [PATCH] Fix help2man failure
 
 Add --no-discard-stderr to work around the error.
 
+Upstream-Status: Inactive-Upstream
+
 Signed-off-by: Lans Zhang <jia.zhang@windriver.com>
 ---
  Make.rules | 2 +-

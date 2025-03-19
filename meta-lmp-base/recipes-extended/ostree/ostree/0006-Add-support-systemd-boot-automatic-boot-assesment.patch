@@ -1,4 +1,4 @@
-From a9e35b76fd5e47b9bc29a7113d97a4d98a973e75 Mon Sep 17 00:00:00 2001
+From 22a6a9b2eca26e776821d110aad7e2469d99d328 Mon Sep 17 00:00:00 2001
 From: Igor Opaniuk <igor.opaniuk@foundries.io>
 Date: Wed, 11 Sep 2024 18:03:10 +0200
 Subject: [PATCH] Add support systemd-boot automatic boot assesment
@@ -10,12 +10,13 @@ represents the amount of maximum tries for boot counting.
 [1] https://systemd.io/AUTOMATIC_BOOT_ASSESSMENT/
 Upstream-Status: Inappropriate [lmp specific]
 Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
  src/libostree/ostree-sysroot-deploy.c | 66 +++++++++++++++++++++++----
  1 file changed, 58 insertions(+), 8 deletions(-)
 
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index 99c894a..f9c496d 100644
+index 7a9a105..44d9c20 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
 @@ -62,6 +62,8 @@
@@ -27,7 +28,7 @@ index 99c894a..f9c496d 100644
  /* How much additional space we require available on top of what we accounted
   * during the early prune fallocate space check. This accounts for anything not
   * captured directly by `get_kernel_layout_size()` like writing new BLS entries.
-@@ -1907,12 +1909,12 @@ parse_os_release (const char *contents, const char *split)
+@@ -1860,12 +1862,12 @@ parse_os_release (const char *contents, const char *split)
    return ret;
  }
  
@@ -42,7 +43,7 @@ index 99c894a..f9c496d 100644
                             OstreeDeployment *deployment)
  {
    guint index = n_deployments - ostree_deployment_get_index (deployment);
-@@ -1923,14 +1925,52 @@ bootloader_entry_filename (OstreeSysroot *sysroot, guint n_deployments,
+@@ -1876,14 +1878,52 @@ bootloader_entry_filename (OstreeSysroot *sysroot, guint n_deployments,
    if (use_old_naming)
      {
        const char *stateroot = ostree_deployment_get_osname (deployment);
@@ -97,7 +98,7 @@ index 99c894a..f9c496d 100644
  /* Given @deployment, prepare it to be booted; basically copying its
   * kernel/initramfs into /boot/ostree (if needed) and writing out an entry in
   * /boot/loader/entries.
-@@ -1966,7 +2006,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1919,7 +1959,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
    const char *bootcsum = ostree_deployment_get_bootcsum (deployment);
    g_autofree char *bootcsumdir = g_strdup_printf ("ostree/%s-%s", osname, bootcsum);
    g_autofree char *bootconfdir = g_strdup_printf ("loader.%d/entries", new_bootversion);
@@ -106,7 +107,7 @@ index 99c894a..f9c496d 100644
  
    if (!glnx_shutil_mkdir_p_at (sysroot->boot_fd, bootcsumdir, 0775, cancellable, error))
      return FALSE;
-@@ -2348,8 +2388,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -2303,8 +2343,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
    if (!glnx_opendirat (sysroot->boot_fd, bootconfdir, TRUE, &bootconf_dfd, error))
      return FALSE;
  
@@ -121,7 +122,7 @@ index 99c894a..f9c496d 100644
      return FALSE;
  
    return TRUE;
-@@ -4464,14 +4509,19 @@ ostree_sysroot_deployment_set_kargs_in_place (OstreeSysroot *self, OstreeDeploym
+@@ -4440,14 +4485,19 @@ ostree_sysroot_deployment_set_kargs_in_place (OstreeSysroot *self, OstreeDeploym
        ostree_bootconfig_parser_set (new_bootconfig, "options", kargs_str);
  
        g_autofree char *bootconf_name
@@ -143,6 +144,3 @@ index 99c894a..f9c496d 100644
                                                cancellable, error))
          return FALSE;
      }
--- 
-2.34.1
-

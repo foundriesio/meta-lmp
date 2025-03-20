@@ -6,6 +6,8 @@ Subject: [PATCH] cli/config: support default system config
 Support reading configuration from system config when available. This
 allows the OS to control and update a base config.
 
+Upstream-Status: Pending
+
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---

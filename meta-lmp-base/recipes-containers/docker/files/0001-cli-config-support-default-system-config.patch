@@ -1,10 +1,12 @@
-From 906a406d6b3451db8b1da898d594043142e2e83a Mon Sep 17 00:00:00 2001
+From c2aad2a2978cf6d9942ddc2a36a1fba4d62e6739 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Wed, 25 Sep 2019 17:08:35 -0300
 Subject: [PATCH] cli/config: support default system config
 
 Support reading configuration from system config when available. This
 allows the OS to control and update a base config.
+
+Upstream-Status: Pending
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
@@ -13,10 +15,10 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  1 file changed, 10 insertions(+)
 
 diff --git a/cli/config/config.go b/cli/config/config.go
-index 952f6e71f4..2aef68aff8 100644
+index cbb34486a6..f9d7ac15c8 100644
 --- a/cli/config/config.go
 +++ b/cli/config/config.go
-@@ -28,6 +28,7 @@ const (
+@@ -29,6 +29,7 @@
  	ConfigFileName = "config.json"
  	configFileDir  = ".docker"
  	contextsDir    = "contexts"
@@ -24,7 +26,7 @@ index 952f6e71f4..2aef68aff8 100644
  )
  
  var (
-@@ -97,6 +98,15 @@ func load(configDir string) (*configfile.ConfigFile, error) {
+@@ -135,6 +136,15 @@ func load(configDir string) (*configfile.ConfigFile, error) {
  	filename := filepath.Join(configDir, ConfigFileName)
  	configFile := configfile.New(filename)
  
@@ -41,5 +43,5 @@ index 952f6e71f4..2aef68aff8 100644
  	if err != nil {
  		if os.IsNotExist(err) {
 -- 
-2.34.1
+2.50.1
 

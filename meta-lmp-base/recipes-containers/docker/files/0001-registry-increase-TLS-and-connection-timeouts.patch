@@ -3,6 +3,8 @@ From: Mike Sul <mike.sul@foundries.io>
 Date: Wed, 30 Jun 2021 15:06:05 +0300
 Subject: [PATCH] registry: increase TLS and connection timeouts
 
+Upstream-Status: Pending
+
 Signed-off-by: Mike Sul <mike.sul@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---

@@ -7,6 +7,8 @@ Subject: [PATCH] dockerd: daemon: use default system config when none is
 This allows the system image to provide a default daemon.json file while
 still allowing the user to overwrite via /etc/docker/daemon.json.
 
+Upstream-Status: Pending
+
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---

@@ -11,6 +11,10 @@ SRC_URI:append = " \
     file://docker.service \
 "
 
+SRC_URI:remove = "file://increase_containerd_timeouts.patch"
+SRC_URI:remove = "file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import"
+SRC_URI:remove = "file://0001-tarexport-optimize-image-loading-on-local-host.patch;patchdir=src/import"
+
 DOCKER_MAX_CONCURRENT_DOWNLOADS ?= "3"
 DOCKER_MAX_DOWNLOAD_ATTEMPTS ?= "5"
 DOCKER_DAEMON_JSON_CUSTOM ?= ""

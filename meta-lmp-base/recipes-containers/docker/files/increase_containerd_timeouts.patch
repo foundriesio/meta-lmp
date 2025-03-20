@@ -2,6 +2,8 @@ Bump healthcheck, startup and shutdown timeout values for containerd.
 
 This is required for slower systems in order to avoid a dockerd restart.
 
+Upstream-Status: Pending
+
 Index: git/src/import/libcontainerd/supervisor/remote_daemon.go
 ===================================================================
 --- git.orig/src/import/libcontainerd/supervisor/remote_daemon.go

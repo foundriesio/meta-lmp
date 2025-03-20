@@ -1,7 +1,9 @@
-From e916d026698bee9a3b25afb140c6636cac34d4e3 Mon Sep 17 00:00:00 2001
+From c12f9487ff2edd2f98b85f4328649c2d6a16212a Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Wed, 30 Jun 2021 15:06:05 +0300
-Subject: [PATCH] registry: increase TLS and connection timeouts
+Subject: [PATCH 3/5] registry: increase TLS and connection timeouts
+
+Upstream-Status: Pending
 
 Signed-off-by: Mike Sul <mike.sul@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
@@ -12,11 +14,11 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  3 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/distribution/registry.go b/distribution/registry.go
-index eaf86a262e..74ad7f4b2c 100644
+index ef75136bdc..315ebd9d01 100644
 --- a/distribution/registry.go
 +++ b/distribution/registry.go
-@@ -83,7 +83,7 @@ func newRepository(
- 	}
+@@ -79,7 +79,7 @@ func newRepository(
+ 	repoName := reference.Path(ref)
  
  	direct := &net.Dialer{
 -		Timeout:   30 * time.Second,
@@ -24,7 +26,7 @@ index eaf86a262e..74ad7f4b2c 100644
  		KeepAlive: 30 * time.Second,
  	}
  
-@@ -91,7 +91,7 @@ func newRepository(
+@@ -87,7 +87,7 @@ func newRepository(
  	base := &http.Transport{
  		Proxy:               http.ProxyFromEnvironment,
  		DialContext:         direct.DialContext,
@@ -34,10 +36,10 @@ index eaf86a262e..74ad7f4b2c 100644
  		// TODO(dmcgowan): Call close idle connections when complete and use keep alive
  		DisableKeepAlives: true,
 diff --git a/registry/auth.go b/registry/auth.go
-index 38f41db221..4f0ce79928 100644
+index 1b0eeeed0b..e2a707eaf5 100644
 --- a/registry/auth.go
 +++ b/registry/auth.go
-@@ -121,7 +121,7 @@ func v2AuthHTTPClient(endpoint *url.URL, authTransport http.RoundTripper, modifi
+@@ -123,7 +123,7 @@ func v2AuthHTTPClient(endpoint *url.URL, authTransport http.RoundTripper, modifi
  
  	return &http.Client{
  		Transport: transport.NewTransport(authTransport, modifiers...),
@@ -46,7 +48,7 @@ index 38f41db221..4f0ce79928 100644
  	}, nil
  }
  
-@@ -173,7 +173,7 @@ func (err PingResponseError) Error() string {
+@@ -178,7 +178,7 @@ func (err PingResponseError) Error() string {
  func PingV2Registry(endpoint *url.URL, transport http.RoundTripper) (challenge.Manager, error) {
  	pingClient := &http.Client{
  		Transport: transport,
@@ -54,28 +56,24 @@ index 38f41db221..4f0ce79928 100644
 +		Timeout:   60 * time.Second,
  	}
  	endpointStr := strings.TrimRight(endpoint.String(), "/") + "/v2/"
- 	req, err := http.NewRequest(http.MethodGet, endpointStr, nil)
+ 	req, err := http.NewRequest(http.MethodGet, endpointStr, http.NoBody)
 diff --git a/registry/registry.go b/registry/registry.go
-index 5ff39ce5e7..4c943e3f43 100644
+index d3b3fbc9ba..f581913686 100644
 --- a/registry/registry.go
 +++ b/registry/registry.go
-@@ -165,14 +165,14 @@ func newTransport(tlsConfig *tls.Config) *http.Transport {
- 	}
- 
- 	direct := &net.Dialer{
--		Timeout:   30 * time.Second,
-+		Timeout:   60 * time.Second,
- 		KeepAlive: 30 * time.Second,
- 	}
- 
- 	return &http.Transport{
- 		Proxy:               http.ProxyFromEnvironment,
- 		DialContext:         direct.DialContext,
--		TLSHandshakeTimeout: 10 * time.Second,
-+		TLSHandshakeTimeout: 60 * time.Second,
- 		TLSClientConfig:     tlsConfig,
- 		// TODO(dmcgowan): Call close idle connections when complete and use keep alive
- 		DisableKeepAlives: true,
+@@ -142,10 +142,10 @@ func newTransport(tlsConfig *tls.Config) http.RoundTripper {
+ 		&http.Transport{
+ 			Proxy: http.ProxyFromEnvironment,
+ 			DialContext: (&net.Dialer{
+-				Timeout:   30 * time.Second,
++				Timeout:   60 * time.Second,
+ 				KeepAlive: 30 * time.Second,
+ 			}).DialContext,
+-			TLSHandshakeTimeout: 10 * time.Second,
++			TLSHandshakeTimeout: 60 * time.Second,
+ 			TLSClientConfig:     tlsConfig,
+ 			// TODO(dmcgowan): Call close idle connections when complete and use keep alive
+ 			DisableKeepAlives: true,
 -- 
-2.34.1
+2.50.1
 

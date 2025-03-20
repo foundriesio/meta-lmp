@@ -1,7 +1,7 @@
-From 4c2f79265494ebe50972c043d334bd82cb7aff44 Mon Sep 17 00:00:00 2001
+From b5e41c0be98ce9e007a232780434151c43749474 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Fri, 15 Sep 2023 21:27:51 +0200
-Subject: [PATCH] layer: Ensure layer files are synced to disk
+Subject: [PATCH 4/5] layer: Ensure layer files are synced to disk
 
 Invoke the sync system call to guarantee the proper saving of extracted
 layer files on disk before committing the layer. This safeguards against
@@ -23,12 +23,13 @@ Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Mike <mike.sul@foundries.io>
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
  layer/layer_store.go | 8 ++++++++
  1 file changed, 8 insertions(+)
 
 diff --git a/layer/layer_store.go b/layer/layer_store.go
-index 6c010070c3..83216d66e4 100644
+index 6138548481..07d4ab88e3 100644
 --- a/layer/layer_store.go
 +++ b/layer/layer_store.go
 @@ -8,6 +8,7 @@ import (
@@ -39,7 +40,7 @@ index 6c010070c3..83216d66e4 100644
  
  	"github.com/containerd/log"
  	"github.com/docker/distribution"
-@@ -352,6 +353,13 @@ func (ls *layerStore) registerWithDescriptor(ts io.Reader, parent ChainID, descr
+@@ -337,6 +338,13 @@ func (ls *layerStore) registerWithDescriptor(ts io.Reader, parent ChainID, descr
  		return existingLayer.getReference(), nil
  	}
  
@@ -54,5 +55,5 @@ index 6c010070c3..83216d66e4 100644
  		return nil, cErr
  	}
 -- 
-2.34.1
+2.50.1
 

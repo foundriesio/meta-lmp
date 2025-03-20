@@ -1,12 +1,12 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append = " \
-    file://dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
-    file://cli-config-support-default-system-config.patch;patchdir=cli \
-    file://increase_containerd_timeouts.patch \
-    file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
-    file://0001-layer-ensure-layer-files-are-synced-to-disk.patch;patchdir=src/import \
-    file://0001-tarexport-optimize-image-loading-on-local-host.patch;patchdir=src/import \
+    file://0001-cli-config-support-default-system-config.patch;patchdir=cli \
+    file://0001-dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
+    file://0002-remote_daemon-increase-containerd-default-timeouts.patch;patchdir=src/import \
+    file://0003-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
+    file://0004-layer-Ensure-layer-files-are-synced-to-disk.patch;patchdir=src/import \
+    file://0005-tarexport-Optimize-image-loading-on-local-host.patch;patchdir=src/import \
     file://daemon.json.in \
     file://docker.service \
 "

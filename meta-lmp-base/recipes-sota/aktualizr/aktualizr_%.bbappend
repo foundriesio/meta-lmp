@@ -1,11 +1,11 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-BRANCH:lmp = "v95"
-SRCREV:lmp = "9d0d1306132bc0ec5b27afe6d164045d1675bc54"
+BRANCH:lmp = "boost-1.87.0"
+SRCREV:lmp = "3ce78654aaa5cc412e32e88ca6a39b5c13f07de9"
 
 SRC_URI:remove:lmp = "gitsm://github.com/uptane/aktualizr;branch=${BRANCH};name=aktualizr;protocol=https"
 SRC_URI:append:lmp = " \
-    gitsm://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH};name=aktualizr \
+    gitsm://github.com/quaresmajose/aktualizr-lite;protocol=https;branch=${BRANCH};name=aktualizr \
     file://aktualizr-lite.service.in \
     file://tmpfiles.conf \
     "

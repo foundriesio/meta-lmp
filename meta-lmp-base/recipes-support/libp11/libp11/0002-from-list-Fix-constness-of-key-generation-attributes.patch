@@ -3,19 +3,19 @@ From: Ivan Stepic <Ivan.Stepic@bmw.de>
 Date: Tue, 13 Sep 2022 12:40:15 +0200
 Subject: [PATCH 2/4] [from list] Fix constness of key generation attributes
 
-Upstream-Status: Submitted [https://github.com/OpenSC/libp11/pull/474]
+Upstream-Status: Backport [https://github.com/OpenSC/libp11/pull/474]
 Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
 ---
  src/libp11-int.h | 4 ++--
  src/libp11.h     | 6 +++---
- src/p11_key.c    | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ src/p11_key.c    | 5 +++--
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/src/libp11-int.h b/src/libp11-int.h
-index ddde598..3b5db65 100644
+index d5a4c8a..2daa080 100644
 --- a/src/libp11-int.h
 +++ b/src/libp11-int.h
-@@ -312,10 +312,10 @@ extern int pkcs11_generate_random(PKCS11_SLOT_private *, unsigned char *r, unsig
+@@ -323,10 +323,10 @@ extern int pkcs11_generate_random(PKCS11_SLOT_private *, unsigned char *r, unsig
  
  /* Generate and store a private key on the token */
  extern int pkcs11_rsa_keygen(PKCS11_SLOT_private *tpriv,
@@ -29,10 +29,10 @@ index ddde598..3b5db65 100644
  /* Internal implementation of deprecated features */
  
 diff --git a/src/libp11.h b/src/libp11.h
-index 27a34ec..eba19a4 100644
+index b177236..7cfd0c4 100644
 --- a/src/libp11.h
 +++ b/src/libp11.h
-@@ -125,9 +125,9 @@ typedef struct PKCS11_kgen_attrs_st {
+@@ -120,9 +120,9 @@ typedef struct PKCS11_kgen_attrs_st {
  		PKCS11_EC_KGEN *ec;
  		PKCS11_RSA_KGEN *rsa;
  	} kgen;
@@ -46,19 +46,20 @@ index 27a34ec..eba19a4 100644
  
  /**
 diff --git a/src/p11_key.c b/src/p11_key.c
-index 62f68a4..c3b8c0b 100644
+index d131a74..ab2b1f1 100644
 --- a/src/p11_key.c
 +++ b/src/p11_key.c
-@@ -253,7 +253,7 @@ int pkcs11_reload_object(PKCS11_OBJECT_private *obj)
+@@ -259,7 +259,8 @@ int pkcs11_reload_object(PKCS11_OBJECT_private *obj)
   * Generate a key pair directly on token
   */
  int pkcs11_rsa_keygen(PKCS11_SLOT_private *slot, unsigned int bits,
--		char *label, unsigned char* id, size_t id_len) {
-+		const char *label, unsigned char* id, size_t id_len) {
+-		char *label, unsigned char *id, size_t id_len) {
++		const char *label, unsigned char *id, size_t id_len)
++{
  
  	PKCS11_CTX_private *ctx = slot->ctx;
  	CK_SESSION_HANDLE session;
-@@ -309,7 +309,7 @@ int pkcs11_rsa_keygen(PKCS11_SLOT_private *slot, unsigned int bits,
+@@ -315,7 +316,7 @@ int pkcs11_rsa_keygen(PKCS11_SLOT_private *slot, unsigned int bits,
  }
  
  int pkcs11_ec_keygen(PKCS11_SLOT_private *slot, const char *curve,

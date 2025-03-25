@@ -1,0 +1,63 @@
+From e587f8fe42f16b08475d0fbd210c92f542250ddc Mon Sep 17 00:00:00 2001
+From: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Date: Thu, 27 Feb 2025 08:32:01 +0100
+Subject: [PATCH] [FIO toimx] firmware: se_fw: remove info_list from ro section
+
+The change removes the imx_info_list structures from the read-only
+section.
+
+This avoid the kernel panics that might occur during the driver probe
+when info_list is being altered.
+
+Signed-off-by: Jorge Ramirez-Ortiz <jorge@foundries.io>
+Signed-off-by: Daiane Angolini <daiane.angolini@foundries.io>
+Fixes: 650987a3574 (" LF-10819: Secure Enclave FW driver: Add IOCTL to get SoC Info")
+
+Upstream-Status: Pending
+---
+ drivers/firmware/imx/se_fw.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/firmware/imx/se_fw.c b/drivers/firmware/imx/se_fw.c
+index ca98c94171ba82..9ce006b535a3c0 100644
+--- a/drivers/firmware/imx/se_fw.c
++++ b/drivers/firmware/imx/se_fw.c
+@@ -103,7 +103,7 @@ struct seco_soc_info {
+ 
+ static LIST_HEAD(priv_data_list);
+ 
+-static const struct imx_info_list imx8ulp_info = {
++static struct imx_info_list imx8ulp_info = {
+ 	.num_mu = 1,
+ 	.soc_id = SOC_ID_OF_IMX8ULP,
+ 	.board_type = 0,
+@@ -138,7 +138,7 @@ static const struct imx_info_list imx8ulp_info = {
+ 	},
+ };
+ 
+-static const struct imx_info_list imx93_info = {
++static struct imx_info_list imx93_info = {
+ 	.num_mu = 1,
+ 	.soc_id = SOC_ID_OF_IMX93,
+ 	.board_type = 0,
+@@ -172,7 +172,7 @@ static const struct imx_info_list imx93_info = {
+ 	},
+ };
+ 
+-static const struct imx_info_list imx8dxl_info = {
++static struct imx_info_list imx8dxl_info = {
+ 	.num_mu = 7,
+ 	.soc_id = SOC_ID_OF_IMX8DXL,
+ 	.board_type = 0,
+@@ -362,7 +362,7 @@ static const struct imx_info_list imx8dxl_info = {
+ 	},
+ };
+ 
+-static const struct imx_info_list imx95_info = {
++static struct imx_info_list imx95_info = {
+ 	.num_mu = 4,
+ 	.soc_id = SOC_ID_OF_IMX95,
+ 	.board_type = 0,
+-- 
+2.43.2
+

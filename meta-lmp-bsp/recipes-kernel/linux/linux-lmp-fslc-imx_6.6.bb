@@ -8,10 +8,10 @@ include recipes-kernel/linux/linux-lmp-fslc-imx.inc
 include recipes-kernel/linux/kmeta-linux-lmp-6.6.y.inc
 
 # Use Freescale kernel by default
-LINUX_VERSION ?= "6.6.54"
-KERNEL_BRANCH ?= "6.6-2.1.x-imx"
+LINUX_VERSION ?= "6.6.52"
+KERNEL_BRANCH ?= "6.6-2.2.x-imx"
 
-SRCREV_machine = "6605f549a71ef3af9c65609cba985086ac4edf2b"
+SRCREV_machine = "e0f9e2afd4cff3f02d71891244b4aa5899dfc786"
 
 SRC_URI += " \
     file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
@@ -20,7 +20,7 @@ SRC_URI += " \
     file://0002-FIO-toup-media-Kconfig-fix-double-VIDEO_DEV.patch \
     file://0003-FIO-toup-gpu-drm-cadence-select-hdmi-helper.patch \
     file://0004-FIO-toup-media-imx8-select-v4l2_-for-mxc-mipi-csi2_y.patch \
-    file://0001-imx-dts-imx8mm-evkb-fix-the-pmic-name-to-avoid-dupli.patch \
+    file://0001-FIO-toimx-firmware-se_fw-remove-info_list-from-ro-section.patch \
 "
 
 SRC_URI:append:imx8mp-lpddr4-evk = " \

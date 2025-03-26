@@ -1,6 +1,6 @@
 require recipes-security/optee/optee-os-fio.inc
 
-SRCREV = "a475b6048b16c39bad70317674572e1a4bfb1902"
+SRCREV = "dbcc9d5048a9116e8b9793f7be9658866a637054"
 SRCBRANCH = "4.4.0+fio-imx"
 
 DEFAULT_PREFERENCE = "-1"

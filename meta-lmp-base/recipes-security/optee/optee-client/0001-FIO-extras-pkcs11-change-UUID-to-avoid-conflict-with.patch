@@ -8,6 +8,8 @@ they are not compatible with each other from the storage perspective, so
 change UUID to avoid conflict and facilitate the transition by the user
 by allowing both TAs to be installed at the same time.
 
+Upstream-Status: Pending
+
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 ---
  libckteec/include/pkcs11_ta.h | 4 ++--

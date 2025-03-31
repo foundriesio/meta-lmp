@@ -99,7 +99,15 @@ def license_expr_for_recipe(d, recipe):
     """
     Get a license expression for a recipe.
     """
-    file = os.path.join(d.getVar("LICENSE_DIRECTORY"), recipe, "recipeinfo")
+
+    pkgarchs = d.getVar("SSTATE_ARCHS").split()
+    pkgarchs.reverse()
+    for pkgarch in pkgarchs:
+        file = os.path.join(d.getVar("LICENSE_DIRECTORY"), pkgarch, recipe, "recipeinfo")
+        if os.path.exists(file):
+            break
+    if not os.path.exists(file):
+        bb.fatal("Couldn't find license information for recipe %s" % recipe)
     keys_in_file = ["LICENSE"]
     return license_expr_from_file(file, keys_in_file)
 

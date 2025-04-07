@@ -1,3 +1,7 @@
+# LmP incompatible license images wrapper varaibles to mimic the image override
+# INCOMPATIBLE_LICENSE:pn-image and IMAGE_INCOMPATIBLE_LICENSE_EXCEPTIONS:pn-image
+IMAGE_INCOMPATIBLE_LICENSE = "GPL-3.0* LGPL-3.0* AGPL-3.0*"
+
 # Upstream oe-core onfiguration options to minimise GPLv3 content in images.
 require conf/distro/include/no-gplv3.inc
 

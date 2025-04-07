@@ -1,3 +1,6 @@
+# Upstream oe-core configuration options to excluded from the build GPLv3 content in the target images
+require conf/distro/include/no-gplv3.inc
+
 # General LMP build options for disabling usage of GPLv3 based components
 # and dependencies.
 RRECOMMENDS:packagegroup-base-vfat:remove = "dosfstools"

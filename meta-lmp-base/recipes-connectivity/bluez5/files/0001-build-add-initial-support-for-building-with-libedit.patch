@@ -1,7 +1,7 @@
-From 11858cc343cb3c9422468bb2f499fa8837d63448 Mon Sep 17 00:00:00 2001
+From 80e4ac17715315d4310ec0bc766b2d17a0b33ba5 Mon Sep 17 00:00:00 2001
 From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Date: Sun, 5 Feb 2023 18:46:32 +0200
-Subject: [PATCH 1/2] build: add initial support for building with libedit
+Subject: [PATCH] build: add initial support for building with libedit
 
 Enable the project building and running in non-interactive mode
 with BSD-3-Clause licensed library libedit instead of GPLv3+ licensed
@@ -23,7 +23,7 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  9 files changed, 78 insertions(+), 9 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 73d3f8969..b17a7bcda 100644
+index e7cefb5..0854e29 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -25,6 +25,7 @@ pkgincludedir = $(includedir)/bluetooth
@@ -35,11 +35,11 @@ index 73d3f8969..b17a7bcda 100644
  AM_LDFLAGS = $(MISC_LDFLAGS)
  
 diff --git a/Makefile.tools b/Makefile.tools
-index 71033d638..da4f306c2 100644
+index e60c31b..6d7fcff 100644
 --- a/Makefile.tools
 +++ b/Makefile.tools
-@@ -17,7 +17,7 @@ client_bluetoothctl_SOURCES = client/main.c \
- 					client/assistant.h client/assistant.c
+@@ -18,7 +18,7 @@ client_bluetoothctl_SOURCES = client/main.c \
+ 					client/hci.h client/hci.c
  client_bluetoothctl_LDADD = lib/libbluetooth-internal.la \
  			gdbus/libgdbus-internal.la src/libshared-glib.la \
 -			$(GLIB_LIBS) $(DBUS_LIBS) -lreadline
@@ -47,7 +47,7 @@ index 71033d638..da4f306c2 100644
  endif
  
  if ZSH_COMPLETIONS
-@@ -382,7 +382,7 @@ tools_meshctl_SOURCES = tools/meshctl.c \
+@@ -380,7 +380,7 @@ tools_meshctl_SOURCES = tools/meshctl.c \
  				tools/mesh-gatt/onoff-model.c
  tools_meshctl_LDADD = gdbus/libgdbus-internal.la src/libshared-glib.la \
  				lib/libbluetooth-internal.la \
@@ -56,7 +56,7 @@ index 71033d638..da4f306c2 100644
  
  EXTRA_DIST += tools/mesh-gatt/local_node.json tools/mesh-gatt/prov_db.json
  endif
-@@ -401,7 +401,7 @@ tools_mesh_cfgclient_SOURCES = tools/mesh-cfgclient.c \
+@@ -399,7 +399,7 @@ tools_mesh_cfgclient_SOURCES = tools/mesh-cfgclient.c \
  				mesh/crypto.h mesh/crypto.c
  
  tools_mesh_cfgclient_LDADD = lib/libbluetooth-internal.la src/libshared-ell.la \
@@ -65,7 +65,7 @@ index 71033d638..da4f306c2 100644
  
  bin_PROGRAMS +=  tools/mesh-cfgtest
  
-@@ -508,7 +508,7 @@ noinst_PROGRAMS += tools/btmgmt tools/obex-client-tool tools/obex-server-tool \
+@@ -506,7 +506,7 @@ noinst_PROGRAMS += tools/btmgmt tools/obex-client-tool tools/obex-server-tool \
  tools_obex_client_tool_SOURCES = $(gobex_sources) $(btio_sources) \
  						tools/obex-client-tool.c
  tools_obex_client_tool_LDADD = lib/libbluetooth-internal.la \
@@ -74,7 +74,7 @@ index 71033d638..da4f306c2 100644
  
  tools_obex_server_tool_SOURCES = $(gobex_sources) $(btio_sources) \
  						tools/obex-server-tool.c
-@@ -519,16 +519,16 @@ tools_bluetooth_player_SOURCES = tools/bluetooth-player.c client/print.c \
+@@ -517,16 +517,16 @@ tools_bluetooth_player_SOURCES = tools/bluetooth-player.c client/print.c \
  				client/player.c
  tools_bluetooth_player_LDADD = gdbus/libgdbus-internal.la \
  				src/libshared-glib.la \
@@ -94,7 +94,7 @@ index 71033d638..da4f306c2 100644
  if DEPRECATED
  noinst_PROGRAMS += attrib/gatttool
  
-@@ -538,7 +538,7 @@ attrib_gatttool_SOURCES = attrib/gatttool.c attrib/att.c attrib/gatt.c \
+@@ -536,7 +536,7 @@ attrib_gatttool_SOURCES = attrib/gatttool.c attrib/att.c attrib/gatt.c \
  				attrib/utils.c src/log.c client/display.c \
  				client/display.h
  attrib_gatttool_LDADD = lib/libbluetooth-internal.la \
@@ -103,7 +103,7 @@ index 71033d638..da4f306c2 100644
  
  endif
  endif
-@@ -588,5 +588,5 @@ tools/btpclient.$(OBJEXT): src/libshared-ell.la ell/internal
+@@ -586,5 +586,5 @@ tools/btpclient.$(OBJEXT): src/libshared-ell.la ell/internal
  
  tools_btpclientctl_SOURCES = tools/btpclientctl.c client/display.c
  tools_btpclientctl_LDADD = src/libshared-mainloop.la src/libshared-glib.la \
@@ -111,7 +111,7 @@ index 71033d638..da4f306c2 100644
 +				lib/libbluetooth-internal.la $(READLINE_LIBS)
  endif
 diff --git a/attrib/interactive.c b/attrib/interactive.c
-index c0262e87c..d5c94dbe4 100644
+index c0262e8..d5c94db 100644
 --- a/attrib/interactive.c
 +++ b/attrib/interactive.c
 @@ -23,8 +23,12 @@
@@ -157,7 +157,7 @@ index c0262e87c..d5c94dbe4 100644
  
  	g_main_loop_run(event_loop);
 diff --git a/client/display.c b/client/display.c
-index a590a1388..05930e48d 100644
+index a590a13..05930e4 100644
 --- a/client/display.c
 +++ b/client/display.c
 @@ -18,7 +18,13 @@
@@ -226,10 +226,10 @@ index a590a1388..05930e48d 100644
  	rl_redisplay();
  
 diff --git a/configure.ac b/configure.ac
-index 01f0f2ba0..d845fd682 100644
+index a016c99..38bf5ce 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -322,8 +322,10 @@ AM_CONDITIONAL(CLIENT, test "${enable_client}" != "no")
+@@ -331,8 +331,10 @@ AM_CONDITIONAL(CLIENT, test "${enable_client}" != "no")
  if (test "${enable_client}" != "no" || test "${enable_mesh}" = "yes"); then
          AC_CHECK_HEADERS(readline/readline.h, enable_readline=yes,
                  AC_MSG_ERROR(readline header files are required))
@@ -241,7 +241,7 @@ index 01f0f2ba0..d845fd682 100644
  AC_ARG_ENABLE(systemd, AS_HELP_STRING([--disable-systemd],
  		[disable systemd integration]), [enable_systemd=${enableval}])
 diff --git a/src/shared/shell.c b/src/shared/shell.c
-index a8fa87696..005b05f24 100644
+index 107fc7a..1853cd9 100644
 --- a/src/shared/shell.c
 +++ b/src/shared/shell.c
 @@ -26,8 +26,12 @@
@@ -277,15 +277,15 @@ index a8fa87696..005b05f24 100644
  	save_input = !RL_ISSTATE(RL_STATE_DONE);
  
  	if (save_input) {
-@@ -721,6 +728,7 @@ void bt_shell_printf(const char *fmt, ...)
- 			rl_save_prompt();
+@@ -722,6 +729,7 @@ void bt_shell_printf(const char *fmt, ...)
+ 		rl_clear_visible_line();
  		rl_reset_line_state();
  	}
 +#endif
  
  	va_start(args, fmt);
  	vprintf(fmt, args);
-@@ -732,6 +740,7 @@ void bt_shell_printf(const char *fmt, ...)
+@@ -733,6 +741,7 @@ void bt_shell_printf(const char *fmt, ...)
  		va_end(args);
  	}
  
@@ -293,7 +293,7 @@ index a8fa87696..005b05f24 100644
  	if (save_input) {
  		if (!data.saved_prompt)
  			rl_restore_prompt();
-@@ -740,6 +749,7 @@ void bt_shell_printf(const char *fmt, ...)
+@@ -741,6 +750,7 @@ void bt_shell_printf(const char *fmt, ...)
  		rl_redisplay();
  		free(saved_line);
  	}
@@ -301,7 +301,7 @@ index a8fa87696..005b05f24 100644
  }
  
  void bt_shell_echo(const char *fmt, ...)
-@@ -820,7 +830,9 @@ static void prompt_input(const char *str, bt_shell_prompt_input_func func,
+@@ -821,7 +831,9 @@ static void prompt_input(const char *str, bt_shell_prompt_input_func func,
  	data.saved_func = func;
  	data.saved_user_data = user_data;
  
@@ -311,7 +311,7 @@ index a8fa87696..005b05f24 100644
  	bt_shell_set_prompt(str, COLOR_HIGHLIGHT);
  }
  
-@@ -887,7 +899,9 @@ int bt_shell_release_prompt(const char *input)
+@@ -888,7 +900,9 @@ int bt_shell_release_prompt(const char *input)
  
  	data.saved_prompt = false;
  
@@ -321,7 +321,7 @@ index a8fa87696..005b05f24 100644
  
  	func = data.saved_func;
  	user_data = data.saved_user_data;
-@@ -1119,7 +1133,9 @@ static char **menu_completion(const struct bt_shell_menu_entry *entry,
+@@ -1120,7 +1134,9 @@ static char **menu_completion(const struct bt_shell_menu_entry *entry,
  			break;
  		}
  
@@ -331,7 +331,7 @@ index a8fa87696..005b05f24 100644
  		matches = rl_completion_matches(text, entry->gen);
  		break;
  	}
-@@ -1189,7 +1205,9 @@ static void signal_callback(int signum, void *user_data)
+@@ -1190,7 +1206,9 @@ static void signal_callback(int signum, void *user_data)
  	switch (signum) {
  	case SIGINT:
  		if (!queue_isempty(data.inputs) && !data.mode) {
@@ -341,7 +341,7 @@ index a8fa87696..005b05f24 100644
  			rl_crlf();
  			rl_on_new_line();
  			rl_redisplay();
-@@ -1207,7 +1225,9 @@ static void signal_callback(int signum, void *user_data)
+@@ -1208,7 +1226,9 @@ static void signal_callback(int signum, void *user_data)
  	case SIGTERM:
  		if (!terminated) {
  			if (!data.mode) {
@@ -352,7 +352,7 @@ index a8fa87696..005b05f24 100644
  			}
  			mainloop_quit();
 @@ -1271,7 +1291,9 @@ static void rl_init(void)
- 	setlinebuf(stdout);
+ 
  	rl_attempted_completion_function = shell_completion;
  
 +#ifndef HAVE_EDITLINE_READLINE
@@ -361,7 +361,7 @@ index a8fa87696..005b05f24 100644
  	rl_callback_handler_install(NULL, rl_handler);
  
  	rl_init_history();
-@@ -1421,7 +1443,11 @@ static void rl_cleanup(void)
+@@ -1423,7 +1445,11 @@ static void rl_cleanup(void)
  	if (data.history[0] != '\0')
  		write_history(data.history);
  
@@ -374,7 +374,7 @@ index a8fa87696..005b05f24 100644
  }
  
 diff --git a/tools/mesh-gatt/onoff-model.c b/tools/mesh-gatt/onoff-model.c
-index 9dfedd85a..46350a3d6 100644
+index 9dfedd8..46350a3 100644
 --- a/tools/mesh-gatt/onoff-model.c
 +++ b/tools/mesh-gatt/onoff-model.c
 @@ -21,8 +21,14 @@
@@ -393,7 +393,7 @@ index 9dfedd85a..46350a3d6 100644
  
  #include "src/shared/shell.h"
 diff --git a/tools/mesh-gatt/prov.c b/tools/mesh-gatt/prov.c
-index 1f3f62dfd..796de33ef 100644
+index 1f3f62d..796de33 100644
 --- a/tools/mesh-gatt/prov.c
 +++ b/tools/mesh-gatt/prov.c
 @@ -19,8 +19,13 @@
@@ -411,7 +411,7 @@ index 1f3f62dfd..796de33ef 100644
  
  #include "src/shared/util.h"
 diff --git a/tools/obex-client-tool.c b/tools/obex-client-tool.c
-index cb0e41247..f129a6d44 100644
+index cb0e412..f129a6d 100644
 --- a/tools/obex-client-tool.c
 +++ b/tools/obex-client-tool.c
 @@ -22,8 +22,12 @@
@@ -427,6 +427,3 @@ index cb0e41247..f129a6d44 100644
  
  #include "gobex/gobex.h"
  #include "btio/btio.h"
--- 
-2.49.0
-

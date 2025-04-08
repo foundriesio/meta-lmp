@@ -9,6 +9,10 @@ OPTEEMACHINE:imx8qm-mek = "imx-mx8qmmek"
 OPTEEMACHINE:imx93-11x11-lpddr4x-evk = "imx-mx93evk"
 
 # SoC Settings
+# https://github.com/OP-TEE/optee_os/issues/7327
+EXTRA_OEMAKE:append:imx-generic-bsp = " \
+    CFG_CORE_HUK_SUBKEY_COMPAT_USE_OTP_DIE_ID=n \
+"
 EXTRA_OEMAKE:append:mx8m-nxp-bsp = " \
     CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
     CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_HWRNG_PTA=y CFG_HWRNG_QUALITY=1024 \

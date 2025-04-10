@@ -40,6 +40,9 @@ EXTRA_OEMAKE += " \
     O=${B} \
 "
 
+# lib/libmbedtls/mbedtls/library/common.h:245:17: error: array subscript 48 is outside array bounds of 'unsigned char[48]' [-Werror=array-bounds=]
+EXTRA_OEMAKE += 'CFLAGS="-Wno-error=array-bounds"'
+
 CFLAGS[unexport] = "1"
 LDFLAGS[unexport] = "1"
 CPPFLAGS[unexport] = "1"

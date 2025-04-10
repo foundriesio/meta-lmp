@@ -30,3 +30,9 @@ do_deploy() {
 }
 
 FILES:${PN} = "${includedir}/optee/"
+
+# ERROR: optee-os-tadevkit-4.4.0-r0 do_package_qa: QA Issue: File /usr/include/optee/export-user_ta/lib/libdl.a in package optee-os-tadevkit-dev contains reference to TMPDIR [buildpaths]
+# ERROR: optee-os-tadevkit-4.4.0-r0 do_package_qa: QA Issue: File /usr/include/optee/export-user_ta/lib/libutee.a in package optee-os-tadevkit-dev contains reference to TMPDIR [buildpaths]
+# ERROR: optee-os-tadevkit-4.4.0-r0 do_package_qa: QA Issue: File /usr/include/optee/export-user_ta/lib/libmbedtls.a in package optee-os-tadevkit-dev contains reference to TMPDIR [buildpaths]
+# ERROR: optee-os-tadevkit-4.4.0-r0 do_package_qa: QA Issue: File /usr/include/optee/export-user_ta/lib/libutils.a in package optee-os-tadevkit-dev contains reference to TMPDIR [buildpaths]
+INSANE_SKIP:${PN}-dev += "buildpaths"

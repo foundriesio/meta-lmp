@@ -87,4 +87,7 @@ do_install:append() {
 	if [ "${@bb.utils.contains("MACHINE_FEATURES", "fioefi", "1", "0", d)}" = "1" ]; then
 		rm -f ${D}/${systemd_unitdir}/system/systemd-bless-boot.service
 	fi
+
+	# disables the 'mac' policy for pni-names
+	sed -i -e 's: mac::g' ${D}${nonarch_libdir}/systemd/network/99-default.link
 }

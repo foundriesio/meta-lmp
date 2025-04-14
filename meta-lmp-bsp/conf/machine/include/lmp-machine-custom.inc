@@ -12,6 +12,8 @@ IMAGE_BOOT_FILES:beaglebone-yocto = "u-boot.img MLO boot.itb"
 KERNEL_IMAGETYPE:beaglebone-yocto = "fitImage"
 KERNEL_CLASSES:beaglebone-yocto = " kernel-lmp-fitimage "
 MACHINE_EXTRA_RRECOMMENDS:append:beaglebone-yocto = " bt-fw wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
+UBOOT_ENTRYPOINT:beaglebone-yocto = "0x80008000"
+UBOOT_LOADADDRESS:beaglebone-yocto = "0x80008000"
 ## beaglebone-yocto.conf appends kernel-image-zimage by default
 IMAGE_INSTALL:remove:beaglebone-yocto = "kernel-image-zimage"
 

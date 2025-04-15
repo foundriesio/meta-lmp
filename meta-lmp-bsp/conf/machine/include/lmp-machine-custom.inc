@@ -541,7 +541,7 @@ MACHINE_FEATURES:append:sota:tegra = " fioefi"
 LMP_BOOT_FIRMWARE_FILES:append:sota:tegra = " tegra-bl.cap"
 IMAGE_BOOT_FILES:sota:tegra = "systemd-bootaa64.efi;EFI/BOOT/bootaa64.efi"
 ## jetson-agx-xavier-devkit (tegra194)
-OSTREE_KERNEL_ARGS:tegra194 ?= "\${cbootargs} ${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off sdhci_tegra.en_boot_part_access=1"
+OSTREE_KERNEL_ARGS:tegra194 ?= "${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off sdhci_tegra.en_boot_part_access=1"
 ## jetson-agx-orin-devkit (tegra234)
 OSTREE_KERNEL_ARGS:tegra234 ?= "${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off"
 

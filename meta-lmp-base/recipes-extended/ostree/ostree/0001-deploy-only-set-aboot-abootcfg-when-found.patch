@@ -1,0 +1,47 @@
+From 9771655f150f7dd62f88a5caa8574d11a012a4b0 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@foundries.io>
+Date: Tue, 15 Apr 2025 20:28:33 -0300
+Subject: [PATCH] deploy: only set aboot/abootcfg when found
+
+Bootloader entry should only have aboot and abootcfg configuration
+entries when aboot.img is found on the system (e.g.
+/usr/lib/modules/$kver).
+
+Otherwise it will be always set, won't be used during boot and
+systemd-boot will complain about unknown lines.
+
+Upstream-Status: Submitted [https://github.com/ostreedev/ostree/pull/3413]
+
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+---
+ src/libostree/ostree-sysroot-deploy.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
+index 5d356d4d..99dee170 100644
+--- a/src/libostree/ostree-sysroot-deploy.c
++++ b/src/libostree/ostree-sysroot-deploy.c
+@@ -2114,17 +2114,10 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+     {
+       g_autofree char *aboot_relpath = g_strconcat ("/", bootcsumdir, "/", aboot_fn, NULL);
+       ostree_bootconfig_parser_set (bootconfig, "aboot", aboot_relpath);
+-    }
+-  else
+-    {
+-      g_autofree char *aboot_relpath
+-          = g_strconcat ("/", deployment_dirpath, "/usr/lib/ostree-boot/aboot.img", NULL);
+-      ostree_bootconfig_parser_set (bootconfig, "aboot", aboot_relpath);
+-    }
+ 
+-  g_autofree char *abootcfg_relpath
+-      = g_strconcat ("/", deployment_dirpath, "/usr/lib/ostree-boot/aboot.cfg", NULL);
+-  ostree_bootconfig_parser_set (bootconfig, "abootcfg", abootcfg_relpath);
++      g_autofree char *abootcfg_relpath = g_strconcat ("/", bootcsumdir, "/aboot.cfg", NULL);
++      ostree_bootconfig_parser_set (bootconfig, "abootcfg", abootcfg_relpath);
++    }
+ 
+   if (kernel_layout->devicetree_namever)
+     {
+-- 
+2.34.1
+

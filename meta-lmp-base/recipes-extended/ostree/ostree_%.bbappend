@@ -12,6 +12,7 @@ SRC_URI:append = " \
     file://0005-ostree-decrease-default-grub.cfg-timeout-and-set-def.patch \
     file://0006-Add-support-systemd-boot-automatic-boot-assesment.patch \
     file://0008-sysroot-deploy-systemd-boot-efi-to-ESP-partition.patch \
+    file://0001-deploy-only-set-aboot-abootcfg-when-found.patch \
 "
 
 PACKAGECONFIG:remove = "static"

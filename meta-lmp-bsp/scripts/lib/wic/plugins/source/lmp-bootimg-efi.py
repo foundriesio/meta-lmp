@@ -32,7 +32,7 @@ class BootimgEFIPlugin(SourcePlugin):
     This plugin supports GRUB 2 and systemd-boot bootloaders.
     """
 
-    name = 'bootimg-efi'
+    name = 'lmp-bootimg-efi'
 
     @classmethod
     def _copy_additional_files(cls, hdddir, initrd, dtb):

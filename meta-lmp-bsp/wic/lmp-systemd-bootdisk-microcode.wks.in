@@ -4,7 +4,7 @@
 # It also includes intel-microcode as an initrd for early update support.
 # Based on OE-core's systemd-bootdisk.wks file.
 
-part /boot --source bootimg-efi --sourceparams="loader=systemd-boot,initrd=microcode.cpio" --ondisk sda --label msdos --active --align 1024 --use-uuid
+part /boot --source lmp-bootimg-efi --sourceparams="loader=systemd-boot,initrd=microcode.cpio" --ondisk sda --label msdos --active --align 1024 --use-uuid
 
 part / --source rootfs --ondisk sda --fstype=ext4 --label platform --align 1024 --use-uuid
 

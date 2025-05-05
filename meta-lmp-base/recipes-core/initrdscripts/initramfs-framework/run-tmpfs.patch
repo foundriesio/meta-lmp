@@ -1,7 +1,19 @@
+From f4f5b06595a00acca19b25571ec6c65feb1b2402 Mon Sep 17 00:00:00 2001
+From: Ricardo Salveti <ricardo@opensourcefoundries.com>
+Date: Tue, 20 Feb 2018 21:07:49 -0300
+Subject: [PATCH] initramfs-framework: add ostree support
+
 Upstream-Status: Pending
 
+Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ finish | 3 ++-
+ init   | 4 +++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
 diff --git a/finish b/finish
-index ac0de9f..ed8298d 100755
+index 716c2f4..21eaa57 100755
 --- a/finish
 +++ b/finish
 @@ -35,10 +35,11 @@ finish_run() {
@@ -16,12 +28,12 @@ index ac0de9f..ed8298d 100755
 +		mount --move /run $ROOTFS_DIR/run
  
  		cd $ROOTFS_DIR
- 		exec switch_root -c /dev/console $ROOTFS_DIR ${bootparam_init:-/sbin/init}
+ 		exec switch_root $ROOTFS_DIR ${bootparam_init:-/sbin/init}
 diff --git a/init b/init
-index 567694a..dc2548b 100755
+index a48b77e..b3187ba 100755
 --- a/init
 +++ b/init
-@@ -78,9 +78,11 @@ EFI_DIR=/sys/firmware/efi  # place to store device firmware information
+@@ -81,9 +81,11 @@ EFI_DIR=/sys/firmware/efi  # place to store device firmware information
  touch /etc/fstab
  
  # initialize /proc, /sys, /run/lock and /var/lock
@@ -34,3 +46,6 @@ index 567694a..dc2548b 100755
  
  if [ -d $EFI_DIR ];then
  	mount -t efivarfs none /sys/firmware/efi/efivars
+-- 
+2.49.0
+

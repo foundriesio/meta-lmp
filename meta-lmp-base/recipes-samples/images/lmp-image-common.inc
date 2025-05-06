@@ -101,6 +101,11 @@ python () {
     d.delVarFlag("do_unpack", "noexec")
 }
 
+# ${S} doesn't exist for us
+do_qa_unpack() {
+    return
+}
+
 EXTRA_USERS_PARAMS = "\
 groupadd ${LMP_USER}; \
 useradd -M -p '${LMP_PASSWORD}' ${LMP_USER}; \

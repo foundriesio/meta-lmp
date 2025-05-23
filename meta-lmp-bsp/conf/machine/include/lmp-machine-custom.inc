@@ -132,6 +132,7 @@ WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"
 IMAGE_BOOT_FILES:generic-arm64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer-grub.wks.in', 'grub-efi-bootaa64.efi;EFI/BOOT/bootaa64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}${IMAGE_NAME_SUFFIX}.ota-ext4;rootfs.img', '', d)}"
 
 # Intel
+MACHINE_EXTRA_RRECOMMENDS:remove:intel-corei7-64 = "linux-firmware"
 MACHINE_FEATURES:append:intel-corei7-64 = " tpm2"
 UEFI_SIGN_ENABLE:intel-corei7-64 = "1"
 OSTREE_BOOTLOADER:intel-corei7-64 ?= "none"

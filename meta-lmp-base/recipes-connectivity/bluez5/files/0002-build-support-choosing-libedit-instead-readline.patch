@@ -1,7 +1,7 @@
-From 66c8584c990658d3ddb0376f425172da7c56c83b Mon Sep 17 00:00:00 2001
+From 9dd6463714c9340ac3f567db87b4c991b74a60d8 Mon Sep 17 00:00:00 2001
 From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Date: Sun, 5 Feb 2023 18:57:20 +0200
-Subject: [PATCH] build: support choosing libedit instead readline
+Subject: [PATCH 2/2] build: support choosing libedit instead readline
 
 Support --with-readline option to choose readline or libedit for
 interactive interface of client and/or mesh.
@@ -14,7 +14,7 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  1 file changed, 50 insertions(+), 7 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 38bf5ce..a555da3 100644
+index 9afbe77c9..22a42d23d 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -328,13 +328,56 @@ AC_ARG_ENABLE(client, AS_HELP_STRING([--disable-client],
@@ -81,3 +81,6 @@ index 38bf5ce..a555da3 100644
  
  AC_ARG_ENABLE(systemd, AS_HELP_STRING([--disable-systemd],
  		[disable systemd integration]), [enable_systemd=${enableval}])
+-- 
+2.49.0
+

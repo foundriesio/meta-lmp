@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 # DESCRIPTION
-# This implements the 'bootimg-sota-efi' source plugin class for 'wic'
+# This implements the 'bootimg_sota_efi' source plugin class for 'wic'
 #
-# Heavily based on the bootimg-efi plugin from OE-core.
+# Heavily based on the bootimg_efi plugin from OE-core.
 
 import logging
 import os
@@ -30,7 +30,7 @@ class BootimgSotaEFIPlugin(SourcePlugin):
     This plugin supports GRUB 2 and systemd-boot bootloaders.
     """
 
-    name = 'bootimg-sota-efi'
+    name = 'bootimg_sota_efi'
 
     @classmethod
     def do_configure_grubefi(cls, creator, cr_workdir):
@@ -106,9 +106,9 @@ class BootimgSotaEFIPlugin(SourcePlugin):
             elif source_params['loader'] == 'systemd-boot':
                 cls.do_configure_systemdboot(hdddir, part, creator)
             elif source_params['loader'] != 'l4t-launcher':
-                raise WicError("unrecognized bootimg-sota-efi loader: %s" % source_params['loader'])
+                raise WicError("unrecognized bootimg_sota_efi loader: %s" % source_params['loader'])
         except KeyError:
-            raise WicError("bootimg-sota-efi requires a loader, none specified")
+            raise WicError("bootimg_sota_efi requires a loader, none specified")
 
         if get_bitbake_var("IMAGE_EFI_BOOT_FILES") is None:
             logger.debug('No boot files defined in IMAGE_EFI_BOOT_FILES')
@@ -204,10 +204,10 @@ class BootimgSotaEFIPlugin(SourcePlugin):
                 cp_cmd = "cp %s/BOOTAA64.efi %s/EFI/BOOT/BOOTAA64.efi" % (kernel_dir, hdddir)
                 exec_cmd(cp_cmd, True)
             else:
-                raise WicError("unrecognized bootimg-sota-efi loader: %s" %
+                raise WicError("unrecognized bootimg_sota_efi loader: %s" %
                                source_params['loader'])
         except KeyError:
-            raise WicError("bootimg-sota-efi requires a loader, none specified")
+            raise WicError("bootimg_sota_efi requires a loader, none specified")
 
         startup = os.path.join(kernel_dir, "startup.nsh")
         if os.path.exists(startup):

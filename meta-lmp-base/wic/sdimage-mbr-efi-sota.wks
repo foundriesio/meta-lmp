@@ -4,7 +4,7 @@
 # in the first vfat partition (firmware) and UEFI related files and setup available
 # at the second vfat partition (id 0xef)
 
-part firmware --source bootimg-partition --fstype=vfat --system-id 0xf8 --label boot --active --align 4096 --size 32
-part /boot/efi --source bootimg-sota-efi --sourceparams="loader=grub-efi" --fstype=vfat --system-id 0xef --label efi --align 4096 --use-uuid --size 128M
+part firmware --source bootimg_partition --fstype=vfat --system-id 0xf8 --label boot --active --align 4096 --size 32
+part /boot/efi --source bootimg_sota_efi --sourceparams="loader=grub-efi" --fstype=vfat --system-id 0xef --label efi --align 4096 --use-uuid --size 128M
 part / --source otaimage --fstype=ext4 --align 4096 --use-uuid
 bootloader --configfile="grub-ota.cfg"

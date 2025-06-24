@@ -10,11 +10,9 @@ SRC_URI = " \
     git://github.com/foundriesio/lmp-tools;protocol=https;branch=master;name=lmp-tools \
 "
 
-S = "${WORKDIR}/git/device-scripts"
-
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 do_install () {
 	install -d ${D}${sbindir}
-	install -m 0755 ${S}/fio-diag.sh ${D}${sbindir}
+	install -m 0755 ${S}/device-scripts/fio-diag.sh ${D}${sbindir}
 }

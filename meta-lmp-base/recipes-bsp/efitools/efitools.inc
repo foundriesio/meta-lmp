@@ -32,8 +32,6 @@ SRCREV = "392836a46ce3c92b55dc88a1aebbcfdfc5dcddce"
 
 PARALLEL_MAKE = ""
 
-S = "${WORKDIR}/git"
-
 inherit perlnative
 
 EXTRA_OEMAKE = "\

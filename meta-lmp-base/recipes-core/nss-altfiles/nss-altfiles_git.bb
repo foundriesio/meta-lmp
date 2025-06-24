@@ -8,8 +8,6 @@ SRC_URI = "git://github.com/kinvolk/nss-altfiles.git;protocol=https;branch=maste
 PV = "2.23.0+git"
 SRCREV = "9078c543ba7d2bc5011737675b3dddb882673ce7"
 
-S = "${WORKDIR}/git"
-
 inherit autotools-brokensep
 
 NSS_ALT_TYPES ?= "pwd,grp,spwd,sgrp"

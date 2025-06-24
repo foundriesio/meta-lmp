@@ -17,8 +17,6 @@ SRCREV = "53d65dc48cf436694f7edcfc805414e608e8a2bf"
 
 UPSTREAM_CHECK_GITTAGREGEX = "libp11-(?P<pver>\d+(\.\d+)+)"
 
-S = "${WORKDIR}/git"
-
 inherit autotools pkgconfig
 
 EXTRA_OECONF = "--disable-static"

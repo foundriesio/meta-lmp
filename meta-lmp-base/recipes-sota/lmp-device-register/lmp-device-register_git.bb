@@ -16,8 +16,6 @@ PACKAGECONFIG ?= "composeapp"
 PACKAGECONFIG[composeapp] = "-DDOCKER_COMPOSE_APP=ON,-DDOCKER_COMPOSE_APP=OFF,"
 PACKAGECONFIG[production] = "-DPRODUCTION=ON,-DPRODUCTION=OFF,"
 
-S = "${WORKDIR}/git"
-
 inherit cmake pkgconfig
 
 RDEPENDS:${PN} += "${SOTA_CLIENT}"

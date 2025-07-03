@@ -13,6 +13,6 @@ SRC_URI = "git://github.com/raspberrypi/linux.git;protocol=https;branch=${KBRANC
 
 KMETA = "kernel-meta"
 
-include recipes-kernel/linux/linux-lmp.inc
+require recipes-kernel/linux/linux-lmp.inc
 
 KERNEL_DTC_FLAGS += "-@ -H epapr"

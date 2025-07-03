@@ -12,4 +12,4 @@ SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANC
 
 KMETA = "kernel-meta"
 
-include recipes-kernel/linux/linux-lmp.inc
+require recipes-kernel/linux/linux-lmp.inc

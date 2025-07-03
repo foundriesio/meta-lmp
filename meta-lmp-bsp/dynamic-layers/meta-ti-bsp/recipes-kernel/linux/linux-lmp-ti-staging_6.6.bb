@@ -18,7 +18,7 @@ SRC_URI = "${KERNEL_REPO};protocol=${KERNEL_REPO_PROTOCOL};branch=${KERNEL_BRANC
 
 KMETA = "kernel-meta"
 
-include recipes-kernel/linux/linux-lmp.inc
+require recipes-kernel/linux/linux-lmp.inc
 
 include ${@ 'recipes-kernel/linux/ti-kernel-devicetree-prefix.inc' if d.getVar('KERNEL_DEVICETREE_PREFIX') else ''}
 

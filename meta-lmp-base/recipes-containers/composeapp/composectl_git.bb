@@ -6,10 +6,16 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=504a5c2455c8bb2fc5b76678
 
 GO_IMPORT = "github.com/foundriesio/composeapp"
 GO_IMPORT_PROTO ?= "https"
-SRCBRANCH = "v95"
-SRCREV = "862e6bee1d6596a80855c43c19f0655870e2d505"
+SRCBRANCH = "fix-blob-download-stat-rendering"
+SRCREV = "40bef16f5ef0c0d1e6a26eb85f4c6c77f878eba7"
 SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=${SRCBRANCH}"
 UPSTREAM_CHECK_COMMITS = "1"
+
+GO_DYNLINK = ""
+GO_DYNLINK:arm = ""
+GO_DYNLINK:aarch64 = ""
+GO_DYNLINK:x86 = ""
+GO_DYNLINK:x86-64 = ""
 
 inherit go-mod
 

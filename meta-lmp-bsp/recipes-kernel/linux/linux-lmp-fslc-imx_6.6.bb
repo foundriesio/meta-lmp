@@ -8,22 +8,10 @@ include recipes-kernel/linux/linux-lmp-fslc-imx.inc
 include recipes-kernel/linux/kmeta-linux-lmp-6.6.y.inc
 
 # Use Freescale kernel by default
-LINUX_VERSION ?= "6.6.52"
+LINUX_VERSION ?= "6.6.74"
 KERNEL_BRANCH ?= "6.6-2.2.x-imx"
 
-SRCREV_machine = "e0f9e2afd4cff3f02d71891244b4aa5899dfc786"
-
-SRC_URI += " \
-    file://0004-FIO-toup-hwrng-optee-support-generic-crypto.patch \
-    file://0001-arm64-dts-imx8mq-drop-cpu-idle-states.patch \
-    file://0001-FIO-toimx-of-enable-using-OF_DYNAMIC-without-OF_UNIT.patch \
-    file://0002-FIO-toup-media-Kconfig-fix-double-VIDEO_DEV.patch \
-    file://0003-FIO-toup-gpu-drm-cadence-select-hdmi-helper.patch \
-    file://0004-FIO-toup-media-imx8-select-v4l2_-for-mxc-mipi-csi2_y.patch \
-    file://0001-FIO-toimx-firmware-se_fw-remove-info_list-from-ro-section.patch \
-    file://0001-net-enetc-Use-IRQF_NO_AUTOEN-flag-in-request_irq.patch \
-    file://0001-clk-imx-imx6ul-fix-default-parent-for-enet-_ref_sel.patch \
-"
+SRCREV_machine = "5ff4cf4d61e11f0fdf8d4e2e54fbb203e46d34b2"
 
 SRC_URI:append:imx8mp-lpddr4-evk = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'se05x', 'file://0001-FIO-internal-arch-arm64-dts-imx8mp-enable-I2C5-bus.patch', '', d)} \

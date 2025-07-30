@@ -169,9 +169,6 @@ TOOLCHAIN:pn-nvidia-display-driver = "gcc"
 TOOLCHAIN:pn-libgcc-8 = "gcc"
 TOOLCHAIN:pn-gcc-8-runtime = "gcc"
 
-# qemuriscv64
-TOOLCHAIN:pn-opensbi = "gcc"
-
 # https://reviews.llvm.org/D34796
 # | clang-14: error: unknown argument: '-fno-toplevel-reorder'
 # | clang-14: warning: optimization flag '-fno-merge-constants' is not supported [-Wignored-optimization-argument]

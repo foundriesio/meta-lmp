@@ -47,23 +47,6 @@ UBOOT_DTBO_LOADADDRESS:rpi = "0x026d0000"
 ## Rpi 4/CM4
 MACHINE_EXTRA_RRECOMMENDS:append:raspberrypi4 = " linux-firmware-rpidistro-bcm43456"
 
-# RISC-V targets
-PREFERRED_PROVIDER_virtual/bootloader:qemuriscv64 = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot:qemuriscv64 = "u-boot-fio"
-IMAGE_BOOT_FILES:qemuriscv64 = "boot.itb"
-KERNEL_IMAGETYPE:qemuriscv64 = "fitImage"
-WKS_FILE_DEPENDS:append:qemuriscv64 = " u-boot-default-script"
-PREFERRED_PROVIDER_u-boot-default-script:qemuriscv64 = "u-boot-ostree-scr-fit"
-SOTA_CLIENT_FEATURES:append:qemuriscv64 = " ubootenv"
-KERNEL_IMAGETYPES:remove:qemuriscv64 = "uImage"
-KERNEL_CLASSES:qemuriscv64 = " kernel-lmp-fitimage "
-OSTREE_KERNEL_ARGS:qemuriscv64 ?= "earlycon=sbi ${OSTREE_KERNEL_ARGS_COMMON}"
-UBOOT_ENTRYPOINT:qemuriscv64 = "0x80400000"
-RISCV_SBI_PAYLOAD:qemuriscv64 = "u-boot.bin"
-QB_DEFAULT_BIOS:qemuriscv64 = "fw_payload.elf"
-QB_DRIVE_TYPE:qemuriscv64 = "/dev/vdb"
-QB_OPT_APPEND:append:qemuriscv64 = " -bios ${DEPLOY_DIR_IMAGE}/fw_payload.elf"
-
 # QEMU ARM
 PREFERRED_PROVIDER_virtual/bootloader:qemuarm64 = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot:qemuarm64 = "u-boot-fio"

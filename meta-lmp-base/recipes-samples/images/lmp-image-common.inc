@@ -21,7 +21,6 @@ IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains('DISTRO_FEATURES', 'luks
 # In most cases the rootfs will be expanded to fit available storage
 # However, for QEMU targets we need to pre-allocate enough free space
 # for a full image update
-IMAGE_OVERHEAD_FACTOR:qemuriscv64 ?= "2.3"
 IMAGE_OVERHEAD_FACTOR:qemuarm64 ?= "2.3"
 IMAGE_OVERHEAD_FACTOR:qemuarm ?= "2.3"
 IMAGE_OVERHEAD_FACTOR:intel-corei7-64 ?= "2.3"

@@ -128,10 +128,6 @@ BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/meta-integrity/recipes-core/systemd/systemd_%.bbappend \
 "
-# meta-ti-bsp: mask optee related recipes as they are provided by lmp
-BBMASK += " \
-    /meta-ti/meta-ti-bsp/recipes-security/optee \
-"
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults
 WARN_TO_ERROR_QA = "already-stripped compile-host-path install-host-path \

@@ -135,11 +135,6 @@ TOOLCHAIN:pn-edk2-firmware = "gcc"
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-fiovb_git.bb:do_compile
 TOOLCHAIN:pn-optee-fiovb = "gcc"
 
-# tegra (xavier and orin)
-TOOLCHAIN:pn-optee-os = "gcc"
-TOOLCHAIN:pn-optee-nvsamples = "gcc"
-TOOLCHAIN:pn-standalone-mm-optee-tegra = "gcc"
-
 # lmp-mfgtool distro
 TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
 
@@ -149,15 +144,6 @@ TOOLCHAIN:pn-qoriq-atf = "gcc"
 
 TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 
-# jetson-agx-xavier-devkit
-TOOLCHAIN:pn-nvdisp-init = "gcc"
-# edk2-tegra/edk2/MdeModulePkg/Include/Guid/ExtendedFirmwarePerformance.h:137:50: error: field Guid1 within 'FPDT_DUAL_GUID_STRING_EVENT_RECORD' is less aligned than 'EFI_GUID' (aka 'GUID') and is usually due to 'FPDT_DUAL_GUID_STRING_EVENT_RECORD' being packed, which can lead to unaligned accesses [-Werror,-Wunaligned-access]
-TOOLCHAIN:pn-edk2-firmware-tegra = "gcc"
-# libnvidia-container: unknown argument: '-fplan9-extensions'
-TOOLCHAIN:pn-libnvidia-container = "gcc"
-# kernel module, needs to follow the toolchain used by the kernel
-TOOLCHAIN:pn-nvidia-display-driver = "gcc"
-# configure: error: unrecognized option: `-flto'
 TOOLCHAIN:pn-libgcc-8 = "gcc"
 TOOLCHAIN:pn-gcc-8-runtime = "gcc"
 

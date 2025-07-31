@@ -82,14 +82,5 @@ UBOOT_CLASSES:mx8qm-generic-bsp = "uboot-fitimage"
 IMAGE_BOOT_FILES:mx8qm-nxp-bsp  = "imx-boot u-boot.itb boot.itb"
 PREFERRED_VERSION_u-boot-fio-mfgtool:mx8qm-nxp-bsp ?= "imx-2024.04"
 
-# TI Generic (BSP)
-INITRAMFS_IMAGE:k3 = "initramfs-ostree-lmp-recovery"
-EXTRA_IMAGEDEPENDS:remove:k3 = "u-boot-default-script"
-PREFERRED_PROVIDER_virtual/optee-os:k3 = "optee-os-fio-mfgtool"
-KERNEL_IMAGETYPE:k3 = "fitImage"
-KERNEL_CLASSES:k3 = " kernel-lmp-fitimage "
-# TI AM62XX EVM
-UBOOT_CONFIG_FRAGMENTS:am62xx-evm-k3r5 = "am62x_r5_usbdfu.config"
-
 # Cross machines / BSPs
 PREFERRED_VERSION_u-boot-fio-mfgtool:imx-nxp-bsp ?= "imx-2024.04"

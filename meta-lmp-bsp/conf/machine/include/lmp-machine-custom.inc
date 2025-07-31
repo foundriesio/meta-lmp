@@ -435,66 +435,6 @@ BOOTSCR_LOAD_ADDR:imx93-11x11-lpddr4x-evk = "0x83500000"
 UBOOT_SUFFIX:imx93-11x11-lpddr4x-evk = "bin"
 UBOOT_DTB_NAME:imx93-11x11-lpddr4x-evk ?= "imx93-11x11-evk.dtb"
 
-# TI Generic (BSP)
-TI_COMMON_DEPLOY = "${DEPLOY_DIR}"
-DEPLOY_DIR_SPDX:append = "${@'/${MACHINE}' if 'ti-soc' in (d.getVar('SOC_FAMILY') or '').split(':') else ''}"
-LICENSE_DIRECTORY:append = "${@'/${MACHINE}' if 'ti-soc' in (d.getVar('SOC_FAMILY') or '').split(':') else ''}"
-UBOOT_SIGN_ENABLE:sota:k3 = "1"
-UBOOT_SIGN_KEYDIR:k3 ?= "${TOPDIR}/conf/keys"
-FIT_HASH_ALG:k3 ?= "sha256"
-FIT_SIGN_ALG:k3 ?= "rsa2048"
-KERNEL_IMAGETYPE:sota:k3 = "fitImage"
-KERNEL_IMAGETYPES:sota:k3 = "${KERNEL_IMAGETYPE}"
-PREFERRED_PROVIDER_virtual/kernel:k3 ?= "linux-lmp-ti-staging"
-WKS_FILE_DEPENDS:append:k3 = " virtual/bootloader"
-OSTREE_DEPLOY_USR_OSTREE_BOOT:k3 = "${@bb.utils.contains('DISTRO_FEATURES', 'luks', '1', '0', d)}"
-MACHINE_ESSENTIAL_EXTRA_RDEPENDS:remove:k3 = "kernel-image-image"
-OSTREE_KERNEL_ARGS:k3 ?= "console=ttyS2,115200n8 earlycon=ns16550a,mmio32,0x02800000 ${OSTREE_KERNEL_ARGS_COMMON}"
-# we found some issues on ti-6_12 who is the one that comes by default in 11.00.01 so still with ti-6_6 for now
-TI_PREFERRED_BSP = "ti-6_6"
-
-# TI AM62x
-MACHINE_FEATURES:append:am62xx = " optee"
-PREFERRED_PROVIDER_u-boot-fw-utils:am62xx = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils:am62xx = "libubootenv"
-# only need boot script for sota builds
-WKS_FILE_DEPENDS:append:sota:am62xx = " u-boot-default-script"
-PREFERRED_PROVIDER_u-boot-default-script:sota:am62xx = "u-boot-ostree-scr-fit"
-KERNEL_CLASSES:sota:am62xx = " kernel-lmp-fitimage "
-IMAGE_BOOT_FILES:append:am62xx = " boot.itb"
-UBOOT_ENTRYPOINT:am62xx = "0x82000000"
-UBOOT_LOADADDRESS:am62xx = "0x82000000"
-UBOOT_DTB_LOADADDRESS:am62xx = "0x88000000"
-UBOOT_DTBO_LOADADDRESS:am62xx = "0x89000000"
-EFI_PROVIDER:am62xx = ""
-LMP_BOOT_FIRMWARE_FILES:am62xx = "tispl.bin u-boot.img tiboot3-am62x-gp-evm.bin tiboot3-am62x-hs-evm.bin tiboot3-am62x-hs-fs-evm.bin"
-LMP_BOOT_FIRMWARE_FILES:append:sota:am62xx = " boot.itb"
-## am62xx-evm
-SOTA_CLIENT_FEATURES:append:am62xx-evm = " ubootenv"
-## beagleplay
-SOTA_CLIENT_FEATURES:append:beagleplay = " ubootenv"
-MACHINE_EXTRA_RRECOMMENDS:append:beagleplay = " wl18xx-calibrator wl18xx-target-scripts wl18xx-fw wlconf"
-LMP_BOOT_FIRMWARE_FILES:beagleplay = "tispl.bin u-boot.img tiboot3.bin"
-LMP_BOOT_FIRMWARE_FILES:append:sota:beagleplay = " boot.itb"
-
-# TI AM64x
-MACHINE_FEATURES:append:am64xx = " optee"
-PREFERRED_PROVIDER_u-boot-fw-utils:am64xx = "libubootenv"
-PREFERRED_RPROVIDER_u-boot-fw-utils:am64xx = "libubootenv"
-# only need boot script for sota builds
-WKS_FILE_DEPENDS:append:sota:am64xx = " u-boot-default-script"
-PREFERRED_PROVIDER_u-boot-default-script:sota:am64xx = "u-boot-ostree-scr-fit"
-KERNEL_CLASSES:sota:am64xx = " kernel-lmp-fitimage "
-IMAGE_BOOT_FILES:append:am64xx = " boot.itb"
-UBOOT_ENTRYPOINT:am64xx = "0x82000000"
-UBOOT_LOADADDRESS:am64xx = "0x82000000"
-UBOOT_DTB_LOADADDRESS:am64xx = "0x88000000"
-EFI_PROVIDER:am64xx = ""
-LMP_BOOT_FIRMWARE_FILES:am64xx = "tispl.bin u-boot.img tiboot3-am64x-gp-evm.bin tiboot3-am64x_sr2-hs-evm.bin tiboot3-am64x_sr2-hs-fs-evm.bin"
-LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx = " boot.itb"
-## am64xx-evm
-SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"
-
 # Allwinner (sun8i)
 PREFERRED_PROVIDER_virtual/bootloader:sun8i = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot:sun8i = "u-boot-fio"

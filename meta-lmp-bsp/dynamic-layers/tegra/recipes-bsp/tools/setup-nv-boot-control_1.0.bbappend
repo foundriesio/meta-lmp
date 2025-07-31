@@ -1,2 +1,0 @@
-ESPMOUNT = "/boot"
-NVIDIA_ESPMOUNT = ""

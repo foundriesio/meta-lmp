@@ -495,37 +495,6 @@ LMP_BOOT_FIRMWARE_FILES:append:sota:am64xx = " boot.itb"
 ## am64xx-evm
 SOTA_CLIENT_FEATURES:append:am64xx-evm = " ubootenv"
 
-# Nvidia Tegra
-DISTRO_FEATURES:append:tegra = " opengl"
-DISTRO_FEATURES_DEFAULT:remove:tegra = "modsign"
-PREFERRED_PROVIDER_virtual/kernel:tegra ?= "linux-tegra"
-IMAGE_TEGRAFLASH_FS_TYPE:sota:tegra = "${@bb.utils.contains('TEGRA_EXTERNAL_ROOTFS_WIC', '1', 'wic.gz', 'ota-ext4', d)}"
-IMAGE_TEGRAFLASH_ESPIMG:sota:tegra = "${IMGDEPLOYDIR}/${IMAGE_LINK_NAME}.ota-esp"
-IMAGE_FSTYPES:remove:tegra = "${@bb.utils.contains('TEGRA_EXTERNAL_ROOTFS_WIC', '1', '', 'wic wic.gz wic.bmap', d)}"
-TEGRA_ESP_IMAGE:sota:tegra = ""
-TEGRA_INITRAMFS_FSTYPES:tegra = ""
-INITRD_IMAGE:tegra = ""
-IMAGE_TEGRAFLASH_KERNEL:tegra = "${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}"
-WKS_FILE:tegra:sota ?= "efidisk-sota.wks.in"
-IMAGE_ROOTFS_SIZE:tegra = "65536"
-PREFERRED_PROVIDER_virtual/bootloader:tegra ?= "edk2-firmware-tegra"
-TEGRA_UEFI_CAPSULE_INSTALL_DIR:tegra = ""
-EFI_PROVIDER:sota:tegra = "systemd-boot"
-OSTREE_LOADER_LINK:tegra = "0"
-OSTREE_BOOTLOADER:tegra = "none"
-OSTREE_DEPLOY_DEVICETREE:tegra = "1"
-OSTREE_SPLIT_BOOT:sota:tegra = "1"
-PREFERRED_PROVIDER_virtual/optee-os:tegra = "optee-os"
-MACHINE_FEATURES:append:tegra = " optee"
-SOTA_CLIENT_FEATURES:remove:sota:tegra = "ubootenv"
-MACHINE_FEATURES:append:sota:tegra = " fioefi"
-LMP_BOOT_FIRMWARE_FILES:append:sota:tegra = " tegra-bl.cap"
-IMAGE_BOOT_FILES:sota:tegra = "systemd-bootaa64.efi;EFI/BOOT/bootaa64.efi"
-## jetson-agx-xavier-devkit (tegra194)
-OSTREE_KERNEL_ARGS:tegra194 ?= "${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off sdhci_tegra.en_boot_part_access=1"
-## jetson-agx-orin-devkit (tegra234)
-OSTREE_KERNEL_ARGS:tegra234 ?= "${OSTREE_KERNEL_ARGS_COMMON} rootwait mminit_loglevel=4 console=tty0 console=ttyTCU0,115200 fbcon=map:0 video=efifb:off"
-
 # Allwinner (sun8i)
 PREFERRED_PROVIDER_virtual/bootloader:sun8i = "u-boot-fio"
 PREFERRED_PROVIDER_u-boot:sun8i = "u-boot-fio"
@@ -561,9 +530,3 @@ MACHINE_FIRMWARE:remove:mx6-nxp-bsp = "linux-firmware-imx-sdma-imx6q"
 MACHINE_FIRMWARE:remove:mx8-nxp-bsp = "linux-firmware-imx-sdma-imx7d"
 MACHINE_FIRMWARE:append:mx6-nxp-bsp = " firmware-imx-sdma-imx6q firmwared"
 MACHINE_FIRMWARE:append:mx8-nxp-bsp = " firmware-imx-sdma-imx7d firmwared"
-
-### Tegra custom LmP hook
-TEGRA_EXTERNAL_ROOTFS_WIC ??= "0"
-tegraflash_custom_post:append:tegra() {
-	echo EXTERNAL_ROOTFS_WIC_FLASH=\"${TEGRA_EXTERNAL_ROOTFS_WIC}\" >> .env.initrd-flash
-}

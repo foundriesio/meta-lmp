@@ -1,5 +1,3 @@
-OPTEEMACHINE:am62xx = "k3-am62x"
-OPTEEMACHINE:am64xx = "k3-am64x"
 OPTEEMACHINE:imx6ulevk = "imx-mx6ulevk"
 OPTEEMACHINE:imx6ullevk = "imx-mx6ullevk"
 OPTEEMACHINE:imx8mm-lpddr4-evk = "imx-mx8mmevk"
@@ -30,9 +28,6 @@ EXTRA_OEMAKE:append:mx93-nxp-bsp = " \
 "
 
 # Machine Settings
-EXTRA_OEMAKE:append:am62xx-evm = " \
-    CFG_WITH_SOFTWARE_PRNG=y \
-"
 EXTRA_OEMAKE:append:imx8qm-mek = " \
     CFG_NXP_CAAM=y CFG_NXP_CAAM_RNG_DRV=y \
     CFG_WITH_SOFTWARE_PRNG=n CFG_CRYPTO_DRIVER=y CFG_HWRNG_PTA=y CFG_HWRNG_QUALITY=1024 \

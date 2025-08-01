@@ -108,8 +108,6 @@ OBJCOPY:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-ti-staging:toolchain-clang = "${HOST_PREFIX}strip"
 
 # use gcc for now as it fail with clang with some compile errors:
 # error: passing 'unsigned int *' to parameter of type 'int *' converts between pointers to integer types with different sign [-Werror,-Wpointer-sign]
@@ -144,8 +142,6 @@ TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
 TOOLCHAIN:pn-imx-atf = "gcc"
 TOOLCHAIN:pn-qoriq-atf = "gcc"
 
-# am64xx-evm
-TOOLCHAIN:pn-ti-sci-fw = "gcc"
 TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 
 TOOLCHAIN:pn-libgcc-8 = "gcc"
@@ -168,7 +164,6 @@ TOOLCHAIN:pn-runc-opencontainers = "gcc"
 # U-boot does compile with clang but clang-15 crashes compiling it :(
 TOOLCHAIN:pn-u-boot-fio = "gcc"
 TOOLCHAIN:pn-u-boot-fio-mfgtool = "gcc"
-TOOLCHAIN:pn-u-boot-ti-staging = "gcc"
 
 # isp-imx fails to build with clang
 TOOLCHAIN:pn-isp-imx = "gcc"

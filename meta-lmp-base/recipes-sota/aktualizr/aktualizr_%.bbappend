@@ -77,8 +77,8 @@ FILES:${PN}-lite-dev = "${includedir}/${PN}-lite"
 FILES:${PN}-lite-offline = "${bindir}/aklite-offline"
 
 # Force same RDEPENDS, packageconfig rdepends common to both
-RDEPENDS:${PN}-lite = "\
+RDEPENDS:${PN}-lite:class-target = "\
     ${RDEPENDS:aktualizr} \
     ${@bb.utils.contains('PACKAGECONFIG', 'aklite-offline', '${PN}-lite-offline', '', d)} \
 "
-RDEPENDS:${PN}-lite-lib = "${RDEPENDS:aktualizr} composectl"
+RDEPENDS:${PN}-lite-lib:class-target = "${RDEPENDS:aktualizr} composectl"

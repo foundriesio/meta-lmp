@@ -25,8 +25,6 @@ SYSTEMD_SERVICE:${PN}-lite = "aktualizr-lite.service"
 COMPOSE_HTTP_TIMEOUT ?= "60"
 DOCKER_CRED_HELPER_CFG ?= "${libdir}/docker/config.json"
 
-EXTRA_OECMAKE += "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
-
 # Workaround as aktualizr is a submodule of aktualizr-lite
 do_configure:prepend:lmp() {
     cd ${S}

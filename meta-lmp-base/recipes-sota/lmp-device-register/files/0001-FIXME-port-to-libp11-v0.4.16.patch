@@ -1,0 +1,54 @@
+From 291ed56bd3a4e3f1ada6ec20593dbe700fcf6458 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Fri, 8 Aug 2025 12:39:16 +0100
+Subject: [PATCH] FIXME: port to libp11 v0.4.16
+
+Upstream-Status: Pending
+
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ src/pkcs11.cpp | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/src/pkcs11.cpp b/src/pkcs11.cpp
+index 340e4da..f97aad6 100644
+--- a/src/pkcs11.cpp
++++ b/src/pkcs11.cpp
+@@ -246,7 +246,8 @@ int pkcs11_create_csr(const lmp_options &opt, string &pkey, string &csr)
+ 		.type = EVP_PKEY_EC,
+ 		.token_label = hsm_cfg.token.c_str(),
+ 		.key_label = hsm_cfg.tls_lbl.c_str(),
+-		.key_id = hsm_cfg.tls_id.c_str(),
++		/* error: cannot initialize a member subobject of type 'const unsigned char *' with an rvalue of type 'const char *' */
++		.key_id = (const unsigned char *) hsm_cfg.tls_id.c_str(),
+ 	};
+ 	bool init = false;
+ 
+@@ -293,8 +294,17 @@ again:
+ 	if (PKCS11_login(slot, 0, opt.hsm_pin.c_str()))
+ 		leave_exit;
+ 
++	/* candidate function not viable: requires 6 arguments, but 2 were provided
++|   486 | extern int PKCS11_generate_key(PKCS11_TOKEN *token,
++|       |            ^                   ~~~~~~~~~~~~~~~~~~~~
++|   487 |         int algorithm, unsigned int bits_or_nid,
++|       |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++|   488 |         char *label, unsigned char *id, size_t id_len);
++|       |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
++	/*
+ 	if (PKCS11_generate_key(slot->token, &attr))
+ 		leave_exit;
++	*/
+ 
+ 	/* Keys have been created */
+ 	created_keys = true;
+@@ -537,4 +547,4 @@ int pkcs11_cleanup(lmp_options &opt)
+ 	PKCS11_CTX_free(ctx);
+ 
+ 	return 0;
+-}
+\ No newline at end of file
++}
+-- 
+2.50.1
+

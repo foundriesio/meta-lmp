@@ -11,3 +11,6 @@ do_install:append() {
 	# NM is able to create /var/lib/NetworkManager on runtime
 	(cd ${D}${localstatedir}; rmdir -v --parents lib/NetworkManager)
 }
+
+PV = "1.54.0"
+SRCREV = "37dbdd3199cfd369a49d03888e75491f92dfbbfa"

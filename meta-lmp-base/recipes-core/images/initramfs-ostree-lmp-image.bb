@@ -29,7 +29,7 @@ IMAGE_LINGUAS = ""
 LICENSE = "MIT"
 
 IMAGE_FSTYPES = "cpio.gz"
-IMAGE_FSTYPES:remove = "wic wic.gz wic.bmap wic.nopt ext4 ext4.gz"
+IMAGE_FSTYPES:remove = "wic wic.gz wic.bmap ext4 ext4.gz"
 IMAGE_CLASSES:remove = "image_repo_manifest"
 
 # avoid circular dependencies

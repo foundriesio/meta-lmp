@@ -11,8 +11,6 @@ SRC_URI = " \
 
 S = "${UNPACKDIR}"
 
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
 # Value is in minutes (default to check for reboot every 5 minutes)
 OSTREE_PENDING_REBOOT_CHECK_MINUTES ?= "5"
 
@@ -24,12 +22,12 @@ SYSTEMD_AUTO_ENABLE:${PN}-timer = "enable"
 
 do_compile() {
 	sed -e 's/@@OSTREE_PENDING_REBOOT_CHECK_MINUTES@@/${OSTREE_PENDING_REBOOT_CHECK_MINUTES}/' \
-		${WORKDIR}/ostree-pending-reboot.timer.in > ostree-pending-reboot.timer
+		${UNPACKDIR}/ostree-pending-reboot.timer.in > ostree-pending-reboot.timer
 }
 
 do_install () {
 	install -d ${D}${systemd_system_unitdir}
-	install -m 0644 ${WORKDIR}/ostree-pending-reboot.service ${D}${systemd_system_unitdir}
+	install -m 0644 ${UNPACKDIR}/ostree-pending-reboot.service ${D}${systemd_system_unitdir}
 	install -m 0644 ${B}/ostree-pending-reboot.timer ${D}${systemd_system_unitdir}
 }
 

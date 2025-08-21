@@ -9,8 +9,6 @@ DEPENDS = "plug-and-trust-seteec"
 
 inherit cmake dos2unix
 
-S = "${WORKDIR}/git"
-
 EXTRA_OECMAKE += "\
     -DSIMW_TOP_DIR=${WORKDIR}/recipe-sysroot/usr/include/se05x \
 "

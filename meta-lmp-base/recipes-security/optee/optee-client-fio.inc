@@ -15,8 +15,6 @@ SRC_URI = " \
 
 UPSTREAM_CHECK_GITTAGREGEX = "^(?P<pver>\d+(\.\d+)+)$"
 
-S = "${WORKDIR}/git"
-
 EXTRA_OECMAKE = " \
     -DBUILD_SHARED_LIBS=ON \
     -DRPMB_EMU=OFF \

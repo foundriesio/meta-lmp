@@ -10,8 +10,6 @@ SRC_URI = "git://github.com/NICMx/Jool.git;protocol=https;branch=main"
 PV = "4.1.10"
 SRCREV = "47334c9124b7a2e3253fb279e6c33acb9c2b09a6"
 
-S = "${WORKDIR}/git"
-
 inherit module
 
 EXTRA_OEMAKE += 'ARCH="${ARCH}" CROSS_COMPILE="${TARGET_PREFIX}" \

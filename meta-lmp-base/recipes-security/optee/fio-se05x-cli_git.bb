@@ -10,8 +10,6 @@ DEPENDS = "optee-client openssl"
 SRC_URI = "git://github.com/foundriesio/fio-se05x-cli.git;protocol=https;branch=main"
 SRCREV = "6fd9c9329bb265b916c7fc14cb9447d198aceebf"
 
-S = "${WORKDIR}/git"
-
 TEEC_EXPORT = "${STAGING_DIR_HOST}${prefix}"
 EXTRA_OEMAKE = "TEEC_EXPORT=${TEEC_EXPORT}"
 

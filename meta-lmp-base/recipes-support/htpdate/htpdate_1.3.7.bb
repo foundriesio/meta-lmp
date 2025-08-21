@@ -36,7 +36,7 @@ do_install () {
 	oe_runmake install 'INSTALL=install' 'STRIP=echo' 'DESTDIR=${D}'
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -d ${D}${sysconfdir}/default
-		install -m 644 ${WORKDIR}/default.conf ${D}${sysconfdir}/default/htpdate
+		install -m 644 ${UNPACKDIR}/default.conf ${D}${sysconfdir}/default/htpdate
 		install -d ${D}${systemd_system_unitdir}
 		install -m 644 ${S}/scripts/htpdate.service ${D}${systemd_system_unitdir}
 	fi

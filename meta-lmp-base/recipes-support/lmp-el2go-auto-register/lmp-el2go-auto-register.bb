@@ -22,7 +22,7 @@ do_install() {
 	install -d ${D}${bindir}
 	install -m 0755 ${S}/lmp-el2go-auto-register ${D}${bindir}
 	install -d ${D}${sysconfdir}/default
-	install -m 0644 ${WORKDIR}/default.env ${D}${sysconfdir}/default/lmp-el2go-auto-register
+	install -m 0644 ${UNPACKDIR}/default.env ${D}${sysconfdir}/default/lmp-el2go-auto-register
 	install -d ${D}${datadir}/lmp-el2go-auto-register
-	install -m 0644 ${WORKDIR}/root.crt ${D}${datadir}/lmp-el2go-auto-register
+	install -m 0644 ${UNPACKDIR}/root.crt ${D}${datadir}/lmp-el2go-auto-register
 }

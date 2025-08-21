@@ -26,7 +26,7 @@ do_compile() {
 		-e 's/@@LMP_HOSTNAME_MODE@@/${LMP_HOSTNAME_MODE}/' \
 		-e 's/@@LMP_HOSTNAME_NETDEVICE@@/${LMP_HOSTNAME_NETDEVICE}/' \
 		-e 's/@@LMP_HOSTNAME_FIOVB_VAR@@/${LMP_HOSTNAME_FIOVB_VAR}/' \
-		${WORKDIR}/lmp-auto-hostname.service.in > lmp-auto-hostname.service
+		${UNPACKDIR}/lmp-auto-hostname.service.in > lmp-auto-hostname.service
 
 	# Force job to wait for the network interface to show up if used
 	if [ "${LMP_HOSTNAME_MODE}" = "mac" -a -n "${LMP_HOSTNAME_NETDEVICE}" ]; then
@@ -38,7 +38,7 @@ do_compile() {
 
 do_install() {
 	install -d ${D}${bindir}
-	install -m 0755 ${WORKDIR}/lmp-update-hostname.sh ${D}${bindir}/lmp-update-hostname
+	install -m 0755 ${UNPACKDIR}/lmp-update-hostname.sh ${D}${bindir}/lmp-update-hostname
 
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${B}/lmp-auto-hostname.service ${D}${systemd_system_unitdir}

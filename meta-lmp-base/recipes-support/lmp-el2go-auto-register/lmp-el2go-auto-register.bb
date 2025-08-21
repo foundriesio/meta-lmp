@@ -10,8 +10,6 @@ SRC_URI = "git://github.com/foundriesio/lmp-el2go-auto-register.git;protocol=htt
 "
 SRCREV = "302d47ee8e8daaa3febbfe3b4b27f80d16bb4aee"
 
-S = "${WORKDIR}/git"
-
 RDEPENDS:${PN} += "python3-core opensc fio-se05x-cli"
 
 inherit systemd

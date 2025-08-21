@@ -29,9 +29,9 @@ do_install:append:lmp-wayland() {
     install -d ${D}${datadir}/weston/icon
     install -d ${D}${nonarch_libdir}/tmpfiles.d
 
-    install -m 0644 ${WORKDIR}/utilities-terminal.png ${D}${datadir}/weston/icon/utilities-terminal.png
-    install -m 0644 ${WORKDIR}/background.jpg ${D}${datadir}/weston/backgrounds/background.jpg
-    install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/weston.conf
+    install -m 0644 ${UNPACKDIR}/utilities-terminal.png ${D}${datadir}/weston/icon/utilities-terminal.png
+    install -m 0644 ${UNPACKDIR}/background.jpg ${D}${datadir}/weston/backgrounds/background.jpg
+    install -m 0644 ${UNPACKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/weston.conf
 
     for assignment in ${INI_UNCOMMENT_ASSIGNMENTS}; do
         uncomment "$assignment" ${D}${sysconfdir}/xdg/weston/weston.ini

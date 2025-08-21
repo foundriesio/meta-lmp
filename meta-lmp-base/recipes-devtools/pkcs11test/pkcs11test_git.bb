@@ -7,8 +7,6 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 SRC_URI = "git://github.com/foundriesio/pkcs11test.git;protocol=https;branch=dev"
 SRCREV = "57e1652b1995566e3f33bfa955856d7d0797cc83"
 
-S = "${WORKDIR}/git"
-
 do_compile() {
     oe_runmake
 }

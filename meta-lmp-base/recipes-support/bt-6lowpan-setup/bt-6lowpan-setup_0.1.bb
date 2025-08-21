@@ -30,7 +30,7 @@ do_install() {
 		install -m 0644 ${B}/bt-6lowpan.network ${D}${systemd_unitdir}/network/60-bt-6lowpan.network
 	fi
 	install -d ${D}${libdir}/modules-load.d
-	install -m 0644 ${WORKDIR}/modules-6lowpan.conf ${D}${libdir}/modules-load.d/6lowpan.conf
+	install -m 0644 ${UNPACKDIR}/modules-6lowpan.conf ${D}${libdir}/modules-load.d/6lowpan.conf
 }
 
 FILES:${PN} += "${libdir}/modules-load.d"

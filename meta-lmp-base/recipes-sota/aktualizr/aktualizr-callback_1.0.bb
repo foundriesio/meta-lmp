@@ -10,11 +10,13 @@ SRC_URI = "\
     file://callback-handler \
 "
 
+S = "${UNPACKDIR}"
+
 do_install() {
     install -m 0700 -d ${D}${libdir}/sota/conf.d
     install -m 0755 -d ${D}${bindir}
-    install -m 0644 ${WORKDIR}/90-handle-callback.toml ${D}${libdir}/sota/conf.d/90-handle-callback.toml
-    install -m 0755 ${WORKDIR}/callback-handler ${D}${bindir}/callback-handler
+    install -m 0644 ${UNPACKDIR}/90-handle-callback.toml ${D}${libdir}/sota/conf.d/90-handle-callback.toml
+    install -m 0755 ${UNPACKDIR}/callback-handler ${D}${bindir}/callback-handler
 }
 
 FILES:${PN} = " \

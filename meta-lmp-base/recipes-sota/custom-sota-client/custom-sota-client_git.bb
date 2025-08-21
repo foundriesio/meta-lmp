@@ -13,8 +13,6 @@ SRC_URI = "\
 BRANCH = "main"
 SRCREV = "7055c9a34297de50ab22e6b94e258d4e149c7455"
 
-S = "${WORKDIR}/git"
-
 DEPENDS = "jsoncpp boost aktualizr"
 
 SYSTEMD_PACKAGES += "${PN}"

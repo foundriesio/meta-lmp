@@ -8,8 +8,6 @@ DEPENDS = "optee-os-tadevkit optee-client"
 SRC_URI = "git://github.com/foundriesio/optee-se050-pkcs11-import.git;protocol=https;branch=main"
 SRCREV = "575c71c4c5cb7b7273232e55b776f6ce984b4e67"
 
-S = "${WORKDIR}/git"
-
 TEEC_EXPORT = "${STAGING_DIR_HOST}${prefix}"
 EXTRA_OEMAKE = "TEEC_EXPORT=${TEEC_EXPORT}"
 

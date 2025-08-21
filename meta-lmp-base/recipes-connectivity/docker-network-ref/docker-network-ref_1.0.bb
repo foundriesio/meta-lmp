@@ -18,14 +18,14 @@ DOCKER_NETWORK_NAME ?= "docker-network-ref"
 
 do_compile() {
     sed -e 's|@@DOCKER_NETWORK_NAME@@|${DOCKER_NETWORK_NAME}|g' \
-        ${WORKDIR}/create-docker-ref-network.sh.in > ${WORKDIR}/create-docker-ref-network.sh
+        ${UNPACKDIR}/create-docker-ref-network.sh.in > ${B}/create-docker-ref-network.sh
 }
 
 do_install() {
     install -d ${D}${systemd_unitdir}/system
-    install -m 0644 ${S}/docker-network-ref.service ${D}${systemd_unitdir}/system
+    install -m 0644 ${UNPACKDIR}/docker-network-ref.service ${D}${systemd_unitdir}/system
     install -d ${D}${sbindir}
-    install -m 0755 ${S}/create-docker-ref-network.sh ${D}${sbindir}/
+    install -m 0755 ${B}/create-docker-ref-network.sh ${D}${sbindir}/
 }
 
 FILES:${PN} = " \

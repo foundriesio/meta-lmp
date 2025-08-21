@@ -11,12 +11,14 @@ SRC_URI = " \
     file://${IMA_POLICY} \
 "
 
+S = "${UNPACKDIR}"
+
 inherit features_check
 REQUIRED_DISTRO_FEATURES = "ima"
 
 do_install () {
     install -d ${D}/${sysconfdir}/ima
-    install ${WORKDIR}/${IMA_POLICY}  ${D}/${sysconfdir}/ima/ima-policy
+    install ${UNPACKDIR}/${IMA_POLICY}  ${D}/${sysconfdir}/ima/ima-policy
 }
 
 FILES:${PN} = "${sysconfdir}/ima"

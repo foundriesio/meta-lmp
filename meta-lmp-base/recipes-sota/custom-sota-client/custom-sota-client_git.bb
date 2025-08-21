@@ -1,7 +1,7 @@
 DESCRIPTION = "Custom SOTA Client example based on the aktualizr-lite C++ API"
 SECTION = "base"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=504a5c2455c8bb2fc5b7667833ab1a68"
+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=504a5c2455c8bb2fc5b7667833ab1a68"
 
 inherit pkgconfig cmake systemd
 
@@ -21,7 +21,7 @@ SYSTEMD_SERVICE:${PN} = "${PN}.service"
 do_install:append() {
     install -d ${D}${sysconfdir}/sota/conf.d/
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/systemd.service ${D}${systemd_system_unitdir}/${PN}.service
+    install -m 0644 ${UNPACKDIR}/systemd.service ${D}${systemd_system_unitdir}/${PN}.service
 }
 
 FILES:${PN} += "\

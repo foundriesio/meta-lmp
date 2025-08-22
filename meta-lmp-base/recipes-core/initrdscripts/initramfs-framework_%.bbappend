@@ -7,7 +7,6 @@ SRC_URI:append = " \
 	file://ostree \
 	file://ostree_factory_reset \
 	file://ostree_recovery \
-	file://run-tmpfs.patch \
 "
 
 PACKAGES:append = " \

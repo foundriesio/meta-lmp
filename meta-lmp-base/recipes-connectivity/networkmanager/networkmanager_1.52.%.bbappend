@@ -11,3 +11,6 @@ do_install:append() {
 	# NM is able to create /var/lib/NetworkManager on runtime
 	(cd ${D}${localstatedir}; rmdir -v --parents lib/NetworkManager)
 }
+
+# FIXME: drop me on 1.54
+CFLAGS += "-Wno-error=incompatible-pointer-types"

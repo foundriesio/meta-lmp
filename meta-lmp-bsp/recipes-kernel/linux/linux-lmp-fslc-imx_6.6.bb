@@ -20,7 +20,6 @@ SRC_URI += " \
     file://0002-FIO-toup-media-Kconfig-fix-double-VIDEO_DEV.patch \
     file://0003-FIO-toup-gpu-drm-cadence-select-hdmi-helper.patch \
     file://0004-FIO-toup-media-imx8-select-v4l2_-for-mxc-mipi-csi2_y.patch \
-    file://0001-FIO-toimx-firmware-se_fw-remove-info_list-from-ro-section.patch \
     file://0001-net-enetc-Use-IRQF_NO_AUTOEN-flag-in-request_irq.patch \
     file://0001-clk-imx-imx6ul-fix-default-parent-for-enet-_ref_sel.patch \
 "

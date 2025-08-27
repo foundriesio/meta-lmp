@@ -10,7 +10,6 @@ require optee-fio.inc
 SRC_URI = "git://github.com/foundriesio/optee-sks.git;protocol=https;branch=master"
 SRCREV = "048c0cad8449e31d5b495a228a6bd4a2e5cc71f5"
 
-S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

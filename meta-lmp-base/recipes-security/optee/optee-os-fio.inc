@@ -24,7 +24,6 @@ SRCBRANCH ?= "master"
 OPTEE_OS_REPO ?= "git://github.com/foundriesio/optee_os.git"
 SRC_URI = "${OPTEE_OS_REPO};protocol=https;name=optee-os-fio;branch=${SRCBRANCH}"
 
-S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 
 PKCS11_TA_HEAP_SIZE ??= "65536"

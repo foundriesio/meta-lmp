@@ -104,7 +104,7 @@ QB_OPT_APPEND:qemuarm = "-no-acpi -bios ${DEPLOY_DIR_IMAGE}/u-boot.bin -d unimp"
 
 # ARM64 Generic (SystemReady)
 OSTREE_BOOTLOADER:generic-arm64 ?= "grub"
-MACHINE_FEATURES:append:generic-arm64 = " acpi pci usbhost"
+MACHINE_FEATURES:append:generic-arm64 = " acpi pci usbhost tpm2"
 EFI_PROVIDER:generic-arm64 ?= "grub-efi"
 WKS_FILE:generic-arm64:sota ?= "image-efi-installer-grub.wks.in"
 WKS_FILE_DEPENDS:append:generic-arm64 = " ${INITRD_IMAGE_LIVE}"

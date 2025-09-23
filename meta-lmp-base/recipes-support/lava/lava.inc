@@ -12,7 +12,7 @@ _BPN = "${@d.getVar('BPN').replace('-','_')}"
 
 inherit allarch bin_package python3-dir
 
-S = "${WORKDIR}/${BPN}"
+S = "${UNPACKDIR}/${BPN}"
 
 do_install:append() {
     # fix python libdir

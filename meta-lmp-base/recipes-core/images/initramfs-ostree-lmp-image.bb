@@ -35,7 +35,7 @@ IMAGE_CLASSES:remove = "image_repo_manifest"
 # avoid circular dependencies
 EXTRA_IMAGEDEPENDS = ""
 
-inherit core-image nopackages
+inherit core-image
 
 IMAGE_ROOTFS_SIZE = "8192"
 
@@ -46,5 +46,4 @@ IMAGE_OVERHEAD_FACTOR = "1.0"
 
 BAD_RECOMMENDATIONS += "busybox-syslog"
 
-SSTATE_SKIP_CREATION:task-image-qa = "0"
-SSTATE_SKIP_CREATION:task-image-complete = "0"
+require recipes-samples/images/lmp-feature-initramfs.inc

@@ -90,24 +90,12 @@ OBJCOPY:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}objcopy"
 # kernel recipes to avoid building errors like:
 # aarch64-lmp-linux-llvm-strip: error: Link field value 30 in section .rela.dyn is not a symbol table
 # do_assemble_fitimage.520200: 841: arm-lmp-linux-gnueabi-llvm-objcopy: not found
-OBJCOPY:pn-linux-lmp-dev-mfgtool:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-dev-mfgtool:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-dev:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-dev:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-ea-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-ea-imx:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-toradex-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-toradex-imx:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-fslc-imx:toolchain-clang = "${HOST_PREFIX}strip"
-OBJCOPY:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
-STRIP:pn-linux-lmp-fslc-imx-rt:toolchain-clang = "${HOST_PREFIX}strip"
 
 # use gcc for now as it fail with clang with some compile errors:
 # error: passing 'unsigned int *' to parameter of type 'int *' converts between pointers to integer types with different sign [-Werror,-Wpointer-sign]
@@ -130,17 +118,8 @@ TOOLCHAIN:pn-optee-examples = "gcc"
 ## clang only works with debug mode (not release)
 TOOLCHAIN:pn-edk2-firmware = "gcc"
 
-# imx8mm-lpddr4-evk-sec
-# imx8mp-lpddr4-evk-sec
 #  /srv/oe/build/conf/../../layers/meta-lmp/meta-lmp-base/recipes-security/optee/optee-fiovb_git.bb:do_compile
 TOOLCHAIN:pn-optee-fiovb = "gcc"
-
-# lmp-mfgtool distro
-TOOLCHAIN:pn-optee-os-fio-mfgtool = "gcc"
-
-# imx targets (not reproducible)
-TOOLCHAIN:pn-imx-atf = "gcc"
-TOOLCHAIN:pn-qoriq-atf = "gcc"
 
 TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 
@@ -163,10 +142,6 @@ TOOLCHAIN:pn-runc-opencontainers = "gcc"
 
 # U-boot does compile with clang but clang-15 crashes compiling it :(
 TOOLCHAIN:pn-u-boot-fio = "gcc"
-TOOLCHAIN:pn-u-boot-fio-mfgtool = "gcc"
-
-# isp-imx fails to build with clang
-TOOLCHAIN:pn-isp-imx = "gcc"
 
 # zmq_bind missing when built with clang, causing crashes at runtime
 TOOLCHAIN:pn-zeromq = "gcc"

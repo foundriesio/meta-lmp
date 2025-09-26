@@ -14,7 +14,7 @@ SRC_URI = "${UBOOT_REPO};protocol=https;branch=${SRCBRANCH} \
     file://fw_env.config \
 "
 
-# Handle lmp / lmp-mfgtool distro configs set
+# Handle lmp distro configs set
 SRC_URI:append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'ebbr', 'file://lmp-ebbr-common.cfg', 'file://lmp-common.cfg', d)} \
     ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', '', 'file://lmp-common-nosec.cfg', d)} \

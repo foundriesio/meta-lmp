@@ -8,7 +8,7 @@ PREFERRED_PROVIDER_u-boot-default-script:beaglebone-yocto = "u-boot-ostree-scr-f
 SOTA_CLIENT_FEATURES:append:beaglebone-yocto = " ubootenv"
 OSTREE_KERNEL_ARGS:beaglebone-yocto ?= "console=ttyS0,115200n8 ${OSTREE_KERNEL_ARGS_COMMON}"
 DTB_FILES:append:beaglebone-yocto = " am335x-boneblack-wireless.dtb"
-IMAGE_BOOT_FILES:beaglebone-yocto = "u-boot.img MLO boot.itb"
+IMAGE_BOOT_FILES:beaglebone-yocto = "u-boot.img MLO boot.itb ${KERNEL_IMAGETYPE}"
 KERNEL_IMAGETYPE:beaglebone-yocto = "fitImage"
 KERNEL_CLASSES:beaglebone-yocto = " kernel-lmp-fitimage "
 UBOOT_ENTRYPOINT:beaglebone-yocto = "0x80008000"

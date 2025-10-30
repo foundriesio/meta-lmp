@@ -132,18 +132,3 @@ WKS_FILE_DEPENDS_BOOTLOADERS:remove:intel-corei7-64 = "grub-efi"
 ## wic-based installer requires image to be available via IMAGE_BOOT_FILES
 IMAGE_BOOT_FILES:intel-corei7-64 = "${@bb.utils.contains('WKS_FILE', 'image-efi-installer.wks.in', 'systemd-bootx64.efi;EFI/BOOT/bootx64.efi systemd-bootx64.efi;EFI/systemd/systemd-bootx64.efi ${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ota-ext4;rootfs.img', '', d)}"
 IMAGE_EFI_BOOT_FILES:append:intel-corei7-64 = "${@bb.utils.contains('UEFI_SIGN_ENABLE', '1', ' lockdown.conf;loader/entries/doprovision_lock+0.conf unlock.conf;loader/entries/doprovision_unlock+0.conf LockDown.efi UnLock-signed.efi ${@make_efi_cer_boot_files(d)} ', '', d)}"
-
-
-# Allwinner (sun8i)
-PREFERRED_PROVIDER_virtual/bootloader:sun8i = "u-boot-fio"
-PREFERRED_PROVIDER_u-boot:sun8i = "u-boot-fio"
-UBOOT_ENTRYPOINT:sun8i = "0x42000000"
-WKS_FILE_DEPENDS:append:sun8i = " u-boot-default-script"
-PREFERRED_PROVIDER_u-boot-default-script:sun8i = "u-boot-ostree-scr-fit"
-IMAGE_BOOT_FILES:sun8i = "boot.itb"
-KERNEL_IMAGETYPE:sun8i = "fitImage"
-KERNEL_CLASSES:sun8i = " kernel-lmp-fitimage "
-WKS_FILES:sota:sun8i = "sdimage-sunxi-sota.wks.in"
-IMAGE_FSTYPES:remove:sun8i = "sunxi-sdimg"
-SOTA_CLIENT_FEATURES:append:sun8i = " ubootenv"
-OSTREE_KERNEL_ARGS:sun8i ?= "earlycon console=ttyS0,115200 ${OSTREE_KERNEL_ARGS_COMMON}"

@@ -6,13 +6,11 @@ inherit allarch
 
 SRC_URI = "file://sysctl-panic.conf"
 
-S = "${WORKDIR}"
-
-PACKAGE_ARCH = "${MACHINE_ARCH}"
+S = "${UNPACKDIR}"
 
 do_install () {
 	install -d ${D}${libdir}/sysctl.d
-	install -m 0644 ${WORKDIR}/sysctl-panic.conf ${D}${libdir}/sysctl.d/60-panic.conf
+	install -m 0644 ${UNPACKDIR}/sysctl-panic.conf ${D}${libdir}/sysctl.d/60-panic.conf
 }
 
 FILES:${PN} += "${libdir}/sysctl.d/60-panic.conf"

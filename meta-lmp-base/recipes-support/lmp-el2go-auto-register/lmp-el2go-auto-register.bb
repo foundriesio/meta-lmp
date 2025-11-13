@@ -10,8 +10,6 @@ SRC_URI = "git://github.com/foundriesio/lmp-el2go-auto-register.git;protocol=htt
 "
 SRCREV = "302d47ee8e8daaa3febbfe3b4b27f80d16bb4aee"
 
-S = "${WORKDIR}/git"
-
 RDEPENDS:${PN} += "python3-core opensc fio-se05x-cli"
 
 inherit systemd
@@ -24,7 +22,7 @@ do_install() {
 	install -d ${D}${bindir}
 	install -m 0755 ${S}/lmp-el2go-auto-register ${D}${bindir}
 	install -d ${D}${sysconfdir}/default
-	install -m 0644 ${WORKDIR}/default.env ${D}${sysconfdir}/default/lmp-el2go-auto-register
+	install -m 0644 ${UNPACKDIR}/default.env ${D}${sysconfdir}/default/lmp-el2go-auto-register
 	install -d ${D}${datadir}/lmp-el2go-auto-register
-	install -m 0644 ${WORKDIR}/root.crt ${D}${datadir}/lmp-el2go-auto-register
+	install -m 0644 ${UNPACKDIR}/root.crt ${D}${datadir}/lmp-el2go-auto-register
 }

@@ -6,13 +6,13 @@ inherit allarch
 
 SRC_URI = "file://sysctl-net-queuing.conf"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 do_install () {
 	install -d ${D}${libdir}/sysctl.d
-	install -m 0644 ${WORKDIR}/sysctl-net-queuing.conf ${D}${libdir}/sysctl.d/90-net-queuing.conf
+	install -m 0644 ${UNPACKDIR}/sysctl-net-queuing.conf ${D}${libdir}/sysctl.d/90-net-queuing.conf
 }
 
 FILES:${PN} += "${libdir}/sysctl.d/90-net-queuing.conf"

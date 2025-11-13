@@ -27,7 +27,6 @@ SRC_URI:remove:lmp-base = "file://lmp.cfg"
 SRC_URI:remove:lmp-base = "file://lmp-common.cfg"
 SRC_URI:remove:lmp-base = "file://lmp-common-nosec.cfg"
 
-S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 do_configure[cleandirs] = "${B}"
 

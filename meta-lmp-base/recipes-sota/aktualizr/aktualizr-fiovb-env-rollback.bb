@@ -10,11 +10,11 @@ SRC_URI = "file://sota-fiovb-env.toml"
 
 PV = "1.0"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
     install -m 0700 -d ${D}${libdir}/sota/conf.d
-    install -m 0644 ${WORKDIR}/sota-fiovb-env.toml ${D}${libdir}/sota/conf.d/30-rollback.toml
+    install -m 0644 ${UNPACKDIR}/sota-fiovb-env.toml ${D}${libdir}/sota/conf.d/30-rollback.toml
 }
 
 FILES:${PN} = " \

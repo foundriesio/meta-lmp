@@ -1,11 +1,12 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-BRANCH:lmp = "v95"
-SRCREV:lmp = "6cda15b76d18a186434c75762785f6bb7d33ee93"
+BRANCH:lmp = "master"
+SRCREV:lmp = "c01c39aa24ceb54d32c25aaa6ff33182038f3876"
 
 SRC_URI:remove:lmp = "gitsm://github.com/uptane/aktualizr;branch=${BRANCH};name=aktualizr;protocol=https"
 SRC_URI:append:lmp = " \
     gitsm://github.com/foundriesio/aktualizr-lite;protocol=https;branch=${BRANCH};name=aktualizr \
+    file://0001-CMakeLists.txt-Boost.System-is-now-header-only.patch;patchdir=aktualizr \
     file://aktualizr-lite.service.in \
     file://tmpfiles.conf \
     "
@@ -36,7 +37,7 @@ do_configure:prepend:lmp() {
 do_compile:append:lmp() {
     sed -e 's|@@COMPOSE_HTTP_TIMEOUT@@|${COMPOSE_HTTP_TIMEOUT}|g' \
         -e 's|@@DOCKER_CRED_HELPER_CFG@@|${DOCKER_CRED_HELPER_CFG}|g' \
-        ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
+        ${UNPACKDIR}/aktualizr-lite.service.in > ${UNPACKDIR}/aktualizr-lite.service
 }
 
 do_install:prepend:lmp() {
@@ -55,9 +56,9 @@ do_install:prepend:lmp() {
 
 do_install:append:lmp() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
     install -d ${D}${nonarch_libdir}/tmpfiles.d
-    install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
+    install -m 0644 ${UNPACKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
 }
 
 PACKAGES += "${PN}-get \
@@ -77,8 +78,8 @@ FILES:${PN}-lite-dev = "${includedir}/${PN}-lite"
 FILES:${PN}-lite-offline = "${bindir}/aklite-offline"
 
 # Force same RDEPENDS, packageconfig rdepends common to both
-RDEPENDS:${PN}-lite = "\
+RDEPENDS:${PN}-lite:class-target = "\
     ${RDEPENDS:aktualizr} \
     ${@bb.utils.contains('PACKAGECONFIG', 'aklite-offline', '${PN}-lite-offline', '', d)} \
 "
-RDEPENDS:${PN}-lite-lib = "${RDEPENDS:aktualizr} composectl"
+RDEPENDS:${PN}-lite-lib:class-target = "${RDEPENDS:aktualizr} composectl"

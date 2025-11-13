@@ -7,7 +7,9 @@ DEPENDS = "boost curl glib-2.0 libp11 openssl"
 
 SRCREV = "2557b25bedd47315dec47a01f09d27b979e84569"
 
-SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https;branch=main"
+SRC_URI = "git://github.com/foundriesio/lmp-device-register.git;protocol=https;branch=main \
+           file://0001-CMakeLists.txt-Boost.System-is-now-header-only.patch \
+           file://0001-pkcs11-make-code-compatible-with-libp11-0.4.16.patch"
 
 LMP_DEVICE_API ?= "https://api.foundries.io/ota/devices/"
 LMP_OAUTH_API ?= "https://app.foundries.io/oauth"
@@ -15,8 +17,6 @@ LMP_OAUTH_API ?= "https://app.foundries.io/oauth"
 PACKAGECONFIG ?= "composeapp"
 PACKAGECONFIG[composeapp] = "-DDOCKER_COMPOSE_APP=ON,-DDOCKER_COMPOSE_APP=OFF,"
 PACKAGECONFIG[production] = "-DPRODUCTION=ON,-DPRODUCTION=OFF,"
-
-S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
 

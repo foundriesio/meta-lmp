@@ -1,0 +1,32 @@
+From f7628818792da64defbb5226fe770c89109fdc03 Mon Sep 17 00:00:00 2001
+From: Jose Quaresma <jose.quaresma@foundries.io>
+Date: Tue, 9 Sep 2025 18:31:56 +0100
+Subject: [PATCH] CMakeLists.txt: Boost.System is now header-only
+
+In Boost 1.89.0 release, Boost.System stub library has been removed.
+
+Ref: https://github.com/boostorg/system/commit/7a495bb46d7ccd808e4be2a6589260839b0fd3a3
+
+Upstream-Status: Submitted [https://github.com/foundriesio/lmp-device-register/pull/63]
+
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1090198..6c44e79 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -54,7 +54,7 @@ add_definitions('-Wall')
+ 
+ # find all required libraries
+ set(Boost_USE_STATIC_LIBS ON)
+-find_package(Boost COMPONENTS filesystem iostreams program_options system REQUIRED)
++find_package(Boost COMPONENTS filesystem iostreams program_options REQUIRED)
+ find_package(CURL REQUIRED)
+ find_package(PkgConfig REQUIRED)
+ find_package(OpenSSL 3.0.0 REQUIRED)
+-- 
+2.51.0
+

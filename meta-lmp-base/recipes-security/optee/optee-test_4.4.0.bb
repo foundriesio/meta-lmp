@@ -5,3 +5,5 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=a8fa504109e4cd7ea575bc49ea4be560"
 
 # Due OpenSSL 3.0 deprecated warnings
 CFLAGS += "-Wno-error=deprecated-declarations"
+# error: initializer-string for array of 'unsigned char' truncates NUL terminator but destination lacks 'nonstring' attribute
+CFLAGS += "-Wno-error=unterminated-string-initialization"

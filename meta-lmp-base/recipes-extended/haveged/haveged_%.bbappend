@@ -5,5 +5,8 @@ SRC_URI:append = " \
 "
 
 do_install:append() {
-    install -m 0644 ${WORKDIR}/haveged.service ${D}${systemd_system_unitdir}/
+    install -d ${D}${systemd_system_unitdir}
+    install -m 0644 ${UNPACKDIR}/haveged.service ${D}${systemd_system_unitdir}
 }
+
+FILES:${PN} += "${systemd_system_unitdir}"

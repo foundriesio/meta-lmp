@@ -1,4 +1,4 @@
-DISTRO_VERSION = "5.0.9"
+DISTRO_VERSION = "5.2"
 
 # These default to 'oecore' and 'nodistro'
 SDK_NAME_PREFIX = "${DISTRO}"
@@ -10,8 +10,6 @@ TARGET_VENDOR = "-lmp"
 
 LMP_FACTORY ?= "lmp"
 SPDX_ORG = "Foundries.IO (factory ${LMP_FACTORY})"
-
-TCLIBCAPPEND = ""
 
 require conf/distro/include/arm-defaults.inc
 require conf/distro/include/non-clangable.inc
@@ -37,9 +35,6 @@ PREFERRED_PROVIDER_nativesdk-zlib ?= "nativesdk-zlib"
 PREFERRED_PROVIDER_qemu-native ?= "qemu-native"
 PREFERRED_PROVIDER_qemu-helper-native ?= "qemu-helper-native"
 PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
-
-PREFERRED_VERSION_gcc-arm-none-eabi ?= "11"
-PREFERRED_VERSION_gcc-arm-none-eabi-native ?= "11"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"
@@ -96,18 +91,6 @@ INHERIT += "lmp"
 INHERIT += "lmp-signing"
 INHERIT += "lmp-staging"
 INHERIT += "uninative"
-
-# Clang toolchain
-TOOLCHAIN ?= "clang"
-RUNTIME = "llvm"
-# use llvm provided by clang
-# https://github.com/kraj/meta-clang/pull/799/files
-PREFERRED_PROVIDER_llvm = "clang"
-PREFERRED_PROVIDER_llvm-native = "clang-native"
-PREFERRED_PROVIDER_nativesdk-llvm = "nativesdk-clang"
-PROVIDES:pn-clang = "llvm"
-PROVIDES:pn-clang-native = "llvm-native"
-PROVIDES:pn-nativesdk-clang = "nativesdk-llvm"
 
 PREMIRRORS += "\
      git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \

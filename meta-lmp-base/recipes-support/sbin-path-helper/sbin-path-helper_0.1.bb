@@ -6,14 +6,12 @@ inherit allarch
 
 SRC_URI = "file://path-sbin.sh"
 
-S = "${WORKDIR}"
-
-PACKAGE_ARCH = "${MACHINE_ARCH}"
+S = "${UNPACKDIR}"
 
 do_install () {
 	# Useful for development
 	install -d ${D}${sysconfdir}/profile.d
-	install -m 0644 ${WORKDIR}/path-sbin.sh ${D}${sysconfdir}/profile.d/path-sbin.sh
+	install -m 0644 ${UNPACKDIR}/path-sbin.sh ${D}${sysconfdir}/profile.d/path-sbin.sh
 }
 
 FILES:${PN} += "${sysconfdir}/profile.d/path-sbin.sh"

@@ -1,4 +1,4 @@
-DISTRO_VERSION = "5.0.9"
+DISTRO_VERSION = "5.2"
 
 # These default to 'oecore' and 'nodistro'
 SDK_NAME_PREFIX = "${DISTRO}"
@@ -10,8 +10,6 @@ TARGET_VENDOR = "-lmp"
 
 LMP_FACTORY ?= "lmp"
 SPDX_ORG = "Foundries.IO (factory ${LMP_FACTORY})"
-
-TCLIBCAPPEND = ""
 
 require conf/distro/include/arm-defaults.inc
 require conf/distro/include/non-clangable.inc

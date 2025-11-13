@@ -1,12 +1,12 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append = " \
-    file://dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
-    file://cli-config-support-default-system-config.patch;patchdir=cli \
-    file://increase_containerd_timeouts.patch \
-    file://0001-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
-    file://0001-layer-ensure-layer-files-are-synced-to-disk.patch;patchdir=src/import \
-    file://0001-tarexport-optimize-image-loading-on-local-host.patch;patchdir=src/import \
+    file://0001-cli-config-support-default-system-config.patch;patchdir=cli \
+    file://0001-dockerd-daemon-use-default-system-config-when-none-i.patch;patchdir=src/import \
+    file://0002-remote_daemon-increase-containerd-default-timeouts.patch;patchdir=src/import \
+    file://0003-registry-increase-TLS-and-connection-timeouts.patch;patchdir=src/import \
+    file://0004-layer-Ensure-layer-files-are-synced-to-disk.patch;patchdir=src/import \
+    file://0005-tarexport-Optimize-image-loading-on-local-host.patch;patchdir=src/import \
     file://daemon.json.in \
     file://docker.service \
 "
@@ -22,16 +22,16 @@ do_install:prepend() {
     sed -e 's/@@MAX_CONCURRENT_DOWNLOADS@@/${DOCKER_MAX_CONCURRENT_DOWNLOADS}/' \
         -e 's/@@MAX_DOWNLOAD_ATTEMPTS@@/${DOCKER_MAX_DOWNLOAD_ATTEMPTS}/' \
         -e 's/@@DOCKER_DAEMON_JSON_CUSTOM@@/${DOCKER_DAEMON_JSON_CUSTOM}/' \
-        ${WORKDIR}/daemon.json.in > ${WORKDIR}/daemon.json
+        ${UNPACKDIR}/daemon.json.in > ${UNPACKDIR}/daemon.json
 }
 
 do_install:append() {
     install -d ${D}${libdir}/docker
-    install -m 0644 ${WORKDIR}/daemon.json ${D}${libdir}/docker/
+    install -m 0644 ${UNPACKDIR}/daemon.json ${D}${libdir}/docker/
 
     # Replace default docker.service with the one provided by this recipe
     if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
-        install -m 644 ${WORKDIR}/docker.service ${D}/${systemd_unitdir}/system
+        install -m 644 ${UNPACKDIR}/docker.service ${D}/${systemd_unitdir}/system
     fi
 }
 

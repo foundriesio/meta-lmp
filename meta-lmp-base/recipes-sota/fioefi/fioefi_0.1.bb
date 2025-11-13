@@ -5,8 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 SRC_URI = "file://fioefi.sh.in"
 RDEPENDS:${PN} = " lmp-boot-firmware"
 
-S = "${WORKDIR}"
-B = "${WORKDIR}/build"
+S = "${UNPACKDIR}"
 
 do_compile() {
     # Check if the file wasn't created by soc-specific do_compile() prepend

@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-BRANCH:lmp = "v95"
-SRCREV:lmp = "6cda15b76d18a186434c75762785f6bb7d33ee93"
+BRANCH:lmp = "master"
+SRCREV:lmp = "a033708c6da8f8f2b5935b2fa3d8cfa3eb1f96f5"
 
 SRC_URI:remove:lmp = "gitsm://github.com/uptane/aktualizr;branch=${BRANCH};name=aktualizr;protocol=https"
 SRC_URI:append:lmp = " \
@@ -36,7 +36,7 @@ do_configure:prepend:lmp() {
 do_compile:append:lmp() {
     sed -e 's|@@COMPOSE_HTTP_TIMEOUT@@|${COMPOSE_HTTP_TIMEOUT}|g' \
         -e 's|@@DOCKER_CRED_HELPER_CFG@@|${DOCKER_CRED_HELPER_CFG}|g' \
-        ${WORKDIR}/aktualizr-lite.service.in > ${WORKDIR}/aktualizr-lite.service
+        ${UNPACKDIR}/aktualizr-lite.service.in > ${UNPACKDIR}/aktualizr-lite.service
 }
 
 do_install:prepend:lmp() {
@@ -55,9 +55,9 @@ do_install:prepend:lmp() {
 
 do_install:append:lmp() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/aktualizr-lite.service ${D}${systemd_system_unitdir}/
     install -d ${D}${nonarch_libdir}/tmpfiles.d
-    install -m 0644 ${WORKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
+    install -m 0644 ${UNPACKDIR}/tmpfiles.conf ${D}${nonarch_libdir}/tmpfiles.d/aktualizr-lite.conf
 }
 
 PACKAGES += "${PN}-get \

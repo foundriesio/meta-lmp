@@ -1,4 +1,4 @@
-From 70508880656b9232bb558fccfbf7909713e1215a Mon Sep 17 00:00:00 2001
+From 4f60f1d9cb2c30eb63fa873f8b13c48542c5d3a8 Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Wed, 1 Jun 2022 17:18:06 -0300
 Subject: [PATCH] Add support for directories instead of symbolic links in boot
@@ -25,7 +25,6 @@ Upstream-Status: Pending
 
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
-
 ---
  Makefile-tests.am                       |   4 +
  src/libostree/ostree-sysroot-deploy.c   | 117 ++++++-
@@ -44,10 +43,10 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  create mode 100755 tests/test-admin-deploy-dir-uboot.sh
 
 diff --git a/Makefile-tests.am b/Makefile-tests.am
-index eabd0462..86147358 100644
+index b482cb7..7ac6b82 100644
 --- a/Makefile-tests.am
 +++ b/Makefile-tests.am
-@@ -114,6 +114,10 @@ _installed_or_uninstalled_test_scripts = \
+@@ -115,6 +115,10 @@ _installed_or_uninstalled_test_scripts = \
  	tests/test-admin-deploy-grub2.sh \
  	tests/test-admin-deploy-nomerge.sh \
  	tests/test-admin-deploy-none.sh \
@@ -59,10 +58,10 @@ index eabd0462..86147358 100644
  	tests/test-admin-deploy-whiteouts.sh \
  	tests/test-admin-deploy-emptyetc.sh \
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index 0348fb41..99c894ab 100644
+index bca8b5a..7a9a105 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -2383,10 +2383,60 @@ prepare_new_bootloader_link (OstreeSysroot *sysroot, int current_bootversion, in
+@@ -2338,10 +2338,60 @@ prepare_new_bootloader_link (OstreeSysroot *sysroot, int current_bootversion, in
    return TRUE;
  }
  
@@ -125,7 +124,7 @@ index 0348fb41..99c894ab 100644
  {
    GLNX_AUTO_PREFIX_ERROR ("Final bootloader swap", error);
  
-@@ -2396,12 +2446,22 @@ swap_bootloader (OstreeSysroot *sysroot, OstreeBootloader *bootloader, int curre
+@@ -2351,12 +2401,22 @@ swap_bootloader (OstreeSysroot *sysroot, OstreeBootloader *bootloader, int curre
    if (!_ostree_sysroot_ensure_boot_fd (sysroot, error))
      return FALSE;
  
@@ -154,7 +153,7 @@ index 0348fb41..99c894ab 100644
  
    /* Now we explicitly fsync this directory, even though it
     * isn't required for atomicity, for two reasons:
-@@ -2613,13 +2673,50 @@ write_deployments_bootswap (OstreeSysroot *self, GPtrArray *new_deployments,
+@@ -2574,13 +2634,50 @@ write_deployments_bootswap (OstreeSysroot *self, GPtrArray *new_deployments,
          return glnx_prefix_error (error, "Bootloader write config");
      }
  
@@ -208,7 +207,7 @@ index 0348fb41..99c894ab 100644
  
    if (out_subbootdir)
 diff --git a/src/libostree/ostree-sysroot.c b/src/libostree/ostree-sysroot.c
-index a25d0b20..800bd21f 100644
+index 925c66a..2d823b0 100644
 --- a/src/libostree/ostree-sysroot.c
 +++ b/src/libostree/ostree-sysroot.c
 @@ -601,6 +601,12 @@ compare_loader_configs_for_sorting (gconstpointer a_pp, gconstpointer b_pp)
@@ -310,10 +309,10 @@ index a25d0b20..800bd21f 100644
  
    *out_bootversion = ret_bootversion;
 diff --git a/src/switchroot/ostree-prepare-root.c b/src/switchroot/ostree-prepare-root.c
-index b93e05c7..db565834 100644
+index 8e161be..b371d1c 100644
 --- a/src/switchroot/ostree-prepare-root.c
 +++ b/src/switchroot/ostree-prepare-root.c
-@@ -504,7 +504,7 @@ main (int argc, char *argv[])
+@@ -515,7 +515,7 @@ main (int argc, char *argv[])
     * at /boot inside the deployment. */
    if (snprintf (srcpath, sizeof (srcpath), "%s/boot/loader", root_mountpoint) < 0)
      err (EXIT_FAILURE, "failed to assemble /boot/loader path");
@@ -324,7 +323,7 @@ index b93e05c7..db565834 100644
          {
 diff --git a/tests/admin-test-dir.sh b/tests/admin-test-dir.sh
 new file mode 100644
-index 00000000..0a32c2f2
+index 0000000..0a32c2f
 --- /dev/null
 +++ b/tests/admin-test-dir.sh
 @@ -0,0 +1,407 @@
@@ -737,7 +736,7 @@ index 00000000..0a32c2f2
 +echo "ok fifreeze test"
 diff --git a/tests/test-admin-deploy-dir-grub2.sh b/tests/test-admin-deploy-dir-grub2.sh
 new file mode 100755
-index 00000000..79ca8ed7
+index 0000000..79ca8ed
 --- /dev/null
 +++ b/tests/test-admin-deploy-dir-grub2.sh
 @@ -0,0 +1,31 @@
@@ -774,7 +773,7 @@ index 00000000..79ca8ed7
 +. $(dirname $0)/admin-test-dir.sh
 diff --git a/tests/test-admin-deploy-dir-none.sh b/tests/test-admin-deploy-dir-none.sh
 new file mode 100755
-index 00000000..31b6e209
+index 0000000..31b6e20
 --- /dev/null
 +++ b/tests/test-admin-deploy-dir-none.sh
 @@ -0,0 +1,54 @@
@@ -834,7 +833,7 @@ index 00000000..31b6e209
 +#  ${CMD_PREFIX} ostree --repo=sysroot/ostree/repo config set sysroot.bootloader ""
 diff --git a/tests/test-admin-deploy-dir-syslinux.sh b/tests/test-admin-deploy-dir-syslinux.sh
 new file mode 100755
-index 00000000..1d2b7fd0
+index 0000000..1d2b7fd
 --- /dev/null
 +++ b/tests/test-admin-deploy-dir-syslinux.sh
 @@ -0,0 +1,72 @@
@@ -912,7 +911,7 @@ index 00000000..1d2b7fd0
 +echo "ok kernel in /usr/lib/modules and /usr/lib/ostree-boot"
 diff --git a/tests/test-admin-deploy-dir-uboot.sh b/tests/test-admin-deploy-dir-uboot.sh
 new file mode 100755
-index 00000000..febd6d41
+index 0000000..febd6d4
 --- /dev/null
 +++ b/tests/test-admin-deploy-dir-uboot.sh
 @@ -0,0 +1,80 @@

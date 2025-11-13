@@ -84,7 +84,7 @@ configure_rootfs_nss_altfiles () {
 fakeroot do_populate_rootfs_common_src () {
     mkdir -p ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d
     # Allow sudo group users to use sudo
-    install -m 0440 ${WORKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/50-lmp
+    install -m 0440 ${UNPACKDIR}/sudoers ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/50-lmp
 
     # Enable pam_mkhomedir (requires pam-plugin-mkhomedir to be installed)
     echo "session required pam_mkhomedir.so silent skel=/etc/skel/ umask=0022" >> ${IMAGE_ROOTFS}${sysconfdir}/pam.d/common-session
@@ -99,6 +99,11 @@ python () {
     # Ensure we run these usually noexec tasks
     d.delVarFlag("do_fetch", "noexec")
     d.delVarFlag("do_unpack", "noexec")
+}
+
+# ${S} doesn't exist for us
+do_qa_unpack() {
+    return
 }
 
 EXTRA_USERS_PARAMS = "\

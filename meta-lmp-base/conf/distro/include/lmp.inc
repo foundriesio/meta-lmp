@@ -95,6 +95,10 @@ INHERIT += "lmp-signing"
 INHERIT += "lmp-staging"
 INHERIT += "uninative"
 
+# OEEquivHash
+BB_SIGNATURE_HANDLER ?= "OEEquivHash"
+BB_HASHSERVE ??= "auto"
+
 # Clang toolchain
 TOOLCHAIN ?= "clang"
 RUNTIME = "llvm"

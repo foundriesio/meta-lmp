@@ -12,6 +12,10 @@ LMPSTAGING_LOCK_TO_AVOID_OOM = "clang-native rust-native rust-llvm-native"
 python __anonymous() {
     pn = d.getVar('PN')
 
+    if d.getVar('RM_WORK_EXCLUDE_ALL') != "":
+        d.delVarFlag('rm_work_rootfs', 'cleandirs')
+        d.delVarFlag('rm_work_populatesdk', 'cleandirs')
+
     if bb.data.inherits_class('module', d):
         d.appendVar('DEPENDS', ' virtual/kernel')
         if 'modsign' in d.getVar('DISTRO_FEATURES'):
@@ -25,6 +29,14 @@ python __anonymous() {
 }
 
 inherit_defer ${LMPSTAGING_INHERIT_KERNEL_MODSIGN}
+
+RM_WORK_EXCLUDE_ALL ?= ""
+do_rm_work:prepend () {
+    if [ "${RM_WORK_EXCLUDE_ALL}" != "" ]; then
+        bbnote "rm_work: Skipping as RM_WORK_EXCLUDE_ALL is defined"
+        exit 0
+     fi
+}
 
 BB_HASHCHECK_FUNCTION:lmp = "lmp_sstate_checkhashes"
 def lmp_sstate_checkhashes(sq_data, d, **kwargs):

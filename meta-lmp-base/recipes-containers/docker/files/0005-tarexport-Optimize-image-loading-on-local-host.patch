@@ -1,4 +1,4 @@
-From 36ffbfcba0e6f21678a355ba7804cb3d4bba75ab Mon Sep 17 00:00:00 2001
+From c0d93150360af6040c1ddad34bbfd49b6cf3c44b Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Fri, 22 Sep 2023 12:49:07 +0200
 Subject: [PATCH 5/5] tarexport: Optimize image loading on local host
@@ -27,14 +27,14 @@ Upstream-Status: Inappropriate [lmp specific]
 Signed-off-by: Mike <mike.sul@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
- image/tarexport/load.go      | 60 +++++++++++++++++++++++-------------
- image/tarexport/tarexport.go |  1 +
- 2 files changed, 39 insertions(+), 22 deletions(-)
+ daemon/internal/image/tarexport/load.go      | 58 +++++++++++++-------
+ daemon/internal/image/tarexport/tarexport.go |  1 +
+ 2 files changed, 38 insertions(+), 21 deletions(-)
 
-diff --git a/image/tarexport/load.go b/image/tarexport/load.go
-index 3713203cd1..9b500331e2 100644
---- a/image/tarexport/load.go
-+++ b/image/tarexport/load.go
+diff --git a/daemon/internal/image/tarexport/load.go b/daemon/internal/image/tarexport/load.go
+index 2d1efd20ac..26befbb71e 100644
+--- a/daemon/internal/image/tarexport/load.go
++++ b/daemon/internal/image/tarexport/load.go
 @@ -10,6 +10,7 @@ import (
  	"path/filepath"
  	"reflect"
@@ -43,7 +43,7 @@ index 3713203cd1..9b500331e2 100644
  
  	"github.com/containerd/containerd/v2/pkg/tracing"
  	"github.com/containerd/log"
-@@ -28,6 +29,7 @@ import (
+@@ -27,6 +28,7 @@ import (
  	"github.com/moby/sys/sequential"
  	"github.com/moby/sys/symlink"
  	"github.com/opencontainers/go-digest"
@@ -51,7 +51,7 @@ index 3713203cd1..9b500331e2 100644
  )
  
  func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream io.Writer, quiet bool) (outErr error) {
-@@ -77,8 +79,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -78,8 +80,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  	}
  
  	var parentLinks []parentLink
@@ -60,7 +60,7 @@ index 3713203cd1..9b500331e2 100644
  
  	for _, m := range manifest {
  		select {
-@@ -86,7 +86,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -87,7 +87,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  			return ctx.Err()
  		default:
  		}
@@ -69,7 +69,7 @@ index 3713203cd1..9b500331e2 100644
  		if err != nil {
  			return err
  		}
-@@ -117,7 +117,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -118,7 +118,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  				return ctx.Err()
  			default:
  			}
@@ -78,7 +78,7 @@ index 3713203cd1..9b500331e2 100644
  			if err != nil {
  				return err
  			}
-@@ -141,25 +141,30 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -142,25 +142,30 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  		if err != nil {
  			return err
  		}
@@ -119,7 +119,7 @@ index 3713203cd1..9b500331e2 100644
  	}
  
  	for _, p := range validatedParentLinks(parentLinks) {
-@@ -170,10 +175,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -171,10 +176,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  		}
  	}
  
@@ -130,7 +130,7 @@ index 3713203cd1..9b500331e2 100644
  	return nil
  }
  
-@@ -243,12 +244,19 @@ func (l *tarexporter) loadLayer(ctx context.Context, filename string, rootFS ima
+@@ -244,18 +245,33 @@ func (l *tarexporter) loadLayer(ctx context.Context, filename string, rootFS ima
  	return l.lss.Register(inflatedLayerData, rootFS.ChainID())
  }
  
@@ -152,17 +152,7 @@ index 3713203cd1..9b500331e2 100644
 +	return nil
  }
  
- func (l *tarexporter) legacyLoad(tmpDir string, outStream io.Writer, progressOutput progress.Output) error {
-@@ -302,7 +310,7 @@ func (l *tarexporter) legacyLoad(tmpDir string, outStream io.Writer, progressOut
- 			if err != nil {
- 				return err
- 			}
--			l.setLoadedTag(ref, imgID.Digest(), outStream)
-+			l.setLoadedNamedRef(ref, imgID.Digest(), outStream)
- 		}
- 	}
- 
-@@ -411,6 +419,14 @@ func safePath(base, path string) (string, error) {
+ func safePath(base, path string) (string, error) {
  	return symlink.FollowSymlinkInScope(filepath.Join(base, path), base)
  }
  
@@ -177,11 +167,11 @@ index 3713203cd1..9b500331e2 100644
  type parentLink struct {
  	id, parentID image.ID
  }
-diff --git a/image/tarexport/tarexport.go b/image/tarexport/tarexport.go
-index fad6e49bd6..29d4417747 100644
---- a/image/tarexport/tarexport.go
-+++ b/image/tarexport/tarexport.go
-@@ -25,6 +25,7 @@ type manifestItem struct {
+diff --git a/daemon/internal/image/tarexport/tarexport.go b/daemon/internal/image/tarexport/tarexport.go
+index 631b33f6a6..974a2d29f3 100644
+--- a/daemon/internal/image/tarexport/tarexport.go
++++ b/daemon/internal/image/tarexport/tarexport.go
+@@ -23,6 +23,7 @@ type manifestItem struct {
  	Layers       []string
  	Parent       image.ID                                 `json:",omitempty"`
  	LayerSources map[layer.DiffID]distribution.Descriptor `json:",omitempty"`
@@ -190,5 +180,5 @@ index fad6e49bd6..29d4417747 100644
  
  type tarexporter struct {
 -- 
-2.50.1
+2.52.0
 

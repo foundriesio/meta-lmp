@@ -1,4 +1,4 @@
-From 249cd116c3f94e6f9cdf4334a72ded8c079a4d29 Mon Sep 17 00:00:00 2001
+From d6b65b4d6929af8b1b9e0adaa4945dd1b4b7872c Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Mon, 3 Dec 2018 16:26:18 -0200
 Subject: [PATCH 1/5] dockerd: daemon: use default system config when none is
@@ -12,14 +12,14 @@ Upstream-Status: Pending
 Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
- cmd/dockerd/daemon.go | 6 ++++++
+ daemon/command/daemon.go | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/cmd/dockerd/daemon.go b/cmd/dockerd/daemon.go
-index 8e475d41f2..ce0c021072 100644
---- a/cmd/dockerd/daemon.go
-+++ b/cmd/dockerd/daemon.go
-@@ -554,6 +554,12 @@ func loadDaemonCliConfig(opts *daemonOptions) (*config.Config, error) {
+diff --git a/daemon/command/daemon.go b/daemon/command/daemon.go
+index d25c5b05b0..0b5c97a2df 100644
+--- a/daemon/command/daemon.go
++++ b/daemon/command/daemon.go
+@@ -551,6 +551,12 @@ func loadDaemonCliConfig(opts *daemonOptions) (*config.Config, error) {
  	}
  	opts.setDefaultOptions()
  
@@ -33,5 +33,5 @@ index 8e475d41f2..ce0c021072 100644
  	flags := opts.flags
  	conf.Debug = opts.Debug
 -- 
-2.50.1
+2.51.2
 

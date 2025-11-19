@@ -90,6 +90,8 @@ OBJCOPY:pn-mcumgr:toolchain-clang = "${HOST_PREFIX}objcopy"
 # kernel recipes to avoid building errors like:
 # aarch64-lmp-linux-llvm-strip: error: Link field value 30 in section .rela.dyn is not a symbol table
 # do_assemble_fitimage.520200: 841: arm-lmp-linux-gnueabi-llvm-objcopy: not found
+OBJCOPY:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}objcopy"
+STRIP:pn-linux-lmp-rpi:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}objcopy"
 STRIP:pn-linux-lmp-rt:toolchain-clang = "${HOST_PREFIX}strip"
 OBJCOPY:pn-linux-lmp:toolchain-clang = "${HOST_PREFIX}objcopy"

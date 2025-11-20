@@ -11,7 +11,7 @@ SRC_URI = "\
 "
 
 BRANCH = "main"
-SRCREV = "7055c9a34297de50ab22e6b94e258d4e149c7455"
+SRCREV = "f15dc438a31f7c7316d4f1ab08a58567bfd50fb3"
 
 S = "${WORKDIR}/git"
 

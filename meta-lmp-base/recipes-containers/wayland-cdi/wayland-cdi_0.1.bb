@@ -13,8 +13,8 @@ SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
 do_install() {
 	install -d ${D}${bindir}
-	install -m 0755 ${WORKDIR}/wayland-cdi-generate ${D}${bindir}/wayland-cdi-generate
+	install -m 0755 ${UNPACKDIR}/wayland-cdi-generate ${D}${bindir}/wayland-cdi-generate
 
 	install -d ${D}${systemd_system_unitdir}
-	install -m 0644 ${WORKDIR}/wayland-cdi.service ${D}${systemd_system_unitdir}
+	install -m 0644 ${UNPACKDIR}/wayland-cdi.service ${D}${systemd_system_unitdir}
 }

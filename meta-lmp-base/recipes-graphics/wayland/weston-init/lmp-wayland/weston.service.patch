@@ -1,16 +1,24 @@
 Upstream-Status: Inappropriate [lmp specific]
+---
+ weston.service | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- weston-init/weston.service	2021-07-28 20:36:49.967058683 -0300
-+++ weston-init/weston.service_new	2021-07-28 20:37:49.593091101 -0300
-@@ -34,7 +34,10 @@
+diff --git a/weston.service b/weston.service
+index b7e845e..0feb079 100644
+--- a/weston.service
++++ b/weston.service
+@@ -34,7 +34,10 @@ ConditionPathExists=/dev/tty0
  # Requires systemd-notify.so Weston plugin.
  Type=notify
- EnvironmentFile=/etc/default/weston
--ExecStart=/usr/bin/weston --modules=systemd-notify.so
-+ExecStart=/usr/bin/weston --modules=systemd-notify.so $OPTARGS
+ EnvironmentFile=@sysconfdir@/default/weston
+-ExecStart=@bindir@/weston --modules=systemd-notify.so
++ExecStart=@bindir@/weston --modules=systemd-notify.so $OPTARGS
 +
 +Restart=on-failure
 +RestartSec=10
  
  # Optional watchdog setup
  #TimeoutStartSec=60
+-- 
+2.52.0
+

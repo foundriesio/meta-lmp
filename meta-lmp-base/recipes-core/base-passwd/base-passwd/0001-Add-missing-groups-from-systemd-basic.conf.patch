@@ -1,4 +1,4 @@
-From 7298aab1a72023ca0658f848b37a498e170f2542 Mon Sep 17 00:00:00 2001
+From 065dc1f3a6d8938be22c0111332c4786d534f05c Mon Sep 17 00:00:00 2001
 From: Ricardo Salveti <ricardo@foundries.io>
 Date: Mon, 31 May 2021 17:51:16 -0300
 Subject: [PATCH] Add missing groups from systemd basic.conf
@@ -15,19 +15,20 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  1 file changed, 2 insertions(+)
 
 diff --git a/group.master b/group.master
-index e54fd1d..bddf72e 100644
+index a0f9daf..308eb66 100644
 --- a/group.master
 +++ b/group.master
-@@ -37,7 +37,9 @@ kvm:*:47:
+@@ -37,8 +37,10 @@ kvm:*:47:
  sgx:*:48:
  staff:*:50:
  games:*:60:
 +render:*:61:
  shutdown:*:70:
  wheel:*:80:
+ clock:*:81:
 +nobody:*:99:
  users:*:100:
  nogroup:*:65534:
 -- 
-2.34.1
+2.52.0
 

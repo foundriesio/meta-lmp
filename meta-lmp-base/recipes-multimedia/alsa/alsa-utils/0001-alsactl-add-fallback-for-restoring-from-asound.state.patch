@@ -1,4 +1,4 @@
-From 6bf5c56e692b66ce1e4705c15adc1ae9815dfccb Mon Sep 17 00:00:00 2001
+From 589b9a24d4975c3ab40fec215f288a99f05cfe75 Mon Sep 17 00:00:00 2001
 From: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Date: Thu, 23 Mar 2023 22:03:14 +0200
 Subject: [PATCH] alsactl: add fallback for restoring from asound.state
@@ -14,15 +14,27 @@ Upstream-Status: Pending
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
- alsactl/90-alsa-restore.rules.in | 3 +++
- alsactl/Makefile.am              | 1 +
- configure.ac                     | 6 ++++++
+ alsactl/Makefile.am                   | 1 +
+ alsactl/conf/90-alsa-restore.rules.in | 3 +++
+ configure.ac                          | 6 ++++++
  3 files changed, 10 insertions(+)
 
-diff --git a/alsactl/90-alsa-restore.rules.in b/alsactl/90-alsa-restore.rules.in
-index 5db6080..c4b9564 100644
---- a/alsactl/90-alsa-restore.rules.in
-+++ b/alsactl/90-alsa-restore.rules.in
+diff --git a/alsactl/Makefile.am b/alsactl/Makefile.am
+index 48b7c7a..0a0c4d8 100644
+--- a/alsactl/Makefile.am
++++ b/alsactl/Makefile.am
+@@ -53,6 +53,7 @@ edit = \
+ 		  -e 's,@asoundrcfile\@,$(ASOUND_STATE_DIR)/asound.state,g' \
+ 		  -e "s;@extratest\@;$${extratest};g" \
+ 		  -e "s;@args\@;$${args};g" \
++		  -e 's,@initasoundrcfile\@,$(INIT_ASOUND_STATE_DIR)/asound.state,g' \
+ 							< $< > $@ || rm $@
+ 
+ conf/alsa-state.service: conf/alsa-state.service.in
+diff --git a/alsactl/conf/90-alsa-restore.rules.in b/alsactl/conf/90-alsa-restore.rules.in
+index 6edf97a..47e05ad 100644
+--- a/alsactl/conf/90-alsa-restore.rules.in
++++ b/alsactl/conf/90-alsa-restore.rules.in
 @@ -24,6 +24,9 @@ IMPORT{program}="/usr/bin/cat /run/udev/alsa-hda-analog-card"
  ENV{ALSA_CARD_HDA_ANALOG}!="", ENV{ALSA_CARD_NUMBER}="$env{ALSA_CARD_HDA_ANALOG}"
  
@@ -30,23 +42,11 @@ index 5db6080..c4b9564 100644
 +
 +TEST!="@asoundrcfile@", TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl@args@ -f @initasoundrcfile@ nrestore $devnode", GOTO="alsa_restore_end"
 +TEST!="@asoundrcfile@", TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl@args@ -f @initasoundrcfile@ restore $devnode", GOTO="alsa_restore_end"
- TEST!="@daemonswitch@", RUN+="@sbindir@/alsactl@args@ restore $env{ALSA_CARD_NUMBER}"
- TEST=="@daemonswitch@", RUN+="@sbindir@/alsactl@args@ nrestore $env{ALSA_CARD_NUMBER}"
- 
-diff --git a/alsactl/Makefile.am b/alsactl/Makefile.am
-index e771717..8e529de 100644
---- a/alsactl/Makefile.am
-+++ b/alsactl/Makefile.am
-@@ -51,6 +51,7 @@ edit = \
- 		  -e 's,@asoundrcfile\@,$(ASOUND_STATE_DIR)/asound.state,g' \
- 		  -e "s;@extratest\@;$${extratest};g" \
- 		  -e "s;@args\@;$${args};g" \
-+		  -e 's,@initasoundrcfile\@,$(INIT_ASOUND_STATE_DIR)/asound.state,g' \
- 							< $< > $@ || rm $@
- 
- alsa-state.service: alsa-state.service.in
+ TEST!="@daemonswitch@", IMPORT{program}="@sbindir@/alsactl@args@ --export restore $env{ALSA_CARD_NUMBER}"
+ TEST=="@daemonswitch@", IMPORT{program}="@sbindir@/alsactl@args@ --export nrestore $env{ALSA_CARD_NUMBER}"
+ ENV{ALSA_CARD_STATE}=="waiting", ENV{SYSTEMD_WANTS}="alsa-card-wait@$env{ALSA_CARD_NUMBER}.service"
 diff --git a/configure.ac b/configure.ac
-index 5624add..463a1ea 100644
+index 0b6d82a..0816254 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -428,6 +428,12 @@ AC_ARG_WITH([asound-state-dir],
@@ -63,5 +63,5 @@ index 5624add..463a1ea 100644
          AS_HELP_STRING([--with-alsactl-lock-dir=DIR], [Directory to place lock files in]),
          [ASOUND_LOCK_DIR="$withval"],
 -- 
-2.49.0
+2.52.0
 

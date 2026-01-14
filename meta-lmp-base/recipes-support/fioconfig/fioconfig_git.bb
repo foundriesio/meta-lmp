@@ -17,6 +17,8 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod systemd
 
+# FIXME: Turning off the dynamic linkage is not needed with certain golang versions, e.g. 1.25.3
+GO_DYNLINK:forcevariable = ""
 # Extend from go.bbclass to include internal.Commit and tags
 GO_LDFLAGS += "-tags vpn"
 GO_EXTRA_LDFLAGS = "-X ${GO_IMPORT}/internal.Commit=${SRCREV}"

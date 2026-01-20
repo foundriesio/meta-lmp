@@ -15,4 +15,4 @@ do_install:append() {
     fi
 }
 
-FILES:alsa-utils-alsactl += "${nonarch_libdir}/tmpfiles.d/alsa_utils.conf"
+FILES:${PN}-alsactl += "${nonarch_libdir}/tmpfiles.d/alsa_utils.conf"

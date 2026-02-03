@@ -35,6 +35,10 @@ do_install:append() {
 	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/renew-client-cert ${D}${datadir}/fioconfig/handlers
 	sed -i -e "s/SOTA_CLIENT=aktualizr-lite/SOTA_CLIENT=${SOTA_CLIENT}/g" \
 		 ${D}${datadir}/fioconfig/handlers/aktualizr-toml-update
+
+	install -d ${D}${datadir}/fioconfig/actions
+	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/actions/diag ${D}${datadir}/fioconfig/actions
+	install -m 0755 ${S}/src/${GO_IMPORT}/contrib/actions/reboot ${D}${datadir}/fioconfig/actions
 }
 
 # We need aktualizr because we uses its device gateway connectivity and keys,

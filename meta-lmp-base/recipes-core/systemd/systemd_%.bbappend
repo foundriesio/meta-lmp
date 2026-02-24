@@ -34,7 +34,6 @@ PACKAGECONFIG ?= " \
     serial-getty-generator \
     set-time-epoch \
     sysusers \
-    sysvinit \
     timedated \
     timesyncd \
     userdb \

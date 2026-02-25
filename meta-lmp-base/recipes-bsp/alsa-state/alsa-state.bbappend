@@ -15,6 +15,7 @@ do_install() {
         install -m 0755 ${UNPACKDIR}/alsa-state-init ${D}${sysconfdir}/init.d/alsa-state
     fi
 
+    install -d ${D}/${VAR_STATEDIR}
     install -d ${D}/${SYS_STATEDIR}
     install -d ${D}${sysconfdir}
     install -m 0644 ${UNPACKDIR}/asound.conf ${D}${sysconfdir}

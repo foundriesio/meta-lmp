@@ -13,6 +13,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod
 
+RDEPENDS:${PN}-dev = "make"
 # FIXME: Turning off the dynamic linkage is not needed with certain golang versions, e.g. 1.25.3
 GO_DYNLINK:forcevariable = ""
 GO_INSTALL = "${GO_IMPORT}/cmd/composectl"

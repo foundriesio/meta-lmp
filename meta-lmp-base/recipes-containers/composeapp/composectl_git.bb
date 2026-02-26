@@ -6,8 +6,8 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=504a5c2455c8bb2fc5b76678
 
 GO_IMPORT = "github.com/foundriesio/composeapp"
 GO_IMPORT_PROTO ?= "https"
-SRCBRANCH = "v95"
-SRCREV = "862e6bee1d6596a80855c43c19f0655870e2d505"
+SRCBRANCH = "lmp-97"
+SRCREV = "cc9ef57a9986f768aa659e53142860d9b3818cdc"
 SRC_URI = "git://${GO_IMPORT};protocol=${GO_IMPORT_PROTO};branch=${SRCBRANCH};destsuffix=${GO_SRCURI_DESTSUFFIX}"
 UPSTREAM_CHECK_COMMITS = "1"
 

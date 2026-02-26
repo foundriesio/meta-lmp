@@ -13,6 +13,7 @@ UPSTREAM_CHECK_COMMITS = "1"
 
 inherit go-mod
 
+RDEPENDS:${PN}-dev = "make"
 GO_INSTALL = "${GO_IMPORT}/cmd/composectl"
 GO_EXTRA_LDFLAGS = "\
     -X '${GO_IMPORT}/cmd/composectl/cmd.storeRoot=/var/sota/reset-apps' \

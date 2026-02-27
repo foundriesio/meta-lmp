@@ -25,4 +25,4 @@ do_efi_sign() {
 }
 do_efi_sign[depends] += "sbsigntool-native:do_populate_sysroot"
 do_efi_sign[vardeps] += "UEFI_SIGN_ENABLE UEFI_SIGN_KEYDIR"
-addtask efi_sign before do_deploy after do_bundle_initramfs
+addtask efi_sign after do_install before do_deploy

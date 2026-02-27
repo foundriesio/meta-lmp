@@ -13,8 +13,6 @@ SPDX_ORG = "Foundries.IO (factory ${LMP_FACTORY})"
 
 require conf/distro/include/arm-defaults.inc
 require conf/distro/include/non-clangable.inc
-require conf/distro/include/security_flags.inc
-require conf/distro/include/yocto-uninative.inc
 include conf/distro/include/cve-extra-exclusions.inc
 include conf/distro/include/cve-lmp-extra-exclusions.inc
 
@@ -90,7 +88,6 @@ BUILD_OSTREE_TARBALL ?= "0"
 INHERIT += "lmp"
 INHERIT += "lmp-signing"
 INHERIT += "lmp-staging"
-INHERIT += "uninative"
 
 PREMIRRORS += "\
      git://.*/.* https://storage.googleapis.com/lmp-cache/downloads/ \n \

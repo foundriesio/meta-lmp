@@ -1,4 +1,4 @@
-From 2dadba1575e31425489bb52a67596faa51e69b43 Mon Sep 17 00:00:00 2001
+From 979882d755844ae57bbe7419b69278f05e3b99f3 Mon Sep 17 00:00:00 2001
 From: Igor Opaniuk <igor.opaniuk@foundries.io>
 Date: Thu, 31 Oct 2024 15:16:29 +0100
 Subject: [PATCH] sysroot: deploy systemd-boot efi to ESP partition
@@ -14,14 +14,14 @@ deployment index       path
 Upstream-Status: Inappropriate [lmp specific]
 Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
 ---
- src/libostree/ostree-sysroot-deploy.c | 55 ++++++++++++++++++++++++++-
- 1 file changed, 54 insertions(+), 1 deletion(-)
+ src/libostree/ostree-sysroot-deploy.c | 53 +++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index 44d9c20..f23aab2 100644
+index e8217ba..544cd06 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -1862,6 +1862,19 @@ parse_os_release (const char *contents, const char *split)
+@@ -1822,6 +1822,19 @@ parse_os_release (const char *contents, const char *split)
    return ret;
  }
  
@@ -41,7 +41,7 @@ index 44d9c20..f23aab2 100644
  /* Generate the entry name we will use in /boot/loader/entries for this deployment.
   * The provided n_deployments should be the total number of target deployments (which
   * might be different from the cached value in the sysroot).
-@@ -1960,6 +1973,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1919,6 +1932,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
    g_autofree char *bootcsumdir = g_strdup_printf ("ostree/%s-%s", osname, bootcsum);
    g_autofree char *bootconfdir = g_strdup_printf ("loader.%d/entries", new_bootversion);
    g_autofree char *bootconf_name = bootloader_entry_name (sysroot, n_deployments, deployment);
@@ -55,7 +55,7 @@ index 44d9c20..f23aab2 100644
  
    if (!glnx_shutil_mkdir_p_at (sysroot->boot_fd, bootcsumdir, 0775, cancellable, error))
      return FALSE;
-@@ -1971,6 +1991,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1930,6 +1950,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
    if (!glnx_shutil_mkdir_p_at (sysroot->boot_fd, bootconfdir, 0775, cancellable, error))
      return FALSE;
  
@@ -69,17 +69,17 @@ index 44d9c20..f23aab2 100644
    OstreeRepo *repo = ostree_sysroot_repo (sysroot);
  
    const char *bootprefix = repo->enable_bootprefix ? "/boot/" : "/";
-@@ -1989,6 +2016,32 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
-         return FALSE;
+@@ -1968,6 +1995,32 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+         }
      }
  
-+  glnx_autofd int legacy_dfd = glnx_opendirat_with_errno (deployment_dfd, bootefi_srcpath, TRUE);
-+  if (legacy_dfd >= 0)
++  glnx_autofd int efi_dfd = glnx_opendirat_with_errno (deployment_dfd, bootefi_srcpath, TRUE);
++  if (efi_dfd >= 0)
 +    {
 +      GLNX_HASH_TABLE_FOREACH_IT (bootefi_bins, it, const char *, bootefi_srcfile, const char *, bootefi_dst)
 +        {
 +          g_autofree char *bootefi_file = bootefi_filename(sysroot, bootefi_dst, deployment);
-+          if (fstatat (legacy_dfd, bootefi_srcfile, &stbuf, 0) == 0)
++          if (fstatat (efi_dfd, bootefi_srcfile, &stbuf, 0) == 0)
 +            {
 +              if (!glnx_fstatat_allow_noent (bootefi_dfd, bootefi_file, &stbuf, 0,
 +                                             error))
@@ -92,22 +92,16 @@ index 44d9c20..f23aab2 100644
 +                    return FALSE;
 +                }
 +
-+              if (!install_into_boot (repo, sepolicy, legacy_dfd, bootefi_srcfile,
++              if (!install_into_boot (repo, sepolicy, efi_dfd, bootefi_srcfile,
 +                                      bootefi_dfd, bootefi_file, cancellable, error))
 +                return FALSE;
 +            }
 +        }
-+      glnx_close_fd (&legacy_dfd);
++      glnx_close_fd (&efi_dfd);
 +    }
    /* If we have an initramfs, then install it into
     * /boot/ostree/osname-${bootcsum} if it doesn't exist already.
     */
-@@ -2108,7 +2161,7 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
- 
-   /* search for legacy directory for additional files to copy to /boot/ostree/$os-$bootcsum/ */
-   const char legacy_path[] = "usr/lib/ostree-boot";
--  glnx_autofd int legacy_dfd = glnx_opendirat_with_errno (deployment_dfd, legacy_path, TRUE);
-+  legacy_dfd = glnx_opendirat_with_errno (deployment_dfd, legacy_path, TRUE);
-   if (legacy_dfd >= 0)
-     {
-       if (fstatat (legacy_dfd, ".ostree-bootcsumdir-source", &stbuf, 0) == 0)
+-- 
+2.34.1
+

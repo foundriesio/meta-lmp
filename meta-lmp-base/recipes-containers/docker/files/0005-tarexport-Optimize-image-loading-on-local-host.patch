@@ -1,4 +1,4 @@
-From c0d93150360af6040c1ddad34bbfd49b6cf3c44b Mon Sep 17 00:00:00 2001
+From e2fc32127e9a89b165dafe6bb9a64346f21af2a8 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Fri, 22 Sep 2023 12:49:07 +0200
 Subject: [PATCH 5/5] tarexport: Optimize image loading on local host
@@ -26,24 +26,17 @@ Upstream-Status: Inappropriate [lmp specific]
 
 Signed-off-by: Mike <mike.sul@foundries.io>
 Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
+Signed-off-by: Ricardo Salveti <ricardo.salveti@oss.qualcomm.com>
 ---
- daemon/internal/image/tarexport/load.go      | 58 +++++++++++++-------
+ daemon/internal/image/tarexport/load.go      | 56 +++++++++++++-------
  daemon/internal/image/tarexport/tarexport.go |  1 +
- 2 files changed, 38 insertions(+), 21 deletions(-)
+ 2 files changed, 37 insertions(+), 20 deletions(-)
 
 diff --git a/daemon/internal/image/tarexport/load.go b/daemon/internal/image/tarexport/load.go
-index 2d1efd20ac..26befbb71e 100644
+index 6d7eaa4c0a..e60b6bf047 100644
 --- a/daemon/internal/image/tarexport/load.go
 +++ b/daemon/internal/image/tarexport/load.go
-@@ -10,6 +10,7 @@ import (
- 	"path/filepath"
- 	"reflect"
- 	"runtime"
-+	"strings"
- 
- 	"github.com/containerd/containerd/v2/pkg/tracing"
- 	"github.com/containerd/log"
-@@ -27,6 +28,7 @@ import (
+@@ -28,6 +28,7 @@ import (
  	"github.com/moby/sys/sequential"
  	"github.com/moby/sys/symlink"
  	"github.com/opencontainers/go-digest"
@@ -51,16 +44,16 @@ index 2d1efd20ac..26befbb71e 100644
  )
  
  func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream io.Writer, quiet bool) (outErr error) {
-@@ -78,8 +80,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -79,8 +80,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  	}
  
  	var parentLinks []parentLink
--	var imageIDsStr string
+-	var imageIDsStr strings.Builder
 -	var imageRefCount int
  
  	for _, m := range manifest {
  		select {
-@@ -87,7 +87,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -88,7 +87,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  			return ctx.Err()
  		default:
  		}
@@ -69,7 +62,7 @@ index 2d1efd20ac..26befbb71e 100644
  		if err != nil {
  			return err
  		}
-@@ -118,7 +118,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -119,7 +118,7 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  				return ctx.Err()
  			default:
  			}
@@ -78,11 +71,11 @@ index 2d1efd20ac..26befbb71e 100644
  			if err != nil {
  				return err
  			}
-@@ -142,25 +142,30 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -143,25 +142,30 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  		if err != nil {
  			return err
  		}
--		imageIDsStr += fmt.Sprintf("Loaded image ID: %s\n", imgID)
+-		imageIDsStr.WriteString(fmt.Sprintf("Loaded image ID: %s\n", imgID))
 -
 -		imageRefCount = 0
 +		var imageRefs []string
@@ -119,18 +112,18 @@ index 2d1efd20ac..26befbb71e 100644
  	}
  
  	for _, p := range validatedParentLinks(parentLinks) {
-@@ -171,10 +176,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
+@@ -172,10 +176,6 @@ func (l *tarexporter) Load(ctx context.Context, inTar io.ReadCloser, outStream i
  		}
  	}
  
 -	if imageRefCount == 0 {
--		outStream.Write([]byte(imageIDsStr))
+-		outStream.Write([]byte(imageIDsStr.String()))
 -	}
 -
  	return nil
  }
  
-@@ -244,18 +245,33 @@ func (l *tarexporter) loadLayer(ctx context.Context, filename string, rootFS ima
+@@ -245,18 +245,34 @@ func (l *tarexporter) loadLayer(ctx context.Context, filename string, rootFS ima
  	return l.lss.Register(inflatedLayerData, rootFS.ChainID())
  }
  
@@ -139,7 +132,7 @@ index 2d1efd20ac..26befbb71e 100644
  	if prevID, err := l.rs.Get(ref); err == nil && prevID != imgID {
  		fmt.Fprintf(outStream, "The image %s already exists, renaming the old one with ID %s to empty string\n", reference.FamiliarString(ref), string(prevID)) // todo: this message is wrong in case of multiple tags
  	}
--
+ 
 -	return l.rs.AddTag(ref, imgID, true)
 +	switch specificRef := ref.(type) {
 +	case reference.NamedTagged:
@@ -180,5 +173,5 @@ index 631b33f6a6..974a2d29f3 100644
  
  type tarexporter struct {
 -- 
-2.52.0
+2.34.1
 

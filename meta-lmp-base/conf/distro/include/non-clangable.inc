@@ -128,11 +128,6 @@ TOOLCHAIN:pn-trusted-firmware-a = "gcc"
 TOOLCHAIN:pn-libgcc-8 = "gcc"
 TOOLCHAIN:pn-gcc-8-runtime = "gcc"
 
-# https://reviews.llvm.org/D34796
-# | clang-14: error: unknown argument: '-fno-toplevel-reorder'
-# | clang-14: warning: optimization flag '-fno-merge-constants' is not supported [-Wignored-optimization-argument]
-TOOLCHAIN:pn-efitools = "gcc"
-
 #| /lmp/build-lmp-intel-corei7-64-main-next-container/tmp-lmp/work/corei7-64-lmp-linux/efivar/38+39+git/recipe-sysroot-native/usr/bin/x86_64-lmp-linux/x86_64-lmp-linux-ld: cannot find /lmp/build-lmp-intel-corei7-64-main-next-container/tmp-lmp/work/corei7-64-lmp-linux/efivar/38+39+git/recipe-sysroot/usr/lib/clang/17.0.3/lib/linux/libclang_rt.builtins-x86_64.a: No such file or directory
 # | x86_64-lmp-linux-clang: error: linker command failed with exit code 1 (use -v to see invocation)
 TOOLCHAIN:pn-efivar = "gcc"

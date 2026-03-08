@@ -30,8 +30,6 @@ python __anonymous() {
     # uefi keys
     if pn == 'systemd-boot' or bb.data.inherits_class('kernel-lmp-efi', d):
         add_varfiles_hash_to_vardeps_of_var(('SIGNING_UEFI_SIGN_KEY', 'SIGNING_UEFI_SIGN_CRT'), 'do_efi_sign', d)
-    if pn == 'efitools':
-        add_varfiles_hash_to_vardeps_of_var(('SIGNING_UEFI_SIGN_KEY', 'SIGNING_UEFI_SIGN_CRT'), 'do_prepare_local_auths', d)
 
     # u-boot keys
     if bb.data.inherits_class('kernel-lmp-fitimage', d):

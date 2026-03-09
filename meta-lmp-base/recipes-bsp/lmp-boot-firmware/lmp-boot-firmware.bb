@@ -68,8 +68,12 @@ do_install() {
         fi
     fi
 }
-do_install[depends] = "${@bb.utils.contains('WKS_FILE_DEPENDS', 'virtual/bootloader', 'virtual/bootloader:do_deploy', '', d)}"
-do_install[depends] += "${@bb.utils.contains('WKS_FILE_DEPENDS', 'virtual/trusted-firmware-a', 'virtual/trusted-firmware-a:do_deploy', '', d)}"
+do_install[depends] += "${@'virtual/bootloader:do_deploy' \
+    if ('virtual/bootloader' in (d.getVar('WKS_FILE_DEPENDS') or '').split() \
+        and (d.getVar('PREFERRED_PROVIDER_virtual/bootloader') or '').strip()) else ''}"
+do_install[depends] += " ${@'virtual/trusted-firmware-a:do_deploy' \
+    if ('virtual/trusted-firmware-a' in (d.getVar('WKS_FILE_DEPENDS') or '').split() \
+        and (d.getVar('PREFERRED_PROVIDER_virtual/trusted-firmware-a') or '').strip()) else ''}"
 
 do_deploy() {
     if [ -n "${LMP_BOOT_FIRMWARE_FILES}" ]; then

@@ -50,6 +50,7 @@ shutdown:x:70:
 nobody:*:99:
 users:x:100:
 pulse:x:171:
+dmaheap:x:964:
 empower:x:965:
 seat:x:966:
 teeclnt:x:967:

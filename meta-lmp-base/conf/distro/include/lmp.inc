@@ -110,6 +110,7 @@ MIRRORS =+ "\
 BBMASK += " \
     /meta-virtualization/recipes-kernel/linux/linux-%.bbappend \
     /meta-security/meta-integrity/recipes-core/systemd/systemd_%.bbappend \
+    /meta-qcom/recipes-kernel/linux-firmware/linux-firmware_%.bbappend \
 "
 
 # QA check settings - follow poky, which is stricter than the OE-Core defaults

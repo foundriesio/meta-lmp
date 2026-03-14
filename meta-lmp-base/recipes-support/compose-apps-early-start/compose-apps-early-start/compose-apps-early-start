@@ -57,7 +57,7 @@ start_restorable_apps() {
 				start_compose_app ${app}
 			done
 		else
-			composectl run --apps "${shortlist}"
+			echo "No apps to start"
 		fi
 	else
 		composectl run --apps "${shortlist}"

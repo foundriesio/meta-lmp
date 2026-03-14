@@ -42,7 +42,7 @@ cryptfs_backup_luks_header() {
 	fi
 
 	space=$(df -P ${boot_dev} | awk 'NR==2 {print $4}')
-	if [ "space" -lt "16777216" ]; then
+	if [ "$space" -lt "16777216" ]; then
 		msg "WARNING: Not enough backup storage for the LUKS header!"
 		return
 	fi

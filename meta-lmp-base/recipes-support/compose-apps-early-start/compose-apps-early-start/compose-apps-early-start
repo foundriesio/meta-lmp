@@ -47,9 +47,7 @@ start_restorable_apps() {
 				shortlist="${shortlist}${app},"
 			fi
 		done
-		if [ ! -z $shortlist ] ; then
-			shortlist=${shortlist::-1}
-                fi
+		shortlist="${shortlist%,}"
 	fi
 
 	if [ -z "${shortlist}" ] ; then

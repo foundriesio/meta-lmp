@@ -25,4 +25,4 @@ pkg_postinst_ontarget:${PN}() {
     fi
 }
 
-FILES:alsa-states = "${SYS_STATEDIR}/*.state"
+FILES:alsa-states = "${SYS_STATEDIR}/*.state ${VAR_STATEDIR}"

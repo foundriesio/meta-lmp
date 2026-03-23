@@ -1,4 +1,4 @@
-From e2fc32127e9a89b165dafe6bb9a64346f21af2a8 Mon Sep 17 00:00:00 2001
+From a01c3a8a6442d6e67f20a10a45cc0de904aaa2e8 Mon Sep 17 00:00:00 2001
 From: Mike Sul <mike.sul@foundries.io>
 Date: Fri, 22 Sep 2023 12:49:07 +0200
 Subject: [PATCH 5/5] tarexport: Optimize image loading on local host
@@ -33,7 +33,7 @@ Signed-off-by: Ricardo Salveti <ricardo.salveti@oss.qualcomm.com>
  2 files changed, 37 insertions(+), 20 deletions(-)
 
 diff --git a/daemon/internal/image/tarexport/load.go b/daemon/internal/image/tarexport/load.go
-index 6d7eaa4c0a..e60b6bf047 100644
+index ee1efd7a75..e60b6bf047 100644
 --- a/daemon/internal/image/tarexport/load.go
 +++ b/daemon/internal/image/tarexport/load.go
 @@ -28,6 +28,7 @@ import (
@@ -75,7 +75,7 @@ index 6d7eaa4c0a..e60b6bf047 100644
  		if err != nil {
  			return err
  		}
--		imageIDsStr.WriteString(fmt.Sprintf("Loaded image ID: %s\n", imgID))
+-		fmt.Fprintf(&imageIDsStr, "Loaded image ID: %s\n", imgID)
 -
 -		imageRefCount = 0
 +		var imageRefs []string
@@ -173,5 +173,5 @@ index 631b33f6a6..974a2d29f3 100644
  
  type tarexporter struct {
 -- 
-2.34.1
+2.53.0
 

@@ -8,6 +8,8 @@ SRC_URI = "file://wayland-cdi.service \
     file://wayland-cdi-generate \
 "
 
+S = "${UNPACKDIR}"
+
 SYSTEMD_SERVICE:${PN} = "wayland-cdi.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 

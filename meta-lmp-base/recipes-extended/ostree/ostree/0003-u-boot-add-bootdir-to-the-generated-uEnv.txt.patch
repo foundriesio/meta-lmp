@@ -1,7 +1,7 @@
-From 50a4b61b4b27aea72d92dfbf1c169b03b62699b8 Mon Sep 17 00:00:00 2001
+From bf141e79abd6bd26b8bca3d5631c34b9cded93c4 Mon Sep 17 00:00:00 2001
 From: Gatis Paeglis <gatis.paeglis@qt.io>
 Date: Mon, 22 Aug 2016 15:52:21 +0200
-Subject: [PATCH] u-boot: add 'bootdir' to the generated uEnv.txt
+Subject: [PATCH 3/4] u-boot: add 'bootdir' to the generated uEnv.txt
 
 When doing a full copy of:
 
@@ -33,7 +33,7 @@ Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
  2 files changed, 5 insertions(+)
 
 diff --git a/src/libostree/ostree-bootloader-uboot.c b/src/libostree/ostree-bootloader-uboot.c
-index 41280cf..bfdc5c9 100644
+index 41280cf1..bfdc5c91 100644
 --- a/src/libostree/ostree-bootloader-uboot.c
 +++ b/src/libostree/ostree-bootloader-uboot.c
 @@ -106,6 +106,7 @@ create_config_from_boot_loader_entries (OstreeBootloaderUboot *self, int bootver
@@ -55,7 +55,7 @@ index 41280cf..bfdc5c9 100644
        if (val)
          g_ptr_array_add (new_lines, g_strdup_printf ("ramdisk_image%s=/boot%s", index_suffix, val));
 diff --git a/tests/test-bootdir-update.sh b/tests/test-bootdir-update.sh
-index f69c125..9365b29 100755
+index f69c1253..9365b29e 100755
 --- a/tests/test-bootdir-update.sh
 +++ b/tests/test-bootdir-update.sh
 @@ -35,5 +35,6 @@ assert_has_file sysroot/boot/ostree/testos-${bootcsum}/1
@@ -65,3 +65,6 @@ index f69c125..9365b29 100755
 +assert_file_has_content sysroot/boot/uEnv.txt "bootdir="
  
  echo "ok boot dir with .ostree-bootcsumdir-source"
+-- 
+2.53.0
+

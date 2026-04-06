@@ -1,7 +1,7 @@
-From 979882d755844ae57bbe7419b69278f05e3b99f3 Mon Sep 17 00:00:00 2001
+From 8626cc8ff46d2f3300a3adb4eb499080fcf3aae2 Mon Sep 17 00:00:00 2001
 From: Igor Opaniuk <igor.opaniuk@foundries.io>
 Date: Thu, 31 Oct 2024 15:16:29 +0100
-Subject: [PATCH] sysroot: deploy systemd-boot efi to ESP partition
+Subject: [PATCH 1/4] sysroot: deploy systemd-boot efi to ESP partition
 
 Add support for deploying systemd-boot to ESP partition.
 Considering that default deployment has always index == 0, the filenames
@@ -13,15 +13,16 @@ deployment index       path
 
 Upstream-Status: Inappropriate [lmp specific]
 Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Signed-off-by: Jose Quaresma <jose.quaresma@foundries.io>
 ---
  src/libostree/ostree-sysroot-deploy.c | 53 +++++++++++++++++++++++++++
  1 file changed, 53 insertions(+)
 
 diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
-index e8217ba..544cd06 100644
+index 5230be10..79fa6ddd 100644
 --- a/src/libostree/ostree-sysroot-deploy.c
 +++ b/src/libostree/ostree-sysroot-deploy.c
-@@ -1822,6 +1822,19 @@ parse_os_release (const char *contents, const char *split)
+@@ -1799,6 +1799,19 @@ parse_os_release (const char *contents, const char *split)
    return ret;
  }
  
@@ -38,13 +39,13 @@ index e8217ba..544cd06 100644
 +    return g_strdup_printf ("%s-%d.efi", efiname, index);
 +}
 +
- /* Generate the entry name we will use in /boot/loader/entries for this deployment.
+ /* Generate the filename we will use in /boot/loader/entries for this deployment.
   * The provided n_deployments should be the total number of target deployments (which
   * might be different from the cached value in the sysroot).
-@@ -1919,6 +1932,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1874,6 +1887,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+   const char *bootcsum = ostree_deployment_get_bootcsum (deployment);
    g_autofree char *bootcsumdir = g_strdup_printf ("ostree/%s-%s", osname, bootcsum);
    g_autofree char *bootconfdir = g_strdup_printf ("loader.%d/entries", new_bootversion);
-   g_autofree char *bootconf_name = bootloader_entry_name (sysroot, n_deployments, deployment);
 +  const char *bootefidir = "EFI/BOOT";
 +  const char *bootefi_srcpath = "usr/lib/systemd/boot/efi";
 +  g_autoptr(GHashTable) bootefi_bins = g_hash_table_new (g_str_hash, g_str_equal);
@@ -55,7 +56,7 @@ index e8217ba..544cd06 100644
  
    if (!glnx_shutil_mkdir_p_at (sysroot->boot_fd, bootcsumdir, 0775, cancellable, error))
      return FALSE;
-@@ -1930,6 +1950,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1885,6 +1905,13 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
    if (!glnx_shutil_mkdir_p_at (sysroot->boot_fd, bootconfdir, 0775, cancellable, error))
      return FALSE;
  
@@ -69,7 +70,7 @@ index e8217ba..544cd06 100644
    OstreeRepo *repo = ostree_sysroot_repo (sysroot);
  
    const char *bootprefix = repo->enable_bootprefix ? "/boot/" : "/";
-@@ -1968,6 +1995,32 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
+@@ -1923,6 +1950,32 @@ install_deployment_kernel (OstreeSysroot *sysroot, int new_bootversion,
          }
      }
  
@@ -103,5 +104,5 @@ index e8217ba..544cd06 100644
     * /boot/ostree/osname-${bootcsum} if it doesn't exist already.
     */
 -- 
-2.34.1
+2.53.0
 

@@ -39,7 +39,7 @@ PREFERRED_PROVIDER_nativesdk-qemu ?= "nativesdk-qemu"
 
 # Default distro features for LMP (can be extended by the user if needed)
 INIT_MANAGER = "systemd"
-DISTRO_FEATURES_DEFAULT = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi security tpm integrity seccomp"
+DISTRO_FEATURES_DEFAULTS = "acl argp bluetooth ext2 ipv4 ipv6 largefile usbgadget usbhost wifi xattr zeroconf pci vfat modsign efi security tpm integrity seccomp"
 DISTRO_FEATURES_BACKFILL_CONSIDERED = "pulseaudio ldconfig"
 DISTRO_FEATURES:append = " pam usrmerge virtualization alsa pni-names"
 

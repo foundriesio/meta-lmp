@@ -7,7 +7,7 @@
 
 LMPSTAGING_INHERIT_KERNEL_MODSIGN = ""
 
-LMPSTAGING_LOCK_TO_AVOID_OOM = "clang-native rust-native rust-llvm-native"
+LMPSTAGING_LOCK_TO_AVOID_OOM = "llvm clang-native rust-native rust-llvm-native"
 
 python __anonymous() {
     pn = d.getVar('PN')

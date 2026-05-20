@@ -53,7 +53,7 @@ def bad_license(d, license, denylist):
     for a license string "GPLv3+".
     """
     return not oe.license.license_ok(
-        canonical_license(d, license),
+        oe.license.canonical_license(d, license),
         denylist)
 
 

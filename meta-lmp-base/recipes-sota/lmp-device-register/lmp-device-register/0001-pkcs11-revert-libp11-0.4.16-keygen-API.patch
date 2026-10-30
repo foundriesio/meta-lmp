@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Daiane Angolini <daiane.angolini@oss.qualcomm.com>
+Date: Fri, 30 Oct 2026 15:46:20 -0300
+Subject: [PATCH] pkcs11: revert libp11 0.4.16 keygen API
+
+This reverts commit f6a092e4a42cb9c5b51f15e481f482945ce1a205.
+
+Scarthgap ships libp11 0.4.12, which does not provide PKCS11_keygen,
+PKCS11_params nor the id_len and key_params fields of PKCS11_KGEN_ATTRS,
+so build against the older PKCS11_generate_key API instead.
+
+Upstream-Status: Inappropriate [scarthgap ships libp11 0.4.12]
+Signed-off-by: Daiane Angolini <daiane.angolini@oss.qualcomm.com>
+---
+ inc/device_register.h |  1 -
+ src/pkcs11.cpp        | 12 +++---------
+ 2 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/inc/device_register.h b/inc/device_register.h
+index 48e32ae..e4619a6 100644
+--- a/inc/device_register.h
++++ b/inc/device_register.h
+@@ -27,7 +27,6 @@
+ #include <openssl/err.h>
+ #include <openssl/buffer.h>
+ 
+-#include <boost/algorithm/hex.hpp>
+ #include <boost/algorithm/string.hpp>
+ #include <boost/beast/core/detail/base64.hpp>
+ #include <boost/filesystem.hpp>
+diff --git a/src/pkcs11.cpp b/src/pkcs11.cpp
+index 80176d7..340e4da 100644
+--- a/src/pkcs11.cpp
++++ b/src/pkcs11.cpp
+@@ -239,8 +239,6 @@ int pkcs11_create_csr(const lmp_options &opt, string &pkey, string &csr)
+ 	unsigned int n = 0;
+ 	int ret = 0;
+ 	bool created_keys = false;
+-	std::vector<unsigned char> tls_id_bytes;
+-	PKCS11_params params = {.extractable = 0, .sensitive = 1};
+ 	PKCS11_EC_KGEN ec = {
+ 		.curve = "P-256",
+ 	};
+@@ -248,18 +246,14 @@ int pkcs11_create_csr(const lmp_options &opt, string &pkey, string &csr)
+ 		.type = EVP_PKEY_EC,
+ 		.token_label = hsm_cfg.token.c_str(),
+ 		.key_label = hsm_cfg.tls_lbl.c_str(),
++		.key_id = hsm_cfg.tls_id.c_str(),
+ 	};
+ 	bool init = false;
+ 
+-	boost::algorithm::unhex(hsm_cfg.tls_id, std::back_inserter(tls_id_bytes));
+-	attr.key_id = tls_id_bytes.data();
+-	attr.id_len = tls_id_bytes.size();
+-
+ 	if (opt.hsm_module.empty())
+ 		leave;
+ 
+ 	attr.kgen.ec = &ec;
+-	attr.key_params = &params;
+ again:
+ 	ctx = PKCS11_CTX_new();
+ 
+@@ -299,7 +293,7 @@ again:
+ 	if (PKCS11_login(slot, 0, opt.hsm_pin.c_str()))
+ 		leave_exit;
+ 
+-	if (PKCS11_keygen(slot->token, &attr))
++	if (PKCS11_generate_key(slot->token, &attr))
+ 		leave_exit;
+ 
+ 	/* Keys have been created */
+@@ -543,4 +537,4 @@ int pkcs11_cleanup(lmp_options &opt)
+ 	PKCS11_CTX_free(ctx);
+ 
+ 	return 0;
+-}
++}
+\ No newline at end of file

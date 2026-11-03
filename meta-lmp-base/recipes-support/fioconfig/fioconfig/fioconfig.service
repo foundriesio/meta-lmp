@@ -9,6 +9,8 @@ RestartSec=10
 Restart=always
 ExecStartPre=mkdir -p /var/run/secrets
 ExecStart=/usr/bin/fioconfig daemon
+RuntimeDirectory=fioconfig
+WorkingDirectory=/run/fioconfig
 
 [Install]
 WantedBy=multi-user.target

@@ -8,6 +8,8 @@ ConditionPathExists=/var/sota/config.encrypted
 Type=oneshot
 RemainAfterExit=true
 ExecStart=/usr/bin/fioconfig extract
+RuntimeDirectory=fioconfig
+WorkingDirectory=/run/fioconfig
 
 [Install]
 WantedBy=multi-user.target
